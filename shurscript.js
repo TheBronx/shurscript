@@ -31,7 +31,7 @@ GM_addStyle(".notifications sup {font-size: 10px;}");
 var page;
 var username;
 var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
-var notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + username + "&titleonly=0&showposts=1";
+var notificationsUrl;
 var interval = 1 * 60 * 1000; //1 minuto
 var lastUpdate;
 var lastReadQuote;
@@ -49,6 +49,7 @@ function initialize() {
 	page = location.pathname.replace("/foro","");
 	username = jQuery("a[href*='member.php']").first().text();
 	//variables para notificaciones
+	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
 	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE");
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE");
 }
