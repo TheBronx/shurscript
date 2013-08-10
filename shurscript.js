@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.01
+// @version			0.02
 // @author			TheBronx
 // @author			xusoO
 // @include			*forocoches.com/foro/*
@@ -75,7 +75,7 @@ function bradcrumbToBot() {
  */
 function showNotifications() {
 	//creamos la celda de notificaciones
-	jQuery(".page>div>table tr").first().append('<td class="alt2 notifications">0</td>');
+	jQuery(".page table td.alt2[nowrap]").first().parent().append('<td class="alt2 notifications">0</td>');
 	jQuery('.notifications').click(function() {
 		GM_setValue("FC_LAST_READ_QUOTE", lastReadQuote);
 
