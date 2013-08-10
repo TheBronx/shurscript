@@ -9,9 +9,8 @@
 // @author         TheBronx
 // @author         TheBronx
 // @author         TheBronx
-// @author  Buzzy (autoupdate function; see http://userscripts.org/scripts/show/52251 )
 // @include *forocoches.com/foro/*
-// @grant	GM_log
+// @grant  GM_log
 // @grant 	GM_getValue
 // @grant 	GM_setValue
 // @grant	GM_xmlhttpRequest
