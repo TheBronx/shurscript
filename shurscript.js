@@ -118,17 +118,16 @@ function updateNotifications() {
             return;
         }
         
-        var documentResponse = new DOMParser().parseFromString(response.responseText, "text/html");
-    
-        var citas = documentResponse.querySelectorAll("table > tbody > tr:nth-child(2) > td > div:nth-child(5) > div > em > a");
+        var documentResponse = jQuery.parseHTML(response.responseText);
+        var citas = jQuery(documentResponse).find("table > tbody > tr:nth-child(2) > td > div:nth-child(5) > div > em > a");
         if (citas.length == 0) {
 
-            var tooManyQueriesError = documentResponse.querySelector(".page li").textContent;
+            var tooManyQueriesError = jQuery(documentResponse).find(".page li").text();
             //Hemos recibido un error debido a demasidas peticiones seguidas. Esperamos el tiempo que nos diga ilitri y volvemos a lanzar la query.
             if (tooManyQueriesError) {
                 tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
                 var secondsToWait = tooManyQueriesError.substring(0, tooManyQueriesError.indexOf(" "));
-                var remainingSeconds = secondsToWait;
+                var remainingSeconds = parseInt(secondsToWait) + 1;
                 interval = setInterval(function() {
                     if (remainingSeconds > 0)
                         setNotificationsCount("...<sup>" + (remainingSeconds--) + "</sup>");
