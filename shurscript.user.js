@@ -6,6 +6,8 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
+// @downloadURL		https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js
+// @updateURL		https://github.com/TheBronx/shurscript/raw/master/shurscript.meta.js
 // @version			0.02
 // @author			TheBronx
 // @author			xusoO
