@@ -8,7 +8,7 @@
 // @namespace		http://shurscript.es
 // @downloadURL		https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js
 // @updateURL		https://github.com/TheBronx/shurscript/raw/master/shurscript.meta.js
-// @version			0.02
+// @version			0.03
 // @author			TheBronx
 // @author			xusoO
 // @include			*forocoches.com/foro/*
