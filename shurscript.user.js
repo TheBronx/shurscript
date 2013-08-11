@@ -83,6 +83,10 @@ function showNotifications() {
 
 	    if (jQuery(this).text() == "0" || currentStatus == "ERROR") {
 	        updateNotifications();
+	    } else if (jQuery(this).text() == "1") {
+		    window.open(lastReadQuote, "_blank");
+		    setNotificationsCount(0);
+	        GM_setValue("FC_LAST_QUOTES_COUNT", 0);
 	    } else if (currentStatus == "OK") {
 	        window.open(notificationsUrl, "_blank");
 	        setNotificationsCount(0);
