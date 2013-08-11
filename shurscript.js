@@ -75,7 +75,7 @@ function bradcrumbToBot() {
  */
 function showNotifications() {
 	//creamos la celda de notificaciones
-	jQuery(".page table td.alt2[nowrap]").first().parent().append('<td class="alt2 notifications">0</td>');
+	jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 	jQuery('.notifications').click(function() {
 		GM_setValue("FC_LAST_READ_QUOTE", lastReadQuote);
 
