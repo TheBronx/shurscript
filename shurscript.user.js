@@ -197,6 +197,7 @@ function updateNotifications(firstLoad) {
         }        
             
         newQuotes = new Array();
+        var cita;
         if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
             for (i = 0; i < citas.length; i++) { 
             	cita = new Cita(citas[i]);
@@ -232,6 +233,7 @@ function updateNotifications(firstLoad) {
         //Mensajes de alerta para el usuario
         if (firstLoad) {
 	        if (newQuotes.length == 1) {
+		        cita = newQuotes[0];
 		        if (confirm("El usuario '" + cita.userName + " te ha citado en el hilo '" + cita.threadName + "'\n¿Quieres ver el post ahora?")) {
 			        window.open(cita.postLink, "_self");
 		        }
