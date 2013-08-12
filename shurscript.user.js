@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.05
+// @version			0.06
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
@@ -34,6 +34,10 @@ GM_addStyle(".notificationRow.read a {color: #888 !important;}");
 GM_addStyle(".notificationRow:hover {background: #eee;}");
 GM_addStyle("#noNotificationsMessage {text-align: center; line-height: 83px; font-size: 12pt; color: #646464;}");
 GM_addStyle("#markAllAsReadRow {background: #CC3300;color: white;cursor: pointer;font-size: 10pt;height: 30px;line-height: 27px;text-align: center;}");
+/* ESTILOS FAVORITOS */
+GM_addStyle(".favorite>td:nth-child(3) {background-color:#D5E6EE; border-right: 4px solid #528BC6}");
+GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');}");
+GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');}");
 
 
 /**
@@ -53,6 +57,8 @@ var lastQuotesJSON; //Lista de notificaciones no leidas en formato JSON - Config
 var arrayQuotes;
 var notificationsCount;
 var notificationsBox;
+
+var favorites; //hilos favoritos
 
 jQuery(document).ready(function(){
 	if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes
@@ -81,9 +87,9 @@ function initialize() {
 		    GM_deleteValue("FC_LAST_QUOTES_" + userid);
 	    }
 	}
-
-	lastUpdate = GM_getValue("FC_LAST_QUOTES_UPDATE");
-	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE");
+	
+	//variables para hilos favoritos
+    favorites = jQuery.parseJSON( GM_getValue("FC_FAVORITE_THREADS_" + userid,"[]") );
 }
 
 function run() {
@@ -96,14 +102,19 @@ function run() {
 	if (page=="/newreply.php") {
 		//nestedQuotes(); //TODO activar cuando funcione
 	}
+	if (page=="/forumdisplay.php") {
+        favoriteThreads();
+    }
 }
 
 /**
  * Copiamos la tabla con la navegación en la parte inferior del foro
  */
 function bradcrumbToBot() {
-	jQuery('#threadrating_menu').after( '<table width="100%" cellspacing="1" cellpadding="5" border="0" align="center" class="tborder navigation-bot">'+
-		jQuery('.page>div>table').html()+'</table>' );
+	jQuery('#qrform').before( '<table width="100%" cellspacing="1" cellpadding="5" border="0" align="center" class="tborder navigation-bot">'+
+        jQuery('.page>div>table').html()+'</table><br>' );
+	//borramos las notificaciones de la barra de abajo
+	jQuery('.navigation-bot .notifications').parent().remove();
 }
 
 /**
@@ -337,6 +348,105 @@ function Cita(el) {
 	this.userLink = userElement.attr("href");
 	this.userName = userElement.text();
 	
+}
+
+/**
+ * HILOS FAVORITOS [TheBronx]
+ * Mostramos un icono para marcar hilos favoritos
+ * Los hilos favoritos pasan a estar destacados
+ */
+function favoriteThreads() {
+    var hilos = new Array();
+    var hilo = {};
+    //recogemos todos los hilos actuales
+    $('#threadslist tr td').each( function() {
+        var identifier = $(this).attr('id');
+        if ( identifier != undefined && identifier.indexOf('td_threadstatusicon')>=0 ) {
+            //celda icono
+            hilo.icon_td_id = identifier;
+        } else if (identifier != undefined && identifier.indexOf('td_threadtitle')>=0) {
+            //celda titulo
+            var a = $(this).find('div > a').first();
+            hilo.href = a.attr('href');
+            hilo.id = parseInt(a.attr('href').replace(/.*showthread\.php\?.*t=/,""),10);
+            hilo.title = a.html();
+            hilos.push( hilo );
+            hilo = {};
+        }
+    });
+    
+    //ahora resaltamos los hilos favoritos y mostramos los iconos correspondientes
+    for (var i=0; i<hilos.length; i++) {
+        var hilo = hilos[i];
+        var icon_td = jQuery( "#"+hilo.icon_td_id );
+        if ( favorites.indexOf( hilo.id ) >= 0 ) {
+            //es un hilo favorito
+            icon_td.parent().addClass("favorite");
+            icon_td.hover(
+                function() {//mouse in
+                    $(this).addClass("fav");
+                },
+                function() {//mouse out
+                    $(this).removeClass("fav");
+                }
+            );
+        } else {
+            //es un hilo normal
+            icon_td.hover(
+                function() {//mouse in
+                    $(this).addClass("not_fav");
+                },
+                function() {//mouse out
+                    $(this).removeClass("not_fav");
+                }
+            );
+        }
+        //en ambos casos al hacer clic se cambia su estado (fav->no_fav y viceversa) y se guarda/elimina de favoritos
+        icon_td.click( function(e) {
+            var id = parseInt($( this ).attr('id').replace("td_threadstatusicon_",""),10);
+            //si no era favorito...
+            if (favorites.indexOf(id) < 0) {
+                //lo agregamos a favoritos
+                favorites.push(id);
+                //quitamos el class antiguo
+                $( this ).removeClass("not_fav");
+                //cambiamos los eventos hover
+                $( this ).unbind('mouseenter mouseleave');
+                //nuevos eventos
+                $( this ).hover(
+                    function() {//mouse in
+                        $(this).addClass("fav");
+                    },
+                    function() {//mouse out
+                        $(this).removeClass("fav");
+                    }
+                );
+                $( this ).parent().addClass("favorite");
+            } else {
+                //lo borramos de favoritos
+                favorites.splice(favorites.indexOf(id),1);
+                //quitamos el class antiguo
+                $( this ).removeClass("fav");
+                //cambiamos los eventos hover
+                $( this ).unbind('mouseenter mouseleave');
+                //nuevos eventos
+                $( this ).hover(
+                    function() {//mouse in
+                        $(this).addClass("not_fav");
+                    },
+                    function() {//mouse out
+                        $(this).removeClass("not_fav");
+                    }
+                );
+                $( this ).parent().removeClass("favorite");
+            }
+            saveFavorites();
+        });
+    }
+}
+
+function saveFavorites() {
+    GM_setValue("FC_FAVORITE_THREADS_" + userid, JSON.stringify(favorites));
 }
 
 /* ACTUALIZADOR AUTOMÁTICO */
