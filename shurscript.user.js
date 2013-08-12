@@ -69,7 +69,6 @@ function initialize() {
 	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
 	//variables para notificaciones
 	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
-<<<<<<< HEAD
 	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE_" + userid);
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE_" + userid);
 	lastQuotesJSON = GM_getValue("FC_LAST_QUOTES_" + userid);
@@ -82,10 +81,9 @@ function initialize() {
 		    GM_deleteValue("FC_LAST_QUOTES_" + userid);
 	    }
 	}
-=======
+
 	lastUpdate = GM_getValue("FC_LAST_QUOTES_UPDATE");
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE");
->>>>>>> 6a4df75b1b474cb6d3a38bda308894536b67e5c4
 }
 
 function run() {
