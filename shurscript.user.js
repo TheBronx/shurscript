@@ -26,7 +26,11 @@
 GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 7px 15px; width: 35px; background: #CECECE; color: gray; font-size: 24pt;}");
 GM_addStyle(".notifications.unread {background: #CC3300; color: white;}");
 GM_addStyle(".notifications sup {font-size: 10px;}");
-GM_addStyle("#notificationsBox { background: white; border: 1px solid #CC3300; overflow: auto; position: absolute; width: 340px; display: none;max-height:400px; min-height:83px; box-shadow: 0 2px 4px -2px; right: 5px;}");
+GM_addStyle("#notificationsBox {background: #FFF;border: 1px solid #C30;position: absolute;display: none;box-shadow: 0 2px 4px -2px;right: 11px;}");
+GM_addStyle("#notificationsBox #notificationsList{overflow: auto;max-height: 400px;min-height: 83px;width: 340px;}");
+GM_addStyle("#notificationsBox:after, #notificationsBox:before {bottom: 100%;border: solid transparent;content: ' ';height: 0;width: 0;position: absolute;pointer-events: none;}");
+GM_addStyle("#notificationsBox:after {border-color: rgba(255, 255, 255, 0);border-bottom-color: #fff;border-width: 10px;left: 92%;margin-left: -10px;}");
+GM_addStyle("#notificationsBox:before {border-color: rgba(204, 51, 0, 0);border-bottom-color: #CC3300;border-width: 11px;left: 92%;margin-left: -11px;}");
 GM_addStyle(".notificationRow {height: 70px; overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
 GM_addStyle(".notificationRow > div {margin-top: 2px;}");
 GM_addStyle(".notificationRow.read {color: #AAA !important;}");
@@ -57,6 +61,7 @@ var lastQuotesJSON; //Lista de notificaciones no leidas en formato JSON - Config
 var arrayQuotes;
 var notificationsCount;
 var notificationsBox;
+var notificationsList;
 
 var favorites; //hilos favoritos
 
@@ -72,9 +77,18 @@ function initialize() {
 	//inicializamos variables
 	page = location.pathname.replace("/foro","");
 	username = jQuery("a[href*='member.php']").first().text();
+	encodedUsername = "";
+	for (i = 0; i < username.length; i++) {
+		if (username.charCodeAt(i) > 255) {
+			encodedUsername += "\\" + username.charCodeAt(i);
+		} else {
+			encodedUsername += username.charAt(i);
+		}
+	}
+
 	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
 	//variables para notificaciones
-	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
+	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
 	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE_" + userid);
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE_" + userid);
 	lastQuotesJSON = GM_getValue("FC_LAST_QUOTES_" + userid);
@@ -263,8 +277,11 @@ function setNotificationsCount(count) {
 
 function createNotificationsBox() {
 	notificationsBox = jQuery("<div id='notificationsBox'/>");
-
+	notificationsList = jQuery("<div id='notificationsList'/>");
+	
 	$(document.body).append(notificationsBox);
+	notificationsBox.append(notificationsList);
+	
 	$(document).mouseup(function (e) {	
 	    if (notificationsBox.css("display") == "block" && !notificationsBox.is(e.target) //No es nuestra caja
 	        && notificationsBox.has(e.target).length === 0) { //Ni tampoco un hijo suyo
@@ -275,19 +292,21 @@ function createNotificationsBox() {
 	    }
 	});
 	
-	markAsReadButton = jQuery("<div class='notificationRow' id='markAllAsReadRow'/>");
+	/*
+markAsReadButton = jQuery("<div class='notificationRow' id='markAllAsReadRow'/>");
 	markAsReadButton.html("Marcar todas como leídas");
-	notificationsBox.append(markAsReadButton);
+	notificationsList.append(markAsReadButton);
+*/
 	
 }
 
 function showNotificationsBox() {
-	notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 14);	
+	notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 20);	
 	notificationsBox.show();
 }
 
 function populateNotificationsBox(array) {
-	notificationsBox.html('<div id="noNotificationsMessage">No tienes ninguna notificación</div>'); //Vaciamos
+	notificationsList.html('<div id="noNotificationsMessage">No tienes ninguna notificación</div>'); //Vaciamos
 	for (i = 0; i < array.length; i++) {
 		addToNotificationsBox(array[i]);
 	}
@@ -302,7 +321,7 @@ function populateNotificationsBox(array) {
 			GM_setValue("FC_LAST_QUOTES_" + userid, lastQuotesJSON);
 /* 			updateNotifications(); */
 		});
-		notificationsBox.append(markAsReadButton);
+		notificationsList.append(markAsReadButton);
 	}
 }
 
@@ -322,7 +341,7 @@ function addToNotificationsBox(cita) {
 
 	link.appendTo(row.find("div").get(2));
 
-	notificationsBox.append(row);
+	notificationsList.append(row);
 }
 
 function markAsRead(cita) {
