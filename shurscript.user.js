@@ -14,6 +14,7 @@
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
+// @grant	GM_deleteValue
 // @grant	GM_xmlhttpRequest
 // @grant	GM_registerMenuCommand
 // @grant	GM_addStyle
@@ -24,17 +25,33 @@
 GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 7px 15px; width: 35px; background: #CECECE; color: gray; font-size: 24pt;}");
 GM_addStyle(".notifications.unread {background: #CC3300; color: white;}");
 GM_addStyle(".notifications sup {font-size: 10px;}");
+GM_addStyle("#notificationsBox { background: white; border: 1px solid #CC3300; overflow: auto; position: absolute; width: 340px; display: none;max-height:400px; min-height:83px; box-shadow: 0 2px 4px -2px; right: 5px;}");
+GM_addStyle(".notificationRow {height: 70px; overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
+GM_addStyle(".notificationRow > div {margin-top: 2px;}");
+GM_addStyle(".notificationRow.read {color: #AAA !important;}");
+GM_addStyle(".notificationRow.read a {color: #888 !important;}");
+GM_addStyle(".notificationRow:hover {background: #eee;}");
+GM_addStyle("#noNotificationsMessage {text-align: center; line-height: 83px; font-size: 12pt; color: #646464;}");
+GM_addStyle("#markAllAsReadRow {background: #CC3300;color: white;cursor: pointer;font-size: 10pt;height: 30px;line-height: 27px;text-align: center;}");
+
 
 /**
  * Página actual (sin http://forocoches.com/foro ni parámetros php)
  */
 var page;
 var username;
+var userid;
 var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
 var notificationsUrl;
 var interval = 1 * 60 * 1000; //1 minuto
-var lastUpdate;
+
+var lastUpdate; //Ultima actualizacion - Config. guardada en el navegador
 var lastReadQuote;
+var lastQuotesJSON; //Lista de notificaciones no leidas en formato JSON - Config. guardada en el navegador
+
+var arrayQuotes;
+var notificationsCount;
+var notificationsBox;
 
 jQuery(document).ready(function(){
 	if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes
@@ -48,13 +65,25 @@ function initialize() {
 	//inicializamos variables
 	page = location.pathname.replace("/foro","");
 	username = jQuery("a[href*='member.php']").first().text();
+	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
 	//variables para notificaciones
 	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
-	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE");
-	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE");
+	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE_" + userid);
+	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE_" + userid);
+	lastQuotesJSON = GM_getValue("FC_LAST_QUOTES_" + userid);
+	arrayQuotes = new Array();
+	if (lastQuotesJSON) {
+	    try {
+		    arrayQuotes = JSON.parse(lastQuotesJSON);
+	    } catch(e){
+		    console.log("Error parsing JSON");
+		    GM_deleteValue("FC_LAST_QUOTES_" + userid);
+	    }
+	}
 }
 
 function run() {
+	createNotificationsBox();
 	showNotifications();
 	if (page=="/showthread.php" || page=="/newreply.php") {
 		//copiamos navegación a la parte inferior del foro
@@ -77,35 +106,29 @@ function showNotifications() {
 	//creamos la celda de notificaciones
 	jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 	jQuery('.notifications').click(function() {
-		GM_setValue("FC_LAST_READ_QUOTE", lastReadQuote);
-
-	    if (jQuery(this).text() == "0" || currentStatus == "ERROR") {
-	        updateNotifications();
-	    } else if (jQuery(this).text() == "1") {
-		    window.open(lastReadQuote, "_blank");
-		    setNotificationsCount(0);
-	        GM_setValue("FC_LAST_QUOTES_COUNT", 0);
-	    } else if (currentStatus == "OK") {
-	        window.open(notificationsUrl, "_blank");
-	        setNotificationsCount(0);
-	        GM_setValue("FC_LAST_QUOTES_COUNT", 0);
-	    }
+		if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > interval)) {
+			updateNotifications();			
+		}
+		showNotificationsBox();
 	});
 
 	//comprobamos (si procede) nuevas notificaciones
 	if (!lastUpdate || Date.now() - parseFloat(lastUpdate) > interval) {
 		//Han pasado más de 1 minuto, volvemos a actualizar
-	    updateNotifications();
+	    updateNotifications(true);
 	} else {
 		//Hace menos de 1 minutos desde la ultima actualización, 
-		//usamos el último numero de citas no leídas guardado
-	    var lastCount = GM_getValue("FC_LAST_QUOTES_COUNT");
-	    setNotificationsCount(lastCount || 0);
+		//usamos las ultimas citas guardadas	    
+	    populateNotificationsBox(arrayQuotes);
+		setNotificationsCount(arrayQuotes.length);
+	    
 	    currentStatus = "OK";
 	}
 }
 
-function updateNotifications() {
+function updateNotifications(firstLoad) {
+	firstLoad = typeof firstLoad !== 'undefined' ? firstLoad : false;
+	
 	jQuery('.notifications').html("...");
     currentStatus = "QUERY";
     GM_xmlhttpRequest({
@@ -122,13 +145,15 @@ function updateNotifications() {
             return;
         }
         
+        lastUpdate = Date.now();
+        
         var documentResponse = jQuery.parseHTML(response.responseText);
-        var citas = jQuery(documentResponse).find("table > tbody > tr:nth-child(2) > td > div:nth-child(5) > div > em > a");
+        var citas = jQuery(documentResponse).find("#inlinemodform table[id*='post']");
         if (citas.length == 0) {
 
             var tooManyQueriesError = jQuery(documentResponse).find(".page li").text();
             //Hemos recibido un error debido a demasidas peticiones seguidas. Esperamos el tiempo que nos diga ilitri y volvemos a lanzar la query.
-            if (tooManyQueriesError) {
+            if (tooManyQueriesError && !firstLoad) {
                 tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
                 var secondsToWait = tooManyQueriesError.substring(0, tooManyQueriesError.indexOf(" "));
                 var remainingSeconds = parseInt(secondsToWait) + 1;
@@ -142,32 +167,63 @@ function updateNotifications() {
                 }
                 , 1000);
                 return;
+            } else if (firstLoad && arrayQuotes.length > 0) {
+	            //Si en la primera carga falla, no dejamos esperando al usuario
+			    populateNotificationsBox(arrayQuotes);
+				setNotificationsCount(arrayQuotes.length);
+			    
+			    currentStatus = "OK";
+
+			    return;
             }
         }        
             
-            
-            
-        var count = 0;
+        newQuotes = new Array();
         if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
             for (i = 0; i < citas.length; i++) { 
-                if (lastReadQuote == citas[i].href) {
+            	cita = new Cita(citas[i]);
+                if (lastReadQuote == cita.postLink) {
                     break;
                 } else {
-                    count++;
+	                newQuotes.push(cita);
                 }
             }
-        } else if (citas.length > 0) { //Si todavia no tenemos datos, el contador de citas es 0
-            GM_setValue("FC_LAST_READ_QUOTE", citas[0].href);
         }
+ 
+        if (citas.length > 0) {
+        	lastReadQuote = new Cita(citas[0]).postLink;
+        	GM_setValue("FC_LAST_READ_QUOTE_" + userid, new Cita(citas[0]).postLink);
+        }
+
+        arrayQuotes = newQuotes.concat(arrayQuotes); //Mergeamos las nuevas y las antiguas
         
-        lastReadQuote = citas[0].href;
+        populateNotificationsBox(arrayQuotes);
+        
+        lastQuotesJSON = JSON.stringify(arrayQuotes); //Formateamos a JSON para guardarlo
+        
+        count = arrayQuotes.length;
     
         setNotificationsCount(count);
 
-        GM_setValue("FC_LAST_QUOTES_UPDATE", Date.now().toString());
-        GM_setValue("FC_LAST_QUOTES_COUNT", count);
-        
+        GM_setValue("FC_LAST_QUOTES_UPDATE_" + userid, Date.now().toString());
+        GM_setValue("FC_LAST_QUOTES_" + userid, lastQuotesJSON);
+    
         currentStatus = "OK";
+        
+        
+        //Mensajes de alerta para el usuario
+        if (firstLoad) {
+	        if (newQuotes.length == 1) {
+		        if (confirm("El usuario '" + cita.userName + " te ha citado en el hilo '" + cita.threadName + "'\n¿Quieres ver el post ahora?")) {
+			        window.open(cita.postLink, "_self");
+		        }
+	        } else if (newQuotes.length > 1) {
+		        if (confirm("Tienes " + newQuotes.length + " nuevas citas en el foro\n¿Quieres verlas ahora?")) {
+		        	$("html, body").animate({ scrollTop: 0 }, "slow");
+			        showNotificationsBox();
+		        }
+	        }
+        }
         
       }
     });
@@ -180,11 +236,101 @@ function setNotificationsCount(count) {
     } else {
         notificationsDiv.removeClass("unread");
     }
+    notificationsCount = count;
     notificationsDiv.html(count);
 }
 
+function createNotificationsBox() {
+	notificationsBox = jQuery("<div id='notificationsBox'/>");
+
+	$(document.body).append(notificationsBox);
+	$(document).mouseup(function (e) {	
+	    if (notificationsBox.css("display") == "block" && !notificationsBox.is(e.target) //No es nuestra caja
+	        && notificationsBox.has(e.target).length === 0) { //Ni tampoco un hijo suyo
+	        notificationsBox.hide(); //Cerramos la caja
+	        e.stopImmediatePropagation();
+	        e.stopPropagation();
+	        e.preventDefault();
+	    }
+	});
+	
+	markAsReadButton = jQuery("<div class='notificationRow' id='markAllAsReadRow'/>");
+	markAsReadButton.html("Marcar todas como leídas");
+	notificationsBox.append(markAsReadButton);
+	
+}
+
+function showNotificationsBox() {
+	notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 14);	
+	notificationsBox.show();
+}
+
+function populateNotificationsBox(array) {
+	notificationsBox.html('<div id="noNotificationsMessage">No tienes ninguna notificación</div>'); //Vaciamos
+	for (i = 0; i < array.length; i++) {
+		addToNotificationsBox(array[i]);
+	}
+	if (array.length > 0) {
+		markAsReadButton = jQuery("<div id='markAllAsReadRow'/>");
+		markAsReadButton.html("Marcar todas como leídas");
+		markAsReadButton.click(function(){
+			emptyArray = new Array();
+			setNotificationsCount(0);
+			populateNotificationsBox(emptyArray);
+			lastQuotesJSON = JSON.stringify(emptyArray);
+			GM_setValue("FC_LAST_QUOTES_" + userid, lastQuotesJSON);
+/* 			updateNotifications(); */
+		});
+		notificationsBox.append(markAsReadButton);
+	}
+}
+
+function addToNotificationsBox(cita) {
+	jQuery("#noNotificationsMessage").hide();
+	row = jQuery("<div class='notificationRow'><div><b>El usuario <a href='" + cita.userLink + "'>" + cita.userName + "</a> te ha citado</div><div><a href='" + cita.threadLink + "'>" + cita.threadName + "</a></b></div><div></div></div>");
+	link = jQuery("<a href='" + cita.postLink + "' style='color:#444;'>" + cita.postText + "</a>");
+	
+	link.mousedown(function(e) { 
+		if (e.which != 3) {
+			setNotificationsCount(notificationsCount - 1);
+			$(this).parent().parent().addClass("read");
+			markAsRead(cita);
+			$(this).off("mousedown");	
+		}
+	});
+
+	link.appendTo(row.find("div").get(2));
+
+	notificationsBox.append(row);
+}
+
+function markAsRead(cita) {
+	
+	var index = jQuery.inArray(cita, arrayQuotes);
+	
+	if (index != -1) {
+		arrayQuotes.splice(index, 1);
+		lastQuotesJSON = JSON.stringify(arrayQuotes);
+    	GM_setValue("FC_LAST_QUOTES_" + userid, lastQuotesJSON);
+    }
+}
 
 
+function Cita(el) {
+	
+	postElement = $(el).find(".smallfont > em > a");
+	this.postLink = postElement.attr("href");
+	this.postText = postElement.text();	
+	
+	threadElement = $(el).find(".alt1 > div > a > strong");
+	this.threadLink = threadElement.parent().attr("href");
+	this.threadName = threadElement.text();
+	
+	userElement = $(el).find(".smallfont > a");
+	this.userLink = userElement.attr("href");
+	this.userName = userElement.text();
+	
+}
 
 
 /* ACTUALIZADOR AUTOMÁTICO */
