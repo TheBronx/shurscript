@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.06
+// @version			0.07
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
@@ -235,6 +235,7 @@ function updateNotifications(firstLoad) {
 	        if (newQuotes.length == 1) {
 		        cita = newQuotes[0];
 		        if (confirm("El usuario '" + cita.userName + " te ha citado en el hilo '" + cita.threadName + "'\n¿Quieres ver el post ahora?")) {
+		        	markAsRead(cita);
 			        window.open(cita.postLink, "_self");
 		        }
 	        } else if (newQuotes.length > 1) {
