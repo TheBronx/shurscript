@@ -27,7 +27,7 @@ GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 7px 1
 GM_addStyle(".notifications.unread {background: #CC3300; color: white;}");
 GM_addStyle(".notifications sup {font-size: 10px;}");
 GM_addStyle("#notificationsBox { background: white; border: 1px solid #CC3300; overflow: auto; position: absolute; width: 340px; display: none;max-height:400px; min-height:83px; box-shadow: 0 2px 4px -2px; right: 5px;}");
-GM_addStyle(".notificationRow {height: 70px; overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
+GM_addStyle(".notificationRow {overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
 GM_addStyle(".notificationRow > div {margin-top: 2px;}");
 GM_addStyle(".notificationRow.read {color: #AAA !important;}");
 GM_addStyle(".notificationRow.read a {color: #888 !important;}");
@@ -72,9 +72,18 @@ function initialize() {
 	//inicializamos variables
 	page = location.pathname.replace("/foro","");
 	username = jQuery("a[href*='member.php']").first().text();
+	encodedUsername = "";
+	for (i = 0; i < username.length; i++) {
+		if (username.charCodeAt(i) > 255) {
+			encodedUsername += "\\" + username.charCodeAt(i);
+		} else {
+			encodedUsername += username.charAt(i);
+		}
+	}
+
 	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
 	//variables para notificaciones
-	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
+	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
 	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE_" + userid);
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE_" + userid);
 	lastQuotesJSON = GM_getValue("FC_LAST_QUOTES_" + userid);
