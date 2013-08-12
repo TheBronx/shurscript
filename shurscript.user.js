@@ -6,9 +6,10 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.04
+// @version			0.05
 // @author			TheBronx
 // @author			xusoO
+// @author			Fritanga
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @grant	GM_log
@@ -50,7 +51,7 @@ function initialize() {
 	username = jQuery("a[href*='member.php']").first().text();
 	//variables para notificaciones
 	notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(username) + "&titleonly=0&showposts=1";
-	lastUpdate  = GM_getValue("FC_LAST_QUOTES_UPDATE");
+	lastUpdate = GM_getValue("FC_LAST_QUOTES_UPDATE");
 	lastReadQuote = GM_getValue("FC_LAST_READ_QUOTE");
 }
 
@@ -59,6 +60,9 @@ function run() {
 	if (page=="/showthread.php" || page=="/newreply.php") {
 		//copiamos navegación a la parte inferior del foro
 		bradcrumbToBot();
+	}
+	if (page=="/newreply.php") {
+		//nestedQuotes(); //TODO activar cuando funcione
 	}
 }
 
@@ -186,7 +190,6 @@ function setNotificationsCount(count) {
 
 
 
-
 /* ACTUALIZADOR AUTOMÁTICO */
 // The following code (updated 07/24/13) is released under public domain.
 // Usage guide: https://userscripts.org/guides/45
@@ -272,70 +275,76 @@ function setNotificationsCount(count) {
         }
 })();
 
-/**
- * FIELDSET DE OPCIONES EN EL EDITOR
- */
-
-// Busca donde colocar el fieldset.
-var pageDiv = document.evaluate("//*[@id='vB_Editor_001_smiliebox']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-// Crea el fieldset
-var fieldsetb = document.createElement("fieldset");
-fieldsetb.title = 'shurscript';
-fieldsetb.style.marginBottom = '10px';
-var legendb = document.createElement("legend");
-legendb.innerHTML = 'shurscript';
-
-// Inserta el fieldset y su leyenda
-pageDiv.parentNode.insertBefore(fieldsetb, pageDiv);
-fieldsetb.appendChild(legendb);
 
 /**
  * CITAS ANIDADAS [Fritanga]
  */
-
+//globales
+// Crea el objeto AJAX.
+var xmlhttp=null;
 // Constantes para las Citas Anidadas
 var buttonText = 'Anidar cita';
 var errText = "No se pudo anidar la cita: ";
 var urlprefix = document.URL.substr(0,document.URL.indexOf('newreply.php'));
-
 // Busca la zona de texto.
-var textarea = document.getElementById('vB_Editor_001_textarea');
 var textarea_insertpoint = -1;
 var requote = /\[QUOTE=[^;\]]+;/;
 var preNewline = '\n';
 var postID = null;
 
-// Crea y añade el botón al fieldset
-var qmbutton = document.createElement("input");
-qmbutton.className = 'button';
-qmbutton.type = 'BUTTON';
-qmbutton.style.cursor = "pointer";
-qmbutton.addEventListener("click", doQuote, false);
-qmbutton.setAttribute('id','butNestQuote');
-qmbutton.value = buttonText;
+function nestedQuotes() {
+	var textarea = $('#vB_Editor_001_textarea');
+	if(textarea == undefined) return; //no tiene sentido continuar si no encontramos el textarea
+	
+	/**
+	 * FIELDSET DE OPCIONES EN EL EDITOR
+	 */
+	// Busca donde colocar el fieldset.
+	var pageDiv = document.evaluate("//*[@id='vB_Editor_001_smiliebox']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	
+	// Crea el fieldset
+	var fieldsetb = document.createElement("fieldset");
+	fieldsetb.title = 'ShurScript';
+	fieldsetb.style.marginBottom = '10px';
+	var legendb = document.createElement("legend");
+	legendb.innerHTML = 'ShurScript';
 
-if(textarea == undefined) qmbutton.disabled = true;
-fieldsetb.appendChild(qmbutton); // Añade el botón al fieldset
+	// Inserta el fieldset y su leyenda
+	pageDiv.parentNode.insertBefore(fieldsetb, pageDiv);
+	fieldsetb.appendChild(legendb);
 
-function reenable() {
-	qmbutton.disabled = false;
-	textarea.disabled = false;
+	// Crea y añade el botón al fieldset
+	var qmbutton = document.createElement("input");
+	qmbutton.className = 'button';
+	qmbutton.type = 'BUTTON';
+	qmbutton.style.cursor = "pointer";
+	qmbutton.addEventListener("click", doQuote, false);
+	qmbutton.setAttribute('id','butNestQuote');
 	qmbutton.value = buttonText;
+
+	fieldsetb.appendChild(qmbutton); // Añade el botón al fieldset
+	console.log("fieldset agregado textarea");
 }
 
-// Crea el objeto AJAX.
-var xmlhttp=null;
+/**
+ * habilita o deshabilita el textarea y el boton de citas anidadas
+ */
+function setTextareaEnabled( flag, buttonText ) {
+	var qmbutton = jQuery('#butNestQuote');
+	var textarea = jQuery('#vB_Editor_001_textarea');
+	qmbutton.attr('disabled', !flag);
+	textarea.attr('disabled', !flag);
+	qmbutton.val( buttonText );
+}
 
 // Primera función tras pulsar el botón!
 function doQuote(e) {
+	var textarea = jQuery('#vB_Editor_001_textarea');
 	// Anula el botón mientras trabaja.
-	qmbutton.disabled = true;
-	textarea.disabled = true;
-	qmbutton.value = 'Trabajando...';
+	setTextareaEnabled( false, 'Trabajando...' );
 	// Busca la cita que ha de anidar en el textarea,
 	// empezando por arriba.
-	var tatext = textarea.value.toUpperCase();
+	var tatext = textarea.val().toUpperCase();
 	textarea_insertpoint = tatext.search(requote);
 	if(textarea_insertpoint >= 0) {
 		var postidpos = textarea_insertpoint+7;
@@ -365,12 +374,12 @@ function doQuote(e) {
 		xmlhttp.open("GET",geturl,true);
 		xmlhttp.send(null);
 	} else {
-		reenable();
+		setTextareaEnabled( true, 'Anidar cita' );
 		alert(errText+"no se han encontrado citas para anidar.");
 	}
 }
 function findFirstQuote() {
-
+	console.log(xmlhttp);
 	if (xmlhttp.readyState==4)
 	{// 4 = "loaded"
 		// Comprueba el retorno, si no es un post, salta un aviso.
@@ -394,6 +403,7 @@ function findFirstQuote() {
 			else quoteid = postidx[0].substr(3);
 		}
 		if(gotPostOK) {
+			var qmbutton = jQuery('#butNestQuote');
 			qmbutton.value = 'Citando...';
 			// Crea una llamda AJAX para obtener el mensaje citado.
 			var geturl = urlprefix + 'newreply.php?do=newreply&p=' + quoteid;
@@ -404,7 +414,7 @@ function findFirstQuote() {
 		}
 		if(!gotPostOK) {
 			// Habilita de nuevo el botón.
-			reenable();
+			setTextareaEnabled( true, 'Anidar cita' );
 			if(quoteid == null) alert(errText+"El mensaje no posee ninguna cita o ya ha sido citado.");
 			else alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
 		}
@@ -434,11 +444,15 @@ function addQuotedMessage() {
 			else quote = xmlhttp.responseText.substring(quoteStart, quoteEnd)+'\n[/QUOTE]';
 		}
 		if(gotPostOK) {
+			var textarea = jQuery('#vB_Editor_001_textarea');
 			// Inserta el mensaje en el lugar correspondiente del TextArea.
-			textarea.value = textarea.value.substr(0,textarea_insertpoint) + preNewline + unescape_ent(quote) + '\n' + textarea.value.substr(textarea_insertpoint);
+			textarea.val( textarea.val().substr(0,textarea_insertpoint) + preNewline + unescape_ent(quote) + '\n' + textarea.val().substr(textarea_insertpoint) );
+			
+			//insertamos en iframe
+			//unsafeWindow.save_iframe_to_textarea();
 		}
 		// Rehabilita el botón y la caja de texto.
-		reenable();
+		setTextareaEnabled( true, 'Anidar cita' );
 		if(!gotPostOK) {
 			if(quoteid == null) alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
 		}
