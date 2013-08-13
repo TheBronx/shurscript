@@ -78,8 +78,8 @@ try {
 	for (i = 0; i < modulesArray.length; i++) {
 		moduleName = modulesArray[i].trim();
 		try {
-/* 			module = eval("new " + moduleName + "()"); */
-			module = new this[moduleName];
+			module = eval("new " + moduleName + "()");
+/* 			module = new this[moduleName]; */
 			if (!module) {
 				helper.log ("Module '" + moduleName + "' not found.");
 			} else {
