@@ -26,7 +26,7 @@ function Citas() {
 		GM_addStyle(".notificationRow.read a {color: #888 !important;}");
 		GM_addStyle(".notificationRow:hover {background: #eee;}");
 		GM_addStyle("#noNotificationsMessage {text-align: center; line-height: 83px; font-size: 12pt; color: #646464;}");
-		GM_addStyle("#markAllAsReadRow {background: #CC3300;color: white;cursor: pointer;font-size: 10pt;height: 30px;line-height: 27px;text-align: center;}");
+		GM_addStyle("#markAllAsReadRow {background: #CC3300;color: white;cursor: pointer;font-size: 10pt;height: 30px;line-height: 30px;text-align: center;border:none;}");
 	
 		/* Variables globales del módulo */	
 		var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
@@ -244,7 +244,7 @@ function Citas() {
 		}
 		
 		function showNotificationsBox() {
-			notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 14);	
+			notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 20);	
 			notificationsBox.show();
 		}
 		
