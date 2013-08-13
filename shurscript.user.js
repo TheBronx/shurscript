@@ -12,11 +12,11 @@
 // @author			Fritanga
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
-// @require			modules/citas.js
-// @require			modules/bottom_navigation.js
-// @require			modules/nested_quotes.js
-// @require			modules/favourite_threads.js
-// @require			modules/auto_updater.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/citas.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/bottom_navigation.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/nested_quotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/favourite_threads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/auto_updater.js
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
@@ -87,8 +87,6 @@ try {
 					helper.log("Loading module '" + moduleName + "'...");
 					module.load();
 					helper.log ("Module '" + moduleName + "' loaded successfully.");
-				} else {
-					helper.log ("Module '" + moduleName + "' will not load under this conditions.");
 				}
 			}
 		} catch (e) {
