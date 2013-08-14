@@ -58,19 +58,6 @@ function initialize() {
 }
 
 function loadModules() {
-
-	/*
-try {
-		loadModule(new Citas());
-		loadModule(new BottomNavigation());
-		loadModule(new NestedQuotes());
-		loadModule(new FavouriteThreads());
-		loadModule(new AutoUpdater()); 
-	} catch (e) {
-		helper.log("Module not found " + e);
-	}
-*/
-	
 	var activeModules = "Citas;BottomNavigation;FavouriteThreads;AutoUpdater";
 /* 	var activeModules = "Citas;BottomNavigation;AutoUpdater"; */
 	var modulesArray = activeModules.split(";");
@@ -95,17 +82,6 @@ try {
 	}
 	
 }
-
-/*
-function loadModule(instance) {
-	try {
-		instance.load();	
-		helper.log ("Module '" + instance.constructor.name + "' loaded successfully.");
-	} catch (e){
-		helper.log ("Failed to load module '" + instance.constructor.name + "'.\n\t\tCaused by: " + e);
-	}
-}
-*/
 
 
 /* Metodos de ayuda comunes a todos los módulos. */
