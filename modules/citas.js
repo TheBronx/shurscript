@@ -236,11 +236,7 @@ function Citas() {
 			        e.preventDefault();
 			    }
 			});
-			
-			markAsReadButton = jQuery("<div class='notificationRow' id='markAllAsReadRow'/>");
-			markAsReadButton.html("Marcar todas como leídas");
-			notificationsBox.append(markAsReadButton);
-			
+						
 		}
 		
 		function showNotificationsBox() {
