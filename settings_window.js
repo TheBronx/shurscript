@@ -63,6 +63,8 @@ function SettingsWindow() {
 	
 		this.module = module;
 		
+		var helper = new ScriptHelper(this.module.id);
+		
 		var preferences;
 		var form;
 		
@@ -119,7 +121,9 @@ function SettingsWindow() {
 	    	form = $('<form/>');
 	    	preferencesPanelBody.append(form);
 			for (var j = 0; j < preferences.length; j++) {
-				form.append(preferences[j].getHTML());
+				var currentValue = helper.getValue(preferences[j].key);
+				form.append(preferences[j].getHTML(currentValue));
+				if (j != preferences.length - 1) form.append('<hr>');
 			}
 			
 			panel.append(preferencesPanel);
@@ -143,7 +147,7 @@ function SettingsWindow() {
 		
 		this.save = function() {
 			if (preferences) {
-				var helper = new ScriptHelper(this.module.id);
+				
 				for (var j = 0; j < preferences.length; j++) {
 					var pref = preferences[j];
 					var input = form.find("[name='" + pref.key + "']");
@@ -155,6 +159,12 @@ function SettingsWindow() {
 					
 					if (pref instanceof BooleanPreference) { //Checkbox
 						value = input[0].checked;
+					} else if (pref instanceof RadioPreference) {
+						input.each(function() {
+							if (this.checked) {
+								value = this.value;
+							}
+						});
 					} else {
 						value = input.val();
 					}
