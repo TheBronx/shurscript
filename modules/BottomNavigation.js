@@ -1,15 +1,14 @@
-/*
-Modulo Shurscript
-@id: BottomNavigation
-@name: Barra de navegación duplicada debajo
-@author: TheBronx
-@version: 0.1
-@description: Copia la tabla con la navegación en la parte inferior del foro
-*/
-
 function BottomNavigation() {
 		
-	var helper = new ScriptHelper("BottomNavigation");
+	this.id = arguments.callee.name; //ModuleID
+	this.name = "Barra de navegación duplicada debajo";
+	this.author = "TheBronx";
+	this.version = "0.1";
+	this.description = "Copia la tabla con la navegación en la parte inferior del foro.";
+	this.enabledByDefault = true;
+
+
+	var helper = new ScriptHelper(this.id);
 	
 	this.shouldLoad = function() {
 		 return page == "/showthread.php" || page == "/newreply.php";

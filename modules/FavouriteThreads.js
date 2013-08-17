@@ -1,15 +1,15 @@
-/*
-Modulo Shurscript
-@id: FavouriteThreads
-@name: Hilos favoritos
-@author: TheBronx
-@version: 0.1
-@description: Mostramos un icono para marcar hilos favoritos. Los hilos favoritos pasan a estar destacados
-*/
 
 function FavouriteThreads() {
 		
-	var helper = new ScriptHelper("FavouriteThreads");
+	this.id = arguments.callee.name; //ModuleID
+	this.name = "Hilos favoritos";
+	this.author = "TheBronx";
+	this.version = "0.1";
+	this.description = "Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo.";
+	this.enabledByDefault = true;
+	
+	
+	var helper = new ScriptHelper(this.id);
 	
 	var favorites;
 		
@@ -22,8 +22,14 @@ function FavouriteThreads() {
 		GM_addStyle(".favorite>td:nth-child(3) {background-color:#D5E6EE; border-right: 4px solid #528BC6}");
 		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');}");
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');}");
-
-		favorites = jQuery.parseJSON( GM_getValue("FC_FAVORITE_THREADS_" + userid,"[]") );
+		
+		favorites = GM_getValue("FC_FAVORITE_THREADS_" + userid); //Antiguos
+		if (favorites) { //Migrar a la nueva estructura de datos
+			helper.setValue("FAVOURITES", favorites);
+			GM_deleteValue("FC_FAVORITE_THREADS_" + userid);
+		}
+		
+		favorites = JSON.parse(helper.getValue("FAVOURITES", '[]'));
 		favoriteThreads();
 	}
 		
@@ -119,7 +125,7 @@ function FavouriteThreads() {
 	}
 	
 	function saveFavorites() {
-	    GM_setValue("FC_FAVORITE_THREADS_" + userid, JSON.stringify(favorites));
+		helper.setValue("FAVOURITES", JSON.stringify(favorites));
 	}
 
 }

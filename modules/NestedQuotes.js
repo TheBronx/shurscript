@@ -1,15 +1,14 @@
-/*
-Modulo Shurscript
-@id: NestedQuotes
-@name: Citas anidadas
-@author: Fritanga
-@version: 0.1
-@description: Permite, al citar, anidar también las citas del post original, incluidas imágenes.
-*/
 
 function NestedQuotes() {
 		
-	var helper = new ScriptHelper("NestedQuotes");
+	this.id = arguments.callee.name; //ModuleID
+	this.name = "Citas anidadas";
+	this.author = "Fritanga";
+	this.version = "0.1";
+	this.description = "Permite, al citar, anidar también las citas del post original, incluidas imágenes.";
+	
+	
+	var helper = new ScriptHelper(this.id);
 	
 	var xmlhttp=null;
 	// Constantes para las Citas Anidadas

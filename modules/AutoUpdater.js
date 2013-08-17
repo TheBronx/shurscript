@@ -1,15 +1,14 @@
-/*
-Modulo Shurscript
-@id: AutoUpdater
-@name: Actualizador de versiones automático
-@author:
-@version: 0.2
-@description: Notifica cuando hay disponible una nueva versión del Shurscript
-*/
 
 function AutoUpdater() {
 		
-	var helper = new ScriptHelper("AutoUpdater");
+	this.id = arguments.callee.name; //ModuleID
+	this.name = "Comprobar actualizaciones automáticamente";
+	this.author = "";
+	this.version = "0.2";
+	this.description = "Mostrará una alerta cuando haya una nueva versión disponible del Shurscript";
+	this.enabledByDefault = true;	
+	
+	var helper = new ScriptHelper(this.id);
 	
 	var id = 175463,
       hours = 1,
@@ -18,11 +17,14 @@ function AutoUpdater() {
       time = new Date().getTime();
 
 	this.shouldLoad = function() {
-		 return true;
+		 return false;
 	}
 	
 	this.load = function() {
-		check();
+		if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
+            GM_setValue('updated_175463', time+'');
+            call(false, true);
+        }
 	}
 	
 	
@@ -32,12 +34,6 @@ function AutoUpdater() {
             url: 'http'+(secure ? 's' : '')+'://userscripts.org/scripts/source/'+id+'.meta.js',
             onload: function(xpr) {compare(xpr, response);},
             onerror: function(xpr) {if (secure) call(response, false);}
-        });
-    }
-    function enable() {
-        GM_registerMenuCommand('Activar actualizaciones automáticas del '+name, function() {
-            GM_setValue('updated_175463', new Date().getTime()+'');
-            call(true, true)
         });
     }
 
@@ -57,30 +53,18 @@ function AutoUpdater() {
             try {
                 location.href = 'http://userscripts.org/scripts/source/'+id+'.user.js';
             } catch(e) {}
-        } else if ( xversion && updated ) {
-            if(confirm('¿Quieres desactivar las actualizaciones automáticas de este script?')) {
-                GM_setValue('updated_175463', 'off');
-                enable();
-                alert('Puedes volver a activarlas desde el submenú User Script Commands.');
-            }
-        } else if (response)
+        } else if (!updated && response)
             alert('No hay actualizaciones disponibles del '+name);
     }
     
     function check() {
-        if (GM_getValue('updated_175463', 0) == 'off')
-            enable();
-        else {
-            if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
-                GM_setValue('updated_175463', time+'');
-                call(false, true);
-            }
-            GM_registerMenuCommand('Comprobar actualizaciones del '+name, function() {
-                GM_setValue('updated_175463', new Date().getTime()+'');
-                call(true, true);
-            });
-        }
+        call(true, true);
     }
     
-	
+    this.getPreferences = function() {
+		return new ButtonPreference("Comprobar ahora", function(){
+			check();
+		});
+	}
+    
 }
