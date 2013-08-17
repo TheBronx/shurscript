@@ -30,7 +30,7 @@ function Quotes() {
 	/* Variables globales del módulo */	
 	var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
 	var notificationsUrl;
-	var interval = 1 * 60 * 1000; //1 minuto
+	var refreshEvery;// = 1 * 60 * 1000; //1 minuto
 	
 	var lastUpdate; //Ultima actualizacion - Config. guardada en el navegador
 	var lastReadQuote;
@@ -67,7 +67,16 @@ function Quotes() {
 		    }
 		}
 		
-		showAlerts = helper.getValue("SHOW_ALERTS", true);		
+		showAlerts = helper.getValue("SHOW_ALERTS", true);	
+		
+		refreshEvery = helper.getValue("REFRESH_EVERY", 2);
+		if (refreshEvery != 'off') {
+			refreshEvery = parseInt(refreshEvery);
+			if (refreshEvery.toString() == 'NaN') {
+				refreshEvery = 2;
+				helper.deleteValue("REFRESH_EVERY");
+			}
+		}
 		
 		createNotificationsBox();
 		showNotifications();
@@ -83,19 +92,18 @@ function Quotes() {
 		//creamos la celda de notificaciones
 		jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 		jQuery('.notifications').click(function() {
-			if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > interval)) {
+			if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60*1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();			
 			}
 			showNotificationsBox();
 		});
 	
 		//comprobamos (si procede) nuevas notificaciones
-		if (!lastUpdate || Date.now() - parseFloat(lastUpdate) > interval) {
-			//Han pasado más de 1 minuto, volvemos a actualizar
+		if (refreshEvery != 'off' && (!lastUpdate || Date.now() - parseFloat(lastUpdate) > refreshEvery)) {
+			//Volvemos a actualizar
 		    updateNotifications(true);
 		} else {
-			//Hace menos de 1 minutos desde la ultima actualización, 
-			//usamos las ultimas citas guardadas	    
+			//Usamos las ultimas citas guardadas	    
 		    populateNotificationsBox(arrayQuotes);
 			setNotificationsCount(arrayQuotes.length);
 		    
@@ -135,12 +143,12 @@ function Quotes() {
 	                tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
 	                var secondsToWait = tooManyQueriesError.substring(0, tooManyQueriesError.indexOf(" "));
 	                var remainingSeconds = parseInt(secondsToWait) + 1;
-	                interval = setInterval(function() {
+	                var timer = setInterval(function() {
 	                    if (remainingSeconds > 0)
 	                        setNotificationsCount("...<sup>" + (remainingSeconds--) + "</sup>");
 	                    else {                    
 	                        updateNotifications();
-	                        clearInterval(interval);
+	                        clearInterval(timer);
 	                    }
 	                }
 	                , 1000);
@@ -315,10 +323,12 @@ function Quotes() {
 	
 	this.getPreferences = function() {
 		var preferences = new Array();
-		showAlerts = helper.getValue("SHOW_ALERTS", true);
 		
-		preferences.push(new BooleanPreference("SHOW_ALERTS", showAlerts, "Mostrar alertas", "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
-/* 		preferences.push(new TextPreference("PRUEBA", "Hola", "Mostrar alertas", "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación")); */
+		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar alertas", "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
+		
+		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
+		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		
+		
 		return preferences;
 	};
 }
