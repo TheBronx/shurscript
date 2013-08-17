@@ -1,18 +1,22 @@
-# [shurScript] CHANGELOG #
+# CHANGELOG #
 
     Última versión estable: v0.07 (12 de agosto de 2013)
-        // Última versión desarrollo: v0.08 (13 de agosto de 2013)
+    En desarrollo: v0.08
 
-## v0.08 (13 de agosto de 2013) ##
+## v0.08 (17 de agosto de 2013) ##
 **Feature:**
-
-* Panel de opciones en el editor para funcionalidades de ShurScript
-    * Botón en el editor que permite anidar la primera cita al citar un mensaje
 * Reescritura completa del script, funcionalidades por módulos
+* Panel de preferencias:
+    * Activar o desactivar funciones
+    * Configurar ciertos aspectos del script
+        * Posibilidad de no mostrar ventana emergente al recibir una cita
+        * Permitir aumentar el intervalo entre un refresco y otro o desactivar el refresco automático
+
+* Actualizar a jQuery 2.0.3 y añadir Bootstrap 3.0.0
 
 **Bugfix:**
-
-* Nuevo estilo con arrow selectora para la barra de notificaciones
+* Correcciones en el actualizador automático
+* Mejorar compatibilidad con Scriptish
 
 ------------------------------------
 ### v0.07 (12 de agosto de 2013) ###
