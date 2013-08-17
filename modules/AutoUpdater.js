@@ -9,18 +9,24 @@ function AutoUpdater() {
 	this.enabledByDefault = true;	
 	
 	var helper = new ScriptHelper(this.id);
-	
+
 	var id = 175463,
       hours = 1,
-      name = GM_info.script.name,
-      version = GM_info.script.version,
+      name,
+      version,
       time = new Date().getTime();
-
-	this.shouldLoad = function() {
-		 return false;
-	}
 	
 	this.load = function() {
+		if (typeof GM_info != 'undefined' ) {
+			name = GM_info.script.name;
+			version = GM_info.script.version
+		} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+			name = GM_getMetadata('name');
+			version = GM_getMetadata('version');
+		} else {
+			alert('El addon de scripts de tu navegador no está soportado.');
+		}
+		
 		if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
             GM_setValue('updated_175463', time+'');
             call(false, true);

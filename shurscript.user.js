@@ -103,14 +103,26 @@ function loadModules() {
 */
 function getAllModules() {
 	var modules = [];
-	var metas = GM_info.scriptMetaStr.split("// @");
-	var meta;
-	for (var i = 0; i < metas.length; i++) {
-		meta = metas[i].trim();
-		if (meta.indexOf("require") == 0 && meta.match("/modules/")) {
-			moduleName = meta.match(/modules\/(.*)\.js/)[1];
-			modules.push(moduleName);
+	if (typeof GM_info != 'undefined' ) {
+		var metas = GM_info.scriptMetaStr.split("// @");
+		var meta;
+		for (var i = 0; i < metas.length; i++) {
+			meta = metas[i].trim();
+			if (meta.indexOf("require") == 0 && meta.match("/modules/")) {
+				var moduleName = meta.match(/modules\/(.*)\.js/)[1];
+				modules.push(moduleName);
+			}
 		}
+	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+		var requires = GM_getMetadata('require');
+		for (var i = 0; i < requires.length; i++) {
+			if (requires[i].match("/modules/")) {
+				var moduleName = requires[i].match(/modules\/(.*)\.js/)[1];
+				modules.push(moduleName);
+			}
+		}
+	} else {
+		alert('El addon de scripts de tu navegador no está soportado.');
 	}
 	
 	return modules;
