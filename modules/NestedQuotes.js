@@ -182,11 +182,14 @@ function NestedQuotes() {
 			}
 			if(gotPostOK) {
 				var textarea = jQuery('#vB_Editor_001_textarea');
+				
 				// Inserta el mensaje en el lugar correspondiente del TextArea.
 				textarea.val( textarea.val().substr(0,textarea_insertpoint) + preNewline + unescape_ent(quote) + '\n' + textarea.val().substr(textarea_insertpoint) );
-				
-				//insertamos en iframe
-				//unsafeWindow.save_iframe_to_textarea();
+
+				// Inserta el mensaje en el Iframe (machacando todo lo que hay, BUG)
+				var iframearea = jQuery('#vB_Editor_001_iframe')[0].contentWindow.document.getElementsByClassName('wysiwyg')[0];
+				iframearea.innerHTML = textarea.val().substr(0,textarea_insertpoint) + preNewline + '\n' + textarea.val().substr(textarea_insertpoint);
+
 			}
 			// Rehabilita el botón y la caja de texto.
 			setTextareaEnabled( true, 'Anidar cita' );
