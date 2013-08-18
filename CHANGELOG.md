@@ -13,6 +13,7 @@
         * Permitir aumentar el intervalo entre un refresco y otro o desactivar el refresco automático
 
 * Actualizar a jQuery 2.0.3 y añadir Bootstrap 3.0.0
+* Nueva funcionalidad: Citas Anidadas
 
 **Bugfix:**
 * Correcciones en el actualizador automático
