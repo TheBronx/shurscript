@@ -1,7 +1,7 @@
 # CHANGELOG #
 
-    Última versión estable: v0.07 (12 de agosto de 2013)
-    En desarrollo: v0.08
+    Última versión estable: v0.08 (12 de agosto de 2013)
+    En desarrollo: v0.09
 
 ## v0.08 (17 de agosto de 2013) ##
 **Feature:**
