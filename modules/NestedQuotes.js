@@ -5,7 +5,8 @@ function NestedQuotes() {
 	this.name = "Citas anidadas";
 	this.author = "Fritanga";
 	this.version = "0.1";
-	this.description = "Permite, al citar, anidar también las citas del post original, incluidas imágenes.";
+	this.description = "Permite ir anidando citas hacia arriba hasta el post original";
+	this.enabledByDefault = true;
 	
 	
 	var helper = new ScriptHelper(this.id);
