@@ -186,9 +186,12 @@ function NestedQuotes() {
 				// Inserta el mensaje en el lugar correspondiente del TextArea.
 				textarea.val( textarea.val().substr(0,textarea_insertpoint) + preNewline + unescape_ent(quote) + '\n' + textarea.val().substr(textarea_insertpoint) );
 
-				// Inserta el mensaje en el Iframe (machacando todo lo que hay, BUG)
-				var iframearea = jQuery('#vB_Editor_001_iframe')[0].contentWindow.document.getElementsByClassName('wysiwyg')[0];
-				iframearea.innerHTML = textarea.val().substr(0,textarea_insertpoint) + preNewline + '\n' + textarea.val().substr(textarea_insertpoint);
+				// Inserta el mensaje en el Iframe WYSIWG Firefox
+				try {
+					var iframearea = jQuery('#vB_Editor_001_iframe')[0].contentWindow.document.getElementsByClassName('wysiwyg')[0];
+					iframearea.innerHTML = iframearea.innerHTML.replace(/\n/g, "")
+					iframearea.innerHTML = iframearea.innerHTML.replace(/\[QUOTE.*\].*\[\/QUOTE\]/, textarea.val().substr(0,textarea_insertpoint) + preNewline + '\n' + textarea.val().substr(textarea_insertpoint));
+				} catch (e) {;}
 
 			}
 			// Rehabilita el botón y la caja de texto.
