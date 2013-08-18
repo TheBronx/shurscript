@@ -53,7 +53,7 @@ function Quotes() {
 			}
 		}
 
-		notificationsUrl = "search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
+		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
 		lastUpdate  = helper.getValue("LAST_QUOTES_UPDATE");
 		lastReadQuote = helper.getValue("LAST_READ_QUOTE");
 		lastQuotesJSON = helper.getValue("LAST_QUOTES");
@@ -92,14 +92,14 @@ function Quotes() {
 		//creamos la celda de notificaciones
 		jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 		jQuery('.notifications').click(function() {
-			if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60*1000))) { //La actualizacion manual hay que esperar un minuto minimo
+			if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();			
 			}
 			showNotificationsBox();
 		});
 	
 		//comprobamos (si procede) nuevas notificaciones
-		if (refreshEvery != 'off' && (!lastUpdate || Date.now() - parseFloat(lastUpdate) > refreshEvery)) {
+		if (refreshEvery != 'off' && (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (refreshEvery * 60 * 1000))) {
 			//Volvemos a actualizar
 		    updateNotifications(true);
 		} else {
