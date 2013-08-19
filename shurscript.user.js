@@ -6,21 +6,23 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.08
+// @version			0.09-dev
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @resource bootstrap-css https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @resource bootstrap-css https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
@@ -29,7 +31,7 @@
 // @grant	GM_registerMenuCommand
 // @grant	GM_addStyle
 // @grant 	GM_getResourceText
-// @history 0.00 first version.
+// @grant 	GM_getResourceURL
 // ==/UserScript==
 
 var helper;
