@@ -39,6 +39,7 @@ function Scrollers() {
 		
 		GM_addStyle('.scrollerArrow#scrollToBottomArrow {\
 						transform: rotate(180deg);\
+						-webkit-transform: rotate(180deg);\
 					}');
 	
 		var container = $("<div id='scrollers'></div>");
