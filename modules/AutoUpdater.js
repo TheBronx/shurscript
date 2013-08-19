@@ -55,6 +55,9 @@ function AutoUpdater() {
             return false;
         }
         var updated = xversion > version;
+        if (!updated && version.indexOf("-dev") != -1) {
+	        updated = xversion >= version.replace("-dev", ""); 
+        }
         if ( updated && confirm('Hay disponible una nueva versión del '+xname+'.\n¿Quieres instalarla?') ) {
             try {
                 location.href = 'http://userscripts.org/scripts/source/'+id+'.user.js';
