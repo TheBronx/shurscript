@@ -25,9 +25,7 @@ function Scrollers() {
 			GM_addStyle('#scrollers {\
 				opacity: 0.5;\
 				bottom: 5px;\
-				left: 0px;\
-				width: 100%;\
-				text-align: center;\
+				left: calc(50% - 55px);\
 				position: fixed;\
 			}');
 		}
