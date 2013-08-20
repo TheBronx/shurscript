@@ -29,23 +29,23 @@ function AutoUpdater() {
 		
 		if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
             GM_setValue('updated_175463', time+'');
-            call(false, true);
+            call(false);
         }
 	}
 	
 	
-    function call(response, secure) {
+    function call(response) {
         GM_xmlhttpRequest({
             method: 'GET',
-            url: 'http'+(secure ? 's' : '')+'://userscripts.org/scripts/source/'+id+'.meta.js',
-            onload: function(xpr) {compare(xpr, response);},
-            onerror: function(xpr) {if (secure) call(response, false);}
+            url: 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js',
+            onload: function(xpr) {compare(xpr, response);}
         });
     }
 
     function compare(xpr,response) {
         var xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
         var xname=/\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
+        
         if ( (xversion) && (xname[1] == name) ) {
             xversion = xversion[1];
             xname = xname[1];
@@ -54,20 +54,26 @@ function AutoUpdater() {
             GM_setValue('updated_175463', 'off');
             return false;
         }
-        var updated = xversion > version;
-        if (!updated && version.indexOf("-dev") != -1) {
-	        updated = xversion >= version.replace("-dev", ""); 
+
+       
+        if (version.indexOf("-dev") != -1) { //Si estamos en una version de desarrollo, actualizamos si es igual (0.09-dev -> 0.09) o superior.
+        	updated = xversion >= version.replace("-dev", "");
+        } else {
+        	updated = xversion > version;
         }
-        if ( updated && confirm('Hay disponible una nueva versión del '+xname+'.\n¿Quieres instalarla?') ) {
+        
+        if ( updated && confirm('Hay disponible una nueva versión del Shurscript.\n¿Quieres instalarla?') ) {
             try {
-                location.href = 'http://userscripts.org/scripts/source/'+id+'.user.js';
+                location.href = 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js';
             } catch(e) {}
-        } else if (!updated && response)
-            alert('No hay actualizaciones disponibles del '+name);
+        } else if (!updated && response) {
+            alert('No hay actualizaciones disponibles del Shurscript');
+        }
+        
     }
     
     function check() {
-        call(true, true);
+        call(true);
     }
     
     this.getPreferences = function() {
