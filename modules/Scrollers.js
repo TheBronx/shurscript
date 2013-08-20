@@ -13,13 +13,25 @@ function Scrollers() {
 	this.load = function() {
 	
 		var side = helper.getValue('SIDE', 'right');
-	
-		GM_addStyle('#scrollers {\
-						opacity: 0.5;\
-						bottom: 5px;\
-						' + side + ': 13px;\
-						position: fixed;\
-					}');
+		
+		if (side != "center") {
+			GM_addStyle('#scrollers {\
+				opacity: 0.5;\
+				bottom: 5px;\
+				' + side + ': 13px;\
+				position: fixed;\
+			}');
+		} else {
+			GM_addStyle('#scrollers {\
+				opacity: 0.5;\
+				bottom: 5px;\
+				left: 0px;\
+				width: 100%;\
+				text-align: center;\
+				position: fixed;\
+			}');
+		}
+		
 		GM_addStyle('#scrollers:hover {\
 						opacity: 0.9;\
 					}');
@@ -68,8 +80,8 @@ function Scrollers() {
 		var upOrDown = [new RadioOption("both", "Ambas flechas"), new RadioOption("up", "Solo la de ir al principio"), new RadioOption("down", "Solo la de ir al final")];
 		preferences.push(new RadioPreference("UP_OR_DOWN", "both", upOrDown, "Mostrar:"));
 		
-		var side = [new RadioOption("left", "A la izquierda"), new RadioOption("right", "A la derecha")];
-		preferences.push(new RadioPreference("SIDE", "right", side, "Alinear:"));
+		var side = [new RadioOption("left", "A la izquierda"), new RadioOption("right", "A la derecha"), new RadioOption("center", "Centradas")];
+		preferences.push(new RadioPreference("SIDE", "center", side, "Alinear:"));
 		
 		return preferences;
 	}
