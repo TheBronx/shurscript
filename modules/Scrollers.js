@@ -1,12 +1,12 @@
 
 function Scrollers() {
 
-	this.id = arguments.callee.name; //ModuleTemplate
+	this.id = arguments.callee.name;
 	this.name = "Scroll arriba y abajo";
 	this.author = "xusoo";
 	this.version = "0.1";
 	this.description = "Aparecerán dos flechas en la parte inferior del foro; una para volver al principio de la página y la otra para ir al final.";
-	this.enabledByDefault = true; //Define si el modulo vendrá activado por defecto o no
+	this.enabledByDefault = false;
 		
 	var helper = new ScriptHelper(this.id);
 
