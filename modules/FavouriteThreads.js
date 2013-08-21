@@ -8,7 +8,6 @@ function FavouriteThreads() {
 	this.description = "Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo.";
 	this.enabledByDefault = true;
 	
-	
 	var helper = new ScriptHelper(this.id);
 	
 	var favorites;
@@ -19,7 +18,7 @@ function FavouriteThreads() {
 	
 	this.load = function() {
 	
-		GM_addStyle(".favorite>td:nth-child(3) {background-color:#D5E6EE; border-right: 4px solid #528BC6}");
+		GM_addStyle(".favorite>td:nth-child(3) {background-color:"+helper.getValue("BACKGROUND_COLOR", "#D5E6EE")+"; border-right: 4px solid "+helper.getValue("BORDER_COLOR", "#528BC6")+"}");
 		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');}");
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');}");
 		
@@ -171,5 +170,13 @@ function FavouriteThreads() {
 		helper.setValue("FAVOURITES", JSON.stringify(favorites));
 	}
 
+	this.getPreferences = function() {
+		var preferences = new Array();
+
+		preferences.push(new TextPreference("BACKGROUND_COLOR", helper.getValue("BACKGROUND_COLOR", "#D5E6EE"), "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
+		preferences.push(new TextPreference("BORDER_COLOR", helper.getValue("BORDER_COLOR", "#528BC6"), "Color de borde", "El color del borde derecho para los hilos favoritos. Por defecto #528BC6"));
+
+		return preferences;
+	};
 }
 
