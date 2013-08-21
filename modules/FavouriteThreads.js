@@ -61,6 +61,7 @@ function FavouriteThreads() {
 	        if ( favorites.indexOf( hilo.id ) >= 0 ) {
 	            //es un hilo favorito
 	            icon_td.parent().addClass("favorite");
+				//evento sobre la celda del icono
 	            icon_td.hover(
 	                function() {//mouse in
 	                    $(this).addClass("fav");
@@ -69,8 +70,18 @@ function FavouriteThreads() {
 	                    $(this).removeClass("fav");
 	                }
 	            );
+				//evento sobre la celda del titulo
+				jQuery( "#"+hilo.icon_td_id.replace("threadstatusicon","threadtitle") ).hover(
+	                function() {//mouse in
+	                    $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).addClass("fav");
+	                },
+	                function() {//mouse out
+	                    $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).removeClass("fav");
+	                }
+	            );
 	        } else {
 	            //es un hilo normal
+				//evento sobre la celda del icono
 	            icon_td.hover(
 	                function() {//mouse in
 	                    $(this).addClass("not_fav");
@@ -79,10 +90,20 @@ function FavouriteThreads() {
 	                    $(this).removeClass("not_fav");
 	                }
 	            );
+				//evento sobre la celda del titulo
+				jQuery( "#"+hilo.icon_td_id.replace("threadstatusicon","threadtitle") ).hover(
+	                function() {//mouse in
+	                    $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).addClass("not_fav");
+	                },
+	                function() {//mouse out
+	                    $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).removeClass("not_fav");
+	                }
+	            );
 	        }
 	        //en ambos casos al hacer clic se cambia su estado (fav->no_fav y viceversa) y se guarda/elimina de favoritos
 	        icon_td.click( function(e) {
 	            var id = parseInt($( this ).attr('id').replace("td_threadstatusicon_",""),10);
+				var celda_titulo = $( "#"+$(this).attr("id").replace("threadstatusicon","threadtitle"));
 	            //si no era favorito...
 	            if (favorites.indexOf(id) < 0) {
 	                //lo agregamos a favoritos
@@ -91,13 +112,24 @@ function FavouriteThreads() {
 	                $( this ).removeClass("not_fav");
 	                //cambiamos los eventos hover
 	                $( this ).unbind('mouseenter mouseleave');
+					celda_titulo.unbind('mouseenter mouseleave');
 	                //nuevos eventos
+					//evento sobre la celda icono
 	                $( this ).hover(
 	                    function() {//mouse in
 	                        $(this).addClass("fav");
 	                    },
 	                    function() {//mouse out
 	                        $(this).removeClass("fav");
+	                    }
+	                );
+					//evento sobre la celda titulo
+					celda_titulo.hover(
+	                    function() {//mouse in
+	                        $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).addClass("fav");
+	                    },
+	                    function() {//mouse out
+	                        $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).removeClass("fav");
 	                    }
 	                );
 	                $( this ).parent().addClass("favorite");
@@ -108,13 +140,24 @@ function FavouriteThreads() {
 	                $( this ).removeClass("fav");
 	                //cambiamos los eventos hover
 	                $( this ).unbind('mouseenter mouseleave');
+					celda_titulo.unbind('mouseenter mouseleave');
 	                //nuevos eventos
+					//evento sobre la celda icono
 	                $( this ).hover(
 	                    function() {//mouse in
 	                        $(this).addClass("not_fav");
 	                    },
 	                    function() {//mouse out
 	                        $(this).removeClass("not_fav");
+	                    }
+	                );
+					//evento sobre la celda titulo
+					celda_titulo.hover(
+	                    function() {//mouse in
+	                        $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).addClass("not_fav");
+	                    },
+	                    function() {//mouse out
+	                        $("#"+$(this).attr("id").replace("threadtitle","threadstatusicon") ).removeClass("not_fav");
 	                    }
 	                );
 	                $( this ).parent().removeClass("favorite");
