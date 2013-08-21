@@ -61,8 +61,10 @@ function initialize() {
 	page = location.pathname.replace("/foro","");
 	
 	//Recogemos nombre e ID de usuario
-	username = jQuery("a[href*='member.php']").first().text();
-	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
+	var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+	username = user.text();
+	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+
 	
 	GM_addStyle(GM_getResourceText('bootstrap-css'));
 	
