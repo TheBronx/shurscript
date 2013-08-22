@@ -16,7 +16,13 @@
  * Ocultar hilos
  * Auto-enviar nuevo post pasados los segundos de espera entre post y post
  * Recuperar últim post no enviado (Por ejemplo al cerrar la pestaña sin querer)
- * Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion)
  * Cambiar alerts por ventanitas bootstrap
  * Soporte para Markdown en el editor
  * Permitir agregar a favoritos un hilo estando ya dentro de él
+
+**En progreso**
+ - [TheBronx] Permitir agregar a favoritos un hilo estando ya dentro de él
+
+**Implementado**
+ * Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion) 
+
