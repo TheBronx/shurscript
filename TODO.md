@@ -20,7 +20,7 @@
  * Soporte para Markdown en el editor
 
 **En progreso**
- - [TheBronx] Permitir agregar a favoritos un hilo estando ya dentro de él
+ - none
 
 **Implementado**
  * Mostrar estrella de favoritos al pasar sobre la celda con el título del hilo
