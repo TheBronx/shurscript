@@ -18,12 +18,12 @@
  * Recuperar últim post no enviado (Por ejemplo al cerrar la pestaña sin querer)
  * Cambiar alerts por ventanitas bootstrap
  * Soporte para Markdown en el editor
- * Permitir agregar a favoritos un hilo estando ya dentro de él
 
 **En progreso**
  - [TheBronx] Permitir agregar a favoritos un hilo estando ya dentro de él
 
 **Implementado**
  * Mostrar estrella de favoritos al pasar sobre la celda con el título del hilo
- * Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion) 
+ * Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion)
+ * Permitir agregar a favoritos un hilo estando ya dentro de él
 
