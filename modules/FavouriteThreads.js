@@ -13,7 +13,7 @@ function FavouriteThreads() {
 	var favorites;
 		
 	this.shouldLoad = function() {
-		 return page == "/forumdisplay.php";
+		 return (page == "/forumdisplay.php" || page == "/showthread.php");
 	}
 	
 	this.load = function() {
@@ -21,6 +21,7 @@ function FavouriteThreads() {
 		GM_addStyle(".favorite>td:nth-child(3) {background-color:"+helper.getValue("BACKGROUND_COLOR", "#D5E6EE")+"; border-right: 4px solid "+helper.getValue("BORDER_COLOR", "#528BC6")+"}");
 		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');}");
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');}");
+		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
 		
 		favorites = GM_getValue("FC_FAVORITE_THREADS_" + userid); //Antiguos
 		if (favorites) { //Migrar a la nueva estructura de datos
@@ -29,10 +30,15 @@ function FavouriteThreads() {
 		}
 		
 		favorites = JSON.parse(helper.getValue("FAVOURITES", '[]'));
-		favoriteThreads();
+		
+		if (page == "/forumdisplay.php") {
+			favoriteThreadsForumdisplay();
+		} else if (page == "/showthread.php") {
+			favoriteThreadsShowthread();
+		}
 	}
 		
-	function favoriteThreads() {
+	function favoriteThreadsForumdisplay() {
 		
 	    var hilos = new Array();
 	    var hilo = {};
@@ -164,6 +170,51 @@ function FavouriteThreads() {
 	            saveFavorites();
 	        });
 	    }
+	}
+	
+	function favoriteThreadsShowthread() {
+		//estamos viendo un hilo, ¿que hilo es?
+		//la pregunta tiene miga, ya que en la URL no tiene por qué venir el topic_id
+		var href = $("#threadtools_menu form>table tr:last a").attr("href");
+		var t_id = parseInt(href.replace("subscription.php?do=addsubscription&t=",""),10);
+		//vale, ahora que sabemos que hilo es, ¿es favorito?
+		var is_favorite = false;
+		if ( favorites.indexOf( t_id ) >= 0 ) {
+	        //es un hilo favorito
+			console.log(t_id+" Favorito");
+			is_favorite = true;
+		} else {
+			//no es un hilo favorito
+			console.log(t_id+" NO Favorito");
+			is_favorite = false;
+		}
+		//agregamos la estrella junto a los botones de responder
+		var estrella = '<td class="shur_estrella"><a href="#" class="'+ (is_favorite ? 'fav':'') +'"></a></td>';
+		//boton de arriba
+		$("#poststop").next().find("td.smallfont").first().before(estrella);
+		//boton de abajo
+		$("#posts").next().find("table td.smallfont").first().before(estrella);
+		
+		//eventos
+		$(".shur_estrella a").each( function() {
+			$(this).click( function() {
+				if (is_favorite) {
+					is_favorite = false;
+					//borramos de favoritos
+					favorites.splice(favorites.indexOf(t_id,1));
+					//quitamos el class
+					$(".shur_estrella a").each( function() { $(this).removeClass('fav') });
+				} else {
+					is_favorite = true;
+					//agregamos a favoritos
+					favorites.push(t_id);
+					//agregamos el class
+					$(".shur_estrella a").each( function() { $(this).addClass('fav') });
+				}
+				saveFavorites();
+				return false;
+			});
+		});
 	}
 	
 	function saveFavorites() {
