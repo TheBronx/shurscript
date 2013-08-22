@@ -1,15 +1,16 @@
 **Para implementar:**
+
  * No notificar de citas si ya se ha leído el hilo
  * Sincronizar preferencias en la nube
  * Modo noche
  * Lista de últimos mensajes escritos
  * Mostrar las ultimas citas aunque esten leídas
- * Mejoras en el editor de posts:
-  Boton Cita Rapida copia el QUOTE en el TextArea,
-  Iconos, 
-  AutoGrow, 
-  Quotes WYSIWYG (sin el [/QUOTE])
-  Botones avanzados en el quick reply
+ * Mejoras en el editor de posts:<br>
+  + Boton Cita Rapida copia el QUOTE en el TextArea,
+  + Iconos, 
+  + AutoGrow
+  + Quotes WYSIWYG (sin el [/QUOTE])
+  + Botones avanzados en el quick reply
  * Mostrar changelog en las actualizaciones
  * Ir a ultimo mensaje mio de un hilo
  * Ocultar hilos
