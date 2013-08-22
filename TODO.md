@@ -19,3 +19,4 @@
  * Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion)
  * Cambiar alerts por ventanitas bootstrap
  * Soporte para Markdown en el editor
+ * Permitir agregar a favoritos un hilo estando ya dentro de él
