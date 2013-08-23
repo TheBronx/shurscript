@@ -324,7 +324,7 @@ function Quotes() {
 	this.getPreferences = function() {
 		var preferences = new Array();
 		
-		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar alertas", "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
+		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
 		
 		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
 		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		

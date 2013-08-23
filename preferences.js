@@ -16,10 +16,9 @@ TextPreference.prototype.getHTML = function(currentValue) {
 }
 
 
-function BooleanPreference(key, defaultValue, name, description) {
+function BooleanPreference(key, defaultValue, description) {
 	this.key = key;
 	this.defaultValue = defaultValue;
-	this.name = name;
     this.description = description;
 }
 
