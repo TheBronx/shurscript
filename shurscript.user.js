@@ -21,7 +21,7 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
-// @resource bootstrap-css https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
 // @grant	GM_log
 // @grant	GM_getValue
@@ -66,7 +66,7 @@ function initialize() {
 	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
 
 	
-	GM_addStyle(GM_getResourceText('bootstrap-css'));
+	GM_addStyle(GM_getResourceText('bootstrapcss'));
 	
 }
 
