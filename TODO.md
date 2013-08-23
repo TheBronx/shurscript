@@ -11,13 +11,13 @@
   + AutoGrow
   + Quotes WYSIWYG (sin el [/QUOTE])
   + Botones avanzados en el quick reply
+  + Soporte para Markdown en el editor
  * Mostrar changelog en las actualizaciones
  * Ir a ultimo mensaje mio de un hilo
  * Ocultar hilos
  * Auto-enviar nuevo post pasados los segundos de espera entre post y post
  * Recuperar últim post no enviado (Por ejemplo al cerrar la pestaña sin querer)
  * Cambiar alerts por ventanitas bootstrap
- * Soporte para Markdown en el editor
 
 **En progreso**
  - none
