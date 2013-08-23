@@ -47,7 +47,7 @@
 #shurscript-settings-window .img-responsive{display:block;height:auto;max-width:100%}
 #shurscript-settings-window .img-rounded{border-radius:6px}
 #shurscript-settings-window .img-circle{border-radius:50%}
-#shurscript-settings-window hr{margin-top:20px;margin-bottom:20px;border:0;border-top:1px solid #eeeeee}
+#shurscript-settings-window hr{margin-top:10px;margin-bottom:10px;border:0;border-top:1px solid #eeeeee}
 #shurscript-settings-window .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0}
 #shurscript-settings-window p{margin:0 0 10px}
 #shurscript-settings-window .lead{margin-bottom:20px;font-size:16.099999999999998px;font-weight:200;line-height:1.4}
