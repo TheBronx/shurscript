@@ -1,4 +1,3 @@
-
 function FavouriteThreads() {
 		
 	this.id = arguments.callee.name; //ModuleID
@@ -181,11 +180,11 @@ function FavouriteThreads() {
 		var is_favorite = false;
 		if ( favorites.indexOf( t_id ) >= 0 ) {
 	        //es un hilo favorito
-			console.log(t_id+" Favorito");
+			//console.log(t_id+" Favorito");
 			is_favorite = true;
 		} else {
 			//no es un hilo favorito
-			console.log(t_id+" NO Favorito");
+			//console.log(t_id+" NO Favorito");
 			is_favorite = false;
 		}
 		//agregamos la estrella junto a los botones de responder
