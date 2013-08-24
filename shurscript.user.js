@@ -15,6 +15,7 @@
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
@@ -60,13 +61,14 @@ function initialize() {
 	//inicializamos variables
 	page = location.pathname.replace("/foro","");
 	
+	GM_addStyle(GM_getResourceText('bootstrapcss'));
+	
 	//Recogemos nombre e ID de usuario
 	var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
 	username = user.text();
 	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
 
 	
-	GM_addStyle(GM_getResourceText('bootstrapcss'));
 	
 }
 
