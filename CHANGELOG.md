@@ -8,6 +8,7 @@
 * Permite elegir el color de los hilos favoritos resaltados
 * La estrella de marcar hilo como Favorito ahora se muestra al pasar por encima del hilo, no solo del icono.
 * También se pueden marcar hilos como favoritos desde dentro del propio hilo.
+* Los hilos favoritos funcionan también en los resultados de búsqueda
 * Las opciones del panel de preferencias ahora están ocultas por defecto para ocupar menos
 * Flechas para ir al principio y al final del post. (Desactivadas por defecto. Activar desde Preferencias)
 * Mejoras en la edición de posts
