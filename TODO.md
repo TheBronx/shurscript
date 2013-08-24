@@ -26,4 +26,5 @@
  * [23/08] Mostrar estrella de favoritos al pasar sobre la celda con el título del hilo
  * [23/08] Selector de color para los hilos favoritos (Y mejorar visibilidad de la opcion)
  * [23/08] Permitir agregar a favoritos un hilo estando ya dentro de él
+ * [24/08] Los hilos favoritos funcionan también en los resultados de búsqueda
 
