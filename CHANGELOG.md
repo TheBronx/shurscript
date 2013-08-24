@@ -1,9 +1,24 @@
 # CHANGELOG #
 
-    Última versión estable: v0.07 (12 de agosto de 2013)
-    En desarrollo: v0.08
+    Última versión estable: v0.08 (17 de agosto de 2013)
+    En desarrollo: v0.09
 
-## v0.08 (17 de agosto de 2013) ##
+## v0.09 ##
+**Feature:**
+* Permite elegir el color de los hilos favoritos resaltados
+* La estrella de marcar hilo como Favorito ahora se muestra al pasar por encima del hilo, no solo del icono.
+* También se pueden marcar hilos como favoritos desde dentro del propio hilo.
+* Las opciones del panel de preferencias ahora están ocultas por defecto para ocupar menos
+* Flechas para ir al principio y al final del post. (Desactivadas por defecto. Activar desde Preferencias)
+* Mejoras en la edición de posts
+    * Botones en la respuesta rápida que hasta ahora estaban solo en Modo Avanzado
+    * Acceso rápido a iconos desde la Respuesta rápida
+    * Multi-cita también en la respuesta rápida. Y ahora se ven directamente los [QUOTE] en la caja de texto.
+    * La caja de texto se adapta al contenido mientras se escribe. Ideal para tochos.
+    * Guardado automático de posts sin enviar, para no perder nada si sin querer cerramos la pestaña o cambiamos de página.
+
+------------------------------------
+### v0.08 (17 de agosto de 2013) ###
 **Feature:**
 * Reescritura completa del script, funcionalidades por módulos
 * Panel de preferencias:
