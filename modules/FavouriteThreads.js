@@ -4,7 +4,7 @@ function FavouriteThreads() {
 	this.id = arguments.callee.name; //ModuleID
 	this.name = "Hilos favoritos";
 	this.author = "TheBronx";
-	this.version = "0.2";
+	this.version = "0.1";
 	this.description = "Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo.";
 	this.enabledByDefault = true;
 	
@@ -182,11 +182,9 @@ function FavouriteThreads() {
 		var is_favorite = false;
 		if ( favorites.indexOf( t_id ) >= 0 ) {
 	        //es un hilo favorito
-			console.log(t_id+" Favorito");
 			is_favorite = true;
 		} else {
 			//no es un hilo favorito
-			console.log(t_id+" NO Favorito");
 			is_favorite = false;
 		}
 		//agregamos la estrella junto a los botones de responder
