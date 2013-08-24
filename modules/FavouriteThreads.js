@@ -1,9 +1,10 @@
+
 function FavouriteThreads() {
 		
 	this.id = arguments.callee.name; //ModuleID
 	this.name = "Hilos favoritos";
 	this.author = "TheBronx";
-	this.version = "0.1";
+	this.version = "0.2";
 	this.description = "Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo.";
 	this.enabledByDefault = true;
 	
@@ -12,14 +13,14 @@ function FavouriteThreads() {
 	var favorites;
 		
 	this.shouldLoad = function() {
-		 return (page == "/forumdisplay.php" || page == "/showthread.php");
+		 return (page == "/forumdisplay.php" || page == "/showthread.php" || page == "/search.php");
 	}
 	
 	this.load = function() {
 	
 		GM_addStyle(".favorite>td:nth-child(3) {background-color:"+helper.getValue("BACKGROUND_COLOR", "#D5E6EE")+"; border-right: 4px solid "+helper.getValue("BORDER_COLOR", "#528BC6")+"}");
-		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');}");
-		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');}");
+		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');min-width:20px;}");
+		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');min-width:20px;}");
 		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
 		
 		favorites = GM_getValue("FC_FAVORITE_THREADS_" + userid); //Antiguos
@@ -30,7 +31,7 @@ function FavouriteThreads() {
 		
 		favorites = JSON.parse(helper.getValue("FAVOURITES", '[]'));
 		
-		if (page == "/forumdisplay.php") {
+		if (page == "/forumdisplay.php" || page == "/search.php") {
 			favoriteThreadsForumdisplay();
 		} else if (page == "/showthread.php") {
 			favoriteThreadsShowthread();
@@ -51,7 +52,8 @@ function FavouriteThreads() {
 	            //celda titulo
 	            var a = $(this).find('div > a').first();
 	            hilo.href = a.attr('href');
-	            hilo.id = parseInt(a.attr('href').replace(/.*showthread\.php\?.*t=/,""),10);
+	            //hilo.id = parseInt(a.attr('href').replace(/.*showthread\.php\?.*t=/,""),10); //antiguo sistema, falla en search.php
+				hilo.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(a.attr('href'))[1]);
 	            hilo.title = a.html();
 	            hilos.push( hilo );
 	            hilo = {};
@@ -180,11 +182,11 @@ function FavouriteThreads() {
 		var is_favorite = false;
 		if ( favorites.indexOf( t_id ) >= 0 ) {
 	        //es un hilo favorito
-			//console.log(t_id+" Favorito");
+			console.log(t_id+" Favorito");
 			is_favorite = true;
 		} else {
 			//no es un hilo favorito
-			//console.log(t_id+" NO Favorito");
+			console.log(t_id+" NO Favorito");
 			is_favorite = false;
 		}
 		//agregamos la estrella junto a los botones de responder
