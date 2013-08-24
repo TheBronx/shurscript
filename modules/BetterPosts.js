@@ -148,7 +148,7 @@ function BetterPosts() {
 		    
 		    var repeatedQuote = false;
 			var multiQuotes = unsafeWindow.fetch_cookie("vbulletin_multiquote");
-		    if (multiQuotes != "") {
+		    if (multiQuotes && multiQuotes != "") {
 		    	multiQuotes = multiQuotes.split(',');
 		    	multiQuotes.forEach(function(quoteId){
 		    		if (id == quoteId) {
@@ -166,7 +166,11 @@ function BetterPosts() {
 		    if (!repeatedQuote)
 			    quote += getQuotedPost(id);
 		    
-		    setEditorContents(''); //Vaciamos el contenido actual
+		    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
+				if (confirm('¿Quieres borrar el contenido del post actual?')) {			
+					setEditorContents(''); //Vaciamos el contenido actual
+				}
+			}
 		    
 		    appendTextToEditor(quote + "<p></br></p>");
 		    
@@ -233,7 +237,7 @@ function BetterPosts() {
 		if (currentPostBackup) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
-				setEditorContents(currentPostBackup.postContents);
+				if (getEditorContents().trim().replace(/\<br\>/g,'') == '') {setEditorContents(currentPostBackup.postContents)};
 		    	reflowTextArea();
 			}
 		}
