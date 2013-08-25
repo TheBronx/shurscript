@@ -12,7 +12,6 @@
     * Configurar ciertos aspectos del script
         * Posibilidad de no mostrar ventana emergente al recibir una cita
         * Permitir aumentar el intervalo entre un refresco y otro o desactivar el refresco automático
-
 * Actualizar a jQuery 2.0.3 y añadir Bootstrap 3.0.0
 * Nueva funcionalidad: Citas Anidadas
 
