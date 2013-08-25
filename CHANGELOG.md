@@ -18,7 +18,8 @@
     * Multi-cita también en la respuesta rápida. Y ahora se ven directamente los [QUOTE] en la caja de texto.
     * La caja de texto se adapta al contenido mientras se escribe. Ideal para tochos.
     * Guardado automático de posts sin enviar, para no perder nada si sin querer cerramos la pestaña o cambiamos de página.
-    
+* A partir de ahora, al encontrar una nueva versión del Shurscript, se mostrarán los cambios destacados (changelog).
+
 ------------------------------------
 
 ### v0.08 `17/08/2013`
