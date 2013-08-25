@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.09-dev
+// @version			0.08-dev
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
@@ -21,7 +21,7 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/AutoUpdater.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
 // @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
@@ -40,12 +40,13 @@
 var helper;
 var allModules = []; //Todos los modulos
 var activeModules = []; //Los que tiene activados el usuario
-var scriptVersion;
+var AutoUpdater;
 
 /* Variables útiles y comunes a todos los módulos */
 var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
 var username;
 var userid;
+var scriptVersion;
 
 
 jQuery(document).ready(function(){
@@ -57,6 +58,9 @@ jQuery(document).ready(function(){
 		initialize();
 		loadModules();
 	}
+	
+	AutoUpdater = new AutoUpdater();
+	AutoUpdater.check(true);
 });
 
 function isCompatible() {

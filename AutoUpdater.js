@@ -1,27 +1,16 @@
 
 function AutoUpdater() {
-		
-	this.id = arguments.callee.name; //ModuleID
-	this.name = "Comprobar actualizaciones automáticamente";
-	this.author = "";
-	this.version = "0.3";
-	this.description = "Mostrará una alerta cuando haya una nueva versión disponible del Shurscript";
-	this.enabledByDefault = true;	
-	
-	var helper = new ScriptHelper(this.id);
-
-	var id = 175463,
-      hours = 1,
+	var hours = 1, //Buscar actualizaciones cada hora
       time = new Date().getTime();
 	
-	this.load = function() {
-
-		if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
-            GM_setValue('updated_175463', time+'');
-            call(false);
+	this.check = function(force) {
+    	if (force) {
+        	call(true);
+        } else if (+time > (+helper.getValue('AUTO_UPDATE', 0) + 1000*60*60*hours)) {
+        	helper.setValue('AUTO_UPDATE', time+'');
+        	call(false);
         }
-	}
-	
+    }
 	
     function call(response) {
         GM_xmlhttpRequest({
@@ -40,7 +29,7 @@ function AutoUpdater() {
             xname = xname[1];
         } else {
             if (xpr.responseText.match('the page you requested doesn\'t exist'))
-            	GM_setValue('updated_175463', 'off');
+            	helper.setValue('AUTO_UPDATE', 'off');
             return false;
         }
 
@@ -80,12 +69,7 @@ function AutoUpdater() {
         }
         
     }
-    
-    this.check = function() {
-        call(true);
-    }
-    
-    
+
     function parseChangelog(changelog, version, fallbackURL) {
     	try {
 	    	version = version.replace(".", "\\.");
@@ -99,11 +83,5 @@ function AutoUpdater() {
 		    return "Haz clic <a target='_blank' href='" + fallbackURL + "'>aquí</a> para ver los cambios de esta versión.";
 	    }
     }
-    
-    this.getPreferences = function() {
-		return new ButtonPreference("Comprobar ahora", function(){
-			check();
-		});
-	}
     
 }

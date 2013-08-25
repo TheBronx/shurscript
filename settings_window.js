@@ -62,7 +62,7 @@ function SettingsWindow() {
 	//Añadir boton de actualizar al título
 	var updateButton = $('<button style="position:absolute;margin-left:15px;" class="btn btn-default btn-sm">Comprobar actualizaciones</button>');
 	updateButton.click(function(){
-		new AutoUpdater().check();
+		AutoUpdater.check(true);
 	});
 	$("#shurscript-settings-window .modal-title").append(updateButton);
 
