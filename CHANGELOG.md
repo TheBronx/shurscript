@@ -5,6 +5,7 @@
 
 ## v0.08 (17 de agosto de 2013) ##
 **Feature:**
+
 * Reescritura completa del script, funcionalidades por módulos
 * Panel de preferencias:
     * Activar o desactivar funciones
@@ -16,6 +17,7 @@
 * Nueva funcionalidad: Citas Anidadas
 
 **Bugfix:**
+
 * Correcciones en el actualizador automático
 * Mejorar compatibilidad con Scriptish
 
