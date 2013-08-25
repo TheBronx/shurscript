@@ -16,6 +16,7 @@ function BetterPosts() {
 	var genericHandler;
 	var checkAutoGrow;
 	var minHeightTextArea;
+	var mirrorTextarea; //TextArea identico oculto para los casos no-WYSIWYG.
 	
 	this.shouldLoad = function() {
 		 return page == "/showthread.php" || page == '/newthread.php' || page == "/newreply.php" || page == "/editpost.php";
@@ -70,7 +71,6 @@ function BetterPosts() {
 		$(getEditor().textobj).on('input', onInputHandler); //Todos tienen TextArea
 	
 		
-		
 		$("#vB_Editor_QR_cmd_resize_1_99").click(function() {
 			checkAutoGrow.checked = false;
 			reflowTextArea();
@@ -100,6 +100,15 @@ function BetterPosts() {
 			}, 1000);
 			
 		});
+		
+		//TextArea copia para calcular el tamaño de la original
+		var originalTextarea = $(getEditor().textobj);
+		mirrorTextarea = $("<textarea>");
+		mirrorTextarea.css('height', 100);
+		mirrorTextarea.css('width', originalTextarea.width());
+		mirrorTextarea.css('position', 'absolute');
+		mirrorTextarea.css('top', '-999px'); //Que este fuera de la pantalla. Si está oculta (display:none) no se calcula el tamaño
+		$(document.body).append(mirrorTextarea);
 		
 		reflowTextArea();
 	}
@@ -272,8 +281,9 @@ function BetterPosts() {
 			if (isWYSIWYG()) {
 				getEditor().editbox.style.height = Math.max(getTextAreaHeight() + 30, minHeightTextArea) + "px";
 			} else {
-				getEditor().textobj.style.height = "0px"; //Resetear tamaño
-				getEditor().textobj.style.height = Math.max(getTextAreaHeight(), minHeightTextArea) + "px";
+				mirrorTextarea.css('width', $(getEditor().textobj).width());
+				mirrorTextarea.val(getEditorContents());
+				getEditor().textobj.style.height = Math.max(mirrorTextarea[0].scrollHeight + 30, minHeightTextArea) + "px";				
 			}
 		}
 	}
