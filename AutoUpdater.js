@@ -50,10 +50,10 @@ function AutoUpdater() {
 	            			message:'<h4>Hay disponible una nueva versión (' + xversion + ') del Shurscript.</h4><p><br></p>' + changelog, 
 	            			buttons:[{
 								"label" : "Más tarde",
-								"class" : "btn-default"
+								"className" : "btn-default"
 								}, {
 								"label" : "Actualizar",
-								"class" : "btn-primary",
+								"className" : "btn-primary",
 								"callback": function() {
 										bootbox.hideAll();
 										location.href = 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js';

@@ -54,8 +54,9 @@ jQuery(document).ready(function(){
 		return;
 	}
 	
+	initialize();
+	
 	if (isCompatible()) {
-		initialize();
 		loadModules();
 	}
 	
@@ -70,7 +71,7 @@ function isCompatible() {
 	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
 		scriptVersion = GM_getMetadata('version');
 	} else {
-		alert('El addon de scripts de tu navegador no está soportado.');
+		bootbox.alert('El addon de scripts de tu navegador no está soportado.');
 		return false;
 	}
 	return true;
@@ -155,8 +156,6 @@ function getAllModules() {
 				modules.push(moduleName);
 			}
 		}
-	} else {
-		alert('El addon de scripts de tu navegador no está soportado.');
 	}
 	
 	return modules;
@@ -201,23 +200,4 @@ ScriptHelper.prototype.getValue = function(key, defaultValue) {
 
 ScriptHelper.prototype.deleteValue = function(key) {
 	GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
-}
-
-/* 
-* Ventanas de dialogos modales.
-* Usage: http://bootboxjs.com/examples.html 
-*/
-/*
-ScriptHelper.prototype.alert = function() {
-	return bootbox.alert(arguments).addClass('shurscript'); //Añadir clase shurscript para que coja los estilos de Bootstrap
-}
-ScriptHelper.prototype.confirm = function() {
-	return bootbox.confirm(arguments).addClass('shurscript');
-}
-ScriptHelper.prototype.prompt = function() {
-	return bootbox.prompt(arguments).addClass('shurscript');
-}
-*/
-ScriptHelper.prototype.dialog = function() {
-	return bootbox.dialog(arguments).addClass('shurscript');
 }

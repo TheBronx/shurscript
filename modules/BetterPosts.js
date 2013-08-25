@@ -176,16 +176,33 @@ function BetterPosts() {
 			    quote += getQuotedPost(id);
 		    
 		    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
-				if (confirm('¿Quieres borrar el contenido del post actual?')) {			
-					setEditorContents(''); //Vaciamos el contenido actual
-				}
+		    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la nueva cita al final o borrar el contenido del post actual?</b>', 
+						        	buttons:[{
+										"label" : "Cancelar",
+										"className" : "btn-default"
+										}, {
+										"label" : "Añadir al final",
+										"className" : "btn-primary",
+										"callback": function() {
+											appendTextToEditor(quote + "<p></br></p>");	
+											reflowTextArea();
+											}
+										}, {
+											"label" : "Borrar actual",
+											"className" : "btn-danger",
+											"callback": function() {
+													setEditorContents(''); //Vaciamos el contenido actual
+													appendTextToEditor(quote + "<p></br></p>");	
+													reflowTextArea();
+												}
+										}]
+			        	});
+			} else {
+				appendTextToEditor(quote + "<p></br></p>");
+				reflowTextArea();
 			}
-		    
-		    appendTextToEditor(quote + "<p></br></p>");
-		    
+
 		    unsafeWindow.set_cookie("vbulletin_multiquote", "");
-		    
-		    reflowTextArea();
 
 	    });
 	}
