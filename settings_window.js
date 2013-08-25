@@ -16,12 +16,12 @@ function SettingsWindow() {
 
 	var panels = [];
 	
-	var modal = $('<div class="modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="static">\
+	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="static">\
 	    <div class="modal-dialog" style="width:800px;">\
 	      <div class="modal-content">\
 	        <div class="modal-header">\
 	          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
-	          <h4 class="modal-title">Preferencias del Shurscript</h4>\
+	          <h4 class="modal-title" style="font-weight:300">Preferencias del <strong>Shurscript ' + scriptVersion + '</strong></h4>\
 	        </div>\
 	        <div class="modal-body">\
 	        	<!--center class="lead" style="font-size: 12pt;">A continuación se listan todas las funcionalidades disponibles en el Shurscript. Activa las que te interesen y desactiva las que no necesites.</center-->\
@@ -57,7 +57,14 @@ function SettingsWindow() {
 	});
 	
 	modal.modal();
+	$(".modal-backdrop").css("z-index", 1010); //Para no superponerse a la de los alerts
 	
+	//Añadir boton de actualizar al título
+	var updateButton = $('<button style="position:absolute;margin-left:15px;" class="btn btn-default btn-sm">Comprobar actualizaciones</button>');
+	updateButton.click(function(){
+		new AutoUpdater().check();
+	});
+	$("#shurscript-settings-window .modal-title").append(updateButton);
 
 	function ModulePanel(module) {
 	

@@ -13,6 +13,8 @@
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
@@ -38,6 +40,7 @@
 var helper;
 var allModules = []; //Todos los modulos
 var activeModules = []; //Los que tiene activados el usuario
+var scriptVersion;
 
 /* Variables útiles y comunes a todos los módulos */
 var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
@@ -49,10 +52,25 @@ jQuery(document).ready(function(){
 	if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
 		return;
 	}
-
-	initialize();
-	loadModules();
+	
+	if (isCompatible()) {
+		initialize();
+		loadModules();
+	}
 });
+
+function isCompatible() {
+	//Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
+	if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+		scriptVersion = GM_info.script.version
+	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+		scriptVersion = GM_getMetadata('version');
+	} else {
+		alert('El addon de scripts de tu navegador no está soportado.');
+		return false;
+	}
+	return true;
+}
 
 function initialize() {
 
@@ -67,9 +85,14 @@ function initialize() {
 	var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
 	username = user.text();
 	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-
 	
-	
+	//Configuracion de las ventanas modales
+	bootbox.setDefaults({
+	    locale: "es",
+	    className: "shurscript",
+	    closeButton: false
+	  });
+	  
 }
 
 function loadModules() {
@@ -102,7 +125,7 @@ function loadModules() {
 			helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
 		}
 	}
-	
+		
 }
 
 /*
@@ -176,3 +199,21 @@ ScriptHelper.prototype.deleteValue = function(key) {
 	GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
 }
 
+/* 
+* Ventanas de dialogos modales.
+* Usage: http://bootboxjs.com/examples.html 
+*/
+/*
+ScriptHelper.prototype.alert = function() {
+	return bootbox.alert(arguments).addClass('shurscript'); //Añadir clase shurscript para que coja los estilos de Bootstrap
+}
+ScriptHelper.prototype.confirm = function() {
+	return bootbox.confirm(arguments).addClass('shurscript');
+}
+ScriptHelper.prototype.prompt = function() {
+	return bootbox.prompt(arguments).addClass('shurscript');
+}
+*/
+ScriptHelper.prototype.dialog = function() {
+	return bootbox.dialog(arguments).addClass('shurscript');
+}

@@ -4,7 +4,7 @@ function AutoUpdater() {
 	this.id = arguments.callee.name; //ModuleID
 	this.name = "Comprobar actualizaciones automáticamente";
 	this.author = "";
-	this.version = "0.2";
+	this.version = "0.3";
 	this.description = "Mostrará una alerta cuando haya una nueva versión disponible del Shurscript";
 	this.enabledByDefault = true;	
 	
@@ -12,21 +12,10 @@ function AutoUpdater() {
 
 	var id = 175463,
       hours = 1,
-      name,
-      version,
       time = new Date().getTime();
 	
 	this.load = function() {
-		if (typeof GM_info != 'undefined' ) {
-			name = GM_info.script.name;
-			version = GM_info.script.version
-		} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
-			name = GM_getMetadata('name');
-			version = GM_getMetadata('version');
-		} else {
-			alert('El addon de scripts de tu navegador no está soportado.');
-		}
-		
+
 		if (+time > (+GM_getValue('updated_175463', 0) + 1000*60*60*hours)) {
             GM_setValue('updated_175463', time+'');
             call(false);
@@ -46,34 +35,69 @@ function AutoUpdater() {
         var xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
         var xname=/\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
         
-        if ( (xversion) && (xname[1] == name) ) {
+        if (xversion) {
             xversion = xversion[1];
             xname = xname[1];
         } else {
-            if ( (xpr.responseText.match('the page you requested doesn\'t exist')) || (xname[1] != name) )
-            GM_setValue('updated_175463', 'off');
+            if (xpr.responseText.match('the page you requested doesn\'t exist'))
+            	GM_setValue('updated_175463', 'off');
             return false;
         }
 
        
-        if (version.indexOf("-dev") != -1) { //Si estamos en una version de desarrollo, actualizamos si es igual (0.09-dev -> 0.09) o superior.
-        	updated = xversion >= version.replace("-dev", "");
+        if (scriptVersion.indexOf("-dev") != -1) { //Si estamos en una version de desarrollo, actualizamos si es igual (0.09-dev -> 0.09) o superior.
+        	updated = xversion >= scriptVersion.replace("-dev", "");
         } else {
-        	updated = xversion > version;
+        	updated = xversion > scriptVersion;
         }
         
-        if ( updated && confirm('Hay disponible una nueva versión del Shurscript.\n¿Quieres instalarla?') ) {
-            try {
-                location.href = 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js';
-            } catch(e) {}
+        if ( updated ) {
+	        GM_xmlhttpRequest({ //Obtenemos el changelog
+	            method: 'GET',
+	            url: 'https://github.com/TheBronx/shurscript/raw/master/CHANGELOG.md',
+	            onload: function(resp) {
+	            	changelog = parseChangelog(resp.responseText, xversion, this.url.replace('raw', 'blob'));
+	            	bootbox.dialog({
+	            			message:'<h4>Hay disponible una nueva versión (' + xversion + ') del Shurscript.</h4><p><br></p>' + changelog, 
+	            			buttons:[{
+								"label" : "Más tarde",
+								"class" : "btn-default"
+								}, {
+								"label" : "Actualizar",
+								"class" : "btn-primary",
+								"callback": function() {
+										bootbox.hideAll();
+										location.href = 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js';
+									}
+								}]
+							}
+					);
+				}
+	          
+	        });
         } else if (!updated && response) {
-            alert('No hay actualizaciones disponibles del Shurscript');
+            bootbox.alert('No hay actualizaciones disponibles del Shurscript');
         }
         
     }
     
-    function check() {
+    this.check = function() {
         call(true);
+    }
+    
+    
+    function parseChangelog(changelog, version, fallbackURL) {
+    	try {
+	    	version = version.replace(".", "\\.");
+	    	
+	    	changelog = changelog.match(RegExp("##[#]? v" + version + ".*([\\s\\S]*?(?=---))"))[1].trim(); //Obtenemos el trozo correspondiente a la version que buscamos
+
+	    	changelog = new Markdown.Converter().makeHtml(changelog); //Convertimos de Markdown a HTML
+
+	    	return changelog;
+	    } catch (e) {
+		    return "Haz clic <a target='_blank' href='" + fallbackURL + "'>aquí</a> para ver los cambios de esta versión.";
+	    }
     }
     
     this.getPreferences = function() {
