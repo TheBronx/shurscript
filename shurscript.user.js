@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.08-dev
+// @version			0.09-dev
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
@@ -60,7 +60,7 @@ jQuery(document).ready(function(){
 	}
 	
 	AutoUpdater = new AutoUpdater();
-	AutoUpdater.check(true);
+	AutoUpdater.check();
 });
 
 function isCompatible() {
