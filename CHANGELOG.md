@@ -12,10 +12,10 @@
 * Los hilos favoritos funcionan también en los resultados de búsqueda
 * Las opciones del panel de preferencias ahora están ocultas por defecto para ocupar menos
 * Flechas para ir al principio y al final del post. (Desactivadas por defecto. Activar desde Preferencias)
-* Mejoras en la edición de posts
+* Mejoras en la edición de posts **(Beta)**
     * Botones en la respuesta rápida que hasta ahora estaban solo en Modo Avanzado
     * Acceso rápido a iconos desde la Respuesta rápida
-    * Multi-cita también en la respuesta rápida. Y ahora se ven directamente los [QUOTE] en la caja de texto.
+    * Multi-cita también en la respuesta rápida. Y ahora se ven directamente los [QUOTE] en la caja de texto. **(Solo disponible en los navegadores que soporten el editor WYSIWYG.)**
     * La caja de texto se adapta al contenido mientras se escribe. Ideal para tochos.
     * Guardado automático de posts sin enviar, para no perder nada si sin querer cerramos la pestaña o cambiamos de página.
 * A partir de ahora, al encontrar una nueva versión del Shurscript, se mostrarán los cambios destacados (changelog).
