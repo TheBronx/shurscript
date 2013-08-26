@@ -6,7 +6,7 @@ function BetterPosts() {
 	this.name = "Editor de posts mejorado";
 	this.author = "xusoo";
 	this.version = "0.1";
-	this.description = "Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado.";
+	this.description = "Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>";
 	this.enabledByDefault = true;
 	
 	
@@ -28,7 +28,7 @@ function BetterPosts() {
 		if (page == "/showthread.php") {
 			genericHandler = function (A){A=unsafeWindow.do_an_e(A);if(A.type=="click"){vB_Editor[getEditor().editorid].format(A,this.cmd,false,true)}vB_Editor[getEditor().editorid].button_context(this,A.type)};
 			
-			if (helper.getValue('MULTI_QUICK_REPLY', true)) {
+			if (helper.getValue('MULTI_QUICK_REPLY', true) && isWYSIWYG()) {
 				enableQuickReplyWithQuote();
 			}
 			
@@ -152,73 +152,87 @@ function BetterPosts() {
 		$("#" + getEditor().editorid).siblings().filter('fieldset').hide();
 		    
 	    $('a[id^="qr_"]').click(function(){
-		    var id = this.id.replace('qr_','');
-		    var quote = '';
-		    
-		    var repeatedQuote = false;
-			var multiQuotes = unsafeWindow.fetch_cookie("vbulletin_multiquote");
-		    if (multiQuotes && multiQuotes != "") {
-		    	multiQuotes = multiQuotes.split(',');
-		    	multiQuotes.forEach(function(quoteId){
-		    		if (id == quoteId) {
-		    			repeatedQuote = true;
-		    		}
-		    		if ($("#post" + quoteId).length == 0) { //Ese post no existe, tal vez no es de este hilo
-		    			return;
-		    		}
-			    	quote += getQuotedPost(quoteId);
-			    	var img = $('img[id^="mq_' + quoteId + '"]');
-			    	img.attr('src', img.attr('src').replace('_on.gif', '_off.gif')); //Quitamos la marca de multi-cita activa
-		    	});
-		    }
-		    
-		    if (!repeatedQuote)
-			    quote += getQuotedPost(id);
-		    
-		    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
-		    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la nueva cita al final o borrar el contenido del post actual?</b>', 
-						        	buttons:[{
-										"label" : "Cancelar",
-										"className" : "btn-default"
-										}, {
-										"label" : "Añadir al final",
-										"className" : "btn-primary",
-										"callback": function() {
-											appendTextToEditor(quote + "<p></br></p>");	
-											reflowTextArea();
-											}
-										}, {
-											"label" : "Borrar actual",
-											"className" : "btn-danger",
+	    	if (isWYSIWYG()) {
+			    var id = this.id.replace('qr_','');
+			    var quote = '';
+			    
+			    var repeatedQuote = false;
+				var multiQuotes = unsafeWindow.fetch_cookie("vbulletin_multiquote");
+			    if (multiQuotes && multiQuotes != "") {
+			    	multiQuotes = multiQuotes.split(',');
+			    	multiQuotes.forEach(function(quoteId){
+			    		if (id == quoteId) {
+			    			repeatedQuote = true;
+			    		}
+			    		if ($("#post" + quoteId).length == 0) { //Ese post no existe, tal vez no es de este hilo
+			    			return;
+			    		}
+				    	quote += getQuotedPost(quoteId);
+				    	var img = $('img[id^="mq_' + quoteId + '"]');
+				    	img.attr('src', img.attr('src').replace('_on.gif', '_off.gif')); //Quitamos la marca de multi-cita activa
+			    	});
+			    }
+			    
+			    if (!repeatedQuote) {
+				    quote += getQuotedPost(id);
+				}
+				
+				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
+			    
+			    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
+			    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?</b>', 
+							        	buttons:[{
+											"label" : "Cancelar",
+											"className" : "btn-default"
+											}, {
+											"label" : "Añadir",
+											"className" : "btn-primary",
 											"callback": function() {
-													setEditorContents(''); //Vaciamos el contenido actual
-													appendTextToEditor(quote + "<p></br></p>");	
-													reflowTextArea();
+												appendTextToEditor(quote);	
+												reflowTextArea();
 												}
-										}]
-			        	});
-			} else {
-				appendTextToEditor(quote + "<p></br></p>");
-				reflowTextArea();
-			}
-
-		    unsafeWindow.set_cookie("vbulletin_multiquote", "");
+											}, {
+												"label" : "Sobreescribir",
+												"className" : "btn-danger",
+												"callback": function() {
+														setEditorContents(''); //Vaciamos el contenido actual
+														appendTextToEditor(quote);	
+														reflowTextArea();
+													}
+											}]
+				        	});
+				} else {
+					appendTextToEditor(quote);
+					reflowTextArea();
+				}
+	
+			    unsafeWindow.set_cookie("vbulletin_multiquote", "");
+		    }
 
 	    });
 	}
 	
 	function getQuotedPost(id) {
 		var username = $("#post" + id).find(".bigusername").text();
-		var quote = $("#post_message_" + id).html();
+		var $post = $("#post_message_" + id).clone(); //Clonamos para no modificar el original
+		
 		//Quitar QUOTEs al post
-	    while (quote.indexOf("<div") != -1) {
-	    	var indexStartQuote = quote.indexOf("<div"); 
-	    	var indexEndQuote = quote.indexOf("</table>"); 
-	    	indexEndQuote = indexEndQuote + quote.substring(indexEndQuote).indexOf("</div>") + 6;
-	    	quote = quote.substring(0, indexStartQuote) + quote.substring(indexEndQuote);
-	    }
+		$post.find("div[style*='margin:20px; margin-top:5px;']").remove();
 	    
-	    return "[QUOTE=" + username + ";" + id + "]" + quote + "[/QUOTE]" + "<p></br></p>";
+	    //Quitar videos de Youtube y reemplazarlos por su BBCode
+	    $post.find("iframe.youtube-player").each(function() {
+		    	var youtubeID = $(this).attr('src').match(/^.*\/(.*)/)[1];
+		    	$(this).replaceWith("[YOUTUBE]" + youtubeID + "[/YOUTUBE]");
+		    }
+	    );
+	    
+	    //Cambiar <img> por [IMG] para no descuadrar el editor con imagenes grandes
+	    $post.find('img[class!="inlineimg"]').each(function() {
+	    		$(this).replaceWith("[IMG]" + $(this).attr('src') + "[/IMG]")
+	    	}
+	    );
+	    
+	    return "[QUOTE=" + username + ";" + id + "]" + $post.html().trim() + "[/QUOTE]" + "<br><br>";
 	}
 		
 	/* Añade nuevos botones que hasta ahora solo estaban disponibles en la versión Avanzada*/
@@ -330,9 +344,6 @@ function BetterPosts() {
 	}
 	
 	function setEditorContents(text) {
-		if (isWYSIWYG()) {
-			text = text.replace(/\n/g, '<br>');
-		}
 		getEditor().set_editor_contents(text)
 	}
 	
@@ -345,7 +356,7 @@ function BetterPosts() {
 		
 		preferences.push(new BooleanPreference("ICONS_AND_BUTTONS", true, "Mostrar nuevos botones e iconos en el formulario de respuesta rápida"));
 		preferences.push(new BooleanPreference("AUTO_GROW", true, "La caja de texto crece a medida que se va escribiendo el post"));
-		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)"));
+		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto) <br><b>Para usar esta funcionalidad, es necesario que el navegador soporte el editor WYSIWYG del foro. Si usas Chrome deberás instalar <a href='https://chrome.google.com/webstore/detail/djajencflkkjdejpmmielapebmcjogoc' target='_blank'>esta extensión</a>.</b>"));
 		
 		return preferences;
 	};
