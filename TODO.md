@@ -5,22 +5,22 @@
  * Modo noche
  * Lista de últimos mensajes escritos
  * Mostrar las ultimas citas aunque esten leídas
- * Mejoras en el editor de posts:<br>
-  + Boton Cita Rapida copia el QUOTE en el TextArea,
-  + Iconos, 
-  + AutoGrow
-  + Quotes WYSIWYG (sin el [/QUOTE])
-  + Botones avanzados en el quick reply
-  + Soporte para Markdown en el editor
- * Mostrar changelog en las actualizaciones
+ * Soporte para Markdown en el editor
  * Ir a ultimo mensaje mio de un hilo
  * Ocultar hilos
  * Auto-enviar nuevo post pasados los segundos de espera entre post y post
- * Recuperar últim post no enviado (Por ejemplo al cerrar la pestaña sin querer)
- * Cambiar alerts por ventanitas bootstrap
 
 **En progreso**
- - none
+* Mostrar changelog en las actualizaciones
+* Recuperar últim post no enviado (Por ejemplo al cerrar la pestaña sin querer)
+* Cambiar alerts por ventanitas bootstrap
+* Mejoras en el editor de posts:<br>
+  * Boton Cita Rapida copia el QUOTE en el TextArea,
+  * Iconos, 
+  * AutoGrow
+  * Quotes WYSIWYG (sin el [/QUOTE])
+  * Botones avanzados en el quick reply
+
 
 **Implementado**
  * [23/08] Mostrar estrella de favoritos al pasar sobre la celda con el título del hilo
