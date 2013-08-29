@@ -16,8 +16,8 @@ function BetterPosts() {
 	var genericHandler;
 	var checkAutoGrow;
 	var minHeightTextArea;
-	var mirrorTextarea; //TextArea identico oculto para los casos no-WYSIWYG.
-	
+	var currentQuickEditorNumber = 1; //Numero del ID del editor rápido. Aumenta en uno en cada edición: vB_Editor_QE_1, 2, 3...
+
 	this.shouldLoad = function() {
 		 return page == "/showthread.php" || page == '/newthread.php' || page == "/newreply.php" || page == "/editpost.php";
 	}
@@ -25,19 +25,71 @@ function BetterPosts() {
 
 	this.load = function() {
 		vB_Editor = unsafeWindow.vB_Editor;
-		if (page == "/showthread.php") {
-			genericHandler = function (A){A=unsafeWindow.do_an_e(A);if(A.type=="click"){vB_Editor[getEditor().editorid].format(A,this.cmd,false,true)}vB_Editor[getEditor().editorid].button_context(this,A.type)};
-			
-			if (helper.getValue('MULTI_QUICK_REPLY', true) && isWYSIWYG()) {
-				enableQuickReplyWithQuote();
-			}
-			
-			if (helper.getValue('ICONS_AND_BUTTONS', true)) {
-				addAdvancedButtons();
-				addIcons();
-			}
-			
-/* 			quickPreview(); */
+		
+		enableCommonFeatures();
+		
+		if (!isWYSIWYG()) { //Chrome, Safari, etc.
+			enableWYSIWYG();
+			var checkWYSIWYG = setInterval(function(){
+				if (getEditor().editdoc.body) {
+					clearInterval(checkWYSIWYG);
+					enableWYSIWYGDependantFeatures();
+				}
+			}, 500);
+		} else { //Firefox
+			enableWYSIWYGDependantFeatures();
+		}
+		
+
+	}
+	
+	function enableWYSIWYG() {
+		
+		var editor = getEditor();
+		
+		if (!isQuickReply()) {
+			$('#' + editor.editorid + '_textarea').css('width', 600);
+		}
+		
+		unsafeWindow.switch_editor_mode(editor.editorid);
+		unsafeWindow.is_saf = false;
+		unsafeWindow.is_moz = true;
+		editor.wysiwyg_mode = true;
+		
+		
+		if ($('#' + editor.editorid + '_cmd_switchmode').length == 0) //Añadimos el boton de cambiar de Editor
+			$('<td><div id="' + editor.editorid + '_cmd_switchmode" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img height="20" width="21" alt="Cambiar Modo de Editor" src="http://st.forocoches.com/foro/images/editor/switchmode.gif" title="Cambiar Modo de Editor"></div></td>').insertAfter($('#vB_Editor_QR_cmd_resize_0_99').parent());
+		
+		
+		if (isQuickReply()) {
+			$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene WYSIWYG
+				
+				var currentEditorID = "vB_Editor_QE_" + (currentQuickEditorNumber++);
+				
+				var checkWYSIWYG = setInterval(function(){ //Esperamos a que aparezca
+					if ($('#' + currentEditorID + "_editor").length > 0) {
+						clearInterval(checkWYSIWYG);
+						unsafeWindow.switch_editor_mode(currentEditorID); //Una vez cargado el editor, lo cambiamos a WYSIWYG .
+						
+						checkWYSIWYG = setInterval(function(){ // Y volvemos a esperar a que cambie de modo
+							if (vB_Editor[currentEditorID].editdoc.body) {
+								clearInterval(checkWYSIWYG);
+								enableQuickEditorFeatures(currentEditorID); //Una vez todo preparado, le añadimos las funciones.
+							}
+						}, 500);
+					}
+				}, 500);
+
+			});
+		}
+
+	}
+	
+	/* Funcionalidades que funcionan solo bajo el editor WYSIWYG */
+	function enableWYSIWYGDependantFeatures() {
+		
+		if (isQuickReply() && helper.getValue('MULTI_QUICK_REPLY', true)) {			
+			enableQuickReplyWithQuote();
 		}
 		
 		if (helper.getValue('AUTO_GROW', true)) {
@@ -45,31 +97,59 @@ function BetterPosts() {
 		}
 		
 		enablePostRecovery();
+	}
+	
+	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
+	function enableCommonFeatures() {
+		if (isQuickReply() && helper.getValue('ICONS_AND_BUTTONS', true)) {
+			addAdvancedButtons();
+			addIcons();
+		}
 		
+/* 		enablePostRecovery(); */
+	}
+	
+	
+	/* Cuando se pulsa el botón Editar de un post, se crea un nuevo editor WYSIWYG */
+	function enableQuickEditorFeatures(currentEditorID) {
+		var currentEditor = vB_Editor[currentEditorID];
+		if (helper.getValue('AUTO_GROW', true)) {
+			$(currentEditor.editdoc.body).on('input', function() {
+				currentEditor.editbox.style.height = Math.max(currentEditor.editdoc.body.offsetHeight + 30, 200) + "px";
+			});
+			$(currentEditor.editdoc.body).trigger('input');
+		}
 	}
 	
 	/* La caja de texto va creciendo a medida que crece el contenido */
 	function enableAutoGrow() {
+		
+		var editor = getEditor();
+		
+		/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
+		try {
+			editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
+		} catch (e) {
+			;
+		}
+	
 		checkAutoGrow = $('<input type="checkbox" checked/>')[0];
 		checkAutoGrow.onclick = function() {
 			if (checkAutoGrow.checked) {
 				reflowTextArea();
 			} else {
-				getEditor().editbox.style.height = minHeightTextArea + "px";
+				editor.editbox.style.height = minHeightTextArea + "px";
 			}
 		}
-		$(getEditor().controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
+		$(editor.controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
 		checkAutoGrow.title = 'Crecer automáticamente con el contenido';
 	
 		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height');
-		var onInputHandler = function(){
-				if (checkAutoGrow.checked) reflowTextArea();
-			};
-		if (isWYSIWYG()) { //Si soporta WYSIWYG
-			$(getEditor().editdoc.body).on('input', onInputHandler);
-		}
-		$(getEditor().textobj).on('input', onInputHandler); //Todos tienen TextArea
-	
+			
+		$(editor.editdoc.body).on('input', function(){
+			if (checkAutoGrow.checked)
+				reflowTextArea();
+		});	
 		
 		$("#vB_Editor_QR_cmd_resize_1_99").click(function() {
 			checkAutoGrow.checked = false;
@@ -80,38 +160,147 @@ function BetterPosts() {
 			reflowTextArea();
 		});
 		
-		$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene auto-grow
-			setTimeout(function(){
-				
-				if (isWYSIWYG()) {
-					$(vB_Editor.vB_Editor_QE_1.editdoc.body).on('input', function() {
-						vB_Editor.vB_Editor_QE_1.editbox.style.height = Math.max(vB_Editor.vB_Editor_QE_1.editdoc.body.offsetHeight + 30, 200) + "px";
-					});
-					$(vB_Editor.vB_Editor_QE_1.editdoc.body).trigger('input');
-				}
-				
-				$(vB_Editor.vB_Editor_QE_1.textobj).on('input', function() {
-					vB_Editor.vB_Editor_QE_1.textobj.style.height = "0px"; //Resetear tamaño
-					vB_Editor.vB_Editor_QE_1.textobj.style.height = Math.max(vB_Editor.vB_Editor_QE_1.textobj.scrollHeight, 200) + "px";
-				});
-				$(vB_Editor.vB_Editor_QE_1.textobj).trigger('input');
-				
-				
-			}, 1000);
-			
-		});
-		
-		//TextArea copia para calcular el tamaño de la original
-		var originalTextarea = $(getEditor().textobj);
-		mirrorTextarea = $("<textarea>");
-		mirrorTextarea.css('height', 100);
-		mirrorTextarea.css('width', originalTextarea.width());
-		mirrorTextarea.css('position', 'absolute');
-		mirrorTextarea.css('top', '-999px'); //Que este fuera de la pantalla. Si está oculta (display:none) no se calcula el tamaño
-		$(document.body).append(mirrorTextarea);
-		
 		reflowTextArea();
 	}
+	
+		
+	/* Permite multi-citar con el botón de respuesta rápida. Además mete la cita en el cuadro de texto de forma visible. */
+	function enableQuickReplyWithQuote(){
+    
+	    $('a[id^="qr_"]').click(function(){
+	    	if (isWYSIWYG()) {
+			    var id = this.id.replace('qr_','');
+			    var quote = '';
+			    
+			    var repeatedQuote = false;
+				var multiQuotes = unsafeWindow.fetch_cookie("vbulletin_multiquote");
+			    if (multiQuotes && multiQuotes != "") {
+			    	multiQuotes = multiQuotes.split(',');
+			    	multiQuotes.forEach(function(quoteId){
+			    		if (id == quoteId) {
+			    			repeatedQuote = true;
+			    		}
+			    		if ($("#post" + quoteId).length == 0) { //Ese post no existe, tal vez no es de este hilo
+			    			return;
+			    		}
+				    	quote += getQuotedPost(quoteId);
+				    	var img = $('img[id^="mq_' + quoteId + '"]');
+				    	img.attr('src', img.attr('src').replace('_on.gif', '_off.gif')); //Quitamos la marca de multi-cita activa
+			    	});
+			    }
+			    
+			    if (!repeatedQuote) {
+				    quote += getQuotedPost(id);
+				}
+				
+				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
+			    
+			    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
+			    	var postOverwrite = helper.getValue('POST_OVERWRITE', 'ASK');
+			    	switch (postOverwrite) {
+				    	case 'ASK':
+					    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?</b>', 
+					        	buttons:[{
+									"label" : "Cancelar",
+									"className" : "btn-default"
+									}, {
+									"label" : "Añadir",
+									"className" : "btn-primary",
+									"callback": function() {
+										appendTextToEditor(quote);	
+										reflowTextArea();
+										}
+									}, {
+										"label" : "Sobreescribir",
+										"className" : "btn-danger",
+										"callback": function() {
+												setEditorContents(''); //Vaciamos el contenido actual
+												appendTextToEditor(quote);	
+												reflowTextArea();
+											}
+									}]
+				        	});
+				        	break;
+				    	case 'OVERWRITE':
+				    		setEditorContents('');
+				    	case 'APPEND':
+				    		appendTextToEditor(quote);	
+				    		reflowTextArea();
+				    		break;
+			    	}
+				} else {
+					appendTextToEditor(quote);
+					reflowTextArea();
+				}
+	
+			    unsafeWindow.set_cookie("vbulletin_multiquote", "");
+		    }
+	    });
+	    
+	    //Ocultamos el check de 'Citar mensaje en respuesta'. No lo eliminamos, si no lo encuentra se va a la respuesta Avanzada.
+	    $("#" + getEditor().editorid).siblings().filter('fieldset').first().hide();
+	}
+	
+	function getQuotedPost(id) {
+		var username = $("#post" + id).find(".bigusername").text();
+		var $post = $("#post_message_" + id).clone(); //Clonamos para no modificar el original
+		
+		//Quitar QUOTEs al post
+		$post.find("div[style*='margin:20px; margin-top:5px;']").remove();
+	    
+	    //Quitar videos de Youtube y reemplazarlos por su BBCode
+	    $post.find("iframe.youtube-player").each(function() {
+		    	var youtubeID = $(this).attr('src').match(/^.*\/(.*)/)[1];
+		    	$(this).replaceWith("[YOUTUBE]" + youtubeID + "[/YOUTUBE]");
+		    }
+	    );
+	    
+	    //Cambiar <img> por [IMG] para no descuadrar el editor con imagenes grandes
+	    $post.find('img[class!="inlineimg"]').each(function() {
+	    		$(this).replaceWith("[IMG]" + $(this).attr('src') + "[/IMG]")
+	    	}
+	    );
+	    
+	    return "[QUOTE=" + username + ";" + id + "]" + $post.html().trim() + "[/QUOTE]" + "<br><br>";
+	}
+		
+
+	/* Sistema de auto-guardado de posts para evitar perder posts no enviados */
+	function enablePostRecovery() {
+		var threadId = $('input[name="t"]').val();
+		if (!threadId && page == '/newthread.php')
+			threadId = 'new_thread';
+			
+		var currentPostBackup = helper.getValue("POST_BACKUP");
+		if (currentPostBackup) {
+			currentPostBackup = JSON.parse(currentPostBackup);
+			if (currentPostBackup.threadId == threadId) {
+				if (getEditorContents().trim().replace(/\<br\>/g,'') == '') {
+					setEditorContents(currentPostBackup.postContents)
+				};
+		    	reflowTextArea();
+			}
+		}
+		
+		
+		//Temporizador de auto-guardado cada vez que se escribe
+		var backupScheduler;
+		var onInputHandler = function(){
+			clearTimeout(backupScheduler);
+			backupScheduler = setTimeout(function() { //
+				helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));				
+			}, 500);
+		};
+		
+		$(getEditor().editdoc.body).on('input', onInputHandler);
+				
+		//Al enviar la respuesta, se elimina el backup
+		$("form[name='vbform']").on("submit", function() {
+			helper.deleteValue("POST_BACKUP");
+		});
+		
+	}
+	
 	
 	/* Añade accesos directos a algunos iconos en al respuesta rápida */
 	function addIcons() {
@@ -146,97 +335,12 @@ function BetterPosts() {
 	function createIcon(name, src, id) {
 		return '<img border="0" class="inlineimg" src="' + src + '" style="cursor: pointer; padding: 5px;" onclick="vB_Editor.' + getEditor().editorid + '.insert_smilie(undefined, \'' + name + '\', \'' + src + '\', ' + id + ')">';
 	}
-		
-	/* Permite multi-citar con el botón de respuesta rápida. Además mete la cita en el cuadro de texto de forma explícita. */
-	function enableQuickReplyWithQuote(){
-		$("#" + getEditor().editorid).siblings().filter('fieldset').hide();
-		    
-	    $('a[id^="qr_"]').click(function(){
-	    	if (isWYSIWYG()) {
-			    var id = this.id.replace('qr_','');
-			    var quote = '';
-			    
-			    var repeatedQuote = false;
-				var multiQuotes = unsafeWindow.fetch_cookie("vbulletin_multiquote");
-			    if (multiQuotes && multiQuotes != "") {
-			    	multiQuotes = multiQuotes.split(',');
-			    	multiQuotes.forEach(function(quoteId){
-			    		if (id == quoteId) {
-			    			repeatedQuote = true;
-			    		}
-			    		if ($("#post" + quoteId).length == 0) { //Ese post no existe, tal vez no es de este hilo
-			    			return;
-			    		}
-				    	quote += getQuotedPost(quoteId);
-				    	var img = $('img[id^="mq_' + quoteId + '"]');
-				    	img.attr('src', img.attr('src').replace('_on.gif', '_off.gif')); //Quitamos la marca de multi-cita activa
-			    	});
-			    }
-			    
-			    if (!repeatedQuote) {
-				    quote += getQuotedPost(id);
-				}
-				
-				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
-			    
-			    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
-			    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?</b>', 
-							        	buttons:[{
-											"label" : "Cancelar",
-											"className" : "btn-default"
-											}, {
-											"label" : "Añadir",
-											"className" : "btn-primary",
-											"callback": function() {
-												appendTextToEditor(quote);	
-												reflowTextArea();
-												}
-											}, {
-												"label" : "Sobreescribir",
-												"className" : "btn-danger",
-												"callback": function() {
-														setEditorContents(''); //Vaciamos el contenido actual
-														appendTextToEditor(quote);	
-														reflowTextArea();
-													}
-											}]
-				        	});
-				} else {
-					appendTextToEditor(quote);
-					reflowTextArea();
-				}
 	
-			    unsafeWindow.set_cookie("vbulletin_multiquote", "");
-		    }
-
-	    });
-	}
-	
-	function getQuotedPost(id) {
-		var username = $("#post" + id).find(".bigusername").text();
-		var $post = $("#post_message_" + id).clone(); //Clonamos para no modificar el original
-		
-		//Quitar QUOTEs al post
-		$post.find("div[style*='margin:20px; margin-top:5px;']").remove();
-	    
-	    //Quitar videos de Youtube y reemplazarlos por su BBCode
-	    $post.find("iframe.youtube-player").each(function() {
-		    	var youtubeID = $(this).attr('src').match(/^.*\/(.*)/)[1];
-		    	$(this).replaceWith("[YOUTUBE]" + youtubeID + "[/YOUTUBE]");
-		    }
-	    );
-	    
-	    //Cambiar <img> por [IMG] para no descuadrar el editor con imagenes grandes
-	    $post.find('img[class!="inlineimg"]').each(function() {
-	    		$(this).replaceWith("[IMG]" + $(this).attr('src') + "[/IMG]")
-	    	}
-	    );
-	    
-	    return "[QUOTE=" + username + ";" + id + "]" + $post.html().trim() + "[/QUOTE]" + "<br><br>";
-	}
-		
 	/* Añade nuevos botones que hasta ahora solo estaban disponibles en la versión Avanzada*/
 	function addAdvancedButtons() {
+		
+		genericHandler = function (A){A=unsafeWindow.do_an_e(A);if(A.type=="click"){vB_Editor[getEditor().editorid].format(A,this.cmd,false,true)}vB_Editor[getEditor().editorid].button_context(this,A.type)};
+	
 		var toolbar = $(getEditor().controlbar).find('> table > tbody > tr > td:nth-child(8)');
 		
 		var buttons = [];
@@ -267,70 +371,25 @@ function BetterPosts() {
 		return $('<td></td>').append(button);
 	}
 	
-	/* Sistema de auto-guardado de posts para evitar perder posts no enviados */
-	function enablePostRecovery() {
-		var threadId = $('input[name="t"]').val();
-		if (!threadId && page == '/newthread.php')
-			threadId = 'new_thread';
-			
-		var currentPostBackup = helper.getValue("POST_BACKUP");
-		if (currentPostBackup) {
-			currentPostBackup = JSON.parse(currentPostBackup);
-			if (currentPostBackup.threadId == threadId) {
-				if (getEditorContents().trim().replace(/\<br\>/g,'') == '') {setEditorContents(currentPostBackup.postContents)};
-		    	reflowTextArea();
-			}
-		}
-		
-		
-		//Temporizador de auto-guardado cada vez que se escribe
-		var backupScheduler;
-		var onInputHandler = function(){
-			clearTimeout(backupScheduler);
-			backupScheduler = setTimeout(function() { //
-				helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));				
-			}, 500);
-		};
-		
-		if (isWYSIWYG()) { //Si soporta WYSIWYG
-			$(getEditor().editdoc.body).on('input', onInputHandler);
-		}
-		$(getEditor().textobj).on('input', onInputHandler); //TextArea tienen todos
-		
-		//Al enviar la respuesta, se elimina el backup
-		$("form[name='vbform']").on("submit", function() {
-			helper.deleteValue("POST_BACKUP");
-		});
-		
-	}
 	
 	/* Utils */
 	
 	/* Fuerza la caja a adaptarse al contenido */
 	function reflowTextArea() {
-		if (checkAutoGrow.checked) {
-			if (isWYSIWYG()) {
-				getEditor().editbox.style.height = Math.max(getTextAreaHeight() + 30, minHeightTextArea) + "px";
-			} else {
-				mirrorTextarea.css('width', $(getEditor().textobj).width());
-				mirrorTextarea.val(getEditorContents());
-				getEditor().textobj.style.height = Math.max(mirrorTextarea[0].scrollHeight + 30, minHeightTextArea) + "px";				
-			}
+		if (checkAutoGrow && checkAutoGrow.checked) {
+			getEditor().editbox.style.height = Math.max(getTextAreaHeight() + 30, minHeightTextArea) + "px";
 		}
 	}
 	
 	function getTextAreaHeight() {
-		var height;
-		if (isWYSIWYG()) {
-			height = getEditor().editdoc.body.offsetHeight;
-		} else {
-			height = getEditor().textobj.scrollHeight;
-		}
+		var height = getEditor().editdoc.body.offsetHeight;
 		return Math.max(height, 100);
 	}
+	
 	function getEditor() {
 		return page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
 	}
+	
 	function isQuickReply() {
 		return getEditor().editorid == 'vB_Editor_QR';
 	}
@@ -356,7 +415,10 @@ function BetterPosts() {
 		
 		preferences.push(new BooleanPreference("ICONS_AND_BUTTONS", true, "Mostrar nuevos botones e iconos en el formulario de respuesta rápida"));
 		preferences.push(new BooleanPreference("AUTO_GROW", true, "La caja de texto crece a medida que se va escribiendo el post"));
-		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto) <br><b>Para usar esta funcionalidad, es necesario que el navegador soporte el editor WYSIWYG del foro. Si usas Chrome deberás instalar <a href='https://chrome.google.com/webstore/detail/djajencflkkjdejpmmielapebmcjogoc' target='_blank'>esta extensión</a>.</b>"));
+		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)"));
+		
+		var options = [new RadioOption("ASK", "Preguntar"), new RadioOption("APPEND", "Añadir"), new RadioOption("OVERWRITE", "Sobreescribir")];
+		preferences.push(new RadioPreference("POST_OVERWRITE", "ASK", options, "Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:"));
 		
 		return preferences;
 	};
