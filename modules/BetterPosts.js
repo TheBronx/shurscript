@@ -128,7 +128,8 @@ function BetterPosts() {
 		
 		/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
 		try {
-			editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
+			if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
+				editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
 		} catch (e) {
 			;
 		}
