@@ -113,7 +113,7 @@ function NestedQuotes() {
 			xmlhttp.send(null);
 		} else {
 			setTextareaEnabled( true, 'Anidar cita' );
-			alert(errText+"no se han encontrado citas para anidar.");
+			bootbox.alert(errText+"no se han encontrado citas para anidar.");
 		}
 	}
 	function findFirstQuote() {
@@ -153,8 +153,8 @@ function NestedQuotes() {
 			if(!gotPostOK) {
 				// Habilita de nuevo el botón.
 				setTextareaEnabled( true, 'Anidar cita' );
-				if(quoteid == null) alert(errText+"El mensaje no posee ninguna cita o ya ha sido citado.");
-				else alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
+				if(quoteid == null) bootbox.alert(errText+"El mensaje no posee ninguna cita o ya ha sido citado.");
+				else bootbox.alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
 			}
 		}
 	}
@@ -198,7 +198,7 @@ function NestedQuotes() {
 			// Rehabilita el botón y la caja de texto.
 			setTextareaEnabled( true, 'Anidar cita' );
 			if(!gotPostOK) {
-				if(quoteid == null) alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
+				if(quoteid == null) bootbox.alert("No se ha podido obtener el post original (status="+xmlhttp.status+").\nForoCoches podría estar caído. ¡Guarda una copia del mensaje!");
 			}
 		}
 	}

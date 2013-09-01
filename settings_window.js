@@ -16,12 +16,12 @@ function SettingsWindow() {
 
 	var panels = [];
 	
-	var modal = $('<div class="modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="static">\
+	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="static">\
 	    <div class="modal-dialog" style="width:800px;">\
 	      <div class="modal-content">\
 	        <div class="modal-header">\
 	          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
-	          <h4 class="modal-title">Preferencias del Shurscript</h4>\
+	          <h4 class="modal-title" style="font-weight:300">Preferencias del <strong>Shurscript ' + scriptVersion + '</strong></h4>\
 	        </div>\
 	        <div class="modal-body">\
 	        	<!--center class="lead" style="font-size: 12pt;">A continuación se listan todas las funcionalidades disponibles en el Shurscript. Activa las que te interesen y desactiva las que no necesites.</center-->\
@@ -57,7 +57,14 @@ function SettingsWindow() {
 	});
 	
 	modal.modal();
+	$(".modal-backdrop").css("z-index", 1010); //Para no superponerse a la de los alerts
 	
+	//Añadir boton de actualizar al título
+	var updateButton = $('<button style="position:absolute;margin-left:15px;" class="btn btn-default btn-sm">Comprobar actualizaciones</button>');
+	updateButton.click(function(){
+		AutoUpdater.check(true);
+	});
+	$("#shurscript-settings-window .modal-title").append(updateButton);
 
 	function ModulePanel(module) {
 	
@@ -77,11 +84,7 @@ function SettingsWindow() {
 		panel = $('<div class="panel">\
 				  <div class="panel-heading">\
 				    <h3 class="panel-title">' + module.name + '</h3>\
-				  </div>\
-				  <div class="panel-body">\
-				    <p>' + module.description + '</p>\
-				  </div>\
-				</div>');
+				  </div>' + ((module.description && module.description != "") ? '<\div class="panel-body"><p>' + module.description + '</p></div>' : '') + '</div>');
 		//<form class="module-settings" id="' + modules[i].id + '"  name="' + modules[i].id + '" class="form-horizontal" disabled></form>\
 		
 		var enableCheck = $('<input style="float: right;" class="module-enable-check" type="checkbox" name="enabled"/>');
@@ -94,15 +97,18 @@ function SettingsWindow() {
 		enableCheck.click(function() {
 			enabled = this.checked == true;
 			if (enabled) {
-				panel.removeClass("disabled-module");
-				if (preferencesPanel) { //Ocultamos el formulario
-					preferencesPanel.slideDown(200);
+				if (settingsButton) {
+					settingsButton.removeAttr("disabled");
 				}
+				panel.removeClass("disabled-module");
 			} else {
-				if (preferencesPanel) { //Mostramos el formulario
+				if (preferencesPanel) { //Ocultamos el formulario
 					preferencesPanel.slideUp(200);
 				}
-				
+				if (settingsButton) {
+					settingsButton.removeClass('active');
+					settingsButton.attr("disabled", "");
+				}
 				panel.addClass("disabled-module");
 			}
 		});
@@ -112,6 +118,7 @@ function SettingsWindow() {
 	    preferences = module.getPreferences && module.getPreferences();
 	    preferences = $(preferences);
 	    if (preferences.length > 0) {
+	    	
 	    	var preferencesPanel = $("<div></div>");
 	    	preferencesPanelBody = $("<div class='panel-body'></div>");
 	    	
@@ -127,9 +134,18 @@ function SettingsWindow() {
 			}
 			
 			panel.append(preferencesPanel);
+			preferencesPanel.hide(); //Se mostrara con el botón
+			
+	    
+	    	settingsButton = $('<button type="button" data-toggle="button" style="float:right; margin: -24px 24px;" class="btn btn-default btn-sm">Opciones</button></div>');
+			panel.find(".panel-heading").append(settingsButton);
 			if (!enabled) {
-				preferencesPanel.hide();
+				settingsButton.attr("disabled", "");
 			}
+			settingsButton.click(function() {
+				preferencesPanel.slideToggle(200);
+	
+			});
 			
 		}
 		

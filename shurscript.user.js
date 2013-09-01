@@ -6,21 +6,26 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.08
+// @version			0.09
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @resource bootstrap-css https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/FavouriteThreads.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/AutoUpdater.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/preferences.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/settings_window.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
@@ -29,27 +34,48 @@
 // @grant	GM_registerMenuCommand
 // @grant	GM_addStyle
 // @grant 	GM_getResourceText
-// @history 0.00 first version.
+// @grant 	GM_getResourceURL
 // ==/UserScript==
 
 var helper;
 var allModules = []; //Todos los modulos
 var activeModules = []; //Los que tiene activados el usuario
+var AutoUpdater;
 
-/* Variables útiles y comunes a todos los módulos */
-var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
+/* Variables Ãºtiles y comunes a todos los mÃ³dulos */
+var page; //PÃ¡gina actual (sin http://forocoches.com/foro ni parÃ¡metros php)
 var username;
 var userid;
+var scriptVersion;
 
 
 jQuery(document).ready(function(){
 	if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
 		return;
 	}
-
+	
 	initialize();
-	loadModules();
+	
+	if (isCompatible()) {
+		loadModules();
+	}
+	
+	AutoUpdater = new AutoUpdater();
+	AutoUpdater.check();
 });
+
+function isCompatible() {
+	//Comprobamos que estÃ¡ soportada la extensiÃ³n y de paso recogemos la version del script actual.
+	if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+		scriptVersion = GM_info.script.version
+	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+		scriptVersion = GM_getMetadata('version');
+	} else {
+		bootbox.alert('El addon de scripts de tu navegador no estÃ¡ soportado.');
+		return false;
+	}
+	return true;
+}
 
 function initialize() {
 
@@ -58,12 +84,20 @@ function initialize() {
 	//inicializamos variables
 	page = location.pathname.replace("/foro","");
 	
+	GM_addStyle(GM_getResourceText('bootstrapcss'));
+	
 	//Recogemos nombre e ID de usuario
-	username = jQuery("a[href*='member.php']").first().text();
-	userid = jQuery("a[href*='member.php']").first().attr("href").replace("member.php?u=", "");
+	var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+	username = user.text();
+	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
 	
-	GM_addStyle(GM_getResourceText('bootstrap-css'));
-	
+	//Configuracion de las ventanas modales
+	bootbox.setDefaults({
+	    locale: "es",
+	    className: "shurscript",
+	    closeButton: false
+	  });
+	  
 }
 
 function loadModules() {
@@ -96,7 +130,7 @@ function loadModules() {
 			helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
 		}
 	}
-	
+		
 }
 
 /*
@@ -122,8 +156,6 @@ function getAllModules() {
 				modules.push(moduleName);
 			}
 		}
-	} else {
-		alert('El addon de scripts de tu navegador no está soportado.');
 	}
 	
 	return modules;
@@ -149,7 +181,7 @@ function getActiveModules() {
 }
 
 
-/* Metodos de ayuda comunes a todos los módulos. */
+/* Metodos de ayuda comunes a todos los mÃ³dulos. */
 function ScriptHelper(moduleName) {
 	this.moduleName = moduleName;
 }
@@ -169,4 +201,3 @@ ScriptHelper.prototype.getValue = function(key, defaultValue) {
 ScriptHelper.prototype.deleteValue = function(key) {
 	GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
 }
-

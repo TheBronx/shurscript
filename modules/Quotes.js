@@ -202,15 +202,50 @@ function Quotes() {
 	        if (showAlerts && firstLoad) {
 		        if (newQuotes.length == 1) {
 			        cita = newQuotes[0];
-			        if (confirm("El usuario '" + cita.userName + " te ha citado en el hilo '" + cita.threadName + "'\n¿Quieres ver el post ahora?")) {
-			        	markAsRead(cita);
-				        window.open(cita.postLink, "_self");
-			        }
+			        bootbox.dialog({message:"El usuario <b>" + cita.userName + "</b> te ha citado en el hilo <b>" + cita.threadName + "</b><p><br></p><i>" + cita.postText + "</i><p><br></p>¿Quieres ver el post ahora?", 
+						        	buttons:[{
+										"label" : "Más tarde",
+										"className" : "btn-default"
+										}, {
+										"label" : "Abrir post",
+										"className" : "btn-default",
+										"callback": function() {
+												markAsRead(cita);
+												window.open(cita.postLink, "_self");
+											}
+										}, {
+											"label" : "En nueva ventana",
+											"className" : "btn-primary",
+											"callback": function() {
+													markAsRead(cita);
+													window.open(cita.postLink, "_blank");
+												}
+										}]
+			        	});
 		        } else if (newQuotes.length > 1) {
-			        if (confirm("Tienes " + newQuotes.length + " nuevas citas en el foro\n¿Quieres verlas ahora?")) {
-			        	$("html, body").animate({ scrollTop: 0 }, "slow");
-				        showNotificationsBox();
-			        }
+		        	bootbox.dialog({message:"Tienes <b>" + newQuotes.length + " citas nuevas</b> en el foro ¿Quieres verlas ahora?", 
+						        	buttons:[{
+										"label" : "Más tarde",
+										"className" : "btn-default"
+										}, {
+										"label" : "Ver lista",
+										"className" : "btn-default",
+										"callback": function() {
+												$("html, body").animate({ scrollTop: 0 }, "slow");
+												showNotificationsBox();
+											}
+										}, {
+											"label" : "Abrir todas en pestañas",
+											"className" : "btn-primary",
+											"callback": function() {
+													markAllAsRead();
+													newQuotes.forEach(function(cita){
+														window.open(cita.postLink, "_blank");
+													});
+												}
+										}]
+			        	});
+
 		        }
 	        }
 	        
@@ -262,22 +297,25 @@ function Quotes() {
 			markAsReadButton = jQuery("<div id='markAllAsReadRow'/>");
 			markAsReadButton.html("Marcar todas como leídas");
 			markAsReadButton.click(function(){
-				emptyArray = new Array();
-				setNotificationsCount(0);
-				populateNotificationsBox(emptyArray);
-				lastQuotesJSON = JSON.stringify(emptyArray);
-				helper.setValue("LAST_QUOTES", lastQuotesJSON);
-				notificationsBox.hide();
-	/* 			updateNotifications(); */
+				markAllAsRead();
 			});
 			notificationsList.append(markAsReadButton);
 		}
 	}
 	
+	function markAllAsRead() {
+		emptyArray = new Array();
+		setNotificationsCount(0);
+		populateNotificationsBox(emptyArray);
+		lastQuotesJSON = JSON.stringify(emptyArray);
+		helper.setValue("LAST_QUOTES", lastQuotesJSON);
+		notificationsBox.hide();
+	}
+	
 	function addToNotificationsBox(cita) {
 		jQuery("#noNotificationsMessage").hide();
-		row = jQuery("<div class='notificationRow'><div><b>El usuario <a href='" + cita.userLink + "'>" + cita.userName + "</a> te ha citado</div><div><a href='" + cita.threadLink + "'>" + cita.threadName + "</a></b></div><div></div></div>");
-		link = jQuery("<a href='" + cita.postLink + "' style='color:#444;'>" + cita.postText + "</a>");
+		var row = jQuery("<div class='notificationRow'><div><b>El usuario <a href='" + cita.userLink + "'>" + cita.userName + "</a> te ha citado</div><div><a href='" + cita.threadLink + "'>" + cita.threadName + "</a></b></div><div></div></div>");
+		var link = jQuery("<a href='" + cita.postLink + "' style='color:#444;'>" + cita.postText + "</a>");
 		
 		link.mousedown(function(e) { 
 			if (e.which != 3) {
@@ -307,15 +345,15 @@ function Quotes() {
 	
 	function Cita(el) {
 		
-		postElement = $(el).find(".smallfont > em > a");
+		var postElement = $(el).find(".smallfont > em > a");
 		this.postLink = postElement.attr("href");
 		this.postText = postElement.text();	
 		
-		threadElement = $(el).find(".alt1 > div > a > strong");
+		var threadElement = $(el).find(".alt1 > div > a > strong");
 		this.threadLink = threadElement.parent().attr("href");
 		this.threadName = threadElement.text();
 		
-		userElement = $(el).find(".smallfont > a");
+		var userElement = $(el).find(".smallfont > a");
 		this.userLink = userElement.attr("href");
 		this.userName = userElement.text();
 		
@@ -324,7 +362,7 @@ function Quotes() {
 	this.getPreferences = function() {
 		var preferences = new Array();
 		
-		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar alertas", "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
+		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
 		
 		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
 		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		
