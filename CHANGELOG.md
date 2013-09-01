@@ -1,11 +1,17 @@
 # CHANGELOG
 
-	Última versión estable: v0.08 (17 de agosto de 2013)
-	En desarrollo: v0.09
+	Última versión estable: v0.09 (1 de septiembre de 2013)
+	En desarrollo: v0.10
 
-## v0.09
+## v0.10
 *(En desarrollo)*
-### Features
+
+------------------------------------
+
+### v0.09 `01/08/2013`
+
+**Features**
+
 * Ahora se puede elegir el color de los hilos favoritos resaltados
 * La estrella de marcar hilo como Favorito ahora se muestra al pasar por encima del hilo, no solo del icono.
 * También se pueden marcar hilos como favoritos desde dentro del propio hilo.
