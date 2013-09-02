@@ -64,7 +64,7 @@ function Scrollers() {
 		} else if (upOrDown == 'down') {
 			container.append(bottomArrow);
 		} else {
-			container.append(bottomArrow).append(topArrow);
+			container.append(topArrow).append(bottomArrow);
 		}
 		
 		$(document.body).append(container);
