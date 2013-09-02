@@ -31,6 +31,7 @@ function Quotes() {
 	var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
 	var notificationsUrl;
 	var refreshEvery;// = 1 * 60 * 1000; //1 minuto
+	var ajax;
 	
 	var lastUpdate; //Ultima actualizacion - Config. guardada en el navegador
 	var lastReadQuote;
@@ -41,6 +42,7 @@ function Quotes() {
 	var notificationsCount;
 	var notificationsBox;
 	var notificationsList;
+	
 			
 	this.load = function initialize() {
 		
@@ -92,7 +94,7 @@ function Quotes() {
 		//creamos la celda de notificaciones
 		jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 		jQuery('.notifications').click(function() {
-			if (status == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
+			if (currentStatus == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();			
 			}
 			showNotificationsBox();
@@ -117,140 +119,153 @@ function Quotes() {
 		jQuery('.notifications').html("...");
 	    currentStatus = "QUERY";
 
-	    GM_xmlhttpRequest({
-	      method: "GET",
-	      url: notificationsUrl,
-	      headers: {
-	        "User-Agent": "Mozilla/5.0"
-	      },
-	      onload: function(response) {
-	    
-	        if (response.readyState != 4 && response.statusText != "OK") { //Ha ocurrido algun error
-	            currentStatus = "ERROR";
-	            setNotificationsCount("X");
-	            return;
-	        }
-	        
-	        lastUpdate = Date.now();
-
-	        var documentResponse = jQuery.parseHTML(response.responseText);
-	        var citas = jQuery(documentResponse).find("#inlinemodform table[id*='post']");
-	        if (citas.length == 0) {
+	    ajax = new XMLHttpRequest();
+		ajax.onreadystatechange= function() {
+			if (ajax.readyState == 4 && ajax.statusText == "OK") {	        
+		        lastUpdate = Date.now();
 	
-	            var tooManyQueriesError = jQuery(documentResponse).find(".page li").text();
-	            //Hemos recibido un error debido a demasidas peticiones seguidas. Esperamos el tiempo que nos diga ilitri y volvemos a lanzar la query.
-	            if (tooManyQueriesError && !firstLoad) {
-	                tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
-	                var secondsToWait = tooManyQueriesError.substring(0, tooManyQueriesError.indexOf(" "));
-	                var remainingSeconds = parseInt(secondsToWait) + 1;
-	                var timer = setInterval(function() {
-	                    if (remainingSeconds > 0)
-	                        setNotificationsCount("...<sup>" + (remainingSeconds--) + "</sup>");
-	                    else {                    
-	                        updateNotifications();
-	                        clearInterval(timer);
-	                    }
-	                }
-	                , 1000);
-	                return;
-	            } else if (firstLoad && arrayQuotes.length > 0) {
-		            //Si en la primera carga falla, no dejamos esperando al usuario
-				    populateNotificationsBox(arrayQuotes);
-					setNotificationsCount(arrayQuotes.length);
-				    
-				    currentStatus = "OK";
-	
-				    return;
-	            }
-	        }        
-	            
-	        newQuotes = new Array();
-	        var cita;
-	        if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
-	            for (var i = 0; i < citas.length; i++) { 
-	            	cita = new Cita(citas[i]);
-	                if (lastReadQuote == cita.postLink) {
-	                    break;
-	                } else {
-		                newQuotes.push(cita);
-	                }
-	            }
-	        }
-	 
-	        if (citas.length > 0) {
-	        	lastReadQuote = new Cita(citas[0]).postLink;
-	        	helper.setValue("LAST_READ_QUOTE", lastReadQuote);
-	        }
-	
-	        arrayQuotes = newQuotes.concat(arrayQuotes); //Mergeamos las nuevas y las antiguas
-	        
-	        populateNotificationsBox(arrayQuotes);
-	        
-	        lastQuotesJSON = JSON.stringify(arrayQuotes); //Formateamos a JSON para guardarlo
-	        
-	        count = arrayQuotes.length;
-	    
-	        setNotificationsCount(count);
-	
-	        helper.setValue("LAST_QUOTES_UPDATE", Date.now().toString());
-	        helper.setValue("LAST_QUOTES", lastQuotesJSON);
-	    
-	        currentStatus = "OK";
-	        
-	        
-	        //Mensajes de alerta para el usuario
-	        if (showAlerts && firstLoad) {
-		        if (newQuotes.length == 1) {
-			        cita = newQuotes[0];
-			        bootbox.dialog({message:"El usuario <b>" + cita.userName + "</b> te ha citado en el hilo <b>" + cita.threadName + "</b><p><br></p><i>" + cita.postText + "</i><p><br></p>¿Quieres ver el post ahora?", 
-						        	buttons:[{
-										"label" : "Más tarde",
-										"className" : "btn-default"
-										}, {
-										"label" : "Abrir post",
-										"className" : "btn-default",
-										"callback": function() {
-												markAsRead(cita);
-												window.open(cita.postLink, "_self");
-											}
-										}, {
-											"label" : "En nueva ventana",
-											"className" : "btn-primary",
-											"callback": function() {
-													markAsRead(cita);
-													window.open(cita.postLink, "_blank");
-												}
-										}]
-			        	});
-		        } else if (newQuotes.length > 1) {
-		        	bootbox.dialog({message:"Tienes <b>" + newQuotes.length + " citas nuevas</b> en el foro ¿Quieres verlas ahora?", 
-						        	buttons:[{
-										"label" : "Más tarde",
-										"className" : "btn-default"
-										}, {
-										"label" : "Ver lista",
-										"className" : "btn-default",
-										"callback": function() {
-												$("html, body").animate({ scrollTop: 0 }, "slow");
-												showNotificationsBox();
-											}
-										}, {
-											"label" : "Abrir todas en pestañas",
-											"className" : "btn-primary",
+		        var documentResponse = jQuery.parseHTML(ajax.responseText);
+		        var citas = jQuery(documentResponse).find("#inlinemodform table[id*='post']");
+		        if (citas.length == 0) {
+		        
+		        	if (ajax.responseText.indexOf("debes estar registrado o identificado")) {
+			            currentStatus = "ERROR";
+			            setNotificationsCount("X");
+			            return;
+		            }
+		
+		            var tooManyQueriesError = jQuery(documentResponse).find(".page li").text();
+		            //Hemos recibido un error debido a demasidas peticiones seguidas. Esperamos el tiempo que nos diga ilitri y volvemos a lanzar la query.
+		            if (tooManyQueriesError && !firstLoad) {
+		                tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
+		                var secondsToWait = tooManyQueriesError.substring(0, tooManyQueriesError.indexOf(" "));
+		                var remainingSeconds = parseInt(secondsToWait) + 1;
+		                var timer = setInterval(function() {
+		                    if (remainingSeconds > 0)
+		                        setNotificationsCount("...<sup>" + (remainingSeconds--) + "</sup>");
+		                    else {                    
+		                        updateNotifications();
+		                        clearInterval(timer);
+		                    }
+		                }
+		                , 1000);
+		                return;
+		            } else if (firstLoad && arrayQuotes.length > 0) {
+			            //Si en la primera carga falla, no dejamos esperando al usuario
+					    populateNotificationsBox(arrayQuotes);
+						setNotificationsCount(arrayQuotes.length);
+					    
+					    currentStatus = "OK";
+		
+					    return;
+		            }
+		            
+		            
+		        }        
+		            
+		        newQuotes = new Array();
+		        var cita;
+		        if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
+		            for (var i = 0; i < citas.length; i++) { 
+		            	cita = new Cita(citas[i]);
+		                if (lastReadQuote == cita.postLink) {
+		                    break;
+		                } else {
+			                newQuotes.push(cita);
+		                }
+		            }
+		        }
+		 
+		        if (citas.length > 0) {
+		        	lastReadQuote = new Cita(citas[0]).postLink;
+		        	helper.setValue("LAST_READ_QUOTE", lastReadQuote);
+		        }
+		
+		        arrayQuotes = newQuotes.concat(arrayQuotes); //Mergeamos las nuevas y las antiguas
+		        
+		        populateNotificationsBox(arrayQuotes);
+		        
+		        lastQuotesJSON = JSON.stringify(arrayQuotes); //Formateamos a JSON para guardarlo
+		        
+		        count = arrayQuotes.length;
+		    
+		        setNotificationsCount(count);
+		
+		        helper.setValue("LAST_QUOTES_UPDATE", Date.now().toString());
+		        helper.setValue("LAST_QUOTES", lastQuotesJSON);
+		    
+		        currentStatus = "OK";
+		        
+		        
+		        //Mensajes de alerta para el usuario
+		        if (showAlerts && firstLoad) {
+			        if (newQuotes.length == 1) {
+				        cita = newQuotes[0];
+				        bootbox.dialog({message:"El usuario <b>" + cita.userName + "</b> te ha citado en el hilo <b>" + cita.threadName + "</b><p><br></p><i>" + cita.postText + "</i><p><br></p>¿Quieres ver el post ahora?", 
+							        	buttons:[{
+											"label" : "Ya leída",
+											"className" : "btn-default",
 											"callback": function() {
 													markAllAsRead();
-													newQuotes.forEach(function(cita){
-														window.open(cita.postLink, "_blank");
-													});
 												}
-										}]
-			        	});
-
-		        }
-	        }
-	        
-	      }
-	    });
+											}, {
+											"label" : "Más tarde",
+											"className" : "btn-default"
+											}, {
+											"label" : "Abrir post",
+											"className" : "btn-default",
+											"callback": function() {
+													markAsRead(cita);
+													window.open(cita.postLink, "_self");
+												}
+											}, {
+												"label" : "En nueva ventana",
+												"className" : "btn-primary",
+												"callback": function() {
+														markAsRead(cita);
+														window.open(cita.postLink, "_blank");
+													}
+											}]
+				        	});
+			        } else if (newQuotes.length > 1) {
+			        	bootbox.dialog({message:"Tienes <b>" + newQuotes.length + " citas nuevas</b> en el foro ¿Quieres verlas ahora?", 
+							        	buttons:[{
+											"label" : "Ya leídas",
+											"className" : "btn-default",
+											"callback": function() {
+													markAllAsRead();
+												}
+											}, {
+											"label" : "Más tarde",
+											"className" : "btn-default"
+											}, {
+											"label" : "Ver lista",
+											"className" : "btn-default",
+											"callback": function() {
+													$("html, body").animate({ scrollTop: 0 }, "slow");
+													showNotificationsBox();
+												}
+											}, {
+												"label" : "Abrir todas en pestañas",
+												"className" : "btn-primary",
+												"callback": function() {
+														markAllAsRead();
+														newQuotes.forEach(function(cita){
+															window.open(cita.postLink, "_blank");
+														});
+													}
+											}]
+				        	});
+	
+			        }
+				}
+			}
+		};
+		
+		ajax.open("GET", notificationsUrl, true);
+		ajax.send();
+			
+	  
 	}
 	
 	function setNotificationsCount(count) {
