@@ -6,26 +6,26 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.09
+// @version			0.09.1
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
 // @include			*forocoches.com/foro/*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
-// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
-// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
+// @require			https://github.com/TheBronx/shurscript/raw/master/plugins/bootbox.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/plugins/Markdown.Converter.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BetterPosts.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/FavouriteThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/Scrollers.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/AutoUpdater.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/preferences.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/settings_window.js
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/master/img/scroller.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
@@ -42,8 +42,8 @@ var allModules = []; //Todos los modulos
 var activeModules = []; //Los que tiene activados el usuario
 var AutoUpdater;
 
-/* Variables Ãºtiles y comunes a todos los mÃ³dulos */
-var page; //PÃ¡gina actual (sin http://forocoches.com/foro ni parÃ¡metros php)
+/* Variables útiles y comunes a todos los módulos */
+var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
 var username;
 var userid;
 var scriptVersion;
@@ -65,13 +65,13 @@ jQuery(document).ready(function(){
 });
 
 function isCompatible() {
-	//Comprobamos que estÃ¡ soportada la extensiÃ³n y de paso recogemos la version del script actual.
+	//Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
 	if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
 		scriptVersion = GM_info.script.version
 	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
 		scriptVersion = GM_getMetadata('version');
 	} else {
-		bootbox.alert('El addon de scripts de tu navegador no estÃ¡ soportado.');
+		bootbox.alert('El addon de scripts de tu navegador no está soportado.');
 		return false;
 	}
 	return true;
@@ -181,7 +181,7 @@ function getActiveModules() {
 }
 
 
-/* Metodos de ayuda comunes a todos los mÃ³dulos. */
+/* Metodos de ayuda comunes a todos los módulos. */
 function ScriptHelper(moduleName) {
 	this.moduleName = moduleName;
 }
