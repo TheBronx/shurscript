@@ -16,7 +16,6 @@ function BetterPosts() {
 	var genericHandler;
 	var checkAutoGrow;
 	var minHeightTextArea;
-	var currentQuickEditorNumber = 1; //Numero del ID del editor rápido. Aumenta en uno en cada edición: vB_Editor_QE_1, 2, 3...
 
 	this.shouldLoad = function() {
 		 return page == "/showthread.php" || page == '/newthread.php' || page == "/newreply.php" || page == "/editpost.php";
@@ -64,16 +63,23 @@ function BetterPosts() {
 		if (isQuickReply()) {
 			$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene WYSIWYG
 				
-				var currentEditorID = "vB_Editor_QE_" + (currentQuickEditorNumber++);
+				var currentEditorID = "vB_Editor_QE_" + unsafeWindow.vB_QuickEditor.editorcounter;
 				
 				var checkWYSIWYG = setInterval(function(){ //Esperamos a que aparezca
 					if ($('#' + currentEditorID + "_editor").length > 0) {
 						clearInterval(checkWYSIWYG);
 						unsafeWindow.switch_editor_mode(currentEditorID); //Una vez cargado el editor, lo cambiamos a WYSIWYG .
-						
+						var currentEditor = vB_Editor[currentEditorID];
 						checkWYSIWYG = setInterval(function(){ // Y volvemos a esperar a que cambie de modo
-							if (vB_Editor[currentEditorID].editdoc.body) {
+							if (currentEditor.editdoc.body) {
 								clearInterval(checkWYSIWYG);
+								/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
+								try {
+									if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
+										currentEditor.editdoc.write('<!doctype HTML>\n' + currentEditor.editdoc.head.outerHTML + currentEditor.editdoc.body.outerHTML);
+								} catch (e) {
+									;
+								}
 								enableQuickEditorFeatures(currentEditorID); //Una vez todo preparado, le añadimos las funciones.
 							}
 						}, 500);
