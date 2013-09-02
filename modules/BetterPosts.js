@@ -53,42 +53,13 @@ function BetterPosts() {
 		unsafeWindow.switch_editor_mode(editor.editorid);
 		unsafeWindow.is_saf = false;
 		unsafeWindow.is_moz = true;
-		editor.wysiwyg_mode = true;
+		editor.wysiwyg_mode = 1;
 		
 		
 		if ($('#' + editor.editorid + '_cmd_switchmode').length == 0) //Añadimos el boton de cambiar de Editor
 			$('<td><div id="' + editor.editorid + '_cmd_switchmode" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img height="20" width="21" alt="Cambiar Modo de Editor" src="http://st.forocoches.com/foro/images/editor/switchmode.gif" title="Cambiar Modo de Editor"></div></td>').insertAfter($('#vB_Editor_QR_cmd_resize_0_99').parent());
 		
 		
-		if (isQuickReply()) {
-			$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene WYSIWYG
-				
-				var currentEditorID = "vB_Editor_QE_" + unsafeWindow.vB_QuickEditor.editorcounter;
-				
-				var checkWYSIWYG = setInterval(function(){ //Esperamos a que aparezca
-					if ($('#' + currentEditorID + "_editor").length > 0) {
-						clearInterval(checkWYSIWYG);
-						unsafeWindow.switch_editor_mode(currentEditorID); //Una vez cargado el editor, lo cambiamos a WYSIWYG .
-						var currentEditor = vB_Editor[currentEditorID];
-						checkWYSIWYG = setInterval(function(){ // Y volvemos a esperar a que cambie de modo
-							if (currentEditor.editdoc.body) {
-								clearInterval(checkWYSIWYG);
-								/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
-								try {
-									if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
-										currentEditor.editdoc.write('<!doctype HTML>\n' + currentEditor.editdoc.head.outerHTML + currentEditor.editdoc.body.outerHTML);
-								} catch (e) {
-									;
-								}
-								enableQuickEditorFeatures(currentEditorID); //Una vez todo preparado, le añadimos las funciones.
-							}
-						}, 500);
-					}
-				}, 500);
-
-			});
-		}
-
 	}
 	
 	/* Funcionalidades que funcionan solo bajo el editor WYSIWYG */
@@ -103,6 +74,32 @@ function BetterPosts() {
 		}
 		
 		enablePostRecovery();
+		
+		if (isQuickReply()) {
+			$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene WYSIWYG
+				var checkWYSIWYG = setInterval(function(){ //Esperamos a que aparezca
+					var currentEditorID = "vB_Editor_QE_" + unsafeWindow.vB_QuickEditor.editorcounter;
+					if ($('#' + currentEditorID + "_editor").length > 0 && vB_Editor[currentEditorID]) {
+						clearInterval(checkWYSIWYG);
+	
+						var currentEditor = vB_Editor[currentEditorID];
+						
+						if (currentEditor.wysiwyg_mode == 0) {
+							unsafeWindow.switch_editor_mode(currentEditorID); //Una vez cargado el editor, lo cambiamos a WYSIWYG .
+							currentEditor.wysiwyg_mode = 1;
+							checkWYSIWYG = setInterval(function(){ // Y volvemos a esperar a que cambie de modo
+								if (vB_Editor[currentEditorID].editdoc.body) {
+									clearInterval(checkWYSIWYG);
+									enableQuickEditorFeatures(currentEditorID); //Una vez todo preparado, le añadimos las funciones.
+								}
+							}, 500);
+						} else {
+							enableQuickEditorFeatures(currentEditorID);
+						}
+					}
+				}, 500);
+			});
+		}
 	}
 	
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
@@ -120,6 +117,13 @@ function BetterPosts() {
 	function enableQuickEditorFeatures(currentEditorID) {
 		var currentEditor = vB_Editor[currentEditorID];
 		if (helper.getValue('AUTO_GROW', true)) {
+			/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
+			try {
+				if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
+					currentEditor.editdoc.write('<!doctype HTML>\n' + currentEditor.editdoc.head.outerHTML + currentEditor.editdoc.body.outerHTML);
+			} catch (e) {
+				;
+			}
 			$(currentEditor.editdoc.body).on('input', function() {
 				currentEditor.editbox.style.height = Math.max(currentEditor.editdoc.body.offsetHeight + 30, 200) + "px";
 			});
