@@ -1,10 +1,19 @@
 # CHANGELOG
 
-	Última versión estable: v0.09 (1 de septiembre de 2013)
+	Última versión estable: v0.09.1 (2 de septiembre de 2013)
 	En desarrollo: v0.10
 
-## v0.10
-*(En desarrollo)*
+## v0.09.1
+**Changes**
+
+* **Deshacer:** Ahora ya no se muestra la estrella al pasar sobre la celda título de cada hilo. Solo por el icono, como antes.
+* Cambiado el orden de las flechas de scroll.
+
+**Bugfixes**
+
+* Solucionado problema con las citas que le ocurría a algunos usuarios con Firefox + GreaseMonkey. No funcionaban.
+* Solucionado bug en Chrome que en la edición rápida de un post y la opción auto-grow, la caja de texto no paraba de crecer.
+
 
 ------------------------------------
 
