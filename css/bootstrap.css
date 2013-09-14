@@ -533,6 +533,7 @@
 .shurscript .pager .disabled>a,.shurscript .pager .disabled>a:hover,.shurscript .pager .disabled>a:focus,.shurscript .pager .disabled>span{color:#999999;cursor:not-allowed;background-color:#ffffff}
 .modal-open{overflow:hidden}
 .shurscript.modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1040;display:none;overflow:auto;overflow-y:scroll}
+.shurscript.modal {overflow: auto;}
 .shurscript.modal.fade .modal-dialog{-webkit-transform:translate(0, -25%);-ms-transform:translate(0, -25%);transform:translate(0, -25%);-webkit-transition:-webkit-transform .3s ease-out;-moz-transition:-moz-transform .3s ease-out;-o-transition:-o-transform .3s ease-out;transition:transform .3s ease-out}
 .shurscript.modal.in .modal-dialog{-webkit-transform:translate(0, 0);-ms-transform:translate(0, 0);transform:translate(0, 0)}
 .shurscript .modal-dialog{z-index:1050;width:auto;padding:10px;margin-right:auto;margin-left:auto}
