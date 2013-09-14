@@ -37,6 +37,7 @@ function Quotes() {
 	var lastReadQuote;
 	var lastQuotesJSON; //Lista de notificaciones no leidas en formato JSON - Config. guardada en el navegador
 	var showAlerts; //Mostrar o no alertas cuando lleguen nuevas notificaciones
+	var mentionsToo;
 	
 	var arrayQuotes;
 	var notificationsCount;
@@ -70,6 +71,7 @@ function Quotes() {
 		}
 		
 		showAlerts = helper.getValue("SHOW_ALERTS", true);	
+		mentionsToo = helper.getValue("MENTIONS_TOO", true);
 		
 		refreshEvery = helper.getValue("REFRESH_EVERY", 2);
 		if (refreshEvery != 'off') {
@@ -128,7 +130,7 @@ function Quotes() {
 		        var citas = jQuery(documentResponse).find("#inlinemodform table[id*='post']");
 		        if (citas.length == 0) {
 		        
-		        	if (ajax.responseText.indexOf("debes estar registrado o identificado")) {
+		        	if (ajax.responseText.indexOf("debes estar registrado o identificado") != -1) {
 			            currentStatus = "ERROR";
 			            setNotificationsCount("X");
 			            return;
@@ -171,7 +173,9 @@ function Quotes() {
 		                if (lastReadQuote == cita.postLink) {
 		                    break;
 		                } else {
-			                newQuotes.push(cita);
+		                	if (mentionsToo || isQuote(cita)) {
+			                	newQuotes.push(cita);
+			                }
 		                }
 		            }
 		        }
@@ -362,7 +366,8 @@ function Quotes() {
 		
 		var postElement = $(el).find(".smallfont > em > a");
 		this.postLink = postElement.attr("href");
-		this.postText = postElement.text();	
+		this.postText = postElement.text();
+		this.postID = this.postLink.match(/#post([\d]*)/)[1];
 		
 		var threadElement = $(el).find(".alt1 > div > a > strong");
 		this.threadLink = threadElement.parent().attr("href");
@@ -374,10 +379,31 @@ function Quotes() {
 		
 	}
 	
+	
+	//Llamada SINCRONA para parsear un post y detectar si es una cita real o solo una mención.
+	function isQuote(cita) {
+		var result = false;
+		ajax = new XMLHttpRequest();
+		ajax.onreadystatechange= function() {
+			if (ajax.readyState == 4 && ajax.statusText == "OK") {	        
+		        var documentResponse = jQuery.parseHTML(ajax.responseText);
+		        var postContent = jQuery(documentResponse).find("#post_message_" + cita.postID).text();
+		        if (postContent.match(RegExp("Originalmente Escrito por " + username, "i"))) {
+			        result = true;
+		        }
+			}
+		};
+		
+		ajax.open("GET", cita.postLink, false);
+		ajax.send();
+		return result;
+	}
+	
 	this.getPreferences = function() {
 		var preferences = new Array();
 		
 		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
+		preferences.push(new BooleanPreference("MENTIONS_TOO", true, "Notificar también las menciones, no solo las citas (Si se desactiva puede ralentizar la recuperación de las notificaciones)"));
 		
 		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
 		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		
