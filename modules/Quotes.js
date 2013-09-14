@@ -103,7 +103,7 @@ function Quotes() {
 		});
 	
 		//comprobamos (si procede) nuevas notificaciones
-		if (refreshEvery != 'off' && (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (refreshEvery * 60 * 1000))) {
+		if (refreshEvery != 'off' && page != "/search.php" && (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (refreshEvery * 60 * 1000))) {
 			//Volvemos a actualizar
 		    updateNotifications(true);
 		} else {
