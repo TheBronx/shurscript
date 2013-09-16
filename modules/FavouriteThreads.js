@@ -1,4 +1,3 @@
-
 function FavouriteThreads() {
 		
 	this.id = arguments.callee.name; //ModuleID
@@ -187,7 +186,11 @@ celda_titulo.hover(
 		//estamos viendo un hilo, ¿que hilo es?
 		//la pregunta tiene miga, ya que en la URL no tiene por qué venir el topic_id
 		var href = $("#threadtools_menu form>table tr:last a").attr("href");
-		var t_id = parseInt(href.replace("subscription.php?do=addsubscription&t=",""),10);
+		if (href.indexOf("subscription")!=-1) {
+			var t_id = parseInt(href.replace("subscription.php?do=addsubscription&t=",""),10);
+		} else {
+			var t_id = parseInt(href.replace("poll.php?do=newpoll&t=",""),10);
+		}
 		//vale, ahora que sabemos que hilo es, ¿es favorito?
 		var is_favorite = false;
 		if ( favorites.indexOf( t_id ) >= 0 ) {
