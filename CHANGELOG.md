@@ -15,7 +15,7 @@
 
 ------------------------------------
 
-### v0.09.1
+### v0.09.1 `02/09/2013`
 **Changes**
 
 * **Deshacer:** Ahora ya no se muestra la estrella al pasar sobre la celda título de cada hilo. Solo por el icono, como antes.
@@ -29,7 +29,7 @@
 
 ------------------------------------
 
-### v0.09 `01/08/2013`
+### v0.09 `01/09/2013`
 
 **Features**
 
