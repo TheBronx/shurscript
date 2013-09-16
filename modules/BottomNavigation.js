@@ -19,8 +19,13 @@ function BottomNavigation() {
 	    jQuery('.page>div>table').html()+'</table><br>' );
 		//borramos las notificaciones de la barra de abajo
 		jQuery('.navigation-bot .notifications').parent().remove();
+		
 		//borramos la barra de navegación inferior de ForoCoches [Fritanga]
-		jQuery('.fjsel').closest('table.tborder').remove();
+		var duplicatedBottomBar = jQuery('.fjsel').closest('table.tborder');
+		var quickJumpSelect = duplicatedBottomBar.find("div.smallfont").parent(); //Combo que permite saltar rapidamente a los subforos, esto lo mantenemos
+		$(".tborder.navigation-bot .alt1").after(quickJumpSelect); //Lo añadimos a nuestra barra
+		quickJumpSelect.addClass("alt1"); //Le damos el mismo estilo
+		duplicatedBottomBar.remove(); //Y eliminamos la duplicada
 	}
 		
 }
