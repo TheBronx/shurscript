@@ -1,9 +1,21 @@
 # CHANGELOG
 
-	Última versión estable: v0.09.1 (2 de septiembre de 2013)
+	Última versión estable: v0.09.2 (16 de septiembre de 2013)
 	En desarrollo: v0.10
 
-## v0.09.1
+## v0.09.2
+**Changes**
+
+* La barra de navegación inferior añadida por Electrik en los últimos días se elimina dejando únicamente visible la de 'shurscript'.
+
+**Bugfixes**
+
+* Solucionado problema por el cual las imágenes del editor mejorado se rompían tras el cambio de Static al CDN.
+
+
+------------------------------------
+
+### v0.09.1
 **Changes**
 
 * **Deshacer:** Ahora ya no se muestra la estrella al pasar sobre la celda título de cada hilo. Solo por el icono, como antes.
