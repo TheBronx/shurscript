@@ -4,6 +4,7 @@
 	En desarrollo: v0.10
 
 ## v0.10
+
 **Changes**
 
 * Nueva opción para notificar solo de lo que son realmente citas y no menciones ni coincidencias con el nick que puede sacar el buscador del foro por error
@@ -14,7 +15,10 @@
 	* Por palabras clave en el título
 	* Manualmente
 * Resaltar y mostrar arriba hilos por palabras clave
-* Opción para mostrar los hilos favoritos por encima del resto
+* Opción para mostrar los hilos favoritos y los destacados por encima del resto
+* La flecha para hacer scroll hasta abajo del todo, ahora va hasta la respuesta rápida, no hasta el final
+* El título de la ventana/pestaña del navegador ahora muestra el número de citas no leídas
+* Recarga automáticamente las búsquedas en las que el sistema obliga a esperar varios segundos, evitando así tener que actualizar manualmente la página. **(Aporte del forero Electrosa)**
 
 **Bugfixes**
 
