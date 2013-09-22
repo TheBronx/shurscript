@@ -468,7 +468,15 @@ function Quotes() {
 		
 		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
 		preferences.push(new BooleanPreference("MENTIONS_TOO", true, "Notificar también las menciones, no solo las citas (Si se desactiva puede ralentizar la recuperación de las notificaciones)"));
-		preferences.push(new BooleanPreference("OPEN_IN_TABS_BUTTON", true, "Mostrar botón en la lista de notificaciones para abrir no leídas en pestañas"));
+		
+		unsafeWindow.chromeTabsWarning = function() {
+			bootbox.alert("<p>Si al darle al botón de Abrir en pestañas solo os abre una pestaña y no todas, es porque tenéis bloqueados los pop-ups para Forocoches, tendréis que permitirselos para poder abrir las notificaciones en pestañas.</p>\
+			<p>Pero eso no es todo, Google Chrome por norma general solo te abrirá el primer enlace en una nueva pestaña. El resto te los abrirá en ventanas independientes.</p>\
+			<p>Cómo sabemos que esto puede ser molesto y no existe solución por nuestra parte, en el caso que de verdad quieras usar esta funcionalidad de abrir las notificaciones en pestañas, \
+			deberás instalar <a target='_blank' href='https://chrome.google.com/webstore/detail/one-window/papnlnnbddhckngcblfljaelgceffobn/related'>esta extensión</a> que aunque no es una solución muy limpia, hace su función.</p>\
+			<p>Para evitar confusiones, decir que esto no tiene nada que ver con abrir una única notificación en una nueva pestaña, eso funciona perfectamente. El problema descrito solo aplica cuando se abre más de una a la vez.</p> <p>Disculpa las molestias</p>");
+		};
+		preferences.push(new BooleanPreference("OPEN_IN_TABS_BUTTON", true, "Mostrar botón en la lista de notificaciones para abrir las no leídas en pestañas. <b style='text-decoration:underline;' onclick='chromeTabsWarning()'>Leer usuarios de Chrome</b>"));
 		
 		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
 		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		
