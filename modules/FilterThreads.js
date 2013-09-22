@@ -1,4 +1,4 @@
-function FavouriteThreads() {
+function FilterThreads() {
 		
 	this.id = arguments.callee.name; //ModuleID
 	this.name = "Filtrado de hilos";
