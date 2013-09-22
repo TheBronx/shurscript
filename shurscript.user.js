@@ -16,7 +16,7 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
