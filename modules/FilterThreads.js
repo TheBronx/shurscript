@@ -11,7 +11,9 @@ function FilterThreads() {
 	
 	var favorites;
 	
-	var hiddenThreads;
+	var hideReadThreads = false;
+	var readThreads = [];
+	var hiddenThreads = [];
 	var hiddenThreadsCount = 0;
 	var hiddenThreadsBlock;
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
@@ -42,9 +44,9 @@ function FilterThreads() {
 		pinnedThreadsSeparator = $("#threadslist > tbody[id^='threadbits_forum'] > tr > .thead").parent();
 				
 		if (page == "/forumdisplay.php" || page == "/search.php") {
-			favoriteThreadsForumdisplay();
+			onForumDisplay();
 		} else if (page == "/showthread.php") {
-			favoriteThreadsShowthread();
+			onShowThread();
 		}
 	}
 	
@@ -69,25 +71,57 @@ function FilterThreads() {
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
 	}
 	
-		
-	function favoriteThreadsForumdisplay() {
-		
-		//Evento para cerrar todos los popups abiertos al hacer clic en cualquier sitio (body)
-		$('body').click(function (e) {
-			
-			if (e.target.className.indexOf("popover") == -1 && !jQuery.contains($(".popover")[0], e.target)) { //No estamos dentro del popup abierto
-				$(".shurmenu_opened").not(e.target.id != "" ? "#" + e.target.id : "").removeClass("shurmenu_opened");
-				
-			    if (e.target.id.indexOf("statusicon") == -1) { //No estamos clicando en un icono del hilo (este ya tiene el manejador de abrir y cerrar el popup)
-				    $(".popover").remove();
-			    }
+	
+	/* Funcionalidad de ocultar hilos ya leídos */
+	function createHideReadThreadsButton() {
+	    hideReadThreads = helper.getValue("HIDDEN_READ_THREADS", false);
+	    var forumToolsButton = $("#forumtools");
+	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
+	    var hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
+	    hideReadThreadsButton.append(hideReadThreadsLink);
+	    hideReadThreadsButton.click(function(){
+	    	hideReadThreads = !hideReadThreads;
+	    	if (hideReadThreads) {
+			    $.each(readThreads, function(index, hilo){
+				    hilo.row.css("display", "none");
+			    });
+			    hideReadThreadsLink.html("Mostrar todos los hilos");
+		    } else {
+			    $.each(readThreads, function(index, hilo){
+				    hilo.row.css("display", "table-row");
+			    });
+			    hideReadThreadsLink.html("Mostrar solo los hilos no leídos");
 		    }
-		});
+		    helper.setValue("HIDDEN_READ_THREADS", hideReadThreads);
+	    });
+	    forumToolsButton.before(hideReadThreadsButton);
+	}
+	
+	/* Construye la expresion regular a partir de una lista de palabras */
+	function getRegex(userInput, isRegex) {
+		var regex;
+		if (isRegex) {
+			regex = new RegExp(userInput, "i");
+		} else {
+			userInput = userInput.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservador de las regex
+			userInput = userInput.replace(/[\ ]*[\,]+[\ ]*$/, ""); //Quitar comas sobrantes
+			regex = "(\\b|\\ )"; //word-break
+			regex += "(" + userInput
+					.replace(/[aáà]/ig, "[aáà]")
+					.replace(/[eéè]/ig, "[eéè]")
+					.replace(/[iíï]/ig, "[iíï]") //Accents insensitive
+					.replace(/[oóò]/ig, "[oóò]")
+					.replace(/[uúü]/ig, "[uúü]")
+					.replace(/[\ ]*[\,]+[\ ]*/g, "|") + ")"; //Reemplazar las comas por |
+			regex += "(\\b|\\ )"; //word-break
+			regex = new RegExp(regex, "i");
+		}
 		
-		
-		//Recuperar la configuracion de hilos ocultos 
-		hiddenThreads = JSON.parse(helper.getValue("HIDDEN_THREADS", '[]'));
-		
+		return regex;
+	}
+	
+	/* Crear todas las expresiones regulares segun el input del usuario */
+	function initRegexs() {
 		//Crear regex de hilos ocultos
 		var hiddenKeywords = helper.getValue("HIDDEN_KEYWORDS");
 		if (hiddenKeywords && hiddenKeywords != "") {
@@ -123,9 +157,30 @@ function FilterThreads() {
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos.");
 			}
 		}
+	}
+		
+	function onForumDisplay() {
+	
+		createHideReadThreadsButton();
 
+		//Evento para cerrar todos los popups abiertos al hacer clic en cualquier sitio (body)
+		$('body').click(function (e) {
+			
+			if (e.target.className.indexOf("popover") == -1 && !jQuery.contains($(".popover")[0], e.target)) { //No estamos dentro del popup abierto
+				$(".shurmenu_opened").not(e.target.id != "" ? "#" + e.target.id : "").removeClass("shurmenu_opened");
+				
+			    if (e.target.id.indexOf("statusicon") == -1) { //No estamos clicando en un icono del hilo (este ya tiene el manejador de abrir y cerrar el popup)
+				    $(".popover").remove();
+			    }
+		    }
+		});
 		
 		
+		//Recuperar los hilos ocultos manualmente
+		hiddenThreads = JSON.parse(helper.getValue("HIDDEN_THREADS", '[]'));
+		
+		initRegexs();
+
 		//Recorremos todos los hilos de la lista	    
 	    $('#threadslist tr').each( function(index) {
 	    	try {
@@ -143,9 +198,7 @@ function FilterThreads() {
 		            hilo.creator = hilo.creator_span.text();
 		            
 		            hilo.icon_td = $(this).find('#td_threadstatusicon_' + hilo.id);
-		            
-		            hilo.originalPosition = index;
-		            
+		            		            
 		            processThread(hilo);
 		            
 		            hilo.icon_td.popover({content: getThreadMenu(hilo), container: 'body', placement: 'right', html: true, trigger: 'manual'});
@@ -173,30 +226,7 @@ function FilterThreads() {
 	        }
 	    });
 	    
-	    
-	}
-	
-	/* Construye la expresion regular a partir de lo que el usuario a escogido en las preferencias */
-	function getRegex(userInput, isRegex) {
-		var regex;
-		if (isRegex) {
-			regex = new RegExp(userInput, "i");
-		} else {
-			userInput = userInput.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservador de las regex
-			userInput = userInput.replace(/[\ ]*[\,]+[\ ]*$/, ""); //Quitar comas sobrantes
-			regex = "(\\b|\\ )"; //word-break
-			regex += "(" + userInput
-					.replace(/[aáà]/ig, "[aáà]")
-					.replace(/[eéè]/ig, "[eéè]")
-					.replace(/[iíï]/ig, "[iíï]") //Accents insensitive
-					.replace(/[oóò]/ig, "[oóò]")
-					.replace(/[uúü]/ig, "[uúü]")
-					.replace(/[\ ]*[\,]+[\ ]*/g, "|") + ")"; //Reemplazar las comas por |
-			regex += "(\\b|\\ )"; //word-break
-			regex = new RegExp(regex, "i");
-		}
-		
-		return regex;
+
 	}
 	
 	/* Aplicar funcionalidad al hilo en cuestion: marcarlo como favorito, ocultarlo, etc.*/
@@ -208,6 +238,7 @@ function FilterThreads() {
 	            hilo.isFavorite = true;
             }
         } else {
+
 	        var matchResult;
 	        
 			if (hiddenThreads.indexOf(hilo.id) >= 0) { //Si está oculto manualmente, prevalece sobretodo lo demas
@@ -262,6 +293,13 @@ function FilterThreads() {
 	        	}
 	        	
 	        }
+	        
+	        if (!hilo.isHidden && hilo.icon_td.find("img").attr("src").indexOf("new.gif") == -1) { //Hilo leído
+	        	if (hideReadThreads) {
+	        		hilo.row.css("display", "none");
+	        	}
+	        	readThreads.push(hilo);
+        	}
 	        
         }
         
@@ -456,7 +494,7 @@ if (hilo.originalPosition) {
         saveFavorites();
 	}
 	
-	function favoriteThreadsShowthread() {
+	function onShowThread() {
 		//estamos viendo un hilo, ¿que hilo es?
 		//la pregunta tiene miga, ya que en la URL no tiene por qué venir el topic_id
 		var href = $("#threadtools_menu form>table tr:last a").attr("href");
@@ -522,6 +560,7 @@ if (hilo.originalPosition) {
 		var preferences = new Array();
 		
 		var hiddenThreadsSection = [];
+		hiddenThreadsSection.push(new BooleanPreference("HIDDEN_READ_THREADS", false, "Mostrar solo hilos no leídos. <span style='color:gray;'>De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>"));
 		hiddenThreadsSection.push(new TextPreference("HIDDEN_USERS", "", "Por usuario <b>(separados por comas)</b>"));
 		hiddenThreadsSection.push(new TextPreference("HIDDEN_KEYWORDS", "", "Por palabras clave <b>(separadas por comas)</b>"));
 		hiddenThreadsSection.push(new BooleanPreference("HIDDEN_KEYWORDS_REGEX", false, "<b>Avanzado:</b> Usar expresión regular en las palabras clave"));
