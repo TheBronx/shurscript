@@ -96,7 +96,7 @@ function SettingsWindow() {
 		//<form class="module-settings" id="' + modules[i].id + '"  name="' + modules[i].id + '" class="form-horizontal" disabled></form>\
 		
 		var enableCheck = $('<input style="float: right;" class="module-enable-check" type="checkbox" name="enabled"/>');
-		var enabled = activeModules.indexOf(module) != -1;
+		var enabled = activeModules[module.id];
 		if (enabled) {
 			enableCheck.attr("checked", "");
 		} else {

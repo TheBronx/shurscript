@@ -43,7 +43,7 @@
 
 var helper;
 var allModules = []; //Todos los modulos
-var activeModules = []; //Los que tiene activados el usuario
+var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
 var AutoUpdater;
 
 /* Variables útiles y comunes a todos los módulos */
@@ -109,8 +109,8 @@ function initialize() {
 
 function loadModules() {
 
+    activeModules = getActiveModules();
     var moduleNames = getAllModules(),
-        activeModules = getActiveModules(),
         module,
         msg;
 
@@ -128,41 +128,42 @@ function loadModules() {
 
     $.each(moduleNames, function(index, moduleName) {
 
-        // do - while(false)
-        do {
-            // Instancia modulo
-            module = getModuleInstance(moduleName);
+        // Instancia modulo
+        module = getModuleInstance(moduleName);
 
-            if ( ! module) {
-                break;
+        if ( ! module) {
+            return;
+        }
+
+        // Guardalo
+        allModules.push(module);
+
+        // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
+        if ( ! activeModules.hasOwnProperty(moduleName)) {
+            activeModules[moduleName] = module.enabledByDefault;
+        }
+
+        // Comprueba que el modulo está activo o aborta
+        if ( ! activeModules[moduleName]) {
+            return;
+        }
+
+        // Si el modulo tiene .shouldLoad y este devuelve false, aborta
+        if (module.shouldLoad && (! module.shouldLoad())) {
+            return;
+        }
+
+        // Si [no estamos en portada], o si [estamos en portada y el modulo funciona en portada]: carga.
+        if ( ! inFrontPage || (inFrontPage && module.worksInFrontPage))  {
+            helper.log("Loading module '" + moduleName + "'...");
+            try {
+	            module.load();
+	            helper.log ("Module '" + moduleName + "' loaded successfully.");
+            } catch (e) {
+	            helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
             }
+        }
 
-            // Guardalo
-            allModules.push(module);
-
-            // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
-            if ( ! activeModules.hasOwnProperty(moduleName)) {
-                activeModules[moduleName] = module.enabledByDefault;
-            }
-
-            // Comprueba que el modulo está activo o aborta
-            if ( ! activeModules[moduleName]) {
-                break;
-            }
-
-            // Si el modulo tiene .shouldLoad y este devuelve false, aborta
-            if (module.shouldLoad && (! module.shouldLoad())) {
-                break;
-            }
-
-            // Si [no estamos en portada], o si [estamos en portada y el modulo funciona en portada]: carga.
-            if ( ! inFrontPage || (inFrontPage && module.worksInFrontPage))  {
-                helper.log("Loading module '" + moduleName + "'...");
-                module.load();
-                helper.log ("Module '" + moduleName + "' loaded successfully.");
-            }
-
-        } while(false)
 
     });
 
