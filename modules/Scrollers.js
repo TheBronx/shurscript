@@ -56,7 +56,7 @@ function Scrollers() {
 		var topArrow = $("<div class='scrollerArrow' id='scrollToTopArrow'></div>");
 		topArrow.click(function(){$('html, body').stop().animate({scrollTop: '0px'}, 800)});
 		var bottomArrow = $("<div class='scrollerArrow' id='scrollToBottomArrow'></div>");
-		bottomArrow.click(function(){$('html, body').stop().animate({scrollTop: $("html").height() + 'px'}, 800)});
+		bottomArrow.click(function(){$('html, body').stop().animate({scrollTop: ($("#qrform").length > 0 ? $("#qrform").offset().top  : $("html").height()) + 'px'}, 800)});
 		
 		var upOrDown = helper.getValue('UP_OR_DOWN', 'both');
 		if (upOrDown == 'up') {
