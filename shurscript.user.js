@@ -3,39 +3,42 @@
 // http://www.gnu.org/licenses/gpl-2.0.html
 //
 // ==UserScript==
-// @name            ShurScript
-// @description     Script para ForoCoches
-// @namespace       http://shurscript.es
-// @version         0.09.2
-// @author          TheBronx
-// @author          xusoO
-// @author          Fritanga
-// @author          juno/ikaros45
-// @include         *forocoches.com*
-// @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
-// @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/plugins/bootbox.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/plugins/Markdown.Converter.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/BetterPosts.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/FavouriteThreads.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/Scrollers.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/AutoUpdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/settings_window.js
-// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
-// @resource scroller-img https://github.com/TheBronx/shurscript/raw/master/img/scroller.png
-// @grant   GM_log
-// @grant   GM_getValue
-// @grant   GM_setValue
-// @grant   GM_deleteValue
-// @grant   GM_xmlhttpRequest
-// @grant   GM_registerMenuCommand
-// @grant   GM_addStyle
-// @grant   GM_getResourceText
-// @grant   GM_getResourceURL
+// @name			ShurScript
+// @description		Script para ForoCoches
+// @namespace		http://shurscript.es
+// @version			0.10-dev
+// @author			TheBronx
+// @author			xusoO
+// @author			Fritanga
+// @author			juno / ikaros45
+// @include			*forocoches.com*
+// @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
+// @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
+// @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
+// @resource trash-img https://github.com/TheBronx/shurscript/raw/dev/img/trash.png
+// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/dev/img/trash-black.png
+// @grant	GM_log
+// @grant	GM_getValue
+// @grant	GM_setValue
+// @grant	GM_deleteValue
+// @grant	GM_xmlhttpRequest
+// @grant	GM_registerMenuCommand
+// @grant	GM_addStyle
+// @grant 	GM_getResourceText
+// @grant 	GM_getResourceURL
 // ==/UserScript==
 
 var helper;
@@ -52,7 +55,7 @@ var scriptVersion;
 var inFrontPage = location.href === 'http://www.forocoches.com/'
 
 jQuery(document).ready(function(){
-    if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+    if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
         return;
     }
 
@@ -109,8 +112,9 @@ function loadModules() {
     var moduleNames = getAllModules(),
         activeModules = getActiveModules(),
         module,
-        msg,
-        getModuleInstance = function (moduleName) {
+        msg;
+
+    var getModuleInstance = function (moduleName) {
             var module;
 
             try {
