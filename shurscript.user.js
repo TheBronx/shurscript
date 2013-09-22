@@ -16,16 +16,19 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/FavouriteThreads.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
 // @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
+// @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
+// @resource trash-img https://github.com/TheBronx/shurscript/raw/dev/img/trash.png
+// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/dev/img/trash-black.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
