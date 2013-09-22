@@ -51,20 +51,28 @@ function FilterThreads() {
 	}
 	
 	function loadStyles() {
-		if (helper.getValue("FAVORITES_JUST_BORDER", false)) {
-			GM_addStyle(".favorite>td:nth-child(3) {border-left: 4px solid "+helper.getValue("FAVORITES_COLOR", "")+" !important}");
-		} else {
-			GM_addStyle(".favorite>td:nth-child(3) {background-color:"+helper.getValue("FAVORITES_COLOR", "")+" !important;}");
+		var favsColor = helper.getValue("FAVORITES_COLOR", "#D5E6EE");
+		if (favsColor !== "") {
+			if (helper.getValue("FAVORITES_JUST_BORDER", false)) {
+				GM_addStyle(".favorite>td:nth-child(3) {border-left: 4px solid " + favsColor + " !important}");
+			} else {
+				GM_addStyle(".favorite>td:nth-child(3) {background-color:" + favsColor + " !important;}");
+			}
 		}
 		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');min-width:20px;}");
 		GM_addStyle(".shurmenu_trigger img, .shurmenu_opened img {display:none;} .shurmenu_trigger, .shurmenu_opened {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://i.imgur.com/CCQcR98.gif');min-width:20px;}");
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');min-width:20px;}");
 		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
-		if (helper.getValue("HIGHLIGHT_JUST_BORDER", false)) {
-			GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid "+helper.getValue("HIGHLIGHT_COLOR", "")+" !important}");
-		} else {
-			GM_addStyle(".highlighted>td:nth-child(3) {background-color:"+helper.getValue("HIGHLIGHT_COLOR", "")+";}");
+		
+		var highlightColor = helper.getValue("HIGHLIGHT_COLOR", "#FAF7DD");
+		if (highlightColor !== "") {
+			if (helper.getValue("HIGHLIGHT_JUST_BORDER", false)) {
+				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + highlightColor + " !important}");
+			} else {
+				GM_addStyle(".highlighted>td:nth-child(3) {background-color:" + highlightColor + ";}");
+			}
 		}
+		
 		if (helper.getValue("HIGHLIGHT_BOLD", true)) {
 			GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
 		}
