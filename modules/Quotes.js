@@ -339,25 +339,29 @@ function Quotes() {
 		setNotificationsCount(count);
 		
 		if (!notificationsListButtons) {
+			notificationsListButtons = jQuery("<table id='notificationsListButtons' border='0' cellspacing='0'><tr></tr></table>");
+			
 			var markAsReadButton = jQuery("<td title='Marcar todas las citas como leídas'/>");
 			markAsReadButton.html("Marcar como leídas");
 			markAsReadButton.click(function(){
 				markAllAsRead();
 			});
+			notificationsListButtons.append(markAsReadButton);
 			
-			var openInTabsButton = jQuery("<td title='Abrir todas las citas no leídas en diferentes pestañas'/>");
-			openInTabsButton.html("Abrir en pestañas");
-			openInTabsButton.click(function(){
-				arrayQuotes.forEach(function(cita){
-					if (!cita.read) {
-						window.open(cita.postLink, "_blank");
-					}
+			if (helper.getValue("OPEN_IN_TABS_BUTTON", true)) {
+				var openInTabsButton = jQuery("<td title='Abrir todas las citas no leídas en diferentes pestañas'/>");
+				openInTabsButton.html("Abrir en pestañas");
+				openInTabsButton.click(function(){
+					arrayQuotes.forEach(function(cita){
+						if (!cita.read) {
+							window.open(cita.postLink, "_blank");
+						}
+					});
+					markAllAsRead();
 				});
-				markAllAsRead();
-			});
+				notificationsListButtons.append(openInTabsButton);
+			}
 			
-			notificationsListButtons = jQuery("<table id='notificationsListButtons' border='0' cellspacing='0'><tr></tr></table>");
-			notificationsListButtons.append(markAsReadButton, openInTabsButton);
 			notificationsBox.append(notificationsListButtons);
 		}
 		
@@ -454,6 +458,7 @@ function Quotes() {
 		
 		preferences.push(new BooleanPreference("SHOW_ALERTS", true, "Mostrar una alerta en el navegador cada vez que llegue una nueva notificación"));
 		preferences.push(new BooleanPreference("MENTIONS_TOO", true, "Notificar también las menciones, no solo las citas (Si se desactiva puede ralentizar la recuperación de las notificaciones)"));
+		preferences.push(new BooleanPreference("OPEN_IN_TABS_BUTTON", true, "Mostrar botón en la lista de notificaciones para abrir no leídas en pestañas"));
 		
 		var refreshEveryOptions = [new RadioOption("2", "Cada 2 minutos"), new RadioOption("10", "Cada 10 minutos"), new RadioOption("30", "Cada 30 minutos"), new RadioOption("off", "Manualmente", "Haciendo clic en el contador de notificaciones")];
 		preferences.push(new RadioPreference("REFRESH_EVERY", "2", refreshEveryOptions, "Buscar citas:"));		

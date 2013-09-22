@@ -3,7 +3,26 @@
 	Última versión estable: v0.09.2 (16 de septiembre de 2013)
 	En desarrollo: v0.10
 
-## v0.09.2
+## v0.10
+**Changes**
+
+* Nueva opción para notificar solo de lo que son realmente citas y no menciones ni coincidencias con el nick que puede sacar el buscador del foro por error
+* Historial de las últimas citas leídas debajo de las nuevas
+* Botón en el listado de notificaciones para abrir todas las nuevas en pestañas
+* Ocultar hilos:
+	* Por usuario creador
+	* Por palabras clave en el título
+	* Manualmente
+* Resaltar y mostrar arriba hilos por palabras clave
+* Opción para mostrar los hilos favoritos por encima del resto
+
+**Bugfixes**
+
+* No actualizar las notificaciones desde search.php, para evitar que nos haga esperar X segundos hasta la próxima búsqueda
+
+------------------------------------
+
+### v0.09.2 `16/09/2013`
 **Changes**
 
 * La barra de navegación inferior añadida por Electrik en los últimos días se elimina dejando únicamente visible la de 'shurscript'.
