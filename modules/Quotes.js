@@ -49,6 +49,8 @@ function Quotes() {
 	var notificationsList;
 	var notificationsListButtons;
 	
+	var originalTitle = document.title; //Para cambiar el titulo de la pagina con el numero de notificaciones
+	
 			
 	this.load = function initialize() {
 		
@@ -292,14 +294,22 @@ function Quotes() {
 	function setNotificationsCount(count) {
 	    var notificationsDiv = jQuery(".notifications");
 	    if (count > 0) {
+	    	
+	    	document.title = "(" + count + ") - " + originalTitle;
+	    	
 		    notificationsDiv.attr("title", "Tienes " + count + " " + (count == 1 ? "notificación no leída" : "notificaciones no leídas"));
 	        notificationsDiv.addClass("unread");
 	    } else {
+	    	
+	    	document.title = originalTitle;
+	    
 		    notificationsDiv.attr("title", "No tienes ninguna notificación nueva");
 	        notificationsDiv.removeClass("unread");
 	    }
 	    notificationsCount = count;
 	    notificationsDiv.html(count);
+	    
+	    
 	    
 	}
 	
