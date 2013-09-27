@@ -560,8 +560,10 @@ if (hilo.originalPosition) {
 		};
 		
 		quickFilter.keydown(function(event) {
-			if (event.which == 27) {
+			if (event.which == 27) { //Escape
 				setTimeout(function(){quickFilter.val("");quickFilter.trigger("input");}, 1); //No sé porqué pero si no se hace en un timer no se vacía :roto2:
+			} else if (event.which == 13) { //Enter
+				event.preventDefault(); //Evita que se haga el submit de un formulario que tiene por encima
 			}
 			
 		});
