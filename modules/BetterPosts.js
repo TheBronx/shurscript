@@ -158,7 +158,7 @@ function BetterPosts() {
 		$(editor.controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
 		checkAutoGrow.title = 'Crecer automáticamente con el contenido';
 	
-		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height');
+		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height') || 430;
 			
 		$(editor.editdoc.body).on('input', function(){
 			if (checkAutoGrow.checked)
