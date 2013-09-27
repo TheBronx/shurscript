@@ -116,24 +116,25 @@ function loadModules() {
         msg;
 
     var getModuleInstance = function (moduleName) {
-            var module;
+        var module;
 
-            try {
-                module = eval("new " + moduleName + "()");
-            } catch (e) {
-                helper.log('No se ha podido cargar el modulo "' + moduleName + '"\nRazon: ' + e);
-            }
+        try {
+            module = eval("new " + moduleName + "()");
+        } catch (e) {
+            helper.log('No se ha podido instanciar el modulo "' + moduleName + '"\nRazon: ' + e);
+        }
 
-            return module;
-        };
+        return module;
+    };
 
+    // En $.each continue="return true", break="return false"
     $.each(moduleNames, function(index, moduleName) {
 
         // Instancia modulo
         module = getModuleInstance(moduleName);
 
         if ( ! module) {
-            return;
+            return true;
         }
 
         // Guardalo
@@ -146,28 +147,28 @@ function loadModules() {
 
         // Comprueba que el modulo está activo o aborta
         if ( ! activeModules[moduleName]) {
-            return;
+            return true;
         }
 
         // Si el modulo tiene .shouldLoad y este devuelve false, aborta
-        if (module.shouldLoad && (! module.shouldLoad())) {
-            return;
+        if (module.shouldLoad && ( ! module.shouldLoad())) {
+            return true;
         }
 
-        // Si [no estamos en portada], o si [estamos en portada y el modulo funciona en portada]: carga.
-        if ( ! inFrontPage || (inFrontPage && module.worksInFrontPage))  {
+        // Si estamos en portada pero el modulo no carga en portada, continue
+        if (inFrontPage && ( ! module.worksInFrontPage))  {
+            return true;    
+        }
+
+        // Si cumplimos con todo, intenta cargar el modulo
+        try {
             helper.log("Loading module '" + moduleName + "'...");
-            try {
-	            module.load();
-	            helper.log ("Module '" + moduleName + "' loaded successfully.");
-            } catch (e) {
-	            helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
-            }
+            module.load();
+            helper.log ("Module '" + moduleName + "' loaded successfully.");
+        } catch (e) {
+            helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
         }
-
-
     });
-
 }
 
 /*
