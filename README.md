@@ -32,6 +32,10 @@ Para instalar el script necesitas solamente dos cosas:
 Una vez instalada la extensión para tu navegador simplemente instala Shurscript abriendo el siguiente enlace 
 (puede que tengas que esperar unos segundos):<br>
 [Instalar Shurscript](https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js)<br>
+<br>
+Ahora simplemente entra a forocoches y el script empezará a funcionar. Para configurar Shurscript:<br>
+![Opciones](http://i43.tinypic.com/fjnqmg.png)<br>
+Pulsa el link "Shurscript" y activa/desactiva y configura los módulos que quieras usar. Que lo disfrutes shur!
 
 
 <h2>Colaborar</h2>
