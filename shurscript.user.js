@@ -27,6 +27,7 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/dev/css/nightmode-min.css
 // @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
 // @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
