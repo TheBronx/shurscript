@@ -4,8 +4,8 @@
 shurscript
 ==========
 
-Script para forocoches.
-Hilo oficial: http://www.forocoches.com/foro/showthread.php?t=3372750
+Script de usuario para ForoCoches.com
+Hilo oficial: [ForoCoches.com ShurScript](http://www.forocoches.com/foro/showthread.php?t=3372750)
 
 
 <h2>Características:</h2>
@@ -31,10 +31,11 @@ Para instalar el script necesitas solamente dos cosas:
 
 Una vez instalada la extensión para tu navegador simplemente instala Shurscript abriendo el siguiente enlace 
 (puede que tengas que esperar unos segundos):<br>
-[Shurscript](https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js)<br>
+[Instalar Shurscript](https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js)<br>
 
 
 <h2>Colaborar</h2>
 Shurscript está desarrollado en forma de módulos, de forma que cualquiera puede colaborar escribiendo su propio módulo.<br>
 Todo el código está publicado en Github (ramas `master` y `dev`) de forma que también puedes contribuir revisando errores 
-y mejorando partes ya existentes.
+y mejorando partes ya existentes.<br>
+Por supuesto también puedes colaborar aportando ideas, sugerencias, probando la rama de desarrollo...
