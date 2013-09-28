@@ -12,8 +12,8 @@ function BetterPosts() {
 	var helper = new ScriptHelper(this.id);
 	
 	var vB_Editor;
-	var genericHandler;
-	var checkAutoGrow;
+	var genericHandler; //Handler para los botones
+	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
 	var minHeightTextArea;
 
 	this.shouldLoad = function() {
@@ -29,7 +29,7 @@ function BetterPosts() {
 		if (!isWYSIWYG()) { //Chrome, Safari, etc.
 			enableWYSIWYG();
 			var checkWYSIWYG = setInterval(function(){
-				if (getEditor().editdoc.body) {
+				if (getEditor().editdoc.body) { //WYSIWYG activado
 					clearInterval(checkWYSIWYG);
 					enableWYSIWYGDependantFeatures();
 				}
@@ -73,6 +73,10 @@ function BetterPosts() {
 		}
 		
 		enablePostRecovery();
+		
+		if (helper.getValue("AUTO_SEND_REPLY", true)) {
+			enableAutoSendReply();
+		}
 		
 		if (isQuickReply()) {
 			$("a[href^='editpost.php?do=editpost']").click(function(){ //El editor de posts tambien tiene WYSIWYG
@@ -154,7 +158,7 @@ function BetterPosts() {
 		$(editor.controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
 		checkAutoGrow.title = 'Crecer automáticamente con el contenido';
 	
-		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height');
+		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height') || 430;
 			
 		$(editor.editdoc.body).on('input', function(){
 			if (checkAutoGrow.checked)
@@ -176,8 +180,8 @@ function BetterPosts() {
 		
 	/* Permite multi-citar con el botón de respuesta rápida. Además mete la cita en el cuadro de texto de forma visible. */
 	function enableQuickReplyWithQuote(){
-    
-	    $('a[id^="qr_"]').click(function(){
+    	
+    	var handler = function(){
 	    	if (isWYSIWYG()) {
 			    var id = this.id.replace('qr_','');
 			    var quote = '';
@@ -245,10 +249,19 @@ function BetterPosts() {
 	
 			    unsafeWindow.set_cookie("vbulletin_multiquote", "");
 		    }
-	    });
+	    };
 	    
 	    //Ocultamos el check de 'Citar mensaje en respuesta'. No lo eliminamos, si no lo encuentra se va a la respuesta Avanzada.
 	    $("#" + getEditor().editorid).siblings().filter('fieldset').first().hide();
+	    
+
+	    //Lanzamos un timer que va comprobando si se han añadido nuevas respuestas para añadirles el manejador de respuesta rápida
+	    setInterval(function() {
+		    var buttonsList = $('a[id^="qr_"]').not(".shurscripted");
+		    buttonsList.addClass("shurscripted");
+		    buttonsList.click(handler);
+	    }, 1000);
+	    
 	}
 	
 	function getQuotedPost(id) {
@@ -304,13 +317,43 @@ function BetterPosts() {
 		
 		$(getEditor().editdoc.body).on('input', onInputHandler);
 				
+				
 		//Al enviar la respuesta, se elimina el backup
-		$("form[name='vbform']").on("submit", function() {
+		$("#qr_submit").on("click", function() {
 			helper.deleteValue("POST_BACKUP");
 		});
 		
+		
 	}
 	
+	function enableAutoSendReply() {
+		//Al enviar la respuesta, se comprueba si nos han hecho esperar
+		$("#qr_submit").on("click", function() {
+			var timeToWait;
+			if (unsafeWindow.autoReplyInterval) { //Si hay alguno activo lo desactivamos
+				clearInterval(unsafeWindow.autoReplyInterval);
+			}
+			var interval = setInterval(function() {
+				var errors = $("#qr_error_td");
+				if (errors.length > 0 && errors.text().indexOf("Debes esperar") != -1) {
+					errors = errors.find("li").first();
+					timeToWait = timeToWait || parseInt(errors.text().match(/en ([\d]+)/)[1]);
+					
+					if ((--timeToWait) <= 0) {
+						clearInterval(interval);
+						helper.deleteValue("POST_BACKUP");
+						$("#qrform").submit();
+					} else {
+						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
+					}
+					
+				} else {
+					clearInterval(interval);
+				}
+			}, 1000);
+			unsafeWindow.autoReplyInterval = interval;
+		});
+	}
 	
 	/* Añade accesos directos a algunos iconos en al respuesta rápida */
 	function addIcons() {
@@ -324,6 +367,7 @@ function BetterPosts() {
 		fieldset.append(createIcon(":cantarin:", "http://cdn.forocoches.com/foro/images/smilies/Sing.gif", 101));
 		fieldset.append(createIcon(":qmeparto:", "http://cdn.forocoches.com/foro/images/smilies/meparto.gif", 142));
 		fieldset.append(createIcon(":nusenuse:", "http://cdn.forocoches.com/foro/images/smilies/nusenuse.gif", 283));
+		fieldset.append(createIcon(":facepalm:", "http://cdn.forocoches.com/foro/images/smilies/facepalm.gif", 318));
 		fieldset.append(createIcon(":zpalomita", "http://cdn.forocoches.com/foro/images/smilies/icon_popcorn.gif", 215));
 		fieldset.append(createIcon(":zplatano2", "http://cdn.forocoches.com/foro/images/smilies/b2.gif", 236));
 		fieldset.append(createIcon(":number1:", "http://cdn.forocoches.com/foro/images/smilies/number_one.gif", 268));
@@ -332,7 +376,7 @@ function BetterPosts() {
 		fieldset.append(createIcon(":sisi1:", "http://cdn.forocoches.com/foro/images/smilies/sisi1.gif", 299));
 		fieldset.append(createIcon(":babeando:", "http://cdn.forocoches.com/foro/images/smilies/babeando.gif", 274));
 		fieldset.append(createIcon(":elboinas:", "http://cdn.forocoches.com/foro/images/smilies/elboinas.gif", 314));
-		fieldset.append(createIcon(":sherlock:", "http://cdn.forocoches.com/foro/images/smilies/sherlock.gif", 281));
+/* 		fieldset.append(createIcon(":sherlock:", "http://cdn.forocoches.com/foro/images/smilies/sherlock.gif", 281)); */
 		fieldset.append(createIcon(":qtedoy:", "http://cdn.forocoches.com/foro/images/smilies/smiley_1140.gif", 191));
 		fieldset.append(createIcon(":abrazo:", "http://cdn.forocoches.com/foro/images/smilies/abrazo.gif", 161));
 		var more = $("<a href='#qrform'>Más...</a>");
@@ -426,6 +470,7 @@ function BetterPosts() {
 		preferences.push(new BooleanPreference("ICONS_AND_BUTTONS", true, "Mostrar nuevos botones e iconos en el formulario de respuesta rápida"));
 		preferences.push(new BooleanPreference("AUTO_GROW", true, "La caja de texto crece a medida que se va escribiendo el post"));
 		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)"));
+		preferences.push(new BooleanPreference("AUTO_SEND_REPLY", true, "Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post"));
 		
 		var options = [new RadioOption("ASK", "Preguntar"), new RadioOption("APPEND", "Añadir"), new RadioOption("OVERWRITE", "Sobreescribir")];
 		preferences.push(new RadioPreference("POST_OVERWRITE", "ASK", options, "Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:"));

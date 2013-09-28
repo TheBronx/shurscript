@@ -11,11 +11,14 @@ function FilterThreads() {
 	
 	var favorites;
 	
+	var threads = [];
+	
 	var hideReadThreads = false;
 	var readThreads = [];
 	var hiddenThreads = [];
 	var hiddenThreadsCount = 0;
 	var hiddenThreadsBlock;
+	var hideReadThreadsButton;
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
 	
 	var highlightedOnTop, favoritesOnTop;
@@ -85,17 +88,19 @@ function FilterThreads() {
 	    hideReadThreads = helper.getValue("HIDDEN_READ_THREADS", false);
 	    var forumToolsButton = $("#forumtools");
 	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
-	    var hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
+	    hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
 	    hideReadThreadsButton.append(hideReadThreadsLink);
 	    hideReadThreadsButton.click(function(){
 	    	hideReadThreads = !hideReadThreads;
 	    	if (hideReadThreads) {
 			    $.each(readThreads, function(index, hilo){
+			    	hilo.hideRead = true;
 				    hilo.row.css("display", "none");
 			    });
 			    hideReadThreadsLink.html("Mostrar todos los hilos");
 		    } else {
 			    $.each(readThreads, function(index, hilo){
+				    hilo.hideRead = false;
 				    hilo.row.css("display", "table-row");
 			    });
 			    hideReadThreadsLink.html("Mostrar solo los hilos no leídos");
@@ -106,14 +111,19 @@ function FilterThreads() {
 	}
 	
 	/* Construye la expresion regular a partir de una lista de palabras */
-	function getRegex(userInput, isRegex) {
+	function getRegex(userInput, isRegex, wholeWords) {
 		var regex;
 		if (isRegex) {
 			regex = new RegExp(userInput, "i");
 		} else {
 			userInput = userInput.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservador de las regex
 			userInput = userInput.replace(/[\ ]*[\,]+[\ ]*$/, ""); //Quitar comas sobrantes
-			regex = "(\\b|\\ )"; //word-break
+			if (typeof wholeWords == "undefined" || wholeWords) {
+				regex = "(\\b|\\ )"; //word-break
+			} else {
+				regex = "";
+			}
+			
 			regex += "(" + userInput
 					.replace(/[aáà]/ig, "[aáà]")
 					.replace(/[eéè]/ig, "[eéè]")
@@ -121,7 +131,11 @@ function FilterThreads() {
 					.replace(/[oóò]/ig, "[oóò]")
 					.replace(/[uúü]/ig, "[uúü]")
 					.replace(/[\ ]*[\,]+[\ ]*/g, "|") + ")"; //Reemplazar las comas por |
-			regex += "(\\b|\\ )"; //word-break
+			
+			if (typeof wholeWords == "undefined" || wholeWords) {
+				regex += "(\\b|\\ )"; //word-break
+			}
+			
 			regex = new RegExp(regex, "i");
 		}
 		
@@ -170,6 +184,8 @@ function FilterThreads() {
 	function onForumDisplay() {
 	
 		createHideReadThreadsButton();
+		
+		createQuickFilter();
 
 		//Evento para cerrar todos los popups abiertos al hacer clic en cualquier sitio (body)
 		$('body').click(function (e) {
@@ -226,6 +242,8 @@ function FilterThreads() {
 		                    $(this).removeClass("shurmenu_trigger");
 		                }
 		            );
+		            
+		            threads.push(hilo);
 			        
 		        
 		        }
@@ -500,6 +518,63 @@ if (hilo.originalPosition) {
         $(hilo.row).removeClass("favorite");
         hilo.isFavorite = false;
         saveFavorites();
+	}
+	
+	function createQuickFilter() {
+		var quickFilter = $("<input name='quickFilter' placeholder='Filtro rápido...'/>");
+		var quickFilterWrapper = $("<td class='tcat' style='padding:0px 4px;'/>");
+		quickFilterWrapper.append(quickFilter);
+		
+		if (page == "/search.php") {
+			$("#threadslist .tcat span").last().append(quickFilterWrapper);
+        } else {
+			hideReadThreadsButton.before(quickFilterWrapper);
+        }
+		
+		var delayer;
+		var filterFunction = function() {
+			if (quickFilter.val() == "" || quickFilter.val().length <= 2) {
+				threads.forEach(function(hilo) {
+					if (!hilo.hideRead) { //Si estaba oculto antes de filtrar por estar leído (es el único tipo de ocultación que tiene un display:none;)
+		        		hilo.row.css("display", "table-row");
+		        	}
+			        hilo.title_link.html(hilo.title);
+				});
+			} else {
+				var regex = getRegex(quickFilter.val(), false, false);
+				threads.forEach(function(hilo) {
+					if (hilo.isHidden) {
+						return;
+					}
+								
+					var matchResult;
+					if (!hilo.hideRead && (matchResult = matchKeywords(hilo.title, regex, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
+			        	hilo.title_link.html(matchResult);
+			        	hilo.row.css("display", "table-row");
+			        } else {
+				        hilo.title_link.html(hilo.title);
+			        	hilo.row.css("display", "none");
+			        }
+				});
+			}
+		};
+		
+		quickFilter.keydown(function(event) {
+			if (event.which == 27) { //Escape
+				setTimeout(function(){quickFilter.val("");quickFilter.trigger("input");}, 1); //No sé porqué pero si no se hace en un timer no se vacía :roto2:
+			} else if (event.which == 13) { //Enter
+				event.preventDefault(); //Evita que se haga el submit de un formulario que tiene por encima
+			}
+			
+		});
+		
+		quickFilter.on("input", function() {
+			clearTimeout(delayer);
+			delayer = setTimeout(filterFunction, 200);
+		});
+		
+		
+
 	}
 	
 	function onShowThread() {
