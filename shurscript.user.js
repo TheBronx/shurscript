@@ -22,10 +22,11 @@
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
+// @require			file:///C:\Users\Trollo\Dropbox\Programacion\shurscript\modules\NightMode.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/dev/preferences.js
-// @require			https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
 // @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
 // @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
@@ -157,7 +158,7 @@ function loadModules() {
 
         // Si estamos en portada pero el modulo no carga en portada, continue
         if (inFrontPage && ( ! module.worksInFrontPage))  {
-            return true;    
+            return true;
         }
 
         // Si cumplimos con todo, intenta cargar el modulo
