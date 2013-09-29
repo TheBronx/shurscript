@@ -5,7 +5,7 @@ function NightMode() {
     this.author = 'ikaros45 / Juno';
     this.version = '0.1';
     this.description = 'Cambia la apariencia del foro a colores más oscuros. Perfecto para leer el foro por la noche sin cansar la vista. <b>BETA</b>';
-    this.enabledByDefault = false; //Define si el modulo vendrá activado por defecto o no
+    this.enabledByDefault = true; //Define si el modulo vendrá activado por defecto o no
     this.worksInFrontPage = true; // Modulo carga en portada
 
     var helper = new ScriptHelper(this.id);
