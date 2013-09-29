@@ -6,26 +6,35 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.09.2
+// @version			0.10
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
-// @include			*forocoches.com/foro/*
+// @author			juno / ikaros45
+// @include			*forocoches.com*
 // @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/plugins/bootbox.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/plugins/Markdown.Converter.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/FilterThreads.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/modules/BetterPosts.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/FavouriteThreads.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/modules/Scrollers.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
+// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/NightMode.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/AutoUpdater.js
 // @require			https://github.com/TheBronx/shurscript/raw/master/preferences.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/settings_window.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/settings_window.js
+// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/master/css/nightmode-min.css
 // @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
 // @resource scroller-img https://github.com/TheBronx/shurscript/raw/master/img/scroller.png
+// @resource star-img https://github.com/TheBronx/shurscript/raw/master/img/star.png
+// @resource trash-img https://github.com/TheBronx/shurscript/raw/master/img/trash.png
+// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/master/img/trash-black.png
+// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/master/img/light-on.png
+// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/master/img/light-off.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
@@ -39,7 +48,7 @@
 
 var helper;
 var allModules = []; //Todos los modulos
-var activeModules = []; //Los que tiene activados el usuario
+var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
 var AutoUpdater;
 
 /* Variables útiles y comunes a todos los módulos */
@@ -47,157 +56,192 @@ var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
 var username;
 var userid;
 var scriptVersion;
-
+// Comprueba si estamos en la portada
+var inFrontPage = location.href === 'http://www.forocoches.com/'
 
 jQuery(document).ready(function(){
-	if (window.top != window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-		return;
-	}
-	
-	initialize();
-	
-	if (isCompatible()) {
-		loadModules();
-	}
-	
-	AutoUpdater = new AutoUpdater();
-	AutoUpdater.check();
+    if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+        return;
+    }
+
+    initialize();
+
+    if (isCompatible()) {
+        loadModules();
+    }
+
+    AutoUpdater = new AutoUpdater();
+    AutoUpdater.check();
 });
 
 function isCompatible() {
-	//Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
-	if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
-		scriptVersion = GM_info.script.version
-	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
-		scriptVersion = GM_getMetadata('version');
-	} else {
-		bootbox.alert('El addon de scripts de tu navegador no está soportado.');
-		return false;
-	}
-	return true;
+    //Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
+    if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+        scriptVersion = GM_info.script.version
+    } else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+        scriptVersion = GM_getMetadata('version');
+    } else {
+        bootbox.alert('El addon de scripts de tu navegador no está soportado.');
+        return false;
+    }
+    return true;
 }
 
 function initialize() {
 
-	helper = new ScriptHelper();
-	
-	//inicializamos variables
-	page = location.pathname.replace("/foro","");
-	
-	GM_addStyle(GM_getResourceText('bootstrapcss'));
-	
-	//Recogemos nombre e ID de usuario
-	var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
-	username = user.text();
-	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-	
-	//Configuracion de las ventanas modales
-	bootbox.setDefaults({
-	    locale: "es",
-	    className: "shurscript",
-	    closeButton: false
-	  });
-	  
+    helper = new ScriptHelper();
+
+    //inicializamos variables
+    page = location.pathname.replace("/foro","");
+
+    GM_addStyle(GM_getResourceText('bootstrapcss'));
+
+    var user;
+    if ( ! inFrontPage) {
+        user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+        username = user.text();
+    } else {
+	    user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
+    }
+    userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+
+    //Configuracion de las ventanas modales
+    bootbox.setDefaults({
+        locale: "es",
+        className: "shurscript",
+        closeButton: false
+      });
+
 }
 
 function loadModules() {
 
-	var modules = getAllModules();
-			
-	var active = getActiveModules();
-		
-	for (var i = 0; i < modules.length; i++) {
-		var moduleName = modules[i].trim();
-		try {
-			module = eval("new " + moduleName + "()");
-			//module = new this[moduleName];
-			if (!module) {
-				helper.log ("Module '" + moduleName + "' not found.");
-			} else {
-				
-				if (active[moduleName] == true || ((typeof active[moduleName] == 'undefined') && module.enabledByDefault)) { //Activado por el usuario o por defecto
-					if (!module.shouldLoad || module.shouldLoad()) {
-						helper.log("Loading module '" + moduleName + "'...");
-						module.load();
-						helper.log ("Module '" + moduleName + "' loaded successfully.");
-					}
-					activeModules.push(module);
-				}
-				allModules.push(module);
-				
-			}
-		} catch (e) {
-			helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
-		}
-	}
-		
+    activeModules = getActiveModules();
+    var moduleNames = getAllModules(),
+        module,
+        msg;
+
+    var getModuleInstance = function (moduleName) {
+        var module;
+
+        try {
+            module = eval("new " + moduleName + "()");
+        } catch (e) {
+            helper.log('No se ha podido instanciar el modulo "' + moduleName + '"\nRazon: ' + e);
+        }
+
+        return module;
+    };
+
+    // En $.each continue="return true", break="return false"
+    $.each(moduleNames, function(index, moduleName) {
+
+        // Instancia modulo
+        module = getModuleInstance(moduleName);
+
+        if ( ! module) {
+            return true;
+        }
+
+        // Guardalo
+        allModules.push(module);
+
+        // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
+        if ( ! activeModules.hasOwnProperty(moduleName)) {
+            activeModules[moduleName] = module.enabledByDefault;
+        }
+
+        // Comprueba que el modulo está activo o aborta
+        if ( ! activeModules[moduleName]) {
+            return true;
+        }
+
+        // Si el modulo tiene .shouldLoad y este devuelve false, aborta
+        if (module.shouldLoad && ( ! module.shouldLoad())) {
+            return true;
+        }
+
+        // Si estamos en portada pero el modulo no carga en portada, continue
+        if (inFrontPage && ( ! module.worksInFrontPage))  {
+            return true;
+        }
+
+        // Si cumplimos con todo, intenta cargar el modulo
+        try {
+            helper.log("Loading module '" + moduleName + "'...");
+            module.load();
+            helper.log ("Module '" + moduleName + "' loaded successfully.");
+        } catch (e) {
+            helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
+        }
+    });
 }
 
 /*
 * Obtener los modulos cargados de los @require
 */
 function getAllModules() {
-	var modules = [];
-	if (typeof GM_info != 'undefined' ) {
-		var metas = GM_info.scriptMetaStr.split("// @");
-		var meta;
-		for (var i = 0; i < metas.length; i++) {
-			meta = metas[i].trim();
-			if (meta.indexOf("require") == 0 && meta.match("/modules/")) {
-				var moduleName = meta.match(/modules\/(.*)\.js/)[1];
-				modules.push(moduleName);
-			}
-		}
-	} else if (typeof GM_getMetadata != 'undefined') { //Scriptish
-		var requires = GM_getMetadata('require');
-		for (var i = 0; i < requires.length; i++) {
-			if (requires[i].match("/modules/")) {
-				var moduleName = requires[i].match(/modules\/(.*)\.js/)[1];
-				modules.push(moduleName);
-			}
-		}
-	}
-	
-	return modules;
+    var modules = [];
+    if (typeof GM_info != 'undefined' ) {
+        var metas = GM_info.scriptMetaStr.split("// @");
+        var meta;
+        for (var i = 0; i < metas.length; i++) {
+            meta = metas[i].trim();
+            if (meta.indexOf("require") == 0 && meta.match("/modules/")) {
+                var moduleName = meta.match(/modules\/(.*)\.js/)[1];
+                modules.push(moduleName.trim());
+            }
+        }
+    } else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+        var requires = GM_getMetadata('require');
+        for (var i = 0; i < requires.length; i++) {
+            if (requires[i].match("/modules/")) {
+                var moduleName = requires[i].match(/modules\/(.*)\.js/)[1];
+                modules.push(moduleName);
+            }
+        }
+    }
+
+    return modules;
 }
 
 /*
 * Obtienes los modulos que tiene activados el usuario {"modulo1" : true, "modulo2" : false, etc.}
 */
 function getActiveModules() {
-	var activeModules = helper.getValue("MODULES");
-	if (activeModules) {
-		try {
-			activeModules = JSON.parse(activeModules);
-		} catch (e){
-			activeModules = {};
-			helper.deleteValue("MODULES");
-		}
-	} else {
-		activeModules = {};
-	}
-	
-	return activeModules;
+    var activeModules = helper.getValue("MODULES");
+    if (activeModules) {
+        try {
+            activeModules = JSON.parse(activeModules);
+        } catch (e){
+            activeModules = {};
+            helper.deleteValue("MODULES");
+        }
+    } else {
+        activeModules = {};
+    }
+
+    return activeModules;
 }
 
 
 /* Metodos de ayuda comunes a todos los módulos. */
 function ScriptHelper(moduleName) {
-	this.moduleName = moduleName;
+    this.moduleName = moduleName;
 }
 
 ScriptHelper.prototype.log = function(message) {
-	console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message)
+    console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message)
 }
 
 ScriptHelper.prototype.setValue = function(key, value) {
-	GM_setValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, value);
+    GM_setValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, value);
 }
 
 ScriptHelper.prototype.getValue = function(key, defaultValue) {
-	return GM_getValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, defaultValue);
+    return GM_getValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, defaultValue);
 }
 
 ScriptHelper.prototype.deleteValue = function(key) {
-	GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
+    GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
 }

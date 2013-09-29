@@ -10,20 +10,26 @@ newMenuItem.click(function(){
 menuItem.parent().append(newMenuItem);
 
 GM_addStyle('.disabled-module {opacity: 0.5;}');
+/* GM_addStyle('#shurscript-settings-window .panel-heading {padding: 5px 8px;}'); */
+GM_addStyle('#shurscript-settings-window, #shurscript-settings-window .panel {color: #333 !important;}');
+/* GM_addStyle('#shurscript-settings-window .panel-body {padding: 7px;}'); */
+GM_addStyle('#shurscript-settings-window p {margin: 0;}');
+GM_addStyle('#shurscript-settings-window, #shurscript-settings-window .panel-body > p, #shurscript-settings-window .help-block {font-size: 13px !important;}');
+GM_addStyle('#shurscript-settings-window .panel-heading > h3 {font-size: 15px !important;}');
 
 
 function SettingsWindow() {
 
 	var panels = [];
 	
-	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="static">\
+	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="true">\
 	    <div class="modal-dialog" style="width:800px;">\
 	      <div class="modal-content">\
 	        <div class="modal-header">\
 	          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
 	          <h4 class="modal-title" style="font-weight:300">Preferencias del <strong>Shurscript ' + scriptVersion + '</strong></h4>\
 	        </div>\
-	        <div class="modal-body">\
+	        <div class="modal-body" style="overflow: auto;">\
 	        	<!--center class="lead" style="font-size: 12pt;">A continuación se listan todas las funcionalidades disponibles en el Shurscript. Activa las que te interesen y desactiva las que no necesites.</center-->\
 	        </div>\
 	        <div class="modal-footer">\
@@ -55,6 +61,8 @@ function SettingsWindow() {
 		modal.modal('hide');
 		window.location.reload();
 	});
+	
+	modal.find(".modal-body").css("height", $(window).height() - 210);
 	
 	modal.modal();
 	$(".modal-backdrop").css("z-index", 1010); //Para no superponerse a la de los alerts
@@ -88,7 +96,7 @@ function SettingsWindow() {
 		//<form class="module-settings" id="' + modules[i].id + '"  name="' + modules[i].id + '" class="form-horizontal" disabled></form>\
 		
 		var enableCheck = $('<input style="float: right;" class="module-enable-check" type="checkbox" name="enabled"/>');
-		var enabled = activeModules.indexOf(module) != -1;
+		var enabled = activeModules[module.id];
 		if (enabled) {
 			enableCheck.attr("checked", "");
 		} else {
@@ -127,17 +135,13 @@ function SettingsWindow() {
 
 	    	form = $('<form/>');
 	    	preferencesPanelBody.append(form);
-			for (var j = 0; j < preferences.length; j++) {
-				var currentValue = helper.getValue(preferences[j].key);
-				form.append(preferences[j].getHTML(currentValue));
-				if (j != preferences.length - 1) form.append('<hr>');
-			}
+			form.append(getHTMLFromPreferences(preferences));
 			
 			panel.append(preferencesPanel);
 			preferencesPanel.hide(); //Se mostrara con el botón
 			
 	    
-	    	settingsButton = $('<button type="button" data-toggle="button" style="float:right; margin: -24px 24px;" class="btn btn-default btn-sm">Opciones</button></div>');
+	    	settingsButton = $('<button type="button" data-toggle="button" style="float:right; margin: -23px 24px;" class="btn btn-default btn-sm">Opciones</button>');
 			panel.find(".panel-heading").append(settingsButton);
 			if (!enabled) {
 				settingsButton.attr("disabled", "");
@@ -147,6 +151,24 @@ function SettingsWindow() {
 	
 			});
 			
+		}
+		
+		function getHTMLFromPreferences(preferences) {
+			var html = '';
+			for (var j = 0; j < preferences.length; j++) {
+				if (preferences[j] instanceof SectionPreference) {
+					html += '<h4 style="border-bottom: 1px solid lightgray">' + preferences[j].title + '</h4>';
+					html += preferences[j].description;
+					html += "<div style='padding:20px;'>";
+					html += getHTMLFromPreferences(preferences[j].subpreferences);
+					html += "</div>";
+				} else {
+					var currentValue = helper.getValue(preferences[j].key);
+					html += preferences[j].getHTML(currentValue);
+					if (j != preferences.length - 1) html += '<hr>';
+				}
+			}
+			return html;
 		}
 		
 		this.get = function() {
@@ -165,29 +187,41 @@ function SettingsWindow() {
 			if (preferences) {
 				
 				for (var j = 0; j < preferences.length; j++) {
-					var pref = preferences[j];
-					var input = form.find("[name='" + pref.key + "']");
-					var value;
-					
-					if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
-						continue;
-					}
-					
-					if (pref instanceof BooleanPreference) { //Checkbox
-						value = input[0].checked;
-					} else if (pref instanceof RadioPreference) {
-						input.each(function() {
-							if (this.checked) {
-								value = this.value;
-							}
-						});
-					} else {
-						value = input.val();
-					}
-
-					helper.setValue(pref.key, value);
+					parseAndSavePreference(preferences[j]);
 				}
 			}
+		}
+		
+		function parseAndSavePreference(pref) {
+			if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
+				return;
+			}
+			
+			if (pref instanceof SectionPreference) { //Grupo de preferencias
+				innerPrefs = pref.subpreferences;
+				for (var j = 0; j < innerPrefs.length; j++) {
+					parseAndSavePreference(innerPrefs[j]);
+				}
+				return;
+			}
+			
+			
+			var input = form.find("[name='" + pref.key + "']");
+			var value;
+			
+			if (pref instanceof BooleanPreference) { //Checkbox
+				value = input[0].checked;
+			} else if (pref instanceof RadioPreference) {
+				input.each(function() {
+					if (this.checked) {
+						value = this.value;
+					}
+				});
+			} else {
+				value = input.val();
+			}
+
+			helper.setValue(pref.key, value);
 		}
 
 	}

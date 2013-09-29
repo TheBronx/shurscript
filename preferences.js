@@ -88,3 +88,21 @@ ButtonPreference.prototype.getHTML = function() {
 	button.click(this.clickHandler);
 	return button;
 }
+
+
+function SectionPreference(title, description, subpreferences) {
+    this.title = title;
+    this.description = description;
+    this.subpreferences = subpreferences;
+}
+
+SectionPreference.prototype.getHTML = function() {
+	var section = '<h4 style="border-bottom: 1px solid lightgray">' + this.title + '</h4>';
+	section += this.description;
+	section += "<div style='padding:20px;'>";
+	this.subpreferences.forEach(function(pref){
+		section += pref.getHTML();
+	});
+	section += "</div>";
+	return section;
+}
