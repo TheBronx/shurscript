@@ -270,6 +270,57 @@ function BetterPosts() {
 		
 		//Quitar QUOTEs al post
 		$post.find("div[style*='margin:20px; margin-top:5px;']").remove();
+		
+		//Quitar código y reemplazarlos por su BBCode
+		/*
+$post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Código')").parent().each(function() {
+		    	var code = $(this).find('pre').text();
+		    	$(this).replaceWith("[CODE]<pre>" + code + "</pre>[/CODE]");
+		    }
+	    );
+*/
+	    
+	    //Quitar código y reemplazarlos por su BBCode
+		$post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Código')").parent().each(function() {
+				var code = $(this).find('.alt2');
+		
+		    	var title = $(this).find('.smallfont').text();
+
+		    	if (title == "Código HTML:") {
+			    	
+		    		code.find('span').each(function() {
+		    			var br = (this.nextSibling && this.nextSibling.textContent.indexOf("\n") == 0 ? "</br>" : "");
+				    	this.outerHTML = $(this).text().replace(/</g, '&lt;') + br; //Escapar HTML y mantener saltos de linea
+			    	});
+			    	
+			    	code = code.html().replace(/ /g, "&nbsp;");
+			    	$(this).replaceWith("[HTML]</br>" + code.trim() + "</br>[/HTML]");
+			    	return;
+		    	} 
+		    	
+		    	
+		    	if (title == "Código PHP:") {
+		    		code = code.find('code span');
+		    		code.find('span').each(function() {
+				    	this.outerHTML = this.innerHTML; //Cambiar los SPAN por su contenido
+			    	});
+			    	
+			    	code = code.html().replace(/ /g, "&nbsp;");
+			    	
+			    	$(this).replaceWith("[PHP]</br>" + code.trim() + "</br>[/PHP]");
+			    	return;
+		    	} 
+		    	
+		    	
+		    	code = code.text();
+		    	code = code.replace(/\n/g, "</br>").replace(/\ /g, "&nbsp;"); //Mantener espacios y saltos de linea
+		    	if (title == "Código:") {
+			    	$(this).replaceWith("[CODE]</br>" + code.trim() + "</br>[/CODE]");
+		    	}
+		    	
+		    	
+		    }
+	    );
 	    
 	    //Quitar videos de Youtube y reemplazarlos por su BBCode
 	    $post.find("iframe.youtube-player").each(function() {
