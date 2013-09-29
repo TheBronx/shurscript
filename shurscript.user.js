@@ -5,7 +5,7 @@
 // ==UserScript==
 // @name			ShurScript
 // @description		Script para ForoCoches
-// @namespace		http://shurscript.es
+// @namespace		http://shurscript.org
 // @version			0.10-dev
 // @author			TheBronx
 // @author			xusoO
