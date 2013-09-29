@@ -33,6 +33,8 @@
 // @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
 // @resource trash-img https://github.com/TheBronx/shurscript/raw/dev/img/trash.png
 // @resource trash-black-img https://github.com/TheBronx/shurscript/raw/dev/img/trash-black.png
+// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/dev/img/light-on.png
+// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/dev/img/light-off.png
 // @grant	GM_log
 // @grant	GM_getValue
 // @grant	GM_setValue
