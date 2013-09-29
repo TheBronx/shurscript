@@ -94,12 +94,14 @@ function initialize() {
 
     GM_addStyle(GM_getResourceText('bootstrapcss'));
 
-    // Si no estamos en portada, recogemos nombre e ID de usuario
+    var user;
     if ( ! inFrontPage) {
-        var user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+        user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
         username = user.text();
-        userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+    } else {
+	    user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
     }
+    userid = user.attr("href").match(/\?u\=(\d*)/)[1];
 
     //Configuracion de las ventanas modales
     bootbox.setDefaults({
