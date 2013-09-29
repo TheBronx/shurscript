@@ -24,7 +24,7 @@ function NightMode() {
         css = GM_getResourceText('nightmodecss');
 
         // Incluyelo en head
-        if (helper.getValue('SHOW_ICON')) {
+        if (helper.getValue('SHOW_ICON', true)) {
 			icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");	        
 			
         	if (helper.getValue('ENABLED', false)) {
@@ -49,8 +49,8 @@ function NightMode() {
     };
     
     var enableNightMode = function() {
-	    helper.setValue('ENABLED', true);
 	    if (icon) {
+		    helper.setValue('ENABLED', true);
 			icon.attr('src', GM_getResourceURL('nightmode-off'));
 			icon.attr('title', 'Desactivar modo noche');
 		}
@@ -58,8 +58,8 @@ function NightMode() {
     };
     
     var disableNightMode = function() {
-	    helper.setValue('ENABLED', false);
 	    if (icon) {
+	    	helper.setValue('ENABLED', false);
 			icon.attr('src', GM_getResourceURL('nightmode-on'));
 			icon.attr('title', 'Activar modo noche');
 		}
