@@ -399,14 +399,17 @@ function Quotes() {
 		var row = jQuery("<div class='notificationRow " + (cita.read ? "read" : "") + "'><div><b>El usuario <a href='" + cita.userLink + "'>" + cita.userName + "</a> te ha citado</div><div><a href='" + cita.threadLink + "'>" + cita.threadName + "</a></b></div><div></div></div>");
 		var link = jQuery("<a href='" + cita.postLink + "' style='color:#444;'>" + cita.postText + "</a>");
 		
-		link.mousedown(function(e) { 
-			if (e.which != 3) {
-/* 				setNotificationsCount(notificationsCount - 1); */
-				$(this).parent().parent().addClass("read");
-				markAsRead(cita);
-				$(this).off("mousedown");	
-			}
-		});
+		if (!cita.read) {
+			link.mousedown(function(e) { 
+				if (e.which != 3) {
+					if (!cita.read) {
+						$(this).parent().parent().addClass("read");
+						markAsRead(cita);
+					}
+					$(this).off("mousedown");	
+				}
+			});
+		}
 	
 		link.appendTo(row.find("div").get(2));
 	

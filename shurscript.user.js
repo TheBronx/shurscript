@@ -6,7 +6,7 @@
 // @name			ShurScript
 // @description		Script para ForoCoches
 // @namespace		http://shurscript.es
-// @version			0.10
+// @version			0.10.1
 // @author			TheBronx
 // @author			xusoO
 // @author			Fritanga
@@ -64,14 +64,13 @@ jQuery(document).ready(function(){
         return;
     }
 
-    initialize();
-
-    if (isCompatible()) {
+    if (isLoggedIn() && isCompatible()) {
+	    initialize();
         loadModules();
-    }
 
-    AutoUpdater = new AutoUpdater();
-    AutoUpdater.check();
+        AutoUpdater = new AutoUpdater();
+        AutoUpdater.check();
+    }
 });
 
 function isCompatible() {
@@ -81,7 +80,7 @@ function isCompatible() {
     } else if (typeof GM_getMetadata != 'undefined') { //Scriptish
         scriptVersion = GM_getMetadata('version');
     } else {
-        bootbox.alert('El addon de scripts de tu navegador no está soportado.');
+        alert('El addon de userscripts de tu navegador no está soportado.');
         return false;
     }
     return true;
@@ -96,15 +95,6 @@ function initialize() {
 
     GM_addStyle(GM_getResourceText('bootstrapcss'));
 
-    var user;
-    if ( ! inFrontPage) {
-        user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
-        username = user.text();
-    } else {
-	    user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
-    }
-    userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-
     //Configuracion de las ventanas modales
     bootbox.setDefaults({
         locale: "es",
@@ -112,6 +102,23 @@ function initialize() {
         closeButton: false
       });
 
+}
+
+function isLoggedIn() {
+	var user;
+    if ( ! inFrontPage) {
+        user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+        username = user.text();
+    } else {
+	    user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
+    }
+    
+    if (user.length > 0) {
+    	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+    	return true;
+    }
+    
+    return false;
 }
 
 function loadModules() {

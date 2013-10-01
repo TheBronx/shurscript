@@ -72,7 +72,9 @@ function BetterPosts() {
 			enableAutoGrow();
 		}
 		
-		enablePostRecovery();
+		if (helper.getValue('SAVE_POSTS', true)) {
+			enablePostRecovery();
+		}
 		
 		if (helper.getValue("AUTO_SEND_REPLY", true)) {
 			enableAutoSendReply();
@@ -112,7 +114,6 @@ function BetterPosts() {
 			addIcons();
 		}
 		
-/* 		enablePostRecovery(); */
 	}
 	
 	
@@ -370,30 +371,30 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 				
 				
 		//Al enviar la respuesta, se elimina el backup
-		$("#qr_submit").on("click", function() {
+		$("input[name='sbutton']").on("click", function() {
 			helper.deleteValue("POST_BACKUP");
 		});
 		
 		
 	}
 	
+    /* Al enviar la respuesta, se comprueba si nos han hecho esperar */
 	function enableAutoSendReply() {
-		//Al enviar la respuesta, se comprueba si nos han hecho esperar
-		$("#qr_submit").on("click", function() {
+		var checkWaiting = function() {
 			var timeToWait;
 			if (unsafeWindow.autoReplyInterval) { //Si hay alguno activo lo desactivamos
 				clearInterval(unsafeWindow.autoReplyInterval);
 			}
 			var interval = setInterval(function() {
-				var errors = $("#qr_error_td");
+				var errors = $("td.alt1 ol");
 				if (errors.length > 0 && errors.text().indexOf("Debes esperar") != -1) {
 					errors = errors.find("li").first();
 					timeToWait = timeToWait || parseInt(errors.text().match(/en ([\d]+)/)[1]);
 					
-					if ((--timeToWait) <= 0) {
+					if ((timeToWait--) <= 0) {
 						clearInterval(interval);
 						helper.deleteValue("POST_BACKUP");
-						$("#qrform").submit();
+						$("form[name='vbform']").submit();
 					} else {
 						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
 					}
@@ -403,7 +404,14 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 				}
 			}, 1000);
 			unsafeWindow.autoReplyInterval = interval;
-		});
+		};
+		
+		
+		if (!isQuickReply()) { //En la respuesta avanzada se envia la página y vuelve con el temporizador, entonces no tiene sentido aplicarle el evento al botón, si no cuando carga la página comprobarlo.
+			checkWaiting();
+		} else {
+			$("input[name='sbutton']").on("click", checkWaiting);
+		}
 	}
 	
 	/* Añade accesos directos a algunos iconos en al respuesta rápida */
@@ -522,6 +530,7 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 		preferences.push(new BooleanPreference("AUTO_GROW", true, "La caja de texto crece a medida que se va escribiendo el post"));
 		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)"));
 		preferences.push(new BooleanPreference("AUTO_SEND_REPLY", true, "Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post"));
+		preferences.push(new BooleanPreference("SAVE_POSTS", true, "Guardar copia de los mensajes sin enviar para evitar perder el contenido de un post accidentalmente"));
 		
 		var options = [new RadioOption("ASK", "Preguntar"), new RadioOption("APPEND", "Añadir"), new RadioOption("OVERWRITE", "Sobreescribir")];
 		preferences.push(new RadioPreference("POST_OVERWRITE", "ASK", options, "Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:"));
@@ -529,97 +538,5 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 		return preferences;
 	};
 	
-		/*
-var fontsHandler = function (A){A=unsafeWindow.do_an_e(A);if(A.type=="click"){this._onclick(A);unsafeWindow.vB_Editor[getEditor().editorid].menu_context(this,"mouseover")}else{unsafeWindow.vB_Editor[getEditor().editorid].menu_context(this,A.type)}};
-		var fontnameMenu = $('<div id="' + getEditor().editorid + '_popup_fontname_menu" class="vbmenu_popup" style="cursor: default; padding: 3px; width: 200px; height: 250px; overflow: auto; position: absolute; z-index: 50; clip: rect(auto, auto, auto, auto); left: 703.317px; top: 720.433px;"></div>');
-		var fontnameButton = $('<div title="Fuentes" id="' + getEditor().editorid + '_popup_fontname" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="popup_feedback" style="border-right: 1px solid rgb(255, 255, 255);"><div style="width:91px" id="vB_Editor_001_font_out">Fuentes</div><div id="vB_Editor_001_fontoption_Arial" style="width: 91px; display: none;">Arial</div><div id="vB_Editor_001_fontoption_Arial Black" style="width: 91px; display: none;">Arial Black</div><div id="vB_Editor_001_fontoption_Arial Narrow" style="width: 91px; display: none;">Arial Narrow</div><div id="vB_Editor_001_fontoption_Book Antiqua" style="width: 91px; display: none;">Book Antiqua</div><div id="vB_Editor_001_fontoption_Century Gothic" style="width: 91px; display: none;">Century Gothic</div><div id="vB_Editor_001_fontoption_Comic Sans MS" style="width: 91px; display: none;">Comic Sans MS</div><div id="vB_Editor_001_fontoption_Courier New" style="width: 91px; display: none;">Courier New</div><div id="vB_Editor_001_fontoption_Fixedsys" style="width: 91px; display: none;">Fixedsys</div><div id="vB_Editor_001_fontoption_Franklin Gothic Medium" style="width: 91px; display: none;">Franklin Gothic Medium</div><div id="vB_Editor_001_fontoption_Garamond" style="width: 91px; display: none;">Garamond</div><div id="vB_Editor_001_fontoption_Georgia" style="width: 91px; display: none;">Georgia</div><div id="vB_Editor_001_fontoption_Impact" style="width: 91px; display: none;">Impact</div><div id="vB_Editor_001_fontoption_Lucida Console" style="width: 91px; display: none;">Lucida Console</div><div id="vB_Editor_001_fontoption_Lucida Sans Unicode" style="width: 91px; display: none;">Lucida Sans Unicode</div><div id="vB_Editor_001_fontoption_Microsoft Sans Serif" style="width: 91px; display: none;">Microsoft Sans Serif</div><div id="vB_Editor_001_fontoption_Palatino Linotype" style="width: 91px; display: none;">Palatino Linotype</div><div id="vB_Editor_001_fontoption_System" style="width: 91px; display: none;">System</div><div id="vB_Editor_001_fontoption_Tahoma" style="width: 91px; display: none;">Tahoma</div><div id="vB_Editor_001_fontoption_Times New Roman" style="width: 91px; display: none;">Times New Roman</div><div id="vB_Editor_001_fontoption_Trebuchet MS" style="width: 91px; display: none;">Trebuchet MS</div><div id="vB_Editor_001_fontoption_Verdana" style="width: 91px; display: none;">Verdana</div></td><td class="popup_pickbutton" style="border-color: rgb(255, 255, 255);"><img width="11" height="16" alt="" src="http://cdn.forocoches.com/foro/images/editor/menupop.gif"></td></tr></tbody></table></div>');
-		fontnameButton[0].cmd = 'fontname';
-		fontnameButton[0].editorid = getEditor().editorid;
-		
-fontnameButton[0]._onclick = function (A) {
-		    if (typeof unsafeWindow.do_an_e == "function") {
-		        unsafeWindow.do_an_e(A);
-		        if (unsafeWindow.vBmenu.activemenu == null || unsafeWindow.vBmenu.menus[vBmenu.activemenu].controlkey != this.id) {
-		            unsafeWindow.vBmenu.menus[this.id].show(this)
-		        } else {
-		            unsafeWindow.vBmenu.menus[this.id].hide()
-		        }
-		    }
-		};
-		fontnameButton[0].onclick =	
-fontnameButton[0].onmousedown = fontnameButton[0].onmouseover = fontnameButton[0].onmouseout = fontsHandler;
-		fontnameButton.click(function() {
-			fontnameMenu.css('top', fontnameButton.offset().top);
-			fontnameMenu.css('left', fontnameButton.offset().left);
-			fontnameMenu.show();
-		});
-
-		buttons.push(fontnameButton);
-		toolbar.append(fontnameMenu);
-		toolbar.after(buttons);
-		
-		getEditor().fontoptions = ["Arial", "Arial Black", "Arial Narrow", "Book Antiqua", "Century Gothic", "Comic Sans MS", "Courier New", "Fixedsys", "Franklin Gothic Medium", "Garamond", "Georgia", "Impact", "Lucida Console", "Lucida Sans Unicode", "Microsoft Sans Serif", "Palatino Linotype", "System", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
-		build_fontname_popup(fontnameButton[0], fontnameMenu[0]);
-
-		
-		fontnameMenu.hide();
-	}
 	
-	// Sacado del foro y modificado para que funcione dentro de nuestro sandbox
-	function build_fontname_popup(obj, menu) {
-	    for (var n in getEditor().fontoptions) {
-            var option = document.createElement("div");
-            option.innerHTML = '<font face="' + getEditor().fontoptions[n] + '">' + getEditor().fontoptions[n] + "</font>";
-            option.className = "ofont";
-            option.style.textAlign = "left";
-            option.title = getEditor().fontoptions[n];
-            option.cmd = obj.cmd;
-            option.controlkey = obj.id;
-            option.editorid = getEditor().editorid;
-            option.onmouseover = option.onmouseout = option.onmouseup = option.onmousedown = function (A){A=unsafeWindow.do_an_e(A);unsafeWindow.vB_Editor[getEditor().editorid].button_context(this,A.type,"menu")};
-            option.onclick = function (A){unsafeWindow.vB_Editor[getEditor().editorid].format(A,this.cmd,this.firstChild.innerHTML);menu.hide()};
-            menu.appendChild(option)
-	    }
-	}
-*/
-	
-	
-	
-	/*
-function quickPreview() {
-		var quickPreviewButton = $('<input type="button" onclick="clickedelm = this.value" id="qr_qpreview" tabindex="3" name="qpreview" value="Vista previa" class="button">');
-		quickPreviewButton.click(function(){
-			$('#post_message_143936299').html(createFakePost(getEditor().get_editor_contents()));
-		});
-		$("#qr_submit").parent().append(quickPreviewButton);
-	}
-	
-	function createFakePost(text) {
-		return parseQuotes(text);
-	}
-	
-	function parseQuotes(text) {
-		text = text.replace(/\[QUOTE.*\](.*)\[\/QUOTE\]/, createFakePost('$1'));
-		return text;
-	}
-	
-	function createFakeQuote(text, username, post) {
-		var quote = '<div style="margin:20px; margin-top:5px; "><div style="margin-bottom:2px" class="smallfont">Cita:</div><table cellspacing="0" cellpadding="5" border="0" width="100%"><tbody><tr><td style="border:1px inset" class="alt2">';
-		if (username) {
-			quote += '<div>Originalmente Escrito por <b>' + username + '</b>';
-			if (post) {
-				quote += '<a rel="nofollow" href="showthread.php?p=' + post + '#post' + post + '"><img border="0" alt="Ver Mensaje" src="http://cdn.forocoches.com/foro/images/buttons/viewpost.gif" class="inlineimg" title="Ver Mensaje"></a>';
-			}
-			
-			quote += '</div><div style="font-style:italic">' + text + '</div>';
-			
-		} else {
-			quote += text;
-		}
-		
-		quote += '</td></tr></tbody></table></div>';
-	}
-*/
-	
-
 }
