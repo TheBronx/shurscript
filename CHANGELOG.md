@@ -10,7 +10,7 @@
 * El contador de notificaciones pasaba a números negativos si hacías clic en notificaciones ya leídas (Issue #7)
 * Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
 
-### v0.10
+### v0.10 `29/09/2013`
 
 **Changes**
 
