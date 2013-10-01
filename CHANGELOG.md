@@ -1,9 +1,16 @@
 # CHANGELOG
 
-	Última versión estable: v0.09.2 (16 de septiembre de 2013)
-	En desarrollo: v0.10
+	Última versión estable: v0.10.1 (1 de octubre de 2013)
+	En desarrollo: v0.11
+	
+## v0.10.1
 
-## v0.10
+**Bugfixes**
+
+* El contador de notificaciones pasaba a números negativos si hacías clic en notificaciones ya leídas (Issue #7)
+* Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
+
+### v0.10
 
 **Changes**
 
