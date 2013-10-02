@@ -1,9 +1,16 @@
 # CHANGELOG
 
-	Última versión estable: v0.09.2 (16 de septiembre de 2013)
-	En desarrollo: v0.10
+	Última versión estable: v0.10.1 (1 de octubre de 2013)
+	En desarrollo: v0.11
+	
+## v0.10.1
 
-## v0.10
+**Bugfixes**
+
+* El contador de notificaciones pasaba a números negativos si hacías clic en notificaciones ya leídas (Issue #7)
+* Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
+
+### v0.10
 
 **Changes**
 
@@ -21,6 +28,7 @@
 * El título de la ventana/pestaña del navegador ahora muestra el número de citas no leídas
 * Recarga automáticamente las búsquedas en las que el sistema obliga a esperar varios segundos, evitando así tener que actualizar manualmente la página. **(Aporte del forero Electrosa)**
 * Enviar automáticamente las respuestas cuando el foro te hace esperar 30 segundos entre post y post
+* Modo Noche **(Aporte del forero Juno)** (BETA. Es posible que de vez en cuando os aparezca el foro en blanco durante un par de segundos.)
 
 
 **Bugfixes**
@@ -28,6 +36,7 @@
 * No actualizar las notificaciones desde search.php, para evitar que nos haga esperar X segundos hasta la próxima búsqueda
 * Devolver el tamaño adecuado al editor de texto de la respuesta avanzada
 * Al enviar una respuesta rápida, no funcionaba el botón de cita rápida en los nuevos posts del hilo
+* Cita rápida de etiquetas CODE, HTML y PHP
 
 ------------------------------------
 

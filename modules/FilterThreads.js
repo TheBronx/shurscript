@@ -70,7 +70,7 @@ function FilterThreads() {
 		var highlightColor = helper.getValue("HIGHLIGHT_COLOR", "#FAF7DD");
 		if (highlightColor !== "") {
 			if (helper.getValue("HIGHLIGHT_JUST_BORDER", false)) {
-				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + highlightColor + " !important}");
+				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + highlightColor + "}");
 			} else {
 				GM_addStyle(".highlighted>td:nth-child(3) {background-color:" + highlightColor + ";}");
 			}

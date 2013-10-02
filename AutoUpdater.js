@@ -41,11 +41,12 @@ function AutoUpdater() {
         }
         
         if ( updated ) {
+        	var url = 'https://github.com/TheBronx/shurscript/raw/master/CHANGELOG.md';
 	        GM_xmlhttpRequest({ //Obtenemos el changelog
 	            method: 'GET',
-	            url: 'https://github.com/TheBronx/shurscript/raw/master/CHANGELOG.md',
+	            url: url,
 	            onload: function(resp) {
-	            	changelog = parseChangelog(resp.responseText, xversion, this.url.replace('raw', 'blob'));
+	            	changelog = parseChangelog(resp.responseText, xversion, url.replace('raw', 'blob'));
 	            	bootbox.dialog({
 	            			message:'<h4>Hay disponible una nueva versión (' + xversion + ') del Shurscript.</h4><p><br></p>' + changelog, 
 	            			buttons:[{

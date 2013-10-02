@@ -9,7 +9,7 @@ function NightMode() {
     this.worksInFrontPage = true; // Modulo carga en portada
 
     var helper = new ScriptHelper(this.id);
-
+    
     var css, icon;
 
     /* Define una condición a la carga del módulo. Si no se quiere condición, eliminar este metodo o devolver true. */
@@ -25,52 +25,52 @@ function NightMode() {
 
         // Incluyelo en head
         if (helper.getValue('SHOW_ICON', true)) {
-            icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");
-
-            if (helper.getValue('ENABLED', false)) {
-                enableNightMode();
-            } else {
-                disableNightMode();
-            }
-
-            icon.click(function(){
-                if (helper.getValue('ENABLED', false)) {
-                    disableNightMode();
-                } else {
-                    enableNightMode();
-                }
-            });
-            $(document.body).append(icon);
-
+			icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");	        
+			
+        	if (helper.getValue('ENABLED', false)) {
+	        	enableNightMode();
+        	} else {
+	        	disableNightMode();
+        	}
+        	
+			icon.click(function(){
+				if (helper.getValue('ENABLED', false)) {
+					disableNightMode();
+	        	} else {
+					enableNightMode();
+	        	}
+			});
+			$(document.body).append(icon);
+			
         } else {
-            enableNightMode();
+        	enableNightMode();
         }
 
     };
-
+    
     var enableNightMode = function() {
-        if (icon) {
-            helper.setValue('ENABLED', true);
-            icon.attr('src', GM_getResourceURL('nightmode-off'));
-            icon.attr('title', 'Desactivar modo noche');
-        }
-        $('<style id="nightmode-style">' + css + '</style>').appendTo('head');
+	    if (icon) {
+		    helper.setValue('ENABLED', true);
+			icon.attr('src', GM_getResourceURL('nightmode-off'));
+			icon.attr('title', 'Desactivar modo noche');
+		}
+		$('<style id="nightmode-style">' + css + '</style>').appendTo('head');
     };
-
+    
     var disableNightMode = function() {
-        if (icon) {
-            helper.setValue('ENABLED', false);
-            icon.attr('src', GM_getResourceURL('nightmode-on'));
-            icon.attr('title', 'Activar modo noche');
-        }
-        $("#nightmode-style").remove();
+	    if (icon) {
+	    	helper.setValue('ENABLED', false);
+			icon.attr('src', GM_getResourceURL('nightmode-on'));
+			icon.attr('title', 'Activar modo noche');
+		}
+    	$("#nightmode-style").remove();
     };
-
+    
     this.getPreferences = function() {
-        var preferences = new Array();
+	    var preferences = new Array();
+		
+		preferences.push(new BooleanPreference("SHOW_ICON", true, "<b>Mostrar un icono pequeño arriba a la derecha del foro para activar/desactivar el modo noche rápidamente.</b> Si desmarcas esta opción, tendrás que venir aquí cada vez para activar o desactivar el modo noche."));
 
-        preferences.push(new BooleanPreference("SHOW_ICON", true, "<b>Mostrar un icono pequeño arriba a la derecha del foro para activar/desactivar el modo noche rápidamente.</b> Si desmarcas esta opción, tendrás que venir aquí cada vez para activar o desactivar el modo noche."));
-
-        return preferences;
+		return preferences;
     };
 }
