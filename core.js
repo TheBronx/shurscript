@@ -5,7 +5,7 @@ var SHURSCRIPT = (function ($, GM, undefined) {
 
     self.name = 'core';
 
-    self.GM = GM;
+    // self.GM = GM; // Esto casi que solo lo deberian usar los helpers
     self.modules = {};
 
     self.initialize = function () {
@@ -35,8 +35,9 @@ var SHURSCRIPT = (function ($, GM, undefined) {
     // Objeto base para modulos
     self._moduleProto = {
         enabledByDefault: true,
-        worksInFrontPage: true,
-        shouldLoad: function () {return true;}
+        worksInFrontPage: false,
+        shouldLoad: function () {return true;},
+        getPreferences: function () {return [];}
     };
 
     self.loadModules = function () {
@@ -50,9 +51,23 @@ var SHURSCRIPT = (function ($, GM, undefined) {
                 return true;
             }
 
-            // Metele un helper
-            moduleObject.helper = self.getHelper(moduleObject.name);
+            // Si estamos en portada y el modulo no funciona en la portada, continue
+            if (self.env.inFrontPage && ( ! moduleObject.worksInFrontPage)) {
+                return true;
+            }
 
+            // Luz verde: Ahora a ciclar sanamente al objeto.
+            moduleObject.helper = self.getHelper(moduleObject.id);
+
+
+            // Intentamos carga.
+            try {
+                self.helper.log('Cargando modulo ' + moduleObject.id);
+                moduleObject.load();
+                self.helper.log('Modulo ' + moduleObject.id + 'cargado');
+            } catch (e) {
+                self.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
+            }
         });
     };
 

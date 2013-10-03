@@ -23,4 +23,4 @@
         return helper;
     };
 
-})(jQuery, SHURSCRIPT, GREASEMONKEY, window.console);
+})(jQuery, SHURSCRIPT, GREASEMONKEY, console);
