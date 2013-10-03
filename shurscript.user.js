@@ -12,11 +12,21 @@
 // @author          Fritanga
 // @author          juno / ikaros45
 // @include         *forocoches.com*
+// @grant           GM_log
+// @grant           GM_getValue
+// @grant           GM_setValue
+// @grant           GM_deleteValue
+// @grant           GM_xmlhttpRequest
+// @grant           GM_registerMenuCommand
+// @grant           GM_addStyle
+// @grant           GM_getResourceText
+// @grant           GM_getResourceURL
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/gm_wrap.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
@@ -28,27 +38,16 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/AutoUpdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/preferences.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/settings_window.js
-// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
-// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
-// @resource scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
-// @resource star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
-// @resource trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
-// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
-// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
-// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
-// @grant   GM_log
-// @grant   GM_getValue
-// @grant   GM_setValue
-// @grant   GM_deleteValue
-// @grant   GM_xmlhttpRequest
-// @grant   GM_registerMenuCommand
-// @grant   GM_addStyle
-// @grant   GM_getResourceText
-// @grant   GM_getResourceURL
+// @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
+// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
+// @resource        scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
+// @resource        star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
+// @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
+// @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
+// @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
+// @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
 
-var SHURSCRIPT = 'LOL';
-alert(SHURSCRIPT);
 var helper;
 var allModules = []; //Todos los modulos
 var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
@@ -232,26 +231,4 @@ function getActiveModules() {
     }
 
     return activeModules;
-}
-
-
-/* Metodos de ayuda comunes a todos los módulos. */
-function ScriptHelper(moduleName) {
-    this.moduleName = moduleName;
-}
-
-ScriptHelper.prototype.log = function(message) {
-    console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message)
-}
-
-ScriptHelper.prototype.setValue = function(key, value) {
-    GM_setValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, value);
-}
-
-ScriptHelper.prototype.getValue = function(key, defaultValue) {
-    return GM_getValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid, defaultValue);
-}
-
-ScriptHelper.prototype.deleteValue = function(key) {
-    GM_deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + userid);
 }

@@ -1,5 +1,5 @@
-/*
 var SHURSCRIPT = (function ($) {
+    'use strict';
 
     var self = {};
 
@@ -8,5 +8,3 @@ var SHURSCRIPT = (function ($) {
     return self;
 
 })(jQuery);
-*/
-SHURSCRIPT = 'lolasso';
