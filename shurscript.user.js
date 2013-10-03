@@ -14,27 +14,28 @@
 // @include         *forocoches.com*
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NightMode.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
-// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/dev/css/nightmode-min.css
-// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
-// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
-// @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
-// @resource trash-img https://github.com/TheBronx/shurscript/raw/dev/img/trash.png
-// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/dev/img/trash-black.png
-// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/dev/img/light-on.png
-// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/dev/img/light-off.png
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Scrollers.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NightMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/AutoUpdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/settings_window.js
+// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
+// @resource star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
+// @resource trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
+// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
+// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
+// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // @grant   GM_log
 // @grant   GM_getValue
 // @grant   GM_setValue
