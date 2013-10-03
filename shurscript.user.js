@@ -58,7 +58,7 @@ jQuery(document).ready(function(){
 
     SHURSCRIPT.initialize();
 
-    if (SHURSCRIPT.user.isLoggedIn) {
+    if (SHURSCRIPT.env.user.loggedIn) {
         SHURSCRIPT.loadModules();
         // SHURSCRIPT.AutoUpdater.check();
     }
