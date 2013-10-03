@@ -1,4 +1,5 @@
-var SHURAPP = (function ($) {
+/*
+var SHURSCRIPT = (function ($) {
 
     var self = {};
 
@@ -7,3 +8,5 @@ var SHURAPP = (function ($) {
     return self;
 
 })(jQuery);
+*/
+SHURSCRIPT = 'lolasso';

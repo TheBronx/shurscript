@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.10.1-dev
+// @version         0.10.1-exp
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
@@ -47,6 +47,8 @@
 // @grant   GM_getResourceURL
 // ==/UserScript==
 
+var SHURSCRIPT = 'LOL';
+alert(SHURSCRIPT);
 var helper;
 var allModules = []; //Todos los modulos
 var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
