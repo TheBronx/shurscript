@@ -27,6 +27,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/gm_wrap.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
@@ -48,29 +49,28 @@
 // @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
 
-alert('lol');
 
 
-// jQuery(document).ready(function(){
-//     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-//         return;
-//     }
+jQuery(document).ready(function(){
+    if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+        return;
+    }
 
-//     SHURSCRIPT.initialize();
+    SHURSCRIPT.initialize();
 
-//     if (SHURSCRIPT.user.isLoggedIn) {
-//         SHURSCRIPT.loadModules();
-//         // SHURSCRIPT.AutoUpdater.check();
-//     }
-//     /*
-//     if (isLoggedIn() && isCompatible()) {
-//         initialize();
-//         loadModules();
+    if (SHURSCRIPT.user.isLoggedIn) {
+        SHURSCRIPT.loadModules();
+        // SHURSCRIPT.AutoUpdater.check();
+    }
+    /*
+    if (isLoggedIn() && isCompatible()) {
+        initialize();
+        loadModules();
 
-//         AutoUpdater = new AutoUpdater();
-//         AutoUpdater.check();
-//     }*/
-// });
+        AutoUpdater = new AutoUpdater();
+        AutoUpdater.check();
+    }*/
+});
 
 // var helper;
 // var allModules = []; //Todos los modulos

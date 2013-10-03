@@ -2,14 +2,14 @@ var SHURSCRIPT = (function ($, GM, undefined) {
     'use strict';
 
     var self = {};
-/*
+
     self.name = 'core';
-    self.helper = SHURSCRIPT.getHelper(self.name);
 
     self.GM = GM;
     self.modules = {};
 
     self.initialize = function () {
+        self.helper = SHURSCRIPT.getHelper(self.name);
 
         self.env = {
             page: location.pathname.replace("/foro","")
@@ -21,6 +21,6 @@ var SHURSCRIPT = (function ($, GM, undefined) {
 
     };
 
-*/
     return self;
+
 })(jQuery, GREASEMONKEY);
