@@ -1,6 +1,39 @@
+(function ($, SHURSCRIPT) {
+    'use strict';
+
+    /*
+    Elementos utiles del closure o heredados en el objeto
+    =====================================================
+    $: jQuery local
+    SHURSCRIPT: nucleo aplicacion
+    this.helper: objeto helper personalizado para el módulo
+
+
+    Propiedades heredadas por defecto que puedes querer sobreescribir
+    =================================================================
+    enabledByDefault: true por defecto
+    worksInFrontPage: false por defecto
+    shouldLoad(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
+    */
+
+    var self = {};
+
+    self.id = 'NightMode';
+    self.name = 'Modo noche';
+    self.author = 'ikaros45 / juno';
+    self.version = '0.1';
+    self.description = 'Cambia la apariencia del foro a colores más oscuros. Perfecto para leer el foro por la noche sin cansar la vista. <b>BETA</b>';
+    self.worksInFrontPage = true;
+
+    // Guarda en aplicacion
+    SHURSCRIPT.modules[self.id] = self;
+
+})(jQuery, SHURSCRIPT, undefined);
+/*
 function NightMode() {
 
     this.id = arguments.callee.name; //ModuleTemplate
+    alert(this.id);
     this.name = 'Modo noche';
     this.author = 'ikaros45 / Juno';
     this.version = '0.1';
@@ -11,7 +44,6 @@ function NightMode() {
     var helper = new ScriptHelper(this.id);
     var css, icon;
 
-    /* Método obligatorio y punto de entrada a la lógica del módulo */
     this.load = function() {
 
         // Carga CSS
@@ -68,3 +100,4 @@ function NightMode() {
 		return preferences;
     };
 }
+*/

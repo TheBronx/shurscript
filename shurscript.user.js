@@ -48,187 +48,211 @@
 // @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
 
-var helper;
-var allModules = []; //Todos los modulos
-var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
-var AutoUpdater;
+alert('lol');
 
-/* Variables útiles y comunes a todos los módulos */
-var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
-var username;
-var userid;
-var scriptVersion;
-// Comprueba si estamos en la portada
-var inFrontPage = location.href === 'http://www.forocoches.com/'
 
-jQuery(document).ready(function(){
-    if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-        return;
-    }
+// jQuery(document).ready(function(){
+//     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+//         return;
+//     }
 
-    if (isLoggedIn() && isCompatible()) {
-        initialize();
-        loadModules();
+//     SHURSCRIPT.initialize();
 
-        AutoUpdater = new AutoUpdater();
-        AutoUpdater.check();
-    }
-});
+//     if (SHURSCRIPT.user.isLoggedIn) {
+//         SHURSCRIPT.loadModules();
+//         // SHURSCRIPT.AutoUpdater.check();
+//     }
+//     /*
+//     if (isLoggedIn() && isCompatible()) {
+//         initialize();
+//         loadModules();
 
-function isCompatible() {
-    //Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
-    if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
-        scriptVersion = GM_info.script.version;
+//         AutoUpdater = new AutoUpdater();
+//         AutoUpdater.check();
+//     }*/
+// });
 
-    } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
-        scriptVersion = GM_getMetadata('version');
+// var helper;
+// var allModules = []; //Todos los modulos
+// var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
+// var AutoUpdater;
 
-    } else {
-        alert('El addon de userscripts de tu navegador no está soportado.');
-        return false;
-    }
+// /* Variables útiles y comunes a todos los módulos */
+// var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
+// var username;
+// var userid;
+// var scriptVersion;
+// // Comprueba si estamos en la portada
+// var inFrontPage = location.href === 'http://www.forocoches.com/'
 
-    return true;
-}
+// jQuery(document).ready(function(){
+//     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+//         return;
+//     }
 
-function initialize() {
+//     if (isLoggedIn() && isCompatible()) {
+//         initialize();
+//         loadModules();
 
-    helper = new ScriptHelper();
+//         AutoUpdater = new AutoUpdater();
+//         AutoUpdater.check();
+//     }
+// });
 
-    //inicializamos variables
-    page = location.pathname.replace("/foro","");
+// function isCompatible() {
+//     //Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
+//     if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+//         scriptVersion = GM_info.script.version;
 
-    GM_addStyle(GM_getResourceText('bootstrapcss'));
+//     } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
+//         scriptVersion = GM_getMetadata('version');
 
-    //Configuracion de las ventanas modales
-    bootbox.setDefaults({
-        locale: "es",
-        className: "shurscript",
-        closeButton: false
-    });
+//     } else {
+//         alert('El addon de userscripts de tu navegador no está soportado.');
+//         return false;
+//     }
 
-}
+//     return true;
+// }
 
-function isLoggedIn() {
-    var user;
+// function initialize() {
 
-    if (inFrontPage) {
-        user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
-    } else {
-        user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
-        username = user.text();
-    }
+//     helper = new ScriptHelper();
 
-    if (user.length) {
-        userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-        return true;
-    }
+//     //inicializamos variables
+//     page = location.pathname.replace("/foro","");
 
-    return false;
-}
+//     GM_addStyle(GM_getResourceText('bootstrapcss'));
 
-function loadModules() {
+//     //Configuracion de las ventanas modales
+//     bootbox.setDefaults({
+//         locale: "es",
+//         className: "shurscript",
+//         closeButton: false
+//     });
 
-    activeModules = getActiveModules();
-    var moduleNames = getAllModules(),
-        module;
+// }
 
-    var getModuleInstance = function (moduleName) {
-        var module;
+// function isLoggedIn() {
+//     var user;
 
-        try {
-            module = eval("new " + moduleName + "()");
-        } catch (e) {
-            helper.log('No se ha podido instanciar el modulo "' + moduleName + '"\nRazon: ' + e);
-        }
+//     if (inFrontPage) {
+//         user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
+//     } else {
+//         user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
+//         username = user.text();
+//     }
 
-        return module;
-    };
+//     if (user.length) {
+//         userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+//         return true;
+//     }
 
-    // En $.each continue="return true", break="return false"
-    $.each(moduleNames, function(index, moduleName) {
+//     return false;
+// }
 
-        // Instancia modulo
-        module = getModuleInstance(moduleName);
+// function loadModules() {
 
-        if ( ! module) {
-            return true;
-        }
+//     activeModules = getActiveModules();
+//     var moduleNames = getAllModules(),
+//         module;
 
-        // Guardalo
-        allModules.push(module);
+//     var getModuleInstance = function (moduleName) {
+//         var module;
 
-        // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
-        if ( ! activeModules.hasOwnProperty(moduleName)) {
-            activeModules[moduleName] = module.enabledByDefault;
-        }
+//         try {
+//             module = eval("new " + moduleName + "()");
+//         } catch (e) {
+//             helper.log('No se ha podido instanciar el modulo "' + moduleName + '"\nRazon: ' + e);
+//         }
 
-        // Comprueba que el modulo está activo o aborta
-        if ( ! activeModules[moduleName]) {
-            return true;
-        }
+//         return module;
+//     };
 
-        // Si el modulo tiene .shouldLoad y este devuelve false, aborta
-        if (module.shouldLoad && ( ! module.shouldLoad())) {
-            return true;
-        }
+//     // En $.each continue="return true", break="return false"
+//     $.each(moduleNames, function(index, moduleName) {
 
-        // Si estamos en portada pero el modulo no carga en portada, continue
-        if (inFrontPage && ( ! module.worksInFrontPage))  {
-            return true;
-        }
+//         // Instancia modulo
+//         module = getModuleInstance(moduleName);
 
-        // Si cumplimos con todo, intenta cargar el modulo
-        try {
-            helper.log("Loading module '" + moduleName + "'...");
-            module.load();
-            helper.log ("Module '" + moduleName + "' loaded successfully.");
-        } catch (e) {
-            helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
-        }
-    });
-}
+//         if ( ! module) {
+//             return true;
+//         }
 
-/*
-* Obtener los modulos cargados de los @require
-*/
-function getAllModules() {
-    var modules = [];
-    if (typeof GM_info !== 'undefined' ) {
-        var metas = GM_info.scriptMetaStr.split("// @");
-        var meta;
-        for (var i = 0; i < metas.length; i++) {
-            meta = metas[i].trim();
-            if (meta.indexOf("require") === 0 && meta.match("/modules/")) {
-                var moduleName = meta.match(/modules\/(.*)\.js/)[1];
-                modules.push(moduleName.trim());
-            }
-        }
-    } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
-        var requires = GM_getMetadata('require');
-        for (var i = 0; i < requires.length; i++) {
-            if (requires[i].match("/modules/")) {
-                var moduleName = requires[i].match(/modules\/(.*)\.js/)[1];
-                modules.push(moduleName);
-            }
-        }
-    }
+//         // Guardalo
+//         allModules.push(module);
 
-    return modules;
-}
+//         // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
+//         if ( ! activeModules.hasOwnProperty(moduleName)) {
+//             activeModules[moduleName] = module.enabledByDefault;
+//         }
 
-/*
-* Obtienes los modulos que tiene activados el usuario {"modulo1" : true, "modulo2" : false, etc.}
-*/
-function getActiveModules() {
-    var serializedActiveModules = helper.getValue("MODULES"),
-        activeModules = {};
+//         // Comprueba que el modulo está activo o aborta
+//         if ( ! activeModules[moduleName]) {
+//             return true;
+//         }
 
-    try {
-        activeModules = JSON.parse(serializedActiveModules);
-    } catch (e) {
-        helper.deleteValue("MODULES");
-    }
+//         // Si el modulo tiene .shouldLoad y este devuelve false, aborta
+//         if (module.shouldLoad && ( ! module.shouldLoad())) {
+//             return true;
+//         }
 
-    return activeModules;
-}
+//         // Si estamos en portada pero el modulo no carga en portada, continue
+//         if (inFrontPage && ( ! module.worksInFrontPage))  {
+//             return true;
+//         }
+
+//         // Si cumplimos con todo, intenta cargar el modulo
+//         try {
+//             helper.log("Loading module '" + moduleName + "'...");
+//             module.load();
+//             helper.log ("Module '" + moduleName + "' loaded successfully.");
+//         } catch (e) {
+//             helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
+//         }
+//     });
+// }
+
+// /*
+// * Obtener los modulos cargados de los @require
+// */
+// function getAllModules() {
+//     var modules = [];
+//     if (typeof GM_info !== 'undefined' ) {
+//         var metas = GM_info.scriptMetaStr.split("// @");
+//         var meta;
+//         for (var i = 0; i < metas.length; i++) {
+//             meta = metas[i].trim();
+//             if (meta.indexOf("require") === 0 && meta.match("/modules/")) {
+//                 var moduleName = meta.match(/modules\/(.*)\.js/)[1];
+//                 modules.push(moduleName.trim());
+//             }
+//         }
+//     } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
+//         var requires = GM_getMetadata('require');
+//         for (var i = 0; i < requires.length; i++) {
+//             if (requires[i].match("/modules/")) {
+//                 var moduleName = requires[i].match(/modules\/(.*)\.js/)[1];
+//                 modules.push(moduleName);
+//             }
+//         }
+//     }
+
+//     return modules;
+// }
+
+// /*
+// * Obtienes los modulos que tiene activados el usuario {"modulo1" : true, "modulo2" : false, etc.}
+// */
+// function getActiveModules() {
+//     var serializedActiveModules = helper.getValue("MODULES"),
+//         activeModules = {};
+
+//     try {
+//         activeModules = JSON.parse(serializedActiveModules);
+//     } catch (e) {
+//         helper.deleteValue("MODULES");
+//     }
+
+//     return activeModules;
+// }

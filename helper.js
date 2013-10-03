@@ -1,4 +1,4 @@
-(function ($, SHURSCRIPT, GM) {
+(function ($, SHURSCRIPT, GM, undefined) {
     'use strict';
 
     // Define el prototipo del helper
