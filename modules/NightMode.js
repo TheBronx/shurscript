@@ -6,31 +6,33 @@
 
     Propiedades por definir
     =====================
-    self.id
-    self.name
-    self.author
-    self.version
-    self.description
-    self.validPages: array con identificadores de pagina sin el "/foro":
-        /: portada
-        /search.php: si estamos en www.forocoches.com/foro/search.php...
-        /showthread.php: si estamos viendo un hilo
-        /etc...
+    - self.id
+    - self.name
+    - self.author
+    - self.version
+    - self.description
 
     Propiedades heredadas que puedes querer sobreescribir
-    =================================================================
-    self.enabledByDefault: true por defecto
-    self.additionalLoadCheck(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
+    =====================================================
+    - self.enabledByDefault: true por defecto
+    - self.additionalLoadCheck(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
+    - self.validPages: array con identificadores de pagina sin el "/foro":
+        /!\ Si el modulo funciona en todas las páginas, no toques esta propiedad
+        - "/": portada
+        - "/search.php": si estamos en www.forocoches.com/foro/search.php...
+        - "/showthread.php:" si estamos viendo un hilo
+
 
     Elementos utiles del closure, heredados o generados en el objeto
     ================================================================
-    $: jQuery local
-    SHURSCRIPT: nucleo aplicacion
-    self._helper: objeto helper personalizado para el módulo
-    undefined: undefined fiable, puedes comparar con él sin hacer un typeof
+    - $: jQuery local
+    - SHURSCRIPT: nucleo aplicacion
+    - self._helper: objeto helper personalizado para el módulo. Tiene una referencia
+      a GM, el objeto con los metodos de greasemonkey
+    - undefined: undefined fiable, puedes comparar con él sin hacer un typeof
     */
 
-    self.id = 'NightMode';
+    // self.id = 'NightMode';
     self.name = 'Modo noche';
     self.author = 'ikaros45 / juno';
     self.version = '0.1';

@@ -33,26 +33,27 @@ var SHURSCRIPT = (function ($, undefined) {
     self.loadModules = function () {
         $.each(self.modules, function (moduleName, moduleObject) {
 
-            // Inicializa: pasa helper
-            moduleObject.__init__(self.getHelper(moduleObject.id));
-
-            // Si no estamos en una pagina en la que el modulo corre, continue
-            if ( ! moduleObject.isValidPage()) {
-                return true;
-            }
-
-            // Si no cumple el check adicional, continue
-            if ( ! moduleObject.additionalLoadCheck()) {
-                return true;
-            }
-
             // Intentamos carga.
             try {
-                self.helper.log('Cargando modulo ' + moduleObject.id);
+
+                // Inicializa: pasa helper
+                moduleObject.__init__(self.getHelper(moduleObject.id));
+
+                // Si no estamos en una pagina en la que el modulo corre, continue
+                if ( ! moduleObject.isValidPage()) {
+                    return true;
+                }
+
+                // Si no cumple el check adicional, continue
+                if ( ! moduleObject.additionalLoadCheck()) {
+                    return true;
+                }
+
+                self._helper.log('Cargando modulo ' + moduleObject.id);
                 moduleObject.load();
-                self.helper.log('Modulo ' + moduleObject.id + 'cargado');
+                self._helper.log('Modulo ' + moduleObject.id + 'cargado');
             } catch (e) {
-                self.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
+                self._helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
             }
         });
     };
