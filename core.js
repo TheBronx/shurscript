@@ -1,21 +1,19 @@
-var SHURSCRIPT = (function ($, GM, undefined) {
+var SHURSCRIPT = (function ($, undefined) {
     'use strict';
-
     var self = {};
 
-    self.name = 'core';
+    self.id = 'core';
 
     // self.GM = GM; // Esto casi que solo lo deberian usar los helpers
     self.modules = {};
 
     self.initialize = function () {
         // Helper para el core
-        self.helper = SHURSCRIPT.getHelper(self.name);
+        self._helper = SHURSCRIPT.getHelper(self.id);
 
         // Saca toda la informacion del entorno (environment)
         self.env = {
-            inFrontPage: location.href === 'http://www.forocoches.com/',
-            page: location.pathname.replace("/foro","")
+            page: self._helper.location.pathname.replace("/foro","")
         };
 
         var body_html = $('body').html();
@@ -28,37 +26,25 @@ var SHURSCRIPT = (function ($, GM, undefined) {
                 id: id_regex_results[1],
                 name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1],
                 loggedIn: true
-            }
+            };
         }
     };
 
-    // Objeto base para modulos
-    self._moduleProto = {
-        enabledByDefault: true,
-        worksInFrontPage: false,
-        shouldLoad: function () {return true;},
-        getPreferences: function () {return [];}
-    };
-
     self.loadModules = function () {
-        $.each(self.modules, function(moduleName, moduleObject) {
+        $.each(self.modules, function (moduleName, moduleObject) {
 
-            // Extiende el objeto
-            moduleObject.__proto__ = self._moduleProto;
+            // Inicializa: pasa helper
+            moduleObject.__init__(self.getHelper(moduleObject.id));
 
-            // Si no debe cargar, continue
-            if ( ! moduleObject.shouldLoad()) {
+            // Si no estamos en una pagina en la que el modulo corre, continue
+            if ( ! moduleObject.isValidPage()) {
                 return true;
             }
 
-            // Si estamos en portada y el modulo no funciona en la portada, continue
-            if (self.env.inFrontPage && ( ! moduleObject.worksInFrontPage)) {
+            // Si no cumple el check adicional, continue
+            if ( ! moduleObject.additionalLoadCheck()) {
                 return true;
             }
-
-            // Luz verde: Ahora a ciclar sanamente al objeto.
-            moduleObject.helper = self.getHelper(moduleObject.id);
-
 
             // Intentamos carga.
             try {
@@ -72,5 +58,4 @@ var SHURSCRIPT = (function ($, GM, undefined) {
     };
 
     return self;
-
-})(jQuery, GREASEMONKEY);
+})(jQuery);

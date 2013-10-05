@@ -1,4 +1,4 @@
-(function ($, SHURSCRIPT, GM, console, undefined) {
+(function ($, SHURSCRIPT, GM, location, console, undefined) {
     'use strict';
 
     // Define el prototipo del helper
@@ -14,7 +14,9 @@
         },
         deleteValue: function(key) {
             GM.deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.user.id);
-        }
+        },
+        GM: GM,
+        location: location
     };
 
     SHURSCRIPT.getHelper = function (moduleName) {
@@ -22,5 +24,4 @@
         helper.moduleName = moduleName;
         return helper;
     };
-
-})(jQuery, SHURSCRIPT, GREASEMONKEY, console);
+})(jQuery, SHURSCRIPT, GREASEMONKEY, location, console);

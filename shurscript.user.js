@@ -27,6 +27,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/gm_wrap.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/proto_module.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
@@ -48,8 +49,6 @@
 // @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
 // @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
-
-
 
 jQuery(document).ready(function(){
     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
