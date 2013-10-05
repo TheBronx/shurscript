@@ -1,47 +1,52 @@
-(function ($, SHURSCRIPT, self, undefined) {
+(function ($, SHURSCRIPT, undefined) {
     'use strict';
 
     /*
-    Utiliza el objecto self para escribir tu módulo
+    Crea un módulo llamando a SHURSCRIPT.createModule(), pasandole un objeto
+    con los parámetros necesarios.
+    */
+    var module = SHURSCRIPT.createModule({
+        id: 'ID modulo',
+        name: 'Nombre modulo',
+        author: 'Autor',
+        version: 'Version',
+        description: 'Descripcion'
+    });
 
-    Propiedades por definir
-    =====================
-    - self.id
-    - self.name
-    - self.author
-    - self.version
-    - self.description
-
+    /*
     Propiedades heredadas que puedes querer sobreescribir
     =====================================================
-    - self.enabledByDefault: true por defecto
-    - self.additionalLoadCheck(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
-    - self.validPages: array con identificadores de pagina sin el "/foro":
-        /!\ Si el modulo funciona en todas las páginas, no toques esta propiedad
-        - "/": portada
-        - "/search.php": si estamos en www.forocoches.com/foro/search.php...
-        - "/showthread.php:" si estamos viendo un hilo
+    - .enabledByDefault: true por defecto
+    - .additionalLoadCheck(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
+    - .moduleDomain: string o array con identificadores de pagina sin el "/foro":
+        - 'NOT_FRONTPAGE': el modulo funciona en todo forocoches salvo la portada (VALOR POR DEFECTO)
+        - 'ALL': el modulo funciona en todo forocoches
+        - '/': Sólo portada
+        - '/search.php': Sólo si estamos en www.forocoches.com/foro/search.php...
+        - ['/showthread.php', '/'] Vista de un hilo y portada
 
-
-    Elementos utiles del closure, heredados o generados en el objeto
-    ================================================================
+    Elementos utiles del closure y del objeto modulo
+    ================================================
     - $: jQuery local
     - SHURSCRIPT: nucleo aplicacion
-    - self._helper: objeto helper personalizado para el módulo. Tiene una referencia
+    - SHURSCRIPT.env: informacion sobre el entorno (pagina, usuario, etc)
+    - self.helper: objeto helper personalizado para el módulo. Tiene una referencia
       a GM, el objeto con los metodos de greasemonkey
     - undefined: undefined fiable, puedes comparar con él sin hacer un typeof
+
+
+
+    Define todas las propiedades y métodos que necesites. Variables/funciones
+    declarados en este scope serán visibles desde cualquier metodo del modulo.
     */
 
-    // self.id = 'NightMode';
-    self.name = 'Modo noche';
-    self.author = 'ikaros45 / juno';
-    self.version = '0.1';
-    self.description = 'Cambia la apariencia del foro a colores más oscuros. Perfecto para leer el foro por la noche sin cansar la vista. <b>BETA</b>';
+    // Metodo obligatorio. Puerta de entrada logica al modulo.
+    module.load = function () {
 
-    // Guarda en aplicacion
-    SHURSCRIPT.modules[self.id] = self;
+    };
 
-})(jQuery, SHURSCRIPT, Object.create(SHURSCRIPT.protoModule));
+
+})(jQuery, SHURSCRIPT);
 
 /*
 function NightMode() {

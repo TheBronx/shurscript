@@ -19,9 +19,13 @@
         location: location
     };
 
-    SHURSCRIPT.getHelper = function (moduleName) {
+    SHURSCRIPT.createHelper = function (moduleName) {
         var helper = Object.create(proto);
         helper.moduleName = moduleName;
         return helper;
     };
+
+    // Ya de paso creamos el helper para el core
+    SHURSCRIPT.helper = SHURSCRIPT.createHelper(SHURSCRIPT.id);
+
 })(jQuery, SHURSCRIPT, GREASEMONKEY, location, console);
