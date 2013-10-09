@@ -18,7 +18,7 @@
     =====================================================
     - .enabledByDefault: true por defecto
     - .additionalLoadCheck(): devuelve true por defecto. Sobreescribe si necesitas alguna condicion especial de carga
-    - .moduleDomain: string o array de strings con identificadores de pagina sin el "/foro":
+    - .domain: string o array de strings con identificadores de pagina sin el "/foro":
         - 'NOT_FRONTPAGE': el modulo funciona en todo forocoches salvo la portada (VALOR POR DEFECTO)
         - 'ALL': el modulo funciona en todo forocoches
         - '/': Sólo portada

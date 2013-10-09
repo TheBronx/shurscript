@@ -50,6 +50,7 @@
 // @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
 
+
 jQuery(document).ready(function(){
     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
         return;
@@ -61,14 +62,6 @@ jQuery(document).ready(function(){
         SHURSCRIPT.loadModules();
         // SHURSCRIPT.AutoUpdater.check();
     }
-    /*
-    if (isLoggedIn() && isCompatible()) {
-        initialize();
-        loadModules();
-
-        AutoUpdater = new AutoUpdater();
-        AutoUpdater.check();
-    }*/
 });
 
 // var helper;
@@ -97,117 +90,3 @@ jQuery(document).ready(function(){
 //         AutoUpdater.check();
 //     }
 // });
-
-// function isCompatible() {
-//     //Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
-//     if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
-//         scriptVersion = GM_info.script.version;
-
-//     } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
-//         scriptVersion = GM_getMetadata('version');
-
-//     } else {
-//         alert('El addon de userscripts de tu navegador no está soportado.');
-//         return false;
-//     }
-
-//     return true;
-// }
-
-// function initialize() {
-
-//     helper = new ScriptHelper();
-
-//     //inicializamos variables
-//     page = location.pathname.replace("/foro","");
-
-//     GM_addStyle(GM_getResourceText('bootstrapcss'));
-
-//     //Configuracion de las ventanas modales
-//     bootbox.setDefaults({
-//         locale: "es",
-//         className: "shurscript",
-//         closeButton: false
-//     });
-
-// }
-
-// function isLoggedIn() {
-//     var user;
-
-//     if (inFrontPage) {
-//         user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
-//     } else {
-//         user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
-//         username = user.text();
-//     }
-
-//     if (user.length) {
-//         userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-//         return true;
-//     }
-
-//     return false;
-// }
-
-// function loadModules() {
-
-//     activeModules = getActiveModules();
-//     var moduleNames = getAllModules(),
-//         module;
-
-//     var getModuleInstance = function (moduleName) {
-//         var module;
-
-//         try {
-//             module = eval("new " + moduleName + "()");
-//         } catch (e) {
-//             helper.log('No se ha podido instanciar el modulo "' + moduleName + '"\nRazon: ' + e);
-//         }
-
-//         return module;
-//     };
-
-//     // En $.each continue="return true", break="return false"
-//     $.each(moduleNames, function(index, moduleName) {
-
-//         // Instancia modulo
-//         module = getModuleInstance(moduleName);
-
-//         if ( ! module) {
-//             return true;
-//         }
-
-//         // Guardalo
-//         allModules.push(module);
-
-//         // Si el modulo no está registrado en activeModules, hazlo y mete su .enabledByDefault como valor
-//         if ( ! activeModules.hasOwnProperty(moduleName)) {
-//             activeModules[moduleName] = module.enabledByDefault;
-//         }
-
-//         // Comprueba que el modulo está activo o aborta
-//         if ( ! activeModules[moduleName]) {
-//             return true;
-//         }
-
-//         // Si el modulo tiene .shouldLoad y este devuelve false, aborta
-//         if (module.shouldLoad && ( ! module.shouldLoad())) {
-//             return true;
-//         }
-
-//         // Si estamos en portada pero el modulo no carga en portada, continue
-//         if (inFrontPage && ( ! module.worksInFrontPage))  {
-//             return true;
-//         }
-
-//         // Si cumplimos con todo, intenta cargar el modulo
-//         try {
-//             helper.log("Loading module '" + moduleName + "'...");
-//             module.load();
-//             helper.log ("Module '" + moduleName + "' loaded successfully.");
-//         } catch (e) {
-//             helper.log ("Failed to load module '" + moduleName + "'\nCaused by: " + e);
-//         }
-//     });
-// }

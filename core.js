@@ -37,9 +37,21 @@ var SHURSCRIPT = (function ($, undefined) {
 
         // Guarda modulo
         self.modules[module.id] = module;
+
+        return module;
     };
 
     self.initialize = function () {
+
+        // Configuracion de las ventanas modales
+        self.helper.bootbox.setDefaults({
+            locale: "es",
+            className: "shurscript",
+            closeButton: false
+        });
+
+        // Mete bootstrap
+        self.helper.addStyle('bootstrapcss');
 
         // Saca toda la informacion del entorno (environment)
         self.env = {

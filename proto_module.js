@@ -9,10 +9,13 @@
         enabledByDefault: true,
         additionalLoadCheck: function () {return true;},
         getPreferences: function () {return {};},
-        moduleDomain: NO_FRONTPAGE,
+        domain: NO_FRONTPAGE,
         isValidPage: function () {
-
-            var domain = this.moduleDomain,
+            /*
+            Comprueba si en la pagina actual el modulo
+            debe lanzarse.
+            */
+            var domain = this.domain,
                 page = SHURSCRIPT.env.page;
 
             if (typeof domain === 'string') {

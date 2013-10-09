@@ -1,4 +1,4 @@
-(function ($, SHURSCRIPT, GM, location, console, undefined) {
+(function ($, SHURSCRIPT, GM, bootbox, location, console, undefined) {
     'use strict';
 
     // Define el prototipo del helper
@@ -15,7 +15,15 @@
         deleteValue: function(key) {
             GM.deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.user.id);
         },
+        addStyle: function (styleResource) {
+            /*
+            Mete CSS previamente registrado en archivo principal con @resource
+            */
+            var css = GM.getResourceText(styleResource);
+            GM.addStyle(css);
+        },
         GM: GM,
+        bootbox: bootbox,
         location: location
     };
 
@@ -28,4 +36,4 @@
     // Ya de paso creamos el helper para el core
     SHURSCRIPT.helper = SHURSCRIPT.createHelper(SHURSCRIPT.id);
 
-})(jQuery, SHURSCRIPT, GREASEMONKEY, location, console);
+})(jQuery, SHURSCRIPT, GREASEMONKEY, bootbox, location, console);
