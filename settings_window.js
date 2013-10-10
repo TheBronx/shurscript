@@ -3,21 +3,36 @@
 
 	var self = {};
 
-	self.html = SHURSCRIPT.helper.GM.getResource('modalhtml');
-	alert(self.html);
+
+
+	self.appendMenuItem = function () {
+		var menuItem = $('.vbmenu_control').first();
+		var newMenuItem = menuItem.clone();
+
+		newMenuItem.css("cursor", "pointer");
+		newMenuItem.html("<a>Shurscript</a>");
+		newMenuItem.click(function(){
+			self.show();
+		});
+		menuItem.parent().append(newMenuItem);
+	};
+
+	self.show = function () {
+		alert('show!');
+	};
+
+	self.load = function () {
+		self.html = SHURSCRIPT.helper.GM.getResourceText('modalhtml');
+		self.appendMenuItem();
+	};
+
+	SHURSCRIPT.settingsWindow = self;
 
 })(jQuery, SHURSCRIPT);
 
 /*
 //Creamos el nuevo menú arriba a la derecha
-var menuItem = $('.vbmenu_control').first();
-var newMenuItem = menuItem.clone();
-newMenuItem.css("cursor", "pointer");
-newMenuItem.html("<a>Shurscript</a>");
-newMenuItem.click(function(){
-	new SettingsWindow();
-});
-menuItem.parent().append(newMenuItem);
+
 
 function SettingsWindow() {
 

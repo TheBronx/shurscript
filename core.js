@@ -77,6 +77,10 @@ var SHURSCRIPT = (function ($, undefined) {
     };
 
     self.loadModules = function () {
+        // Ejecutamos settingsWindow
+        self.settingsWindow.load();
+
+        // Loop sobre modulos para cargarlos
         $.each(self.modules, function (moduleName, moduleObject) {
 
             // Intentamos carga.
