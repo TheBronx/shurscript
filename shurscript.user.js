@@ -42,51 +42,23 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/settings_window.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
+// @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
+// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
 // @resource        scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
 // @resource        star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
 // @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
 // @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
-// @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
-// @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // ==/UserScript==
 
 
 jQuery(document).ready(function(){
-    if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-        return;
-    }
+    if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
 
-    SHURSCRIPT.initialize();
-
-    if (SHURSCRIPT.env.user.loggedIn) {
-        SHURSCRIPT.loadModules();
+        SHURSCRIPT.initialize();
         // SHURSCRIPT.AutoUpdater.check();
+
+        if (SHURSCRIPT.env.user.loggedIn) {
+            SHURSCRIPT.loadModules();
+        }
     }
 });
-
-// var helper;
-// var allModules = []; //Todos los modulos
-// var activeModules = {}; //{"modulo1" : true, "modulo2" : false, etc.}
-// var AutoUpdater;
-
-// /* Variables útiles y comunes a todos los módulos */
-// var page; //Página actual (sin http://forocoches.com/foro ni parámetros php)
-// var username;
-// var userid;
-// var scriptVersion;
-// // Comprueba si estamos en la portada
-// var inFrontPage = location.href === 'http://www.forocoches.com/'
-
-// jQuery(document).ready(function(){
-//     if (window.top !== window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-//         return;
-//     }
-
-//     if (isLoggedIn() && isCompatible()) {
-//         initialize();
-//         loadModules();
-
-//         AutoUpdater = new AutoUpdater();
-//         AutoUpdater.check();
-//     }
-// });

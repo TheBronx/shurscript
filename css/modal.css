@@ -1,0 +1,20 @@
+.disabled-module {
+    opacity: 0.5;
+}
+
+#shurscript-settings-window, #shurscript-settings-window .panel {
+    color: #333 !important;
+}
+
+#shurscript-settings-window p {
+    margin: 0;
+}
+
+#shurscript-settings-window, #shurscript-settings-window .panel-body > p, #shurscript-settings-window .help-block {
+    font-size: 13px !important;
+}
+
+#shurscript-settings-window .panel-heading > h3 {
+    font-size: 15px !important;
+}
+

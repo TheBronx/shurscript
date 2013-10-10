@@ -3,6 +3,7 @@ var SHURSCRIPT = (function ($, undefined) {
     var self = {};
 
     self.id = 'core';
+    self.scriptVersion = '10.5';
     self.modules = {};
 
     // Genera modulo extendiendo la base y lo registra
@@ -93,7 +94,7 @@ var SHURSCRIPT = (function ($, undefined) {
 
                 self.helper.log('Cargando modulo ' + moduleObject.id);
                 moduleObject.load();
-                self.helper.log('Modulo ' + moduleObject.id + 'cargado');
+                self.helper.log('Modulo ' + moduleObject.id + ' cargado');
             } catch (e) {
                 self.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
             }
