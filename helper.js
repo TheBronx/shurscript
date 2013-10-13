@@ -12,13 +12,13 @@
             console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message);
         },
         setValue: function(key, value) {
-            GM.setValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.env.user.id, value);
+            GM.setValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.core.environment.user.id, value);
         },
         getValue: function(key, defaultValue) {
-            return GM.getValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.env.user.id, defaultValue);
+            return GM.getValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.core.environment.user.id, defaultValue);
         },
         deleteValue: function(key) {
-            GM.deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.env.user.id);
+            GM.deleteValue("SHURSCRIPT_" + (this.moduleName ? this.moduleName + "_" : "") + key + "_" + SHURSCRIPT.core.environment.user.id);
         },
         addStyle: function (styleResource) {
             /*

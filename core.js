@@ -22,9 +22,11 @@
         }
 
         // Registra entorno
-        self.environment.user = {
-            id: id_regex_results[1],
-            name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1],
+        self.environment = {
+            user: {
+                id: id_regex_results[1],
+                name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
+            },
             page: self.helper.location.pathname.replace("/foro","")
         };
 
@@ -38,8 +40,11 @@
             closeButton: false
         });
 
+        // Carga la ventana de preferencias
+        SHURSCRIPT.settingsWindow.load();
+
         // Lanza carga modulos
-        SHUSCRIPT.moduleManager.loadModules();
+        SHURSCRIPT.moduleManager.loadModules();
 
         // Busca actualizaciones
         // TODO

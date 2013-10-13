@@ -2,10 +2,10 @@
     'use strict';
 
     /*
-    Crea un módulo llamando a SHURSCRIPT.createModule(), pasandole un objeto
+    Crea un módulo llamando a SHURSCRIPT.moduleManager.createModule(), pasandole un objeto
     con los parámetros necesarios.
     */
-    var module = SHURSCRIPT.createModule({
+    var mod = SHURSCRIPT.moduleManager.createModule({
         id: 'ID modulo',
         name: 'Nombre modulo',
         author: 'Autor',
@@ -29,21 +29,20 @@
     Elementos utiles del closure y del objeto modulo
     ================================================
     - $: jQuery local
-    - SHURSCRIPT: nucleo aplicacion
-    - SHURSCRIPT.env: informacion sobre el entorno (pagina, usuario, etc)
+    - SHURSCRIPT: namespace de la aplicacion
+    - SHURSCRIPT.core.environment: informacion sobre el entorno (pagina, usuario, etc)
     - self.helper: objeto helper personalizado para el módulo. Tiene una referencia
-      a GM, el objeto con los metodos de greasemonkey
+      a GM, el objeto con los metodos de greasemonkey, y a bootbox
     - undefined: undefined fiable, puedes comparar con el sin hacer un typeof
-
-
 
     Define todas las propiedades y métodos que necesites. Variables/funciones
     declarados en este scope serán visibles desde cualquier metodo del modulo.
+    No obstante es preferible guardar todo en mod.
     */
 
     // Metodo obligatorio. Puerta de entrada logica al modulo.
-    module.load = function () {
-
+    mod.load = function () {
+        alert('Ejecutado modulo ' + mod.id);
     };
 
 

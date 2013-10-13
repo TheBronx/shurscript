@@ -9,6 +9,6 @@ var SHURSCRIPT = {
 
 jQuery(document).ready(function(){
     if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-        SHURSCRIPT.initialize();
+        SHURSCRIPT.core.initialize();
     }
 });

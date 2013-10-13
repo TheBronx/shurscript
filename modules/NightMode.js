@@ -1,7 +1,7 @@
 (function ($, SHURSCRIPT, undefined) {
     'use strict';
 
-    var mod = SHURSCRIPT.createModule({
+    var mod = SHURSCRIPT.moduleManager.createModule({
         id: 'NightMode',
         name: 'Modo Noche',
         author: 'Juno / ikaros45',

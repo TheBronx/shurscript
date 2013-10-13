@@ -17,14 +17,14 @@
         enabledByDefault: true,
         additionalLoadCheck: function () {return true;},
         getPreferences: function () {return {};},
-        domain: NO_FRONTPAGE,
+        domain: self.NO_FRONTPAGE,
         isValidPage: function () {
             /*
             Comprueba si en la pagina actual el modulo
             debe lanzarse.
             */
             var domain = this.domain,
-                page = SHURSCRIPT.env.page;
+                page = SHURSCRIPT.core.environment.page;
 
             if (typeof domain === 'string') {
                 if (domain === self.ALL) {

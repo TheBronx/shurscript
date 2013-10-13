@@ -5,10 +5,16 @@
 	*/
 
 	var self = {};
+	self.id = 'SettingsWindow';
+	self.helper = SHURSCRIPT.helper.createHelper(self.id);
 
 	self.appendMenuItem = function () {
-		var menuItem = $('.vbmenu_control').first();
-		var newMenuItem = menuItem.clone();
+		/*
+		Mete elemento <Shurscript> en barra de FC para acceder a las preferencias
+		*/
+
+		var menuItem = $('.vbmenu_control').first(),
+			newMenuItem = menuItem.clone();
 
 		newMenuItem.css("cursor", "pointer");
 		newMenuItem.html("<a>Shurscript</a>");
@@ -19,11 +25,17 @@
 	};
 
 	self.show = function () {
+		/*
+		Lanza la ventana con las preferencias
+		*/
 		alert('show!');
 	};
 
 	self.load = function () {
-		self.html = SHURSCRIPT.helper.GM.getResourceText('modalhtml');
+		/*
+		Puerta de entrada a la unidad
+		*/
+		self.html = self.helper.GM.getResourceText('modalhtml');
 		self.appendMenuItem();
 	};
 

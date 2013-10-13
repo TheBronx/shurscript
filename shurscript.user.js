@@ -30,13 +30,6 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/module_manager.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Scrollers.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NightMode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/AutoUpdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/preferences.js
@@ -50,3 +43,9 @@
 // @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
 // @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
 // ==/UserScript==
+
+
+/*
+Es imprescindible que los modulos se carguen en este orden:
+init > gm_wrap > helper > core > module_manager
+*/
