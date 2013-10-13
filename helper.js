@@ -1,8 +1,13 @@
 (function ($, SHURSCRIPT, GM, bootbox, location, console, undefined) {
     'use strict';
+    /*
+    Unidad para helpers
+    */
+
+    var self = {};
 
     // Define el prototipo del helper
-    var proto = {
+    self.proto = {
         log: function (message) {
             console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message);
         },
@@ -27,13 +32,11 @@
         location: location
     };
 
-    SHURSCRIPT.createHelper = function (moduleName) {
-        var helper = Object.create(proto);
+    self.createHelper = function (moduleName) {
+        var helper = Object.create(self.proto);
         helper.moduleName = moduleName;
         return helper;
     };
 
-    // Ya de paso creamos el helper para el core
-    SHURSCRIPT.helper = SHURSCRIPT.createHelper(SHURSCRIPT.id);
-
+    SHURSCRIPT.helper = self;
 })(jQuery, SHURSCRIPT, GREASEMONKEY, bootbox, location, console);

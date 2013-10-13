@@ -25,10 +25,11 @@
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/init.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/gm_wrap.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/proto_module.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/module_manager.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
@@ -49,16 +50,3 @@
 // @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
 // @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
 // ==/UserScript==
-
-
-jQuery(document).ready(function(){
-    if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-
-        SHURSCRIPT.initialize();
-        // SHURSCRIPT.AutoUpdater.check();
-
-        if (SHURSCRIPT.env.user.loggedIn) {
-            SHURSCRIPT.loadModules();
-        }
-    }
-});

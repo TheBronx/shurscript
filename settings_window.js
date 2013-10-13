@@ -1,9 +1,10 @@
 (function ($, SHURSCRIPT, undefined) {
 	'use strict';
+	/*
+	Unidad para las opciones de modulos
+	*/
 
 	var self = {};
-
-
 
 	self.appendMenuItem = function () {
 		var menuItem = $('.vbmenu_control').first();
