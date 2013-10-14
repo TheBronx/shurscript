@@ -18,15 +18,12 @@ function HighlightOP() {
     this.load = function() {
         var currentThread = getURLParameter("t") || getCurrentThread();
         var currentPage = getURLParameter("page") || getCurrentPage();
-        var p = getURLParameter("p");// TODO - when post ID is provided, we don't have thread nor page number.
         
-        if (! p) {
-            // If not in first page, we must load it to get OP's name.
-            if (currentPage && currentPage !== 1) {
-                loadFirstPage(currentThread);
-            } else {
-                highlightOP(null);
-            }
+        // If not in first page, we must load it to get OP's name.
+        if (currentPage && currentPage !== 1) {
+            loadFirstPage(currentThread);
+        } else {
+            highlightOP(null);
         }
     }
     
@@ -89,10 +86,16 @@ function HighlightOP() {
     }
 
     function getCurrentPage() {
-        return null;
+        return $("div.pagenav:first-child span strong").html();
     }
-
+    
     function getCurrentThread() {
-        return null;
+        var href = $("#threadtools_menu form > table tr:last a").attr("href");
+        
+        if (href.indexOf("subscription") !== -1) {
+            return parseInt(href.replace("subscription.php?do=addsubscription&t=", ""), 10);
+        } else {
+            return parseInt(href.replace("poll.php?do=newpoll&t=", ""), 10);
+        }
     }
 }
