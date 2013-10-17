@@ -39,7 +39,7 @@ function RefreshSearch() {
         }
     }
     
-    function refresh() {
+    unsafeWindow.refresh = function() {
         if (location.href === "http://www.forocoches.com/foro/search.php?do=process") {
             // Reenviar el formulario (actualizar la página causa que el navegador muestre el típico mensaje al reenviar un formulario por POST)
             document.getElementById("searchform").submit();
@@ -50,7 +50,7 @@ function RefreshSearch() {
         }
     }
     
-    function cancel() {
+    unsafeWindow.cancel = function() {
         elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ Recarga automática desactivada ]";
         
         seconds = 288;
