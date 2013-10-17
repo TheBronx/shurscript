@@ -54,11 +54,11 @@ function RefreshSearch() {
         elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ Recarga automática desactivada ]";
         
         seconds = 288;
-        cancel = true;
+        cancelar = true;
     }
     
     function updateCountDown() {
-        if (cancel) return;
+        if (cancelar) return;
         
         seconds--;
         
