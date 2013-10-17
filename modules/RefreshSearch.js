@@ -50,8 +50,7 @@ function RefreshSearch() {
         }
     }
     
-    unsafeWindow.refresh = refresh;
-    unsafeWindow.cancel = function() {
+    function cancel() {
         elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ Recarga automática desactivada ]";
         
         seconds = 288;
@@ -64,10 +63,18 @@ function RefreshSearch() {
         seconds--;
         
         if (seconds > 0) {
-            elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ <a href='#' onclick='cancel(); return false;'>cancelar</a> ]";
+            var enlace = $("<a href='#'>Cancelar</a>").click(function() { this.cancel(); });
+            
+            elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. &mdash; ";
+            $(elementCountDown).append(enlace);
+            
             setTimeout(updateCountDown, 967);
         } else {
-            elementCountDown.innerHTML = "Cargando… [ <a href='#' onclick='refresh(); return false;'>recargar</a> ]";
+            var enlace = $("<a href='#'>Refrescar</a>").click(function() { this.refresh(); });
+            
+            elementCountDown.innerHTML = "Cargando… &mdash; ";
+            $(elementCountDown).append(enlace);
+            
             refresh();
         }
     }
