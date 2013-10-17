@@ -63,14 +63,14 @@ function RefreshSearch() {
         seconds--;
         
         if (seconds > 0) {
-            var enlace = $("<a href='#'>Cancelar</a>").click(function() { this.cancel(); });
+            var enlace = $("<a href='#'>Cancelar</a>").click(function() { cancel(); });
             
             elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. &mdash; ";
             $(elementCountDown).append(enlace);
             
             setTimeout(updateCountDown, 967);
         } else {
-            var enlace = $("<a href='#'>Refrescar</a>").click(function() { this.refresh(); });
+            var enlace = $("<a href='#'>Refrescar</a>").click(function() { refresh(); });
             
             elementCountDown.innerHTML = "Cargando… &mdash; ";
             $(elementCountDown).append(enlace);
