@@ -1,8 +1,8 @@
 function HighlightOP() {
-    this.id = arguments.callee.name; //ModuleTemplate
+    this.id = arguments.callee.name;
     this.name = "Resaltar al creador del hilo";
     this.author = "Electrosa";
-    this.version = "0.1";
+    this.version = "1.0";
     this.description = "Resalta los mensajes que ha escrito el creador del hilo.";
     this.enabledByDefault = true;
     this.worksInFrontPage = false;
@@ -16,14 +16,14 @@ function HighlightOP() {
 
     /* Método obligatorio y punto de entrada a la lógica del módulo */
     this.load = function() {
-        var currentThread = getURLParameter("t") || getCurrentThread();
-        var currentPage = getURLParameter("page") || getCurrentPage();
+        var currentThread = unsafeWindow.threadid || getURLParameter("t") || getCurrentThread();
+        var currentPage = getURLParameter("page") || getCurrentPage() || -1;
         
         // If not in first page, we must load it to get OP's name.
-        if (currentPage && currentPage !== 1) {
-            loadFirstPage(currentThread);
-        } else {
+        if (currentPage === 1) {
             highlightOP(null);
+        } else if (currentThread) {
+            loadFirstPage(currentThread);
         }
     }
     
@@ -86,16 +86,11 @@ function HighlightOP() {
     }
 
     function getCurrentPage() {
-        return $("div.pagenav:first-child span strong").html();
+        return document.getElementById("showthread_threadrate_form").page.value
+            || $("div.pagenav:first-child span strong").html();
     }
     
     function getCurrentThread() {
-        var href = $("#threadtools_menu form > table tr:last a").attr("href");
-        
-        if (href.indexOf("subscription") !== -1) {
-            return parseInt(href.replace("subscription.php?do=addsubscription&t=", ""), 10);
-        } else {
-            return parseInt(href.replace("poll.php?do=newpoll&t=", ""), 10);
-        }
+        return document.getElementById("showthread_threadrate_form").t.value;
     }
 }
