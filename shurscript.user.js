@@ -25,8 +25,8 @@
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/dust.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/init.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/gm_wrap.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/module_manager.js
@@ -47,5 +47,5 @@
 
 /*
 Es imprescindible que los modulos se carguen en este orden:
-init > gm_wrap > helper > core > module_manager
+init > helper > core > module_manager
 */

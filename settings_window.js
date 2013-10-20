@@ -1,14 +1,14 @@
 (function ($, SHURSCRIPT, undefined) {
 	'use strict';
 	/*
-	Unidad para las opciones de modulos
+	Componente settingsWindow: opciones de modulos
 	*/
 
-	var self = {};
-	self.id = 'SettingsWindow';
-	self.helper = SHURSCRIPT.helper.createHelper(self.id);
+	var settingsWindow = SHURSCRIPT.createNameSpace('settingsWindow');
+	settingsWindow.id = 'SettingsWindow';
+	settingsWindow.helper = SHURSCRIPT.helper.createHelper(settingsWindow.id);
 
-	self.appendMenuItem = function () {
+	settingsWindow.appendMenuItem = function () {
 		/*
 		Mete elemento <Shurscript> en barra de FC para acceder a las preferencias
 		*/
@@ -16,30 +16,53 @@
 		var menuItem = $('.vbmenu_control').first(),
 			newMenuItem = menuItem.clone();
 
-		newMenuItem.css("cursor", "pointer");
-		newMenuItem.html("<a>Shurscript</a>");
-		newMenuItem.click(function(){
-			self.show();
-		});
+		newMenuItem.css('cursor', 'pointer');
+		newMenuItem.html('<a>Shurscript</a>');
+		newMenuItem.click(settingsWindow.show);
 		menuItem.parent().append(newMenuItem);
 	};
 
-	self.show = function () {
+	settingsWindow.show = function () {
 		/*
 		Lanza la ventana con las preferencias
 		*/
-		alert('show!');
+
+		settingsWindow.$modal.modal();
 	};
 
-	self.load = function () {
+	settingsWindow.load = function () {
 		/*
 		Puerta de entrada a la unidad
 		*/
-		self.html = self.helper.GM.getResourceText('modalhtml');
-		self.appendMenuItem();
-	};
 
-	SHURSCRIPT.settingsWindow = self;
+		// Mete link para abrir modal
+		settingsWindow.appendMenuItem();
+
+		// Carga plantilla y guarda en objeto jQuery
+		var $modal = $(settingsWindow.helper.GM.getResourceText('modalhtml'));
+
+		// Mete eventos
+		//$modal.on('hidden.bs.modal', function () {
+		//	modal.remove(); //Eliminarla al cerrar
+		//});
+
+		$modal.on('shown.bs.modal', function () {
+			return;
+
+			var contentWindow = $modal.find(".modal-body");
+			var preferences;
+			for (var i = 0; i < allModules.length; i++) {
+				var modulePanel = new ModulePanel(allModules[i]);
+				panels.push(modulePanel);
+				contentWindow.append(modulePanel.get()); //Añadimos los modulos que tengan alguna preferencia configurada
+			}
+		});
+
+		$(document.body).append($modal);
+		settingsWindow.$modal = $modal;
+
+
+	};
 
 })(jQuery, SHURSCRIPT);
 
@@ -48,14 +71,6 @@
 
 
 function SettingsWindow() {
-
-	var panels = [];
-
-	var modal = $();
-
-	modal.on('hidden.bs.modal', function () {
-	  modal.remove(); //Eliminarla al cerrar
-	});
 
 	modal.on('shown.bs.modal', function () {
 	  	var contentWindow = modal.find(".modal-body");

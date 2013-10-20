@@ -1,23 +1,23 @@
 (function ($, SHURSCRIPT, undefined) {
     'use strict';
     /*
-    Unidad para creacion y registro de modulos
+    Componente moduleManager: creacion y registro de modulos
     */
 
-    var self = {};
+    var moduleManager = SHURSCRIPT.createNameSpace('moduleManager');
 
-    self.id = 'ModuleManager';
-    self.helper = SHURSCRIPT.helper.createHelper(self.id);
+    moduleManager.id = 'ModuleManager';
+    moduleManager.helper = SHURSCRIPT.helper.createHelper(moduleManager.id);
 
-    self.ALL = 'ALL';
-    self.NO_FRONTPAGE = 'NO_FRONTPAGE';
+    moduleManager.ALL = 'ALL';
+    moduleManager.NO_FRONTPAGE = 'NO_FRONTPAGE';
 
     // Registra Objeto base para modulos
-    self.protoModule = {
+    moduleManager.protoModule = {
         enabledByDefault: true,
         additionalLoadCheck: function () {return true;},
         getPreferences: function () {return {};},
-        domain: self.NO_FRONTPAGE,
+        domain: moduleManager.NO_FRONTPAGE,
         isValidPage: function () {
             /*
             Comprueba si en la pagina actual el modulo
@@ -27,9 +27,9 @@
                 page = SHURSCRIPT.core.environment.page;
 
             if (typeof domain === 'string') {
-                if (domain === self.ALL) {
+                if (domain === moduleManager.ALL) {
                     return true;
-                } else if (domain === self.NO_FRONTPAGE) {
+                } else if (domain === moduleManager.NO_FRONTPAGE) {
                     return page !== '/';
                 }
                 return page === domain;
@@ -40,15 +40,16 @@
         }
     };
 
-    self.modules = {};
+    // Store de modulos
+    moduleManager.modules = {};
 
-    self.createModule = function (specs) {
+    moduleManager.createModule = function (specs) {
         /*
         Genera modulo extendiendo la base y lo registra
         */
 
         // Crea modulo a partir del proto modulo
-        var module = Object.create(self.protoModule);
+        var module = Object.create(moduleManager.protoModule);
 
         // Copia parametros y si falta alguno, aborta
         var params = ['id', 'name', 'author', 'version', 'description'];
@@ -61,7 +62,7 @@
 
                 var error_msg = 'Error generando modulo {' + mod_name +
                                 '}.El parametro ' + param + ' no ha sido definido.';
-                self.helper.log(error_msg);
+                moduleManager.helper.log(error_msg);
 
                 // Aborta todo
                 throw (error_msg);
@@ -75,21 +76,21 @@
         module.helper = SHURSCRIPT.helper.createHelper(module.id);
 
         // Registra modulo
-        self.modules[module.id] = module;
+        moduleManager.modules[module.id] = module;
 
         return module;
     };
 
-    self.loadModules = function () {
+    moduleManager.loadModules = function () {
         /*
         Lanza la carga de modulos
         */
 
         // Ejecutamos settingsWindow
-        // self.settingsWindow.load();
+        // moduleManager.settingsWindow.load();
 
         // Loop sobre modulos para cargarlos
-        $.each(self.modules, function (moduleName, moduleObject) {
+        $.each(moduleManager.modules, function (moduleName, moduleObject) {
 
             // Intentamos carga.
             try {
@@ -104,15 +105,13 @@
                     return true;
                 }
 
-                self.helper.log('Cargando modulo ' + moduleObject.id);
+                moduleManager.helper.log('Cargando modulo ' + moduleObject.id);
                 moduleObject.load();
-                self.helper.log('Modulo ' + moduleObject.id + ' cargado');
+                moduleManager.helper.log('Modulo ' + moduleObject.id + ' cargado');
             } catch (e) {
-                self.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
+                moduleManager.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
             }
         });
     };
-
-    SHURSCRIPT.moduleManager = self;
 
 })(jQuery, SHURSCRIPT);

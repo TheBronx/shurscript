@@ -1,13 +1,14 @@
-(function ($, SHURSCRIPT, GM, bootbox, location, console, undefined) {
+(function ($, SHURSCRIPT, bootbox, location, console, undefined) {
     'use strict';
     /*
-    Unidad para helpers
+    Componente helpers
     */
 
-    var self = {};
+    var helper = SHURSCRIPT.createNameSpace('helper'),
+        GM = SHURSCRIPT.GreaseMonkey;
 
     // Define el prototipo del helper
-    self.proto = {
+    helper.proto = {
         log: function (message) {
             console.log("[SHURSCRIPT]" + (this.moduleName ? (" [Modulo " + this.moduleName + "] ") : " ") + new Date().toLocaleTimeString() + ": " + message);
         },
@@ -32,11 +33,10 @@
         location: location
     };
 
-    self.createHelper = function (moduleName) {
-        var helper = Object.create(self.proto);
-        helper.moduleName = moduleName;
-        return helper;
+    helper.createHelper = function (moduleName) {
+        var newHelper = Object.create(helper.proto);
+        newHelper.moduleName = moduleName;
+        return newHelper;
     };
 
-    SHURSCRIPT.helper = self;
-})(jQuery, SHURSCRIPT, GREASEMONKEY, bootbox, location, console);
+})(jQuery, SHURSCRIPT, bootbox, location, console);

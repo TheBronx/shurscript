@@ -1,15 +1,15 @@
 (function ($, SHURSCRIPT, undefined) {
     'use strict';
     /*
-    Unidad para el nucleo de la aplicacion
+    Componente core: nucleo de la aplicacion
     */
 
-    var self = {};
+    var core = SHURSCRIPT.createNameSpace('core');
 
-    self.id = 'core';
-    self.helper = SHURSCRIPT.helper.createHelper(self.id);
+    core.id = 'core';
+    core.helper = SHURSCRIPT.helper.createHelper(core.id);
 
-    self.initialize = function () {
+    core.initialize = function () {
 
         var body_html = $('body').html();
 
@@ -22,19 +22,19 @@
         }
 
         // Registra entorno
-        self.environment = {
+        core.environment = {
             user: {
                 id: id_regex_results[1],
                 name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
             },
-            page: self.helper.location.pathname.replace("/foro","")
+            page: core.helper.location.pathname.replace("/foro","")
         };
 
         // Mete bootstrap
-        self.helper.addStyle('bootstrapcss');
+        core.helper.addStyle('bootstrapcss');
 
         // Configuracion de las ventanas modales
-        self.helper.bootbox.setDefaults({
+        core.helper.bootbox.setDefaults({
             locale: "es",
             className: "shurscript",
             closeButton: false
@@ -52,19 +52,18 @@
 
     // Devuelve objeto con la configuracion del usuario (activo/inactivo)
     // {module1: true, module2: false...}
-    self.getModulesConfig = function () {
+    core.getModulesConfig = function () {
         var modulesConfig = {};
 
         try {
-            var serializedModulesConfig = self.helper.GM.getValue("MODULES");
+            var serializedModulesConfig = core.helper.GM.getValue("MODULES");
             modulesConfig = JSON.parse(serializedModulesConfig);
 
         } catch (e) {
-            self.helper.GM.deleteValue("MODULES");
+            core.helper.GM.deleteValue("MODULES");
         }
 
         return modulesConfig;
      };
 
-     SHURSCRIPT.core = self;
 })(jQuery, SHURSCRIPT);
