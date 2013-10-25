@@ -15,6 +15,9 @@ var SHURSCRIPT = {
         addStyle: GM_addStyle,
         getResourceText: GM_getResourceText,
         getResourceURL: GM_getResourceURL
+    },
+    environment: {
+        page: location.pathname.replace("/foro","")
     }
 };
 
@@ -29,7 +32,7 @@ var SHURSCRIPT = {
      * Crea un namespace dentro de SHURSCRIPT pasandole un string de forma 'SHURSCRIPT.nombreNameSpace'
      * o simplemente 'nombreNameSpace'
      */
-    core.createNameSpace = function (ns) {
+    var createNameSpace = function (ns) {
         var segments = ns.split('.'),
             parent = SHURSCRIPT;
 
@@ -55,13 +58,13 @@ var SHURSCRIPT = {
             console.log("[SHURSCRIPT]  [Modulo " + this.moduleName + "]" + new Date().toLocaleTimeString() + ": " + message);
         },
         setValue: function(key, value) {
-            GM.setValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.env.user.id, value);
+            GM.setValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id, value);
         },
         getValue: function(key, defaultValue) {
-            return GM.getValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.env.user.id, defaultValue);
+            return GM.getValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id, defaultValue);
         },
         deleteValue: function(key) {
-            GM.deleteValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.env.user.id);
+            GM.deleteValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id);
         },
         throw: function (message) {
             throw "[SHURSCRIPT]  [Modulo " + this.moduleName + "]" + new Date().toLocaleTimeString() + ": " + message;
@@ -75,6 +78,7 @@ var SHURSCRIPT = {
             var css = GM.getResourceText(styleResource);
             GM.addStyle(css);
         },
+        getResourceText: GM.getResourceText,
         bootbox: bootbox,
         location: location
     };
@@ -99,19 +103,14 @@ var SHURSCRIPT = {
      * @param specs.name - nombre componente
      * @param specs.description - que hace este componente
      */
-    core.createComponent = function (specs) {
-        var props = ['id', 'name', 'description'];
-
-        // Comprueba que specs contiene todos los valores
-        $.each(props, function (index, prop) {
-            if (specs[prop] === undefined) {
-                core.helper.throw('Error al crear componente. La propiedad ' + prop + ' no ha sido definida.');
-            }
-        });
+    core.createComponent = function (id) {
+        if (id === undefined) {
+            core.helper.throw('Error al crear componente. La propiedad ' + prop + ' no ha sido definida.');
+        }
 
         // Crea namespace y copiale las propiedades
-        var comp = core.createNameSpace(specs.id);
-        $.extend(comp, specs);
+        var comp = createNameSpace(id);
+        comp.id = id;
 
         // Metele un helper
         comp.helper = core.createHelper(comp.id);
@@ -119,6 +118,46 @@ var SHURSCRIPT = {
         return comp;
     };
 
+    /**
+     * Inicializa la aplicacion
+     */
+    core.initialize = function () {
+
+        var body_html = $('body').html();
+
+        // Saca por regexps id
+        var id_regex_results = /userid=(\d*)/.exec(body_html);
+
+        // Si el usuario no está logueado, aborta.
+        if ( ! id_regex_results) {
+            return false;
+        }
+
+        // Guarda info usuario
+        SHURSCRIPT.environment.user = {
+            id: id_regex_results[1],
+            name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
+        };
+
+        // Mete bootstrap
+        core.helper.addStyle('bootstrapcss');
+
+        // Configuracion de las ventanas modales
+        core.helper.bootbox.setDefaults({
+            locale: "es",
+            className: "shurscript",
+            closeButton: false
+        });
+
+        // Carga la ventana de preferencias
+        // SHURSCRIPT.settingsWindow.load();
+
+        // Lanza carga modulos
+        SHURSCRIPT.moduleManager.startModules();
+
+        // Busca actualizaciones
+        // TODO
+    };
 
 })(jQuery, SHURSCRIPT, bootbox, window.console, window.location);
 

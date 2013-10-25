@@ -1,19 +1,22 @@
-(function ($, SHURSCRIPT, undefined) {
+(function ($, createModule, environment, undefined) {
     'use strict';
-    var mod = SHURSCRIPT.moduleManager.createModule({
-        id: 'NightMode',
+
+    var mod = createModule({
+        id: 'nightMode',
         name: 'Modo Noche',
         author: 'Juno / ikaros45',
-        version: '0.1',
-        description: 'Cambia la apariencia del foro a colores más oscuros. Perfecto para leer el foro por la noche sin cansar la vista. <b>BETA</b>'
+        version: '0.2',
+        description: 'Cambia la apariencia del foro a colores más oscuros. ' +
+                     'Perfecto para leer el foro por la noche sin cansar la' +
+                     ' vista. <b>BETA</b>'
     });
 
     mod.domain = 'ALL';
     mod.enabledByDefault = false;
 
-    mod.load = function () {
+    mod.onStart = function () {
         // Crea tag style y guardalo para luego
-        var css = mod.helper.GM.getResourceText('nightmodecss');
+        var css = mod.helper.getResourceText('nightmodecss');
         mod.styleTag = $('<style>' + css + '</style>');
 
         // Crea tag imagen y guarda
@@ -32,10 +35,10 @@
 
     };
 
+    /**
+     * Invierte estado
+     */
     mod.toggle = function () {
-        /*
-         * Invierte estado
-         */
         if (mod.stateIsOn()) {
             mod.turnOff();
         } else {
@@ -43,18 +46,18 @@
         }
     };
 
+    /**
+     * Lee el ultimo estado guardado en el navegador
+     */
     mod.stateIsOn = function () {
-        /*
-         * Lee el ultimo estado guardado en el navegador
-         */
         return mod.helper.getValue('ENABLED', false);
     };
 
+    /**
+     * Guarda estado en el navegador
+     */
     mod.setState = function (value) {
-        /*
-         * Guarda estado en el navegador
-         */
-        mod.helper.setValue('ENABLED', !!value);
+        mod.helper.setValue('ENABLED', value);
     };
 
     mod.turnOn = function () {
@@ -69,4 +72,4 @@
         mod.setState(false);
     };
 
-})(jQuery, SHURSCRIPT);
+})(jQuery, SHURSCRIPT.moduleManager.createModule, SHURSCRIPT.env);
