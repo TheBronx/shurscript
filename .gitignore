@@ -9,6 +9,7 @@ lib-cov
 *.orig
 *.sublime-project
 *.sublime-workspace
+.idea/*
 
 pids
 logs

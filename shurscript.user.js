@@ -21,31 +21,40 @@
 // @grant           GM_addStyle
 // @grant           GM_getResourceText
 // @grant           GM_getResourceURL
+// @run-at document-start
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/dust.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/init.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/helper.js
+
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/module_manager.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NightMode.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/AutoUpdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/settings_window.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/settingswindow.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
+
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/nightmode.js
+
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
-// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
+
 // @resource        scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
 // @resource        star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
 // @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
 // @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
+
+// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
 // ==/UserScript==
 
-
-/*
-Es imprescindible que los modulos se carguen en este orden:
-init > helper > core > module_manager
+/**
+ * Es imprescindible que los archivos se carguen en este orden:
+ * core > componentes > modulos
 */
+
+jQuery(document).ready(function(){
+    if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+        // SHURSCRIPT.core.initialize();
+    }
+});
+
