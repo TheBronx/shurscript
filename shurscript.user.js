@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.10.5-exp
+// @version         0.11.0-exp
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
@@ -44,13 +44,15 @@
 // ==/UserScript==
 
 /**
- * Es imprescindible que los archivos se carguen en este orden:
+ * Es imprescindible que los archivos js se carguen en este orden:
  * core > componentes > modulos
 */
 
-jQuery(document).ready(function () {
-    if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-        SHURSCRIPT.core.initialize();
-    }
-});
+if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
+    // Lanza la carga prematura
+    SHURSCRIPT.core.initializeEagerly();
+
+    // Programa la carga normal
+    jQuery(document).ready(SHURSCRIPT.core.initialize);
+}
 

@@ -49,7 +49,8 @@
         getOptions: function () {return [];},
 
         /**
-         * Function a sobreescribir para comprobar si onEagerLoad se debe ejecutar
+         * Function a sobreescribir para meter una condicion
+         * para la ejecucion prematura del modulo
          */
         eagerStartCheck: function () {return false;},
 
@@ -132,7 +133,7 @@
                 moduleManager.helper.log(error_msg);
 
                 // Aborta todo
-                throw (error_msg);
+                moduleManager.helper.throw (error_msg);
             }
 
             // Si todo va bien, copia.
@@ -151,11 +152,7 @@
     /**
      * Lanza la carga de modulos en document.ready
      */
-    moduleManager.startModules = function () {
-
-
-        // Ejecutamos settingsWindow
-        // moduleManager.settingsWindow.load();
+    moduleManager.startModulesOnDocReady = function () {
 
         // Loop sobre modulos para cargarlos
         $.each(moduleManager.modules, function (moduleName, module) {
@@ -163,9 +160,9 @@
             // Intentamos carga.
             try {
 
-                module.refreshState();
-
                 // Si el modulo no esta activado
+                // (nota: el estado del modulo ha sido actualizado
+                // en el .startModulesEagerly
                 if ( ! module.state.enabled) {
                     return true;
                 }
@@ -188,5 +185,44 @@
             }
         });
     };
+
+    /**
+     * Lanza la carga "prematura" de modulos. Todos la aplicacion
+     * ShurScript estará cargada pero el DOM no.
+     */
+    moduleManager.startModulesEagerly = function () {
+
+        // Loop sobre modulos para cargarlos
+        $.each(moduleManager.modules, function (moduleName, module) {
+
+            // Intentamos carga.
+            try {
+
+                module.refreshState();
+
+                // Si el modulo no esta activado
+                if ( ! module.state.enabled) {
+                    return true;
+                }
+
+                // Si el modulo no carga prematuramente, aborta
+                if ( ! module.eagerStartCheck()) {
+                    return true;
+                }
+
+                // Si no estamos en una pagina en la que el modulo corre, continue
+                if ( ! module.isValidPage()) {
+                    return true;
+                }
+
+                moduleManager.helper.log('[Modo prematuro] Cargando modulo ' + module.id);
+                module.onEagerStart();
+                moduleManager.helper.log('[Modo prematuro] Modulo ' + module.id + ' cargado');
+            } catch (e) {
+                moduleManager.helper.log('[Modo prematuro] Fallo cargando modulo ' + module.id + '\nRazon: ' + e);
+            }
+        });
+    };
+
 
 })(jQuery, SHURSCRIPT);

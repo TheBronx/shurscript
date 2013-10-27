@@ -30,8 +30,11 @@ var SHURSCRIPT = {
     SHURSCRIPT.core = core;
 
     /**
-     * Crea un namespace dentro de SHURSCRIPT pasandole un string de forma 'SHURSCRIPT.nombreNameSpace'
-     * o simplemente 'nombreNameSpace'
+     * Crea un namespace dentro de SHURSCRIPT pasandole
+     * un string de forma 'SHURSCRIPT.nombreNameSpace'
+     * o simplemente 'nombreNameSpace' o 'nameSpace.subNameSpace.subSub...'
+     *
+     * @param {string} ns - nombre/ruta del nameSpace
      */
     var createNameSpace = function (ns) {
         var segments = ns.split('.'),
@@ -56,39 +59,56 @@ var SHURSCRIPT = {
     // Prototipo para los helpers
     var protoHelper = {
         log: function (message) {
-            console.log(this._getCallerDescription()  + message);
+            console.log(this._getCallerDescription() + message);
         },
+
         /**
          * Compone el string para este modulo + usuario + key
          *
          * @param {string} key - nombre de la llave
+         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
-        _getShurKey: function (key) {
-            return 'SHURSCRIPT_' + this.moduleId + '_' + SHURSCRIPT.environment.user.id + '_' + key;
+        _getShurKey: function (key, withId) {
+            var id = (withId === true) ? SHURSCRIPT.environment.user.id : '';
+            return 'SHURSCRIPT_' + this.moduleId + '_' + id + '_' + key;
         },
 
         /**
          * Compone una cadena con el nombre del modulo que esta llamando al helper y la hora
          */
         _getCallerDescription: function () {
-            return '[SHURSCRIPT]  [Modulo ' + this.moduleId + ']' + new Date().toLocaleTimeString() + ': ';
+            return '[SHURSCRIPT]  [Modulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
         },
 
-        setValue: function(key, value) {
+        /**
+         *
+         * @param key
+         * @param value
+         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
+         */
+        setValue: function(key, value, withId) {
             GM.setValue(this._getShurKey(key), value);
         },
 
-        getValue: function(key, defaultValue) {
-            return GM.getValue(this._getShurKey(key), defaultValue);
+        /**
+         *
+         * @param key
+         * @param defaultValue
+         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
+         * @returns {string} - valor leido del navegador
+         */
+        getValue: function(key, defaultValue, withId) {
+            return GM.getValue(this._getShurKey(key, withId), defaultValue);
         },
 
         /**
          * Borra una llave guardada en el navegador
          *
          * @param {string} key - nombre llave
+         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
-        deleteValue: function(key) {
-            GM.deleteValue(this._getShurKey(key));
+        deleteValue: function(key, withId) {
+            GM.deleteValue(this._getShurKey(key), withId);
         },
 
         /**
@@ -117,7 +137,7 @@ var SHURSCRIPT = {
     /**
      * Crea un helper
      *
-     * @param moduleId - id modulo o componente
+     * @param {string} moduleId - id modulo o componente
      */
     core.createHelper =  function (moduleId) {
         var newHelper = Object.create(protoHelper);
@@ -130,9 +150,9 @@ var SHURSCRIPT = {
     /**
      * Crea un componente para la aplicacion
      *
-     * @param specs.id - id componente
-     * @param specs.name - nombre componente
-     * @param specs.description - que hace este componente
+     * @param {string} specs.id - id componente
+     * @param {string} specs.name - nombre componente
+     * @param {string} specs.description - que hace este componente
      */
     core.createComponent = function (id) {
         if (id === undefined) {
@@ -150,7 +170,7 @@ var SHURSCRIPT = {
     };
 
     /**
-     * Inicializa la aplicacion
+     * Inicializa la aplicacion de modo normal
      */
     core.initialize = function () {
 
@@ -184,81 +204,30 @@ var SHURSCRIPT = {
         SHURSCRIPT.preferences.start();
 
         // Lanza carga modulos
-        SHURSCRIPT.moduleManager.startModules();
+        SHURSCRIPT.moduleManager.startModulesOnDocReady();
 
         // Busca actualizaciones
         // TODO
     };
 
+    /**
+     * Inicializa la aplicacion en modo prematuro (antes del doc ready)
+     */
+    core.initializeEagerly = function () {
+        // De forma pseudo-asincronica, espera hasta que el head este cargado
+
+//        Esto se espera a que head este cargado, pero funciona igual de bien sin el
+//        var startLoopHeadReady = function () {
+//            if ($('head') !== null) {
+//                SHURSCRIPT.moduleManager.startModulesEagerly();
+//            } else {
+//                setTimeout(startLoopHeadReady, 10);
+//            }
+//        }
+//        startLoopHeadReady();
+
+        SHURSCRIPT.moduleManager.startModulesEagerly();
+    };
+
+
 })(jQuery, SHURSCRIPT, bootbox, console);
-
-
-///**
-// * Componente core: nucleo aplicacion
-// */
-//(function ($, SHURSCRIPT, undefined) {
-//    'use strict';
-//
-//    var core = SHURSCRIPT.createNameSpace('core');
-//
-//    core.id = 'core';
-//    core.helper = SHURSCRIPT.helper.createHelper(core.id);
-//
-//    core.initialize = function () {
-//
-//        var body_html = $('body').html();
-//
-//        // Saca por regexps id
-//        var id_regex_results = /userid=(\d*)/.exec(body_html);
-//
-//        // Si el usuario no está logueado, aborta.
-//        if ( ! id_regex_results) {
-//            return false;
-//        }
-//
-//        // Registra entorno
-//        core.environment = {
-//            user: {
-//                id: id_regex_results[1],
-//                name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
-//            },
-//            page: core.helper.location.pathname.replace("/foro","")
-//        };
-//
-//        // Mete bootstrap
-//        core.helper.addStyle('bootstrapcss');
-//
-//        // Configuracion de las ventanas modales
-//        core.helper.bootbox.setDefaults({
-//            locale: "es",
-//            className: "shurscript",
-//            closeButton: false
-//        });
-//
-//        // Carga la ventana de preferencias
-//        SHURSCRIPT.settingsWindow.load();
-//
-//        // Lanza carga modulos
-//        SHURSCRIPT.moduleManager.loadModules();
-//
-//        // Busca actualizaciones
-//        // TODO
-//    };
-//
-//    // Devuelve objeto con la configuracion del usuario (activo/inactivo)
-//    // {module1: true, module2: false...}
-//    core.getModulesConfig = function () {
-//        var modulesConfig = {};
-//
-//        try {
-//            var serializedModulesConfig = core.helper.GM.getValue("MODULES");
-//            modulesConfig = JSON.parse(serializedModulesConfig);
-//
-//        } catch (e) {
-//            core.helper.GM.deleteValue("MODULES");
-//        }
-//
-//        return modulesConfig;
-//     };
-//
-//})(jQuery, SHURSCRIPT);

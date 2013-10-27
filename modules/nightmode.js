@@ -14,7 +14,7 @@
     mod.domain = 'ALL';
     mod.enabledByDefault = false;
 
-    mod.onStart = function () {
+    mod.onEagerStart = function () {
         // Crea tag style y guardalo para luego
         var css = mod.helper.getResourceText('nightmodecss');
         mod.styleTag = $('<style>' + css + '</style>');
@@ -34,6 +34,11 @@
         }
 
     };
+
+    /**
+     * Este modulo debe cargar prematuramente
+     */
+    mod.eagerStartCheck = function () {return true;};
 
     /**
      * Invierte estado
