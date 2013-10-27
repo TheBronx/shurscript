@@ -132,8 +132,7 @@ var SHURSCRIPT = {
          * @param {string} message - mensaje para la excepcion
          */
         throw: function (message) {
-            var exc = '[EXCEPTION] - ' + message;
-            this.log(exc);
+            this.log('[EXCEPTION] - ' + message);
             throw exc;
         },
 
