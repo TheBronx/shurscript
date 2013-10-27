@@ -1,4 +1,4 @@
-(function ($, createModule, environment, undefined) {
+(function ($, createModule, createOption, undefined) {
     'use strict';
 
     var mod = createModule({
@@ -54,7 +54,7 @@
     };
 
     /**
-     * Guarda estado en el navegador
+     * Guarda estado (encendido/apagado) en el navegador
      */
     mod.setState = function (value) {
         mod.helper.setValue('ENABLED', value);
@@ -72,4 +72,21 @@
         mod.setState(false);
     };
 
-})(jQuery, SHURSCRIPT.moduleManager.createModule, SHURSCRIPT.env);
+    mod.getOptions = function () {
+        return [
+            createOption({type: 'checkbox', mapsTo: 'someAttribute', caption: 'caption', subCaption: 'jjiji'}),
+            createOption({
+                type: 'radio',
+                elements: [
+                    {value: 'value1', caption: 'Yo que se premoh'},
+                    {value: 'value2', caption: 'aUUUUU', subCaption: 'au au au UUUUU'}
+                ],
+                caption: 'JOJOJOOJ',
+                mapsTo: 'someAttribute[radio!]'
+            }),
+            createOption({type: 'text', caption: 'por usuarios', subCaption: 'separados por comas', mapsTo: 'ijijiji'}),
+            createOption({type: 'header', caption: 'SOY UN PUTO HEADER', subCaption: 'blalblablalbalbalblablala'})
+        ];
+    };
+
+})(jQuery, SHURSCRIPT.moduleManager.createModule, SHURSCRIPT.preferences.createOption);

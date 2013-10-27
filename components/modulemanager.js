@@ -12,15 +12,41 @@
 
     // Objeto prototipo-base para modulos
     var protoModule = {
-        enabledByDefault: true,
+
+        // Objeto donde se almacena de el estado del modulo
+        state: {
+            enabled: true
+        },
+
+        /**
+         * Hace persistente el estado del modulo
+         */
+        storeState: function () {
+            var serializedState = JSON.stringify(this.state);
+
+            this.helper.setValue('__state', serializedState);
+        },
+
+        /**
+         * Actualiza el ultimo estado guardado del modulo.
+         * Si no se encuentra estado guardado, no hace nada.
+         */
+        refreshState: function () {
+
+            var serializedState = this.helper.getValue('__state', '');
+
+            if (serializedState !== '') {
+                this.state = JSON.parse(serializedState);
+            }
+        },
 
         // Por defecto los modulos arrancan fuera de la portada
         domain: moduleManager.NO_FRONTPAGE,
 
         /**
-         * Funcion a sobreescribir si queremos mas preferencias
+         * Funcion a sobreescribir si queremos definir opciones para la configuracion
          */
-        getPreferences: function () {return {};},
+        getOptions: function () {return [];},
 
         /**
          * Function a sobreescribir para comprobar si onEagerLoad se debe ejecutar
@@ -79,11 +105,12 @@
     /**
      * Genera modulo extendiendo la base y lo registra
      *
-     * @param specs.id
-     * @param specs.name
-     * @param specs.author
-     * @param specs.version
-     * @param specs.description
+     * @param {string} specs.id
+     * @param {string} specs.name
+     * @param {string} specs.author
+     * @param {string} specs.version
+     * @param {string} specs.description
+     * 
      * @returns module
      */
     moduleManager.createModule = function (specs) {
@@ -131,26 +158,33 @@
         // moduleManager.settingsWindow.load();
 
         // Loop sobre modulos para cargarlos
-        $.each(moduleManager.modules, function (moduleName, moduleObject) {
+        $.each(moduleManager.modules, function (moduleName, module) {
 
             // Intentamos carga.
             try {
 
+                module.refreshState();
+
+                // Si el modulo no esta activado
+                if ( ! module.state.enabled) {
+                    return true;
+                }
+
                 // Si no estamos en una pagina en la que el modulo corre, continue
-                if ( ! moduleObject.isValidPage()) {
+                if ( ! module.isValidPage()) {
                     return true;
                 }
 
                 // Si no cumple el check adicional, continue
-                if ( ! moduleObject.additionalStartCheck()) {
+                if ( ! module.additionalStartCheck()) {
                     return true;
                 }
 
-                moduleManager.helper.log('Cargando modulo ' + moduleObject.id);
-                moduleObject.onStart();
-                moduleManager.helper.log('Modulo ' + moduleObject.id + ' cargado');
+                moduleManager.helper.log('Cargando modulo ' + module.id);
+                module.onStart();
+                moduleManager.helper.log('Modulo ' + module.id + ' cargado');
             } catch (e) {
-                moduleManager.helper.log('Fallo cargando modulo ' + moduleObject.id + '\nRazon: ' + e);
+                moduleManager.helper.log('Fallo cargando modulo ' + module.id + '\nRazon: ' + e);
             }
         });
     };

@@ -21,13 +21,14 @@ var SHURSCRIPT = {
     }
 };
 
-(function ($, SHURSCRIPT, bootbox, console, location, undefined) {
+(function ($, SHURSCRIPT, bootbox, console, undefined) {
     'use strict';
 
     var core = {},
         GM = SHURSCRIPT.GreaseMonkey;
 
     SHURSCRIPT.core = core;
+
     /**
      * Crea un namespace dentro de SHURSCRIPT pasandole un string de forma 'SHURSCRIPT.nombreNameSpace'
      * o simplemente 'nombreNameSpace'
@@ -55,24 +56,54 @@ var SHURSCRIPT = {
     // Prototipo para los helpers
     var protoHelper = {
         log: function (message) {
-            console.log("[SHURSCRIPT]  [Modulo " + this.moduleName + "]" + new Date().toLocaleTimeString() + ": " + message);
+            console.log(this._getCallerDescription()  + message);
         },
-        setValue: function(key, value) {
-            GM.setValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id, value);
-        },
-        getValue: function(key, defaultValue) {
-            return GM.getValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id, defaultValue);
-        },
-        deleteValue: function(key) {
-            GM.deleteValue("SHURSCRIPT_" + this.moduleName + "_" + key + "_" + SHURSCRIPT.environment.user.id);
-        },
-        throw: function (message) {
-            throw "[SHURSCRIPT]  [Modulo " + this.moduleName + "]" + new Date().toLocaleTimeString() + ": " + message;
+        /**
+         * Compone el string para este modulo + usuario + key
+         *
+         * @param {string} key - nombre de la llave
+         */
+        _getShurKey: function (key) {
+            return 'SHURSCRIPT_' + this.moduleId + '_' + SHURSCRIPT.environment.user.id + '_' + key;
         },
 
         /**
-         *  Mete CSS previamente registrado en archivo principal con @resource
-         * @param styleResource - nombre del recurso css
+         * Compone una cadena con el nombre del modulo que esta llamando al helper y la hora
+         */
+        _getCallerDescription: function () {
+            return '[SHURSCRIPT]  [Modulo ' + this.moduleId + ']' + new Date().toLocaleTimeString() + ': ';
+        },
+
+        setValue: function(key, value) {
+            GM.setValue(this._getShurKey(key), value);
+        },
+
+        getValue: function(key, defaultValue) {
+            return GM.getValue(this._getShurKey(key), defaultValue);
+        },
+
+        /**
+         * Borra una llave guardada en el navegador
+         *
+         * @param {string} key - nombre llave
+         */
+        deleteValue: function(key) {
+            GM.deleteValue(this._getShurKey(key));
+        },
+
+        /**
+         * Lanza excepcion
+         *
+         * @param {string} message - mensaje para la excepcion
+         */
+        throw: function (message) {
+            throw this._getCallerDescription() + message;
+        },
+
+        /**
+         * Mete CSS previamente registrado en archivo principal con @resource
+         *
+         * @param {string} styleResource - nombre del recurso css
          */
         addStyle: function (styleResource) {
             var css = GM.getResourceText(styleResource);
@@ -86,11 +117,11 @@ var SHURSCRIPT = {
     /**
      * Crea un helper
      *
-     * @param moduleName - nombre modulo o componente
+     * @param moduleId - id modulo o componente
      */
-    core.createHelper =  function (moduleName) {
+    core.createHelper =  function (moduleId) {
         var newHelper = Object.create(protoHelper);
-        newHelper.moduleName = moduleName;
+        newHelper.moduleId = moduleId;
         return newHelper;
     };
 
@@ -149,8 +180,8 @@ var SHURSCRIPT = {
             closeButton: false
         });
 
-        // Carga la ventana de preferencias
-        // SHURSCRIPT.settingsWindow.load();
+        // Carga modulo de preferencias
+        SHURSCRIPT.preferences.start();
 
         // Lanza carga modulos
         SHURSCRIPT.moduleManager.startModules();
@@ -159,7 +190,7 @@ var SHURSCRIPT = {
         // TODO
     };
 
-})(jQuery, SHURSCRIPT, bootbox, window.console, window.location);
+})(jQuery, SHURSCRIPT, bootbox, console);
 
 
 ///**

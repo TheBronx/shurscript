@@ -1,8 +1,8 @@
 (function (SHURSCRIPT, undefined) {
+    'use strict';
 
-    var templater = SHURSCRIPT.core.createComponent('templater');
-
-    var store = {};
+    var templater = SHURSCRIPT.core.createComponent('templater'),
+        store = {};
 
     templater.storeTemplate = function (tempName, tempText) {
         store[tempName] = {
@@ -24,7 +24,11 @@
             templater.compile(tempName);
         }
 
-        return store[tempName].tempFn(data);
+        try {
+            return store[tempName].tempFn(data);
+        } catch (e) {
+            templater.helper.throw('Error insertando valores en la plantilla:' + e);
+        }
     };
 
     /**
@@ -39,23 +43,27 @@
             return;
         }
 
-        template.tempFn = new Function("obj",
-            "var p=[],print=function(){p.push.apply(p,arguments);};" +
+        try {
+            template.tempFn = new Function("obj",
+                "var p=[],print=function(){p.push.apply(p,arguments);};" +
 
-            // Introduce the data as local variables using with(){}
-            "with(obj){p.push('" +
+                // Introduce the data as local variables using with(){}
+                "with(obj){p.push('" +
 
-            // Convert the template into pure JavaScript
-            template.tempText
-              .replace(/[\r\t\n]/g, " ")
-              .split("<%").join("\t")
-              .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t=(.*?)%>/g, "',$1,'")
-              .split("\t").join("');")
-              .split("%>").join("p.push('")
-              .split("\r").join("\\'") + "');}return p.join('');");
+                // Convert the template into pure JavaScript
+                template.tempText
+                  .replace(/[\r\t\n]/g, " ")
+                  .split("<%").join("\t")
+                  .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+                  .replace(/\t=(.*?)%>/g, "',$1,'")
+                  .split("\t").join("');")
+                  .split("%>").join("p.push('")
+                  .split("\r").join("\\'") + "');}return p.join('');");
 
-        template.compiled = true;
+            template.compiled = true;
+        } catch (e) {
+            templater.helper.throw('Error compilando template [' + tempName + ']: ' + e);
+        }
     };
 
 })(SHURSCRIPT);

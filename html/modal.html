@@ -4,10 +4,93 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" style="font-weight:300">
-                    Preferencias del <strong>Shurscript {shurScriptVersion}</strong>
+                    Preferencias del <strong>Shurscript <%=scriptVersion%></strong>
                 </h4>
             </div>
             <div class="modal-body" style="overflow: auto;">
+
+                <% $.each(modules, function (index, module) { %>
+
+                <!-- Grupo opciones modulo -->
+                <div data-module-id="<%=module.id%>" class="panel shur-module-preferences <%=module.state.enabled ? '' : 'disabled-module'%>">
+
+                    <div class="panel-heading row-fluid">
+                        <input class="shur-module-enabled" type="checkbox" <%=module.state.enabled ? 'checked' : ''%>>
+                        <h3 class="panel-title"><%=module.name%></h3>
+                        <% if (module.options.length > 0) { %>
+                        <button data-toggle="button"
+                                class="btn btn-default btn-sm pull-right shur-btn-options">
+                            Opciones
+                        </button>
+                        <% } %>
+                    </div>
+
+                    <div class="panel-body">
+                        <p><%=module.description%></p>
+                    </div>
+
+                    <div class="shur-options-body" style="display: none;">
+                        <hr style="margin:0">
+
+                        <div class="panel-body">
+                        <!-- Loop sobre las opciones del modulo (si hay) -->
+                        <% $.each(module.options, function (index, option) { %>
+
+                            <% if (option.type === 'checkbox') { %>
+                            <div class="shur-checkbox-group shur-option">
+
+                                <input data-maps-to="<%=option.mapsTo%>" type="checkbox"
+                                        <%=module.state[option.mapsTo] ? 'checked' : ''%>>
+
+                                <label><%=option.caption%></label>
+
+                                <% if (option.subCaption) { %>
+                                    <span class="shur-sub-label"><%=option.subCaption%></span>
+                                <% } %>
+                            </div>
+
+                            <% } else if (option.type === 'radio') { %>
+                            <div class="shur-radio-group shur-option">
+                                <label><%=option.caption%></label>
+
+                                <% $.each(option.elements, function(index, radio) { %>
+                                <div class="shur-radio-element">
+                                    <input type="radio"name="<%=option.mapsTo%>" data-maps-to="<%=option.mapsTo%>"
+                                           value="<%=radio.value%>" <%=module.state[option.mapsTo] === radio.value ? 'checked' : ''%>>
+                                    <%=radio.caption%>
+
+                                    <% if (radio.subCaption) { %>
+                                <span class="shur-sub-label"><%=radio.subCaption%></span>
+                                    <% } %>
+                                </div>
+
+                                <% }); %>
+                            </div>
+
+                            <% } else if (option.type === 'text') { %>
+                            <div class="shur-text-group shur-option">
+                                <label><%=option.caption%></label>
+                                <span> <%=option.subCaption%></span>
+                                <input  type="text"
+                                        class="form-control"
+                                        data-maps-to="<%=option.mapsTo%>"
+                                        value="<%=module.state[option.mapsTo]%>">
+                            </div>
+
+                            <% } else if (option.type === 'header') { %>
+                            <h4 class="shur-header"><%=option.caption%></h4>
+                            <%=option.subCaption%>
+                            <% } %>
+
+                            <hr>
+
+                        <% }); %>
+                        </div>
+                    </div>
+
+
+                </div>
+                <% });%>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
