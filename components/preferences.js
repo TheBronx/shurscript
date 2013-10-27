@@ -67,9 +67,9 @@
             var $prefs = $(prefs),
                 moduleId = $prefs.data('module-id'),
                 module = SHURSCRIPT.moduleManager.modules[moduleId],
-                state = module.state;
+                modulePreferences = module.preferences;
 
-                state.enabled = $prefs.find('.shur-module-enabled').is(':checked');
+                modulePreferences .enabled = $prefs.find('.shur-module-enabled').is(':checked');
 
                 // Loop por las opciones
                 $prefs.find('.shur-option').each(function (index, option) {
@@ -93,13 +93,13 @@
 
                     mapsTo = $input.data('maps-to');
 
-                    // Update state of module
-                    state[mapsTo] = value;
+                    // Update preferences of module
+                    modulePreferences [mapsTo] = value;
 
                 });
 
-            // Guarda estado en el navegador
-            module.storeState();
+            // Guarda modulePreferences en el navegador
+            module.storePreferences();
 
             // Cierra modal
             preferences.$modal.trigger('hidden.bs.modal');
@@ -126,13 +126,12 @@
                 id: module.id,
                 name: module.name,
                 description: module.description,
-                options: module.getOptions(),
-                state: module.state
+                options: module.getPreferenceOptions(),
+                preferences: module.preferences
             });
         });
 
         return $(SHURSCRIPT.templater.fillOut('modal', modalData));
-
     };
 
     /**
@@ -143,15 +142,10 @@
 		// Mete link para abrir modal
 		preferences.appendMenuItem();
 
-        // Crea modal a partir de la plantilla
-
-
-        // Mete CSS
+        // Mete CSS para el modal
         preferences.helper.addStyle('modalcss');
 
     };
-
-
 
    /**
     * Crea objetos que definen opciones para el modulo
