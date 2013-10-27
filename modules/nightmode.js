@@ -1,4 +1,4 @@
-(function ($, createModule, createOption, undefined) {
+(function ($, createModule, undefined) {
     'use strict';
 
     var mod = createModule({
@@ -8,32 +8,42 @@
         version: '0.2',
         description: 'Cambia la apariencia del foro a colores más oscuros. ' +
                      'Perfecto para leer el foro por la noche sin cansar la' +
-                     ' vista. <b>BETA</b>'
+                     ' vista. <b>BETA</b>',
+        domain: 'ALL'
     });
 
-    mod.domain = 'ALL';
-    mod.enabledByDefault = false;
-
+    var _$styleTag, _$lightImg, _turnOn, _turnOff, _stateIsOn, _toggle, _setState;
+    /**
+     * Funcion a la que se llama en modo carga prematuro
+     */
     mod.onEagerStart = function () {
         // Crea tag style y guardalo para luego
         var css = mod.helper.getResourceText('nightmodecss');
-        mod.styleTag = $('<style>' + css + '</style>');
+        _$styleTag = $('<style>' + css + '</style>');
+
+        // $('head').append(_$styleTag);
 
         // Crea tag imagen y guarda
-        mod.lightImg = $('<img width="24px" style="position: fixed; top: 2px; right: 0px; cursor: pointer;">');
-        $('body').append(mod.lightImg);
+        _$lightImg = $('<img id="night-mode-icon" width="24px" style="position: fixed; top: 2px; right: 0px; cursor: pointer;">');
+
+        // Registra evento para meter imagen cuando cuando el documento este cargado... antes no se puede
+        $(document).ready(function () {
+            $('body').append(_$lightImg);
+        });
 
         // Asigna eventos
-        mod.lightImg.click(mod.toggle);
+        _$lightImg.click(_toggle);
 
         // Enciende si la ultima vez estaba encendido
-        if (mod.stateIsOn()) {
-            mod.turnOn();
+        if (_stateIsOn()) {
+            _turnOn();
         } else {
-            mod.turnOff();
+            _turnOff();
         }
 
     };
+
+
 
     /**
      * Este modulo debe cargar prematuramente
@@ -41,57 +51,45 @@
     mod.eagerStartCheck = function () {return true;};
 
     /**
+     * Desactiva el modo de carga normal
+     */
+    mod.normalStartCheck = function () {return false;};
+
+    /**
      * Invierte estado
      */
-    mod.toggle = function () {
-        if (mod.stateIsOn()) {
-            mod.turnOff();
+    _toggle = function () {
+        if (_stateIsOn()) {
+            _turnOff();
         } else {
-            mod.turnOn();
+            _turnOn();
         }
     };
 
     /**
      * Lee el ultimo estado guardado en el navegador
      */
-    mod.stateIsOn = function () {
+    _stateIsOn = function () {
         return mod.helper.getValue('ENABLED', false);
     };
 
     /**
      * Guarda estado (encendido/apagado) en el navegador
      */
-    mod.setState = function (value) {
+    _setState = function (value) {
         mod.helper.setValue('ENABLED', value);
     };
 
-    mod.turnOn = function () {
-        $('head').append(mod.styleTag);
-        mod.lightImg.attr('src', 'https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png');
-        mod.setState(true);
+    _turnOn = function () {
+        $('head').append(_$styleTag);
+        _$lightImg.attr('src', mod.helper.getResourceURL('nightmode-on'));
+        _setState(true);
     };
 
-    mod.turnOff = function () {
-        mod.styleTag.remove();
-        mod.lightImg.attr('src', 'https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png');
-        mod.setState(false);
+    _turnOff = function () {
+        _$styleTag.remove();
+        _$lightImg.attr('src', mod.helper.getResourceURL('nightmode-off'));
+        _setState(false);
     };
 
-    mod.getOptions = function () {
-        return [
-            createOption({type: 'checkbox', mapsTo: 'someAttribute', caption: 'caption', subCaption: 'jjiji'}),
-            createOption({
-                type: 'radio',
-                elements: [
-                    {value: 'value1', caption: 'Yo que se premoh'},
-                    {value: 'value2', caption: 'aUUUUU', subCaption: 'au au au UUUUU'}
-                ],
-                caption: 'JOJOJOOJ',
-                mapsTo: 'someAttribute[radio!]'
-            }),
-            createOption({type: 'text', caption: 'por usuarios', subCaption: 'separados por comas', mapsTo: 'ijijiji'}),
-            createOption({type: 'header', caption: 'SOY UN PUTO HEADER', subCaption: 'blalblablalbalbalblablala'})
-        ];
-    };
-
-})(jQuery, SHURSCRIPT.moduleManager.createModule, SHURSCRIPT.preferences.createOption);
+})(jQuery, SHURSCRIPT.moduleManager.createModule);

@@ -13,31 +13,103 @@
     // Objeto prototipo-base para modulos
     var protoModule = {
 
-        // Objeto donde se almacena de el estado del modulo
-        state: {
+        /**
+         * Constructor/incializador
+         *
+         * @param {string} specs.id
+         * @param {string} specs.name
+         * @param {string} specs.author
+         * @param {string} specs.version
+         * @param {string} specs.description
+         * @param {string} [specs.domain] - dominio en el que el modulo arranca. Posibles valores:
+         * - 'NO_FRONTPAGE' - carga en todo FC salvo la portada [valor por defecto]
+         * - 'ALL' - carga en todo FC
+         * - string con nombre del recurso tal y como esta en helper.environment.page
+         * - array de strings como en el punto anterior
+         * @param {object} [specs.initialPreferences] - preferencias iniciales del modulo.
+         * Las preferencias guardadas por el usuario tienen prioridad.
+         * @param {bool} [specs.initialPreferences.enabled] - bool para modulo cargado por defecto. Por defecto es true
+         */
+        __init__: function (specs) {
+
+            // Copia parametros y si falta alguno, aborta
+            var params = ['id', 'name', 'author', 'version', 'description'],
+
+            // Dentro del $.each, this no se refiere al objeto, asi que guarda una ref.
+                self = this;
+
+            $.each(params, function (index, param) {
+
+                // Comprueba que no falte el parametro
+                if (specs[param] === undefined) {
+                    var mod_name = specs.id || specs.name || 'no identificado';
+
+                    var error_msg = 'Error generando modulo {' + mod_name +
+                                    '}.El parametro ' + param + ' no ha sido definido.';
+                    moduleManager.helper.log(error_msg);
+
+                    // Aborta todo
+                    moduleManager.helper.throw (error_msg);
+                }
+
+                // Si todo va bien, copia.
+                self[param] = specs[param];
+            });
+
+            // Guarda preferencias iniciales, si las hay
+            this.initialPreferences = specs.initialPreferences || {};
+
+            // Metele opcionalmente el dominio (por default es NO_FRONTPAGE)
+            if (specs.domain !== undefined) {
+                this.domain = specs.domain;
+            }
+
+            // Metele un module helper ya configurado
+            this.helper = SHURSCRIPT.core.createModuleHelper(specs.id);
+
+            // Registra modulo
+            moduleManager.modules[this.id] = this;
+
+            // Elimina constructor
+            delete this.__init__;
+
+            // Devuelve objeto modulo
+            return this;
+        },
+
+        // Objeto donde se almacenan las preferencias
+        preferences: {
             enabled: true
         },
 
         /**
          * Hace persistente el estado del modulo
          */
-        storeState: function () {
-            var serializedState = JSON.stringify(this.state);
+        storePreferences: function () {
+            var serializedPreferences = JSON.stringify(this.preferences);
 
-            this.helper.setValue('__state', serializedState);
+            this.helper.setValue('__preferences', serializedPreferences);
         },
 
         /**
-         * Actualiza el ultimo estado guardado del modulo.
-         * Si no se encuentra estado guardado, no hace nada.
+         * Actualiza las preferencias.
+         *
+         * Una preferencia guardada tiene prioridad sobre una preferencia
+         * definida en .initialPreferences. Pero si el objeto de preferencias
+         * guardadas no tiene una llave, se toma de initialPreferences.
          */
-        refreshState: function () {
+        refreshPreferences: function () {
 
-            var serializedState = this.helper.getValue('__state', '');
+            var serializedStoredPreferences = this.helper.getValue('__preferences', ''),
+                storedPreferences = {};
 
-            if (serializedState !== '') {
-                this.state = JSON.parse(serializedState);
+            if (serializedStoredPreferences !== '') {
+                storedPreferences = JSON.parse(serializedStoredPreferences);
             }
+
+            // Aqui la cascada de storedPreferences > initialPreferences > preferences
+            // El true es para hacer una copia recursiva
+            $.extend(true, this.preferences, this.initialPreferences, storedPreferences);
         },
 
         // Por defecto los modulos arrancan fuera de la portada
@@ -46,7 +118,7 @@
         /**
          * Funcion a sobreescribir si queremos definir opciones para la configuracion
          */
-        getOptions: function () {return [];},
+        getPreferenceOptions: function () {return [];},
 
         /**
          * Function a sobreescribir para meter una condicion
@@ -89,13 +161,13 @@
          * Funcion a sobreescribir si queremos hacer alguna comprobacion adicional antes de lanzar el modulo
          * @returns {boolean}
          */
-        additionalStartCheck: function () {return true;},
+        normalStartCheck: function () {return true;},
 
         /**
          * Funcion a sobreescribir que se ejecutara tras la carga del DOM si el modulo debe ejecutarse
          * Normalmente aqui va deberia ir la logica del modulo
          */
-        onStart: function () {}
+        onNormalStart: function () {}
 
 
     };
@@ -106,53 +178,21 @@
     /**
      * Genera modulo extendiendo la base y lo registra
      *
-     * @param {string} specs.id
-     * @param {string} specs.name
-     * @param {string} specs.author
-     * @param {string} specs.version
-     * @param {string} specs.description
-     * 
      * @returns module
      */
     moduleManager.createModule = function (specs) {
-
         // Crea modulo a partir del proto modulo
-        var module = Object.create(protoModule);
-
-        // Copia parametros y si falta alguno, aborta
-        var params = ['id', 'name', 'author', 'version', 'description'];
-
-        $.each(params, function (index, param) {
-
-            // Comprueba que no falte el parametro
-            if (specs[param] === undefined) {
-                var mod_name = specs.id || specs.name || 'no identificado';
-
-                var error_msg = 'Error generando modulo {' + mod_name +
-                                '}.El parametro ' + param + ' no ha sido definido.';
-                moduleManager.helper.log(error_msg);
-
-                // Aborta todo
-                moduleManager.helper.throw (error_msg);
-            }
-
-            // Si todo va bien, copia.
-            module[param] = specs[param];
-        });
-
-        // Metele un helper ya configurado
-        module.helper = SHURSCRIPT.core.createHelper(module.id);
-
-        // Registra modulo
-        moduleManager.modules[module.id] = module;
-
-        return module;
+        try {
+            return Object.create(protoModule).__init__(specs);
+        } catch (e) {
+            mod.helper.throw(e);
+        }
     };
 
     /**
      * Lanza la carga de modulos en document.ready
      */
-    moduleManager.startModulesOnDocReady = function () {
+    moduleManager.startOnDocReadyModules = function () {
 
         // Loop sobre modulos para cargarlos
         $.each(moduleManager.modules, function (moduleName, module) {
@@ -163,7 +203,7 @@
                 // Si el modulo no esta activado
                 // (nota: el estado del modulo ha sido actualizado
                 // en el .startModulesEagerly
-                if ( ! module.state.enabled) {
+                if ( ! module.preferences.enabled) {
                     return true;
                 }
 
@@ -173,12 +213,12 @@
                 }
 
                 // Si no cumple el check adicional, continue
-                if ( ! module.additionalStartCheck()) {
+                if ( ! module.normalStartCheck()) {
                     return true;
                 }
 
                 moduleManager.helper.log('Cargando modulo ' + module.id);
-                module.onStart();
+                module.onNormalStart();
                 moduleManager.helper.log('Modulo ' + module.id + ' cargado');
             } catch (e) {
                 moduleManager.helper.log('Fallo cargando modulo ' + module.id + '\nRazon: ' + e);
@@ -190,7 +230,7 @@
      * Lanza la carga "prematura" de modulos. Todos la aplicacion
      * ShurScript estará cargada pero el DOM no.
      */
-    moduleManager.startModulesEagerly = function () {
+    moduleManager.startEagerModules = function () {
 
         // Loop sobre modulos para cargarlos
         $.each(moduleManager.modules, function (moduleName, module) {
@@ -198,10 +238,10 @@
             // Intentamos carga.
             try {
 
-                module.refreshState();
+                module.refreshPreferences();
 
                 // Si el modulo no esta activado
-                if ( ! module.state.enabled) {
+                if ( ! module.preferences.enabled) {
                     return true;
                 }
 
@@ -210,7 +250,7 @@
                     return true;
                 }
 
-                // Si no estamos en una pagina en la que el modulo corre, continue
+                // Si no estamos en una pagina en la que el modulo corre, aborta
                 if ( ! module.isValidPage()) {
                     return true;
                 }

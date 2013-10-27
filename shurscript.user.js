@@ -21,7 +21,7 @@
 // @grant           GM_addStyle
 // @grant           GM_getResourceText
 // @grant           GM_getResourceURL
-// @run-at document-start
+// @run-at          document-start
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
@@ -30,7 +30,6 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/settingswindow.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/nightmode.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
@@ -40,6 +39,8 @@
 // @resource        star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
 // @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
 // @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
+// @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
+// @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
 // ==/UserScript==
 

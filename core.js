@@ -56,8 +56,23 @@ var SHURSCRIPT = {
         return parent;
     };
 
-    // Prototipo para los helpers
-    var protoHelper = {
+    /**
+     * Prototipo para los helpers para componentes
+     */
+    var protoComponentHelper = {
+        /**
+         * Inicializa el objeto
+         * @param specs.id - id del propietario de este helper
+         */
+        __init__: function (moduleId) {
+            this.moduleId = moduleId;
+
+            // Elimina este metodo ya que no se debe usar mas
+            delete this.__init__;
+
+            // Devuelve el objeto para hacer concatenacion
+            return this;
+        },
         log: function (message) {
             console.log(this._getCallerDescription() + message);
         },
@@ -87,7 +102,7 @@ var SHURSCRIPT = {
          * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
         setValue: function(key, value, withId) {
-            GM.setValue(this._getShurKey(key), value);
+            GM.setValue(this._getShurKey(key, withId), value);
         },
 
         /**
@@ -108,7 +123,7 @@ var SHURSCRIPT = {
          * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
         deleteValue: function(key, withId) {
-            GM.deleteValue(this._getShurKey(key), withId);
+            GM.deleteValue(this._getShurKey(key, withId));
         },
 
         /**
@@ -117,7 +132,9 @@ var SHURSCRIPT = {
          * @param {string} message - mensaje para la excepcion
          */
         throw: function (message) {
-            throw this._getCallerDescription() + message;
+            var exc = '[EXCEPTION] - ' + this._getCallerDescription() + message;
+            this.log(exc);
+            throw exc;
         },
 
         /**
@@ -130,22 +147,53 @@ var SHURSCRIPT = {
             GM.addStyle(css);
         },
         getResourceText: GM.getResourceText,
+        getResourceURL: GM.getResourceURL,
         bootbox: bootbox,
         location: location
     };
 
     /**
-     * Crea un helper
+     * Devuelve el protoModuleHelper, asegurandose de que esta
+     * extendido con los nuevos elementos
+     */
+    var getProtoModuleHelper = function () {
+        // Comprueba que el prototipo que extiende de protoComponentHelper esta creado ya
+        if (getProtoModuleHelper.protoModuleHelper === undefined) {
+
+            // Crea proto que extiende de protoComponentHelper
+            getProtoModuleHelper.protoModuleHelper = Object.create(protoComponentHelper);
+
+            // Metele nuevos atributos
+            getProtoModuleHelper.protoModuleHelper.createPreferenceOption = SHURSCRIPT.preferences.createOption;
+            getProtoModuleHelper.protoModuleHelper.templater = SHURSCRIPT.templater;
+            getProtoModuleHelper.protoModuleHelper.environment = SHURSCRIPT.environment;
+        }
+
+        return getProtoModuleHelper.protoModuleHelper;
+    };
+
+
+    /**
+     * Crea un helper para COMPONENTES
      *
      * @param {string} moduleId - id modulo o componente
      */
-    core.createHelper =  function (moduleId) {
-        var newHelper = Object.create(protoHelper);
-        newHelper.moduleId = moduleId;
-        return newHelper;
+    core.createComponentHelper =  function (moduleId) {
+        return Object.create(protoComponentHelper).__init__(moduleId);
     };
 
-    core.helper = core.createHelper('core');
+    /**
+     * Crea un helper para MODULOS. Como los modulos no tienen accesso a SHURSCRIPT,
+     * reciben un helper más completo con acceso a otros componentes que no existían
+     * cuando protoComponentHelper se creo
+     * 
+     * @param {string} moduleId
+     */
+    core.createModuleHelper = function (moduleId) {
+        return getProtoModuleHelper().__init__(moduleId);
+    };
+
+    core.helper = core.createComponentHelper('core');
 
     /**
      * Crea un componente para la aplicacion
@@ -164,7 +212,7 @@ var SHURSCRIPT = {
         comp.id = id;
 
         // Metele un helper
-        comp.helper = core.createHelper(comp.id);
+        comp.helper = core.createComponentHelper(comp.id);
 
         return comp;
     };
@@ -204,7 +252,7 @@ var SHURSCRIPT = {
         SHURSCRIPT.preferences.start();
 
         // Lanza carga modulos
-        SHURSCRIPT.moduleManager.startModulesOnDocReady();
+        SHURSCRIPT.moduleManager.startOnDocReadyModules();
 
         // Busca actualizaciones
         // TODO
@@ -215,18 +263,7 @@ var SHURSCRIPT = {
      */
     core.initializeEagerly = function () {
         // De forma pseudo-asincronica, espera hasta que el head este cargado
-
-//        Esto se espera a que head este cargado, pero funciona igual de bien sin el
-//        var startLoopHeadReady = function () {
-//            if ($('head') !== null) {
-//                SHURSCRIPT.moduleManager.startModulesEagerly();
-//            } else {
-//                setTimeout(startLoopHeadReady, 10);
-//            }
-//        }
-//        startLoopHeadReady();
-
-        SHURSCRIPT.moduleManager.startModulesEagerly();
+        SHURSCRIPT.moduleManager.startEagerModules();
     };
 
 
