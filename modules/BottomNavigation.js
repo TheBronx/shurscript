@@ -4,7 +4,7 @@
 	var mod = createModule({
 		id: 'bottomNavigation',
 		name: 'Barra de navegación duplicada debajo',
-		author: 'TheBronx & Fritanga',
+		author: 'TheBronx + Fritanga',
 		version: '1.0',
 		description: 'Copia la tabla con la navegación a la parte inferior del foro.',
 		domain: ['/showthread.php','/newreply.php']
