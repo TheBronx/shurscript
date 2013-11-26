@@ -84,8 +84,8 @@ var SHURSCRIPT = {
          * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
         _getShurKey: function (key, withId) {
-            var id = (withId === true) ? SHURSCRIPT.environment.user.id : '';
-            return 'SHURSCRIPT_' + this.moduleId + '_' + id + '_' + key;
+            var id = (withId === true) ? '_' + SHURSCRIPT.environment.user.id : '';
+            return 'SHURSCRIPT_' + this.moduleId + '_' + key + id;
         },
 
         /**
