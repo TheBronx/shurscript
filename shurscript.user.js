@@ -33,6 +33,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/nightmode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
