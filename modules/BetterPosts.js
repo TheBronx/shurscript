@@ -1,28 +1,42 @@
+(function ($, createModule, undefined) {
+    'use strict';
 
-function BetterPosts() {
-
-	this.id = arguments.callee.name;
-	this.name = "Editor de posts mejorado";
-	this.author = "xusoo";
-	this.version = "0.1";
-	this.description = "Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>";
-	this.enabledByDefault = true;
-	
-	
-	var helper = new ScriptHelper(this.id);
+    var mod = createModule({
+        id: 'betterPosts',
+        name: 'Editor de posts mejorado',
+        author: 'xuso0',
+        version: '0.2',
+        description: 'Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>',
+        domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		initialPreferences: {
+            enabled: true, // Esta es opcional - por defecto true
+			iconsAndButtons: true,
+			autoGrow: true,
+			multiQuickReply: true,
+			autoSendReply: true,
+			savePosts: true,
+			postOverwrite: 'ASK',
+		},
+		preferences: {}
+    });
 	
 	var vB_Editor;
 	var genericHandler; //Handler para los botones
 	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
 	var minHeightTextArea;
 
-	this.shouldLoad = function() {
-		 return page == "/showthread.php" || page == '/newthread.php' || page == "/newreply.php" || page == "/editpost.php";
-	}
-	
+    /**
+    * Activamos modo de carga normal (aunque viene activo por defecto)
+    * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
+    */
+    mod.normalStartCheck = function () { return true; };
 
-	this.load = function() {
-		vB_Editor = unsafeWindow.vB_Editor;
+
+    /**
+    * Sobreescribimos la funcion de ejecucion
+    */
+    mod.onNormalStart = function () {
+        vB_Editor = unsafeWindow.vB_Editor;
 		
 		enableCommonFeatures();
 		
@@ -37,9 +51,35 @@ function BetterPosts() {
 		} else { //Firefox
 			enableWYSIWYGDependantFeatures();
 		}
-		
+    };
+	
+	mod.getPreferenceOptions = function () {
+		 // Para no repetir la ristra 15 veces, hacemos una referencia
+		var createPref = mod.helper.createPreferenceOption;
 
-	}
+		// Esto configurara el modal con 2 secciones, la primera con un group radio button,
+		// la segunda con un checkbox y un input text
+		return [
+			// Hacemos un header
+			createPref({type: 'checkbox', mapsTo: 'iconsAndButtons', caption: 'Mostrar nuevos botones e iconos en el formulario de respuesta rápida'}),
+			createPref({type: 'checkbox', mapsTo: 'autoGrow', caption: 'La caja de texto crece a medida que se va escribiendo el post'}),
+			createPref({type: 'checkbox', mapsTo: 'multiQuickReply', caption: 'Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)'}),
+			createPref({type: 'checkbox', mapsTo: 'autoSendReply', caption: 'Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post'}),
+			createPref({type: 'checkbox', mapsTo: 'savePosts', caption: 'Guardar copia de los mensajes sin enviar para evitar perder el contenido de un post accidentalmente'}),
+
+			// Metemos un par de radios
+			createPref({
+				type: 'radio',
+				elements: [
+					{value: 'ASK', caption: 'Preguntar'},
+					{value: 'APPEND', caption: 'Añadir'},
+					{value: 'OVERWRITE', caption: 'Sobreescribir'}
+				],
+				caption: 'Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:',
+				mapsTo: 'postOverwrite'
+			})
+		];
+	};
 	
 	function enableWYSIWYG() {
 		
@@ -57,26 +97,24 @@ function BetterPosts() {
 		
 		if ($('#' + editor.editorid + '_cmd_switchmode').length == 0) //Añadimos el boton de cambiar de Editor
 			$('<td><div id="' + editor.editorid + '_cmd_switchmode" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img height="20" width="21" alt="Cambiar Modo de Editor" src="http://cdn.forocoches.com/foro/images/editor/switchmode.gif" title="Cambiar Modo de Editor"></div></td>').insertAfter($('#vB_Editor_QR_cmd_resize_0_99').parent());
-		
-		
 	}
 	
 	/* Funcionalidades que funcionan solo bajo el editor WYSIWYG */
 	function enableWYSIWYGDependantFeatures() {
 		
-		if (isQuickReply() && helper.getValue('MULTI_QUICK_REPLY', true)) {			
+		if (isQuickReply() && mod.preferences.multiQuickReply) {			
 			enableQuickReplyWithQuote();
 		}
 		
-		if (helper.getValue('AUTO_GROW', true)) {
+		if (mod.preferences.autoGrow) {
 			enableAutoGrow();
 		}
 		
-		if (helper.getValue('SAVE_POSTS', true)) {
+		if (mod.preferences.savePosts) {
 			enablePostRecovery();
 		}
 		
-		if (helper.getValue("AUTO_SEND_REPLY", true)) {
+		if (mod.preferences.autoSendReply) {
 			enableAutoSendReply();
 		}
 		
@@ -109,7 +147,7 @@ function BetterPosts() {
 	
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
 	function enableCommonFeatures() {
-		if (isQuickReply() && helper.getValue('ICONS_AND_BUTTONS', true)) {
+		if (isQuickReply() && mod.preferences.iconsAndButtons) {
 			addAdvancedButtons();
 			addIcons();
 		}
@@ -120,7 +158,7 @@ function BetterPosts() {
 	/* Cuando se pulsa el botón Editar de un post, se crea un nuevo editor WYSIWYG */
 	function enableQuickEditorFeatures(currentEditorID) {
 		var currentEditor = vB_Editor[currentEditorID];
-		if (helper.getValue('AUTO_GROW', true)) {
+		if (mod.preferences.autoGrow) {
 			/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
 			try {
 				if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
@@ -142,7 +180,7 @@ function BetterPosts() {
 		
 		/* Sin DOCTYPE, Chrome no calcula bien la altura del iframe */
 		try {
-			if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
+			if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la pána "Cargando..." indefinidamente :/
 				editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
 		} catch (e) {
 			;
@@ -211,7 +249,7 @@ function BetterPosts() {
 				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
 			    
 			    if (getEditorContents().trim().replace(/\<br\>/g,'') != '') {
-			    	var postOverwrite = helper.getValue('POST_OVERWRITE', 'ASK');
+			    	var postOverwrite = mod.preferences.postOverwrite;
 			    	switch (postOverwrite) {
 				    	case 'ASK':
 					    	bootbox.dialog({message:'Actualmente hay texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?</b>', 
@@ -343,10 +381,10 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 	/* Sistema de auto-guardado de posts para evitar perder posts no enviados */
 	function enablePostRecovery() {
 		var threadId = $('input[name="t"]').val();
-		if (!threadId && page == '/newthread.php')
+		if (!threadId && mod.helper.environment.page == '/newthread.php')
 			threadId = 'new_thread';
 			
-		var currentPostBackup = helper.getValue("POST_BACKUP");
+		var currentPostBackup = mod.helper.getValue("POST_BACKUP");
 		if (currentPostBackup) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
@@ -363,7 +401,7 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 		var onInputHandler = function(){
 			clearTimeout(backupScheduler);
 			backupScheduler = setTimeout(function() { //
-				helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));				
+				mod.helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));				
 			}, 500);
 		};
 		
@@ -372,7 +410,7 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 				
 		//Al enviar la respuesta, se elimina el backup
 		$("input[name='sbutton']").on("click", function() {
-			helper.deleteValue("POST_BACKUP");
+			mod.helper.deleteValue("POST_BACKUP");
 		});
 		
 		
@@ -393,7 +431,7 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 					
 					if ((timeToWait--) <= 0) {
 						clearInterval(interval);
-						helper.deleteValue("POST_BACKUP");
+						mod.helper.deleteValue("POST_BACKUP");
 						$("form[name='vbform']").submit();
 					} else {
 						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
@@ -500,7 +538,7 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 	}
 	
 	function getEditor() {
-		return page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
+		return mod.helper.environment.page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
 	}
 	
 	function isQuickReply() {
@@ -522,21 +560,5 @@ $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Cód
 	function appendTextToEditor(text) {
 		getEditor().insert_text(text);
 	}
-	
-	this.getPreferences = function() {
-		var preferences = new Array();
-		
-		preferences.push(new BooleanPreference("ICONS_AND_BUTTONS", true, "Mostrar nuevos botones e iconos en el formulario de respuesta rápida"));
-		preferences.push(new BooleanPreference("AUTO_GROW", true, "La caja de texto crece a medida que se va escribiendo el post"));
-		preferences.push(new BooleanPreference("MULTI_QUICK_REPLY", true, "Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)"));
-		preferences.push(new BooleanPreference("AUTO_SEND_REPLY", true, "Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post"));
-		preferences.push(new BooleanPreference("SAVE_POSTS", true, "Guardar copia de los mensajes sin enviar para evitar perder el contenido de un post accidentalmente"));
-		
-		var options = [new RadioOption("ASK", "Preguntar"), new RadioOption("APPEND", "Añadir"), new RadioOption("OVERWRITE", "Sobreescribir")];
-		preferences.push(new RadioPreference("POST_OVERWRITE", "ASK", options, "Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:"));
-		
-		return preferences;
-	};
-	
-	
-}
+
+})(jQuery, SHURSCRIPT.moduleManager.createModule);
