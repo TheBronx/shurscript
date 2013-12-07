@@ -16,8 +16,8 @@ function HighlightOP() {
 
     /* Método obligatorio y punto de entrada a la lógica del módulo */
     this.load = function() {
-        var currentThread = unsafeWindow.threadid || getURLParameter("t") || getCurrentThread();
-        var currentPage = getURLParameter("page") || getCurrentPage() || -1;
+        var currentThread = getCurrentThread();
+        var currentPage = getCurrentPage();
         
         // If not in first page, we must load it to get OP's name.
         if (currentPage === 1) {
@@ -59,6 +59,7 @@ function HighlightOP() {
         
         // Add CSS rule
         GM_addStyle(".op_post, .op_quote { background-color: #B1D4D7; }");
+        GM_addStyle(".my_post, .my_quote { border: 3px solid blue !important; border-radius: 5px; }");
         
         // Highlighted posts have "op_post" class
         for (var i = 0, n = users.length; i < n; i++) {
@@ -66,6 +67,10 @@ function HighlightOP() {
             
             if (currentUser === op) {
                 users[i].parentNode.parentNode.classList.add("op_post");
+            }
+            
+            if (currentUser === username) {
+                users[i].parentNode.parentNode.parentNode.parentNode.parentNode.classList.add("my_post");
             }
         }
         
@@ -81,16 +86,24 @@ function HighlightOP() {
                 if (quotedUser === op) {
                     quotes[i].classList.add("op_quote");
                 }
+                
+                if (quotedUser === username) {
+                    quotes[i].classList.add("my_quote");
+                }
             }
         }
     }
 
     function getCurrentPage() {
-        return document.getElementById("showthread_threadrate_form").page.value
-            || $("div.pagenav:first-child span strong").html();
+        return getURLParameter("page")
+            || document.getElementById("showthread_threadrate_form").page.value
+            || $("div.pagenav:first-child span strong").html()
+            || -1;
     }
     
     function getCurrentThread() {
-        return document.getElementById("showthread_threadrate_form").t.value;
+        return unsafeWindow.threadid
+            || getURLParameter("t")
+            || document.getElementById("showthread_threadrate_form").t.value;
     }
 }
