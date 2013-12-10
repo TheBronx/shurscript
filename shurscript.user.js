@@ -21,7 +21,7 @@
 // @grant           GM_addStyle
 // @grant           GM_getResourceText
 // @grant           GM_getResourceURL
-// @run-at          document-start
+// @run-at          document-end
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
@@ -34,6 +34,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/nightmode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
