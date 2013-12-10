@@ -102,7 +102,7 @@ var SHURSCRIPT = {
          * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
         setValue: function(key, value, withId) {
-            GM.setValue(this._getShurKey(key, withId), value);
+            SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, withId), value);
         },
 
         /**
@@ -113,7 +113,7 @@ var SHURSCRIPT = {
          * @returns {string} - valor leido del navegador
          */
         getValue: function(key, defaultValue, withId) {
-            return GM.getValue(this._getShurKey(key, withId), defaultValue);
+            return SHURSCRIPT.GreaseMonkey.getValue(this._getShurKey(key, withId), defaultValue);
         },
 
         /**
@@ -123,7 +123,7 @@ var SHURSCRIPT = {
          * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          */
         deleteValue: function(key, withId) {
-            GM.deleteValue(this._getShurKey(key, withId));
+            SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, withId));
         },
 
         /**
