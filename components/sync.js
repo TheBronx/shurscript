@@ -15,14 +15,15 @@
     
     var Cloud = {
         server: "http://cloud.shurscript.org:8080/",
-        apiKey: "", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
+        apiKey: "123", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
+        preferences: {}, //las preferencias sacadas del server
         
         setValue: function (key, value) {
             console.log("Cloud.setValue("+key+", "+value+")");
             $.ajax({
                 type: 'PUT', 
-                url: this.server + 'preferences/'+key+'/?key=' + this.apiKey,
-                data: {key:value},
+                url: this.server + 'preferences/'+key+'/?apikey=' + this.apiKey,
+                data: {'value':value},
                 dataType: 'json' 
             }); 
         },
@@ -31,9 +32,12 @@
             console.log("Cloud.getValue("+key+", "+defaultValue+")");
             $.ajax({
                 type: 'get', 
-                url: this.server + 'preferences/'+key+'/?key=' + this.apiKey,
+                url: this.server + 'preferences/'+key+'/?apikey=' + this.apiKey,
                 data: "",
-                dataType: 'json' 
+                dataType: 'json',
+                success: this.onServerResponse
+            }) .done(function( data ) {
+                console.log( "Server answer:", data );
             }); 
         },
         
@@ -59,7 +63,13 @@
     };
     
     SHURSCRIPT.GreaseMonkey.getValue =  function (key, defaultValue) {
+        //no podemos llamar sin más a getValue, ya que es asincrona.
+        //es decir, no podemos simplemente decir "return pref"
+        //tampoco podemos tirar de callbacks, complicaría excesivamente los módulos
+        //por tanto trabajaremos con una copia local de las preferencias de la nube
+        //iremos actualizando esa copia cuando el usuario use set o delete, y al cargar el script 
         Cloud.getValue(key, defaultValue);
+        return (Cloud.preferences.key!=undefined) ? Cloud.preferences.key!=undefined:defaultValue;
     };
 
     SHURSCRIPT.GreaseMonkey.deleteValue =  function (key) {
