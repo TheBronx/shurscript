@@ -2,41 +2,41 @@
  * Componente preferences: se encarga de todo lo relacionado con las opciones/preferencias de los modulos
  */
 (function ($, SHURSCRIPT, undefined) {
-	'use strict';
+    'use strict';
 
-	var preferences = SHURSCRIPT.core.createComponent('preferences');
+    var preferences = SHURSCRIPT.core.createComponent('preferences');
 
     /**
      * Mete elemento <Shurscript> en barra de FC para acceder a las preferencias
      */
-	preferences.appendMenuItem = function () {
+    preferences.appendMenuItem = function () {
 
-		var menuItem = $('.vbmenu_control').first(),
-			newMenuItem = menuItem.clone();
+        var menuItem = $('.vbmenu_control').first(),
+            newMenuItem = menuItem.clone();
 
         // TODO: mete el estilo por css
-		newMenuItem.css('cursor', 'pointer');
-		newMenuItem.html('<a>Shurscript</a>');
+        newMenuItem.css('cursor', 'pointer');
+        newMenuItem.html('<a>Shurscript</a>');
         menuItem.parent().append(newMenuItem);
 
-		// Mete el evento para lanzar el modal
+        // Mete el evento para lanzar el modal
         newMenuItem.click(preferences.onShow);
-	};
+    };
 
     /**
      * Lanza la ventana con las preferencias
      */
-	preferences.onShow = function () {
+    preferences.onShow = function () {
         var $modal = preferences.createModal();
 
         $('body').append($modal);
 
         // Mete eventos
-		$modal.on('hidden.bs.modal', function () {
+        $modal.on('hidden.bs.modal', function () {
 
-			//Eliminarla al cerrar
-			$modal.remove();
-		});
+            //Eliminarla al cerrar
+            $modal.remove();
+        });
 
         // Click en botones "Opciones"
         $modal.on('click', '.shur-btn-options', function () {
@@ -53,9 +53,9 @@
            $(event.currentTarget).parents('.shur-module-preferences').toggleClass('disabled-module');
         });
 
-		$modal.modal();
+        $modal.modal();
         preferences.$modal = $modal;
-	};
+    };
 
     /**
      * Lee las opciones y guardalas
@@ -137,14 +137,15 @@
     /**
      * Puerta de entrada a la unidad
      */
-	preferences.start = function () {
+    preferences.load = function ( callback ) {
 
-		// Mete link para abrir modal
-		preferences.appendMenuItem();
+        // Mete link para abrir modal
+        preferences.appendMenuItem();
 
         // Mete CSS para el modal
         preferences.helper.addStyle('modalcss');
 
+        callback(); //avisa al core de que el componente ha terminado
     };
 
    /**
