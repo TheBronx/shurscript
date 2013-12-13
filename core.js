@@ -209,6 +209,10 @@ var SHURSCRIPT = {
         // Crea namespace y copiale las propiedades
         var comp = createNameSpace(id);
         comp.id = id;
+        
+        //Registra el componente
+        if (core.components===undefined) core.components = [];
+        core.components.push( id );
 
         // Metele un helper
         comp.helper = core.createComponentHelper(comp.id);
@@ -247,14 +251,51 @@ var SHURSCRIPT = {
             closeButton: false
         });
 
-        // Carga modulo de preferencias
-        SHURSCRIPT.preferences.start();
+        //lanza la carga de componentes y modulos
+        core.loadNextComponent();
+        
+        /*
+        // Carga componente preferencias
+        SHURSCRIPT.preferences.load();
 
         // Lanza carga modulos
         SHURSCRIPT.moduleManager.startOnDocReadyModules();
-
+        */
         // Busca actualizaciones
         // TODO
+    };
+    
+    //Carga el siguiente componente. En caso contrario llama a la carga de módulos.
+    //La carga de componentes se hace asíncronamente y por orden de "registro" (SHURSCRIPT.core.createComponent())
+    //cada componente debe implementar un método load(callback) y llamar a dicho callback cuando termine
+    //Así se permite que los componentes puedan bloquear la carga del resto de scripts y módulos
+    core.loadNextComponent = function() {
+        var component = core.getNextComponent();
+        if (component!==undefined) {
+            if ( typeof(component.load)==='function') { //existe funcion de carga?
+                console.log("Cargando componente "+component.id);
+                component.load( core.loadNextComponent ); //carga y una vez termines llama a loadNextComponent
+            } else {
+                core.loadNextComponent();
+            }
+        } else {
+            // no quedan componentes
+            // Lanza carga modulos
+            SHURSCRIPT.moduleManager.startOnDocReadyModules();
+        }
+    };
+    
+    // devuelve el siguiente componente en el proceso de carga
+    core.getNextComponent = function() {
+        if (core.components!==undefined) {
+            if (core.componentIndex===undefined) {
+                core.componentIndex = 0;
+            } else {
+                core.componentIndex += 1;
+            }
+            return SHURSCRIPT[core.components[core.componentIndex]];
+        }
+        return;
     };
 
     /**
