@@ -17,7 +17,7 @@
     
     var Cloud = {
         server: "http://cloud.shurscript.org:8080/",
-        apiKey: "123", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
+        apiKey: "", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
         preferences: {}, //las preferencias sacadas del server
         
         setValue: function (key, value) {
@@ -102,6 +102,7 @@
         var apiKey = getApiKey();
         if (apiKey!==false) {
             //tenemos apikey, usémosla
+            Cloud.apiKey = apiKey;
             Cloud.getAll( callback );//una vez recuperadas las preferencias notificamos al core para que cargue el siguiente componente
         } else {
             //hay que pedirle una al server y guardarla en las suscripciones
