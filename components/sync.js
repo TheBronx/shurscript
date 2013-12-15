@@ -90,8 +90,9 @@
             //tampoco podemos tirar de callbacks, complicaría excesivamente los módulos
             //por tanto trabajaremos con una copia local de las preferencias de la nube
             //iremos actualizando esa copia cuando el usuario use set o delete, y al cargar el script 
-            Cloud.getValue(key, defaultValue);
-            return (Cloud.preferences.key!=undefined) ? Cloud.preferences.key!=undefined:defaultValue;
+            //Cloud.getValue(key, defaultValue);
+            console.log("getValue( "+key+" ) = "+Cloud.preferences[key]);
+            return (Cloud.preferences[key]!=undefined) ? Cloud.preferences[key]:defaultValue;
         };
 
         SHURSCRIPT.GreaseMonkey.deleteValue =  function (key) {
