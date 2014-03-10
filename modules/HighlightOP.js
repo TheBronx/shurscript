@@ -8,22 +8,27 @@ function HighlightOP() {
     this.worksInFrontPage = false;
 
     var helper = new ScriptHelper(this.id);
-
-    /* Define una condición a la carga del módulo. Si no se quiere condición, eliminar este metodo o devolver true. */
+    
+    var currentThread, currentPage;
+    
     this.shouldLoad = function() {
         return page === "/showthread.php";
     }
-
-    /* Método obligatorio y punto de entrada a la lógica del módulo */
+    
     this.load = function() {
-        var currentThread = getCurrentThread();
-        var currentPage = getCurrentPage();
+        currentThread = getCurrentThread();
+        currentPage = getCurrentPage();
         
         // If not in first page, we must load it to get OP's name.
         if (currentPage === 1) {
             highlightOP(null);
         } else if (currentThread) {
-            loadFirstPage(currentThread);
+            // Check if we have the OP's name saved from another time.
+            if (sessionStorage["op_" + currentThread]) {
+                highlightOP(sessionStorage["op_" + currentThread]);
+            } else {
+                loadFirstPage(currentThread);
+            }
         }
     }
     
@@ -37,7 +42,9 @@ function HighlightOP() {
                 var parser = new DOMParser();
                 var doc = parser.parseFromString(html, "text/html");
                 
-                highlightOP(doc.getElementsByClassName("bigusername")[0].innerHTML);
+                var username = doc.getElementsByClassName("bigusername")[0].innerHTML;
+                sessionStorage["op_" + currentThread] = username;
+                highlightOP(username);
             }
         };
         
@@ -49,12 +56,13 @@ function HighlightOP() {
         return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))
             || null;
     }
-
+    
     function highlightOP(op) {
         var users = document.getElementsByClassName("bigusername");
         
         if (! op) {
             op = users[0].innerHTML;
+            sessionStorage["op_" + currentThread] = op;
         }
         
         // Add CSS rule
@@ -95,15 +103,22 @@ function HighlightOP() {
     }
 
     function getCurrentPage() {
-        return getURLParameter("page")
-            || document.getElementById("showthread_threadrate_form").page.value
-            || $("div.pagenav:first-child span strong").html()
-            || -1;
+        var r;
+        
+        if (r = getURLParameter("page")) return r;
+        if (r = document.getElementById("showthread_threadrate_form")) return r.page.value;
+        if (r = $("div.pagenav:first-child span strong")[0]) return r.html();
+        
+        return -1;
     }
     
     function getCurrentThread() {
-        return unsafeWindow.threadid
-            || getURLParameter("t")
-            || document.getElementById("showthread_threadrate_form").t.value;
+        var r;
+        
+        if (r = unsafeWindow.threadid) return r;
+        if (r = getURLParameter("t")) return r;
+        if (r = document.getElementById("qr_threadid")) return r.t.value;
+        
+        return null;
     }
 }
