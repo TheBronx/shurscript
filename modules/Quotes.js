@@ -431,7 +431,7 @@ function Quotes() {
 		
 		var postElement = $(el).find(".smallfont > em > a");
 		this.postLink = postElement.attr("href");
-		this.postText = postElement.text();
+		this.postText = postElement.text().replace(/</g, '&lt;');
 		this.postID = this.postLink.match(/#post([\d]*)/)[1];
 		
 		var threadElement = $(el).find(".alt1 > div > a > strong");
