@@ -24,6 +24,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NightMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/preferences.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
