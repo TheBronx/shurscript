@@ -22,9 +22,7 @@ function FilterThreads() {
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
 	
 	var highlightedOnTop, favoritesOnTop;
-	
-	var pinnedThreadsSeparator; //Separador entre chinchetas y hilos normales
-			
+				
 	this.shouldLoad = function() {
 		 return (page == "/forumdisplay.php" || page == "/showthread.php" || page == "/search.php");
 	}
@@ -43,9 +41,7 @@ function FilterThreads() {
 		
 		favoritesOnTop = helper.getValue("FAVORITES_TOP", true);
 		highlightedOnTop = helper.getValue("HIGHLIGHTED_TOP", true);
-		
-		pinnedThreadsSeparator = $("#threadslist > tbody[id^='threadbits_forum'] > tr > .thead").parent();
-				
+						
 		if (page == "/forumdisplay.php" || page == "/search.php") {
 			onForumDisplay();
 		} else if (page == "/showthread.php") {
@@ -279,7 +275,7 @@ function FilterThreads() {
 					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
 						$(".highlighted").first().before(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+			    		$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 			    	}
 	        	}
 	            
@@ -308,7 +304,7 @@ function FilterThreads() {
 					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
 						$(".favorite").last().after(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+			    		 $("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
 	        	}
 	        	
