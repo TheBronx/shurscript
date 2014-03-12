@@ -9,10 +9,8 @@ newMenuItem.click(function(){
 });
 menuItem.parent().append(newMenuItem);
 
-GM_addStyle('.disabled-module {opacity: 0.5;}');
-/* GM_addStyle('#shurscript-settings-window .panel-heading {padding: 5px 8px;}'); */
+GM_addStyle('.disabled-module .btn {display: none !important;}');
 GM_addStyle('#shurscript-settings-window, #shurscript-settings-window .panel {color: #333 !important;}');
-/* GM_addStyle('#shurscript-settings-window .panel-body {padding: 7px;}'); */
 GM_addStyle('#shurscript-settings-window p {margin: 0;}');
 GM_addStyle('#shurscript-settings-window, #shurscript-settings-window .panel-body > p, #shurscript-settings-window .help-block {font-size: 13px !important;}');
 GM_addStyle('#shurscript-settings-window .panel-heading > h3 {font-size: 15px !important;}');
@@ -92,8 +90,7 @@ function SettingsWindow() {
 		panel = $('<div class="panel">\
 				  <div class="panel-heading">\
 				    <h3 class="panel-title">' + module.name + '</h3>\
-				  </div>' + ((module.description && module.description != "") ? '<\div class="panel-body"><p>' + module.description + '</p></div>' : '') + '</div>');
-		//<form class="module-settings" id="' + modules[i].id + '"  name="' + modules[i].id + '" class="form-horizontal" disabled></form>\
+				  </div>' + ((module.description && module.description != "") ? '<div class="panel-body"><p>' + module.description + '</p></div>' : '') + '</div>');
 		
 		var enableCheck = $('<input style="float: right;" class="module-enable-check" type="checkbox" name="enabled"/>');
 		var enabled = activeModules[module.id];
@@ -101,14 +98,16 @@ function SettingsWindow() {
 			enableCheck.attr("checked", "");
 		} else {
 			panel.addClass("disabled-module");
+			panel.find(".panel-body").hide();
 		}
 		enableCheck.click(function() {
-			enabled = this.checked == true;
+			enabled = this.checked === true;
 			if (enabled) {
 				if (settingsButton) {
 					settingsButton.removeAttr("disabled");
 				}
 				panel.removeClass("disabled-module");
+				panel.find(".panel-body").slideDown(200);
 			} else {
 				if (preferencesPanel) { //Ocultamos el formulario
 					preferencesPanel.slideUp(200);
@@ -118,6 +117,7 @@ function SettingsWindow() {
 					settingsButton.attr("disabled", "");
 				}
 				panel.addClass("disabled-module");
+				panel.find(".panel-body").slideUp(200);
 			}
 		});
 		

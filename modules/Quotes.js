@@ -116,7 +116,6 @@ function Quotes() {
 		} else {
 			//Usamos las ultimas citas guardadas	    
 		    populateNotificationsBox(arrayQuotes);
-			/* setNotificationsCount */(arrayQuotes.length);
 		    
 		    currentStatus = "OK";
 		}
