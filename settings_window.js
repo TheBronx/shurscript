@@ -202,35 +202,43 @@ function SettingsWindow() {
 		}
 		
 		function parseAndSavePreference(pref) {
-			if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
-				return;
-			}
-			
-			if (pref instanceof SectionPreference) { //Grupo de preferencias
-				innerPrefs = pref.subpreferences;
-				for (var j = 0; j < innerPrefs.length; j++) {
-					parseAndSavePreference(innerPrefs[j]);
-				}
-				return;
-			}
-			
-			
-			var input = form.find("[name='" + pref.key + "']");
-			var value;
-			
-			if (pref instanceof BooleanPreference) { //Checkbox
-				value = input[0].checked;
-			} else if (pref instanceof RadioPreference) {
-				input.each(function() {
-					if (this.checked) {
-						value = this.value;
-					}
-				});
-			} else {
-				value = input.val();
-			}
+			try {
 
-			helper.setValue(pref.key, value);
+				if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
+					return;
+				}
+				
+				if (pref instanceof SectionPreference) { //Grupo de preferencias
+					innerPrefs = pref.subpreferences;
+					for (var j = 0; j < innerPrefs.length; j++) {
+						parseAndSavePreference(innerPrefs[j]);
+					}
+					return;
+				}
+				
+				console.log('Guardando ' + pref.key);
+				
+				var input = form.find("[name='" + pref.key + "']");
+				var value;
+				
+				if (pref instanceof BooleanPreference) { //Checkbox
+					value = input[0].checked;
+				} else if (pref instanceof RadioPreference) {
+					input.each(function() {
+						if (this.checked) {
+							value = this.value;
+						}
+					});
+				} else {
+					value = input.val();
+				}
+
+				helper.setValue(pref.key, value);
+
+				console.log('\tvalue = ' + value);
+			} catch (e) {
+				console.log(e);
+			}
 		}
 
 	}
