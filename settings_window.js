@@ -21,21 +21,21 @@ function SettingsWindow() {
 	var panels = [];
 	
 	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="true">\
-	    <div class="modal-dialog" style="width:800px;">\
-	      <div class="modal-content">\
-	        <div class="modal-header">\
-	          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
-	          <h4 class="modal-title" style="font-weight:300">Preferencias del <strong>Shurscript ' + scriptVersion + '</strong></h4>\
-	        </div>\
-	        <div class="modal-body" style="overflow: auto;">\
-	        	<!--center class="lead" style="font-size: 12pt;">A continuación se listan todas las funcionalidades disponibles en el Shurscript. Activa las que te interesen y desactiva las que no necesites.</center-->\
-	        </div>\
-	        <div class="modal-footer">\
-	          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\
-	          <button type="button" class="btn btn-primary" id="save-settings">Guardar cambios</button>\
-	        </div>\
-	      </div>\
-	    </div>\
+		<div class="modal-dialog" style="width:800px;">\
+		  <div class="modal-content">\
+			<div class="modal-header">\
+			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
+			  <h4 class="modal-title" style="font-weight:300">Preferencias del <strong>Shurscript ' + scriptVersion + '</strong></h4>\
+			</div>\
+			<div class="modal-body" style="overflow: auto;">\
+				<!--center class="lead" style="font-size: 12pt;">A continuación se listan todas las funcionalidades disponibles en el Shurscript. Activa las que te interesen y desactiva las que no necesites.</center-->\
+			</div>\
+			<div class="modal-footer">\
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\
+			  <button type="button" class="btn btn-primary" id="save-settings">Guardar cambios</button>\
+			</div>\
+		  </div>\
+		</div>\
 	  </div>');
 	
 	modal.on('hidden.bs.modal', function () {
@@ -43,7 +43,7 @@ function SettingsWindow() {
 	});
 	
 	modal.on('shown.bs.modal', function () {
-	  	var contentWindow = modal.find(".modal-body");
+		var contentWindow = modal.find(".modal-body");
 		var preferences
 		for (var i = 0; i < allModules.length; i++) {
 			var modulePanel = new ModulePanel(allModules[i]);
@@ -56,8 +56,10 @@ function SettingsWindow() {
 	
 	modal.find("button#save-settings").click(function() {
 		save();
-		modal.modal('hide');
-		window.location.reload();
+		bootbox.dialog({message: '<center>Guardando datos...</center>'});
+		setTimeout(function(){
+			window.location.reload();
+		}, 2000)
 	});
 	
 	modal.find(".modal-body").css("height", $(window).height() - 210);
@@ -85,11 +87,12 @@ function SettingsWindow() {
 		
 		var settingsButton;
 		var preferencesPanel;
-		
+
+		var hasChanges = false;
 		
 		panel = $('<div class="panel">\
 				  <div class="panel-heading">\
-				    <h3 class="panel-title">' + module.name + '</h3>\
+					<h3 class="panel-title">' + module.name + '</h3>\
 				  </div>' + ((module.description && module.description != "") ? '<div class="panel-body"><p>' + module.description + '</p></div>' : '') + '</div>');
 		
 		var enableCheck = $('<input style="float: right;" class="module-enable-check" type="checkbox" name="enabled"/>');
@@ -100,7 +103,7 @@ function SettingsWindow() {
 			panel.addClass("disabled-module");
 			panel.find(".panel-body").hide();
 		}
-		enableCheck.click(function() {
+		enableCheck.change(function() {
 			enabled = this.checked === true;
 			if (enabled) {
 				if (settingsButton) {
@@ -123,25 +126,28 @@ function SettingsWindow() {
 		
 		panel.find(".panel-heading").prepend(enableCheck);
 		
-	    preferences = module.getPreferences && module.getPreferences();
-	    preferences = $(preferences);
-	    if (preferences.length > 0) {
-	    	
-	    	var preferencesPanel = $("<div></div>");
-	    	preferencesPanelBody = $("<div class='panel-body'></div>");
-	    	
-	    	preferencesPanel.append("<hr style='margin:0'>");
-	    	preferencesPanel.append(preferencesPanelBody);
+		preferences = module.getPreferences && module.getPreferences();
+		preferences = $(preferences);
+		if (preferences.length > 0) {
+			
+			var preferencesPanel = $("<div></div>");
+			preferencesPanelBody = $("<div class='panel-body'></div>");
+			
+			preferencesPanel.append("<hr style='margin:0'>");
+			preferencesPanel.append(preferencesPanelBody);
 
-	    	form = $('<form/>');
-	    	preferencesPanelBody.append(form);
+			form = $('<form/>');
+			form.change(function(){
+				hasChanges = true;
+			});
+			preferencesPanelBody.append(form);
 			form.append(getHTMLFromPreferences(preferences));
 			
 			panel.append(preferencesPanel);
 			preferencesPanel.hide(); //Se mostrara con el botón
 			
-	    
-	    	settingsButton = $('<button type="button" data-toggle="button" style="float:right; margin: -23px 24px;" class="btn btn-default btn-sm">Opciones</button>');
+		
+			settingsButton = $('<button type="button" data-toggle="button" style="float:right; margin: -23px 24px;" class="btn btn-default btn-sm">Opciones</button>');
 			panel.find(".panel-heading").append(settingsButton);
 			if (!enabled) {
 				settingsButton.attr("disabled", "");
@@ -182,10 +188,13 @@ function SettingsWindow() {
 		this.isEnabled = function() {
 			return enabled;
 		}
+
+		this.hasChanges = function() {
+			return hasChanges;
+		}
 		
 		this.save = function() {
 			if (preferences) {
-				
 				for (var j = 0; j < preferences.length; j++) {
 					parseAndSavePreference(preferences[j]);
 				}
@@ -231,10 +240,11 @@ function SettingsWindow() {
 		var activeModules = {};
 		for(var i = 0; i < panels.length; i++) {
 			activeModules[panels[i].getModule().id] = panels[i].isEnabled(); 
-			panels[i].save(); //Guardamos la configuracion de cada modulo
+			if (panels[i].hasChanges()) {
+				panels[i].save(); //Guardamos la configuracion de cada modulo
+			}
 		}
 		helper.setValue("MODULES", JSON.stringify(activeModules)); //Guardamos los activados y desactivados
-		
 	}
 
 }
