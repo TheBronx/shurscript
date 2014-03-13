@@ -216,7 +216,7 @@ function SettingsWindow() {
 					return;
 				}
 				
-				console.log('Guardando ' + pref.key);
+				alert('Guardando ' + pref.key);
 				
 				var input = form.find("[name='" + pref.key + "']");
 				var value;
@@ -235,9 +235,9 @@ function SettingsWindow() {
 
 				helper.setValue(pref.key, value);
 
-				console.log('\tvalue = ' + value);
+				alert('Valor = ' + value);
 			} catch (e) {
-				console.log(e);
+				alert(e);
 			}
 		}
 
