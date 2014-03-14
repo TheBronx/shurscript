@@ -16,7 +16,8 @@
     };
     
     var Cloud = {
-        server: "http://cloud.shurscript.org:8080/",
+        //server: "http://cloud.shurscript.org:8080/",
+		server: "http://95.85.8.80:8080/",
         apiKey: "", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
         preferences: {}, //las preferencias sacadas del server
         
