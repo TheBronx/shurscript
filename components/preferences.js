@@ -135,9 +135,9 @@
     };
 
     /**
-     * Puerta de entrada a la unidad
+     * Puerta de entrada al componente
      */
-    preferences.load = function ( callback ) {
+    preferences.loadAndCallback = function ( callback ) {
 
         // Mete link para abrir modal
         preferences.appendMenuItem();

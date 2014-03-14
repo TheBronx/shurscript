@@ -272,9 +272,9 @@ var SHURSCRIPT = {
     core.loadNextComponent = function() {
         var component = core.getNextComponent();
         if (component!==undefined) {
-            if ( typeof(component.load)==='function') { //existe funcion de carga?
+            if (typeof(component.loadAndCallback)==='function') { //existe funcion de carga?
                 console.log("Cargando componente "+component.id);
-                component.load( core.loadNextComponent ); //carga y una vez termines llama a loadNextComponent
+                component.loadAndCallback( core.loadNextComponent ); //carga y una vez termines llama a loadNextComponent
             } else {
                 core.loadNextComponent();
             }

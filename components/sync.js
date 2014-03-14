@@ -78,7 +78,7 @@
     };
     
     //Punto de entrada al componente.
-    sync.load = function(callback) {
+    sync.loadAndCallback = function(callback) {
         //sobreescribimos las funciones de manejo de preferencias
         SHURSCRIPT.GreaseMonkey.setValue =  function (key, value) {
             Cloud.setValue(key, value);
