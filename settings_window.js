@@ -19,6 +19,8 @@ GM_addStyle('#shurscript-settings-window .panel-heading > h3 {font-size: 15px !i
 function SettingsWindow() {
 
 	var panels = [];
+
+	var hasChanges = false;
 	
 	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="true">\
 		<div class="modal-dialog" style="width:800px;">\
@@ -55,11 +57,15 @@ function SettingsWindow() {
 	$(document.body).append(modal);
 	
 	modal.find("button#save-settings").click(function() {
-		save();
-		bootbox.dialog({message: '<center>Guardando datos...</center>'});
-		setTimeout(function(){
-			window.location.reload();
-		}, 2000)
+		if (hasChanges) {
+			save();
+			bootbox.dialog({message: '<center>Guardando cambios...</center>'});
+			setTimeout(function(){
+				window.location.reload();
+			}, 500);
+		} else {
+			modal.modal('hide');
+		}
 	});
 	
 	modal.find(".modal-body").css("height", $(window).height() - 210);
@@ -88,7 +94,7 @@ function SettingsWindow() {
 		var settingsButton;
 		var preferencesPanel;
 
-		var hasChanges = false;
+		var moduleHasChanges = false;
 		
 		panel = $('<div class="panel">\
 				  <div class="panel-heading">\
@@ -104,6 +110,7 @@ function SettingsWindow() {
 			panel.find(".panel-body").hide();
 		}
 		enableCheck.change(function() {
+			hasChanges = true;
 			enabled = this.checked === true;
 			if (enabled) {
 				if (settingsButton) {
@@ -138,7 +145,7 @@ function SettingsWindow() {
 
 			form = $('<form/>');
 			form.change(function(){
-				hasChanges = true;
+				hasChanges = moduleHasChanges = true;
 			});
 			preferencesPanelBody.append(form);
 			form.append(getHTMLFromPreferences(preferences));
@@ -190,7 +197,7 @@ function SettingsWindow() {
 		}
 
 		this.hasChanges = function() {
-			return hasChanges;
+			return moduleHasChanges;
 		}
 		
 		this.save = function() {
@@ -202,43 +209,35 @@ function SettingsWindow() {
 		}
 		
 		function parseAndSavePreference(pref) {
-			try {
-
-				if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
-					return;
-				}
-				
-				if (pref instanceof SectionPreference) { //Grupo de preferencias
-					innerPrefs = pref.subpreferences;
-					for (var j = 0; j < innerPrefs.length; j++) {
-						parseAndSavePreference(innerPrefs[j]);
-					}
-					return;
-				}
-				
-				alert('Guardando ' + pref.key);
-				
-				var input = form.find("[name='" + pref.key + "']");
-				var value;
-				
-				if (pref instanceof BooleanPreference) { //Checkbox
-					value = input[0].checked;
-				} else if (pref instanceof RadioPreference) {
-					input.each(function() {
-						if (this.checked) {
-							value = this.value;
-						}
-					});
-				} else {
-					value = input.val();
-				}
-
-				helper.setValue(pref.key, value);
-
-				alert('Valor = ' + value);
-			} catch (e) {
-				alert(e);
+			if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
+				return;
 			}
+			
+			if (pref instanceof SectionPreference) { //Grupo de preferencias
+				innerPrefs = pref.subpreferences;
+				for (var j = 0; j < innerPrefs.length; j++) {
+					parseAndSavePreference(innerPrefs[j]);
+				}
+				return;
+			}
+			
+			
+			var input = form.find("[name='" + pref.key + "']");
+			var value;
+			
+			if (pref instanceof BooleanPreference) { //Checkbox
+				value = input[0].checked;
+			} else if (pref instanceof RadioPreference) {
+				input.each(function() {
+					if (this.checked) {
+						value = this.value;
+					}
+				});
+			} else {
+				value = input.val();
+			}
+
+			helper.setValue(pref.key, value);
 		}
 
 	}
