@@ -20,7 +20,7 @@ function SettingsWindow() {
 
 	var panels = [];
 
-	var hasChanges = false;
+	var anythingHasChanged = false;
 	
 	var modal = $('<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="true">\
 		<div class="modal-dialog" style="width:800px;">\
@@ -57,7 +57,7 @@ function SettingsWindow() {
 	$(document.body).append(modal);
 	
 	modal.find("button#save-settings").click(function() {
-		if (hasChanges) {
+		if (anythingHasChanged) {
 			save();
 			bootbox.dialog({message: '<center>Guardando cambios...</center>'});
 			setTimeout(function(){
@@ -94,7 +94,7 @@ function SettingsWindow() {
 		var settingsButton;
 		var preferencesPanel;
 
-		var moduleHasChanges = false;
+		var changedPreferences = []; //Preferencias que hayan cambiado en este modulo
 		
 		panel = $('<div class="panel">\
 				  <div class="panel-heading">\
@@ -110,7 +110,7 @@ function SettingsWindow() {
 			panel.find(".panel-body").hide();
 		}
 		enableCheck.change(function() {
-			hasChanges = true;
+			anythingHasChanged = true;
 			enabled = this.checked === true;
 			if (enabled) {
 				if (settingsButton) {
@@ -144,8 +144,9 @@ function SettingsWindow() {
 			preferencesPanel.append(preferencesPanelBody);
 
 			form = $('<form/>');
-			form.change(function(){
-				hasChanges = moduleHasChanges = true;
+			form.change(function(e){
+				changedPreferences.push(e.target.name);
+				anythingHasChanged = true;
 			});
 			preferencesPanelBody.append(form);
 			form.append(getHTMLFromPreferences(preferences));
@@ -186,33 +187,30 @@ function SettingsWindow() {
 		
 		this.get = function() {
 			return panel;
-		}
+		};
 		
 		this.getModule = function() {
 			return this.module;
-		}
+		};
 		
 		this.isEnabled = function() {
 			return enabled;
-		}
+		};
 
 		this.hasChanges = function() {
-			return moduleHasChanges;
-		}
-		
+			return changedPreferences.length > 0;
+		};
+
 		this.save = function() {
 			if (preferences) {
 				for (var j = 0; j < preferences.length; j++) {
 					parseAndSavePreference(preferences[j]);
 				}
 			}
-		}
+		};
 		
 		function parseAndSavePreference(pref) {
-			if (pref instanceof ButtonPreference) { //Los botones no tienen configuracion que guardar
-				return;
-			}
-			
+
 			if (pref instanceof SectionPreference) { //Grupo de preferencias
 				innerPrefs = pref.subpreferences;
 				for (var j = 0; j < innerPrefs.length; j++) {
@@ -220,7 +218,10 @@ function SettingsWindow() {
 				}
 				return;
 			}
-			
+
+			if ($.inArray(pref.key, changedPreferences) == -1) { //No ha sido modificada
+				return;
+			}
 			
 			var input = form.find("[name='" + pref.key + "']");
 			var value;
