@@ -306,5 +306,4 @@ var SHURSCRIPT = {
         SHURSCRIPT.moduleManager.startEagerModules();
     };
 
-
 })(jQuery, SHURSCRIPT, bootbox, console);
