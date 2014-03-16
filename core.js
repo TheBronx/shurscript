@@ -109,11 +109,10 @@ var SHURSCRIPT = {
          *
          * @param key
          * @param defaultValue
-         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
          * @returns {string} - valor leido del navegador
          */
-        getValue: function(key, defaultValue, withId) {
-            return SHURSCRIPT.GreaseMonkey.getValue(this._getShurKey(key, withId), defaultValue);
+        getValue: function(key, defaultValue) {
+            return SHURSCRIPT.GreaseMonkey.getValue(this._getShurKey(key, false), defaultValue);
         },
 
         /**

@@ -108,9 +108,9 @@
 		}
 
 		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
-		lastUpdate  = mod.helper.getValue("LAST_QUOTES_UPDATE", undefined, true);
-		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE", undefined, true);
-		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES", undefined, true);
+		lastUpdate  = mod.helper.getValue("LAST_QUOTES_UPDATE", undefined);
+		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE", undefined);
+		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES", undefined);
 		arrayQuotes = new Array();
 		if (lastQuotesJSON) {
 		    try {

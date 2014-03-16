@@ -37,9 +37,9 @@
     mod.onNormalStart = function () {
 		loadStyles();
 		
-		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]', true));
-		favoritesOnTop = mod.helper.getValue("FAVORITES_TOP", true, true);
-		highlightedOnTop = mod.helper.getValue("HIGHLIGHTED_TOP", true, true);
+		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]'));
+		favoritesOnTop = mod.helper.getValue("FAVORITES_TOP", true);
+		highlightedOnTop = mod.helper.getValue("HIGHLIGHTED_TOP", true);
 				
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -86,9 +86,9 @@
 	};
 		
 	function loadStyles() {
-		var favsColor = mod.helper.getValue("FAVORITES_COLOR", "#D5E6EE", true);
+		var favsColor = mod.helper.getValue("FAVORITES_COLOR", "#D5E6EE");
 		if (favsColor !== "") {
-			if (mod.helper.getValue("FAVORITES_JUST_BORDER", false, true)) {
+			if (mod.helper.getValue("FAVORITES_JUST_BORDER", false)) {
 				GM_addStyle(".favorite>td:nth-child(3) {border-left: 4px solid " + favsColor + " !important}");
 			} else {
 				GM_addStyle(".favorite>td:nth-child(3) {background-color:" + favsColor + " !important;}");
@@ -99,16 +99,16 @@
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');min-width:20px;}");
 		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
 		
-		var highlightColor = mod.helper.getValue("HIGHLIGHT_COLOR", "#FAF7DD", true);
+		var highlightColor = mod.helper.getValue("HIGHLIGHT_COLOR", "#FAF7DD");
 		if (highlightColor !== "") {
-			if (mod.helper.getValue("HIGHLIGHT_JUST_BORDER", false, true)) {
+			if (mod.helper.getValue("HIGHLIGHT_JUST_BORDER", false)) {
 				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + highlightColor + "}");
 			} else {
 				GM_addStyle(".highlighted>td:nth-child(3) {background-color:" + highlightColor + ";}");
 			}
 		}
 		
-		if (mod.helper.getValue("HIGHLIGHT_BOLD", true, true)) {
+		if (mod.helper.getValue("HIGHLIGHT_BOLD", true)) {
 			GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
 		}
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
@@ -130,7 +130,7 @@
 		});
 		
 		//Recuperar los hilos ocultos manualmente
-		hiddenThreads = JSON.parse(mod.helper.getValue("HIDDEN_THREADS", '[]', true));
+		hiddenThreads = JSON.parse(mod.helper.getValue("HIDDEN_THREADS", '[]'));
 		
 		initRegexs();
 
@@ -546,10 +546,10 @@
 	/* Crear todas las expresiones regulares segun el input del usuario */
 	function initRegexs() {
 		//Crear regex de hilos ocultos
-		var hiddenKeywords = mod.helper.getValue("HIDDEN_KEYWORDS", "", true);
+		var hiddenKeywords = mod.helper.getValue("HIDDEN_KEYWORDS", "");
 		if (hiddenKeywords && hiddenKeywords != "") {
 			try {
-				var hiddenKeywordsIsRegex = mod.helper.getValue("HIDDEN_KEYWORDS_REGEX", false, true);
+				var hiddenKeywordsIsRegex = mod.helper.getValue("HIDDEN_KEYWORDS_REGEX", false);
 				regexHiddenKeywords = getRegex(hiddenKeywords, hiddenKeywordsIsRegex);
 			} catch (e) {
 				regexHiddenKeywords = null;
@@ -558,7 +558,7 @@
 		}
 		
 		//Crear regex de hilos ocultos por usuario
-		var hiddenUsers = mod.helper.getValue("HIDDEN_USERS", "", true);
+		var hiddenUsers = mod.helper.getValue("HIDDEN_USERS", "");
 		if (hiddenUsers && hiddenUsers != "") {
 			try {
 				regexHiddenUsers = getRegex(hiddenUsers, false);
@@ -569,10 +569,10 @@
 		}
 		
 		//Crear regex para resaltar hilos 
-		var highlightKeywords = mod.helper.getValue("HIGHLIGHT_KEYWORDS", "", true);
+		var highlightKeywords = mod.helper.getValue("HIGHLIGHT_KEYWORDS", "");
 		if (highlightKeywords && highlightKeywords != "") {
 			try {
-				var highlightKeywordsIsRegex = mod.helper.getValue("HIGHLIGHT_KEYWORDS_REGEX", false, true);
+				var highlightKeywordsIsRegex = mod.helper.getValue("HIGHLIGHT_KEYWORDS_REGEX", false);
 				regexHighlightKeywords = getRegex(highlightKeywords, highlightKeywordsIsRegex);
 			} catch (e) {
 				regexHighlightKeywords = null;
