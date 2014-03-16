@@ -19,7 +19,6 @@
 	
 	var threads = [];
 	var favorites;
-	var hideReadThreads;
 	var readThreads = [];
 	var hiddenThreads = [];
 	var hiddenThreadsCount = 0;
@@ -299,7 +298,7 @@
 	        }
 	        
 	        if (!hilo.isHidden && hilo.icon_td.find("img").attr("src").indexOf("new.gif") == -1) { //Hilo leído
-	        	if (hideReadThreads) {
+	        	if (mod.preferences.hideReadThreads) {
 	        		hilo.row.css("display", "none");
 	        	}
 	        	readThreads.push(hilo);
@@ -456,14 +455,13 @@
 	
 	/* Funcionalidad de ocultar hilos ya leídos */
 	function createHideReadThreadsButton() {
-	    hideReadThreads = mod.helper.getValue("HIDDEN_READ_THREADS", false, true);
 	    var forumToolsButton = $("#stickies_collapse");
-	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
+	    var hideReadThreadsLink = $('<a rel="nofollow">' + (mod.preferences.hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
 	    hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
 	    hideReadThreadsButton.append(hideReadThreadsLink);
 	    hideReadThreadsButton.click(function(){
-	    	hideReadThreads = !hideReadThreads;
-	    	if (hideReadThreads) {
+	    	mod.preferences.hideReadThreads = !mod.preferences.hideReadThreads;
+	    	if (mod.preferences.hideReadThreads) {
 			    $.each(readThreads, function(index, hilo){
 			    	hilo.hideRead = true;
 				    hilo.row.css("display", "none");
@@ -476,7 +474,7 @@
 			    });
 			    hideReadThreadsLink.html("Mostrar solo los hilos no leídos");
 		    }
-		    mod.helper.setValue("HIDDEN_READ_THREADS", hideReadThreads);
+			mod.storePreferences();
 	    });
 	    forumToolsButton.before(hideReadThreadsButton);
 	}
