@@ -12,7 +12,18 @@
         initialPreferences: {
             enabled: true, // Esta es opcional - por defecto true
 			hideReadThreads: false,
-			hiddenUsers: ''
+			hiddenUsers: '',
+			hiddenKeywords: '',
+			hiddenKeywordsIsRegex: false,
+			highlightKeywords: '',
+			highlightKeywordsIsRegex: false,
+			highlightColor: '#FAF7DD',
+			highlightBorderOnly: false,
+			highlightBold: true,
+			highlightedOnTop: true,
+			favoritesColor: '#D5E6EE',
+			favoritesBorderOnly: false,
+			favoritesOnTop: true
         },
 		preferences: {}
     });
@@ -25,7 +36,6 @@
 	var hiddenThreadsBlock;
 	var hideReadThreadsButton;
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
-	var highlightedOnTop, favoritesOnTop;
 	
 	/**
     * Activamos modo de carga normal (aunque viene activo por defecto)
@@ -40,8 +50,6 @@
 		loadStyles();
 		
 		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]'));
-		favoritesOnTop = mod.helper.getValue("FAVORITES_TOP", true);
-		highlightedOnTop = mod.helper.getValue("HIGHLIGHTED_TOP", true);
 				
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -58,48 +66,29 @@
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
-			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>'})
+			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>'}),
+			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
+			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
+			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
+			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
+			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
+			createPref({type: 'text', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">'+mod.initialPreferences.highlightColor+'</span>'}),
+			createPref({type: 'checkbox', mapsTo: 'highlightBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
+			createPref({type: 'checkbox', mapsTo: 'highlightBold', caption: 'Resaltar palabras clave en los títulos de los hilos'}),
+			createPref({type: 'checkbox', mapsTo: 'highlightedOnTop', caption: 'Colocar siempre en primer lugar los hilos resaltados'}),
+			createPref({type: 'header', caption: 'Hilos favoritos', subCaption: 'Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo:'}),
+			createPref({type: 'text', mapsTo: 'favoritesColor', caption: 'Color', subCaption: 'Color de fondo", "El color de fondo para los hilos favoritos. Por defecto <span class="badge">'+mod.initialPreferences.favoritesColor+'</span>'}),
+			createPref({type: 'checkbox', mapsTo: 'favoritesBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
+			createPref({type: 'checkbox', mapsTo: 'favoritesOnTop', caption: 'Colocar siempre en primer lugar los hilos marcados como favoritos'})
 		];
-		
-		/*var preferences = new Array();
-		
-		var hiddenThreadsSection = [];
-		hiddenThreadsSection.push(new BooleanPreference("HIDDEN_READ_THREADS", false, "Mostrar solo hilos no leídos. <span style='color:gray;'>De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>"));
-		hiddenThreadsSection.push(new TextPreference("HIDDEN_USERS", "", "Por usuario <b>(separados por comas)</b>"));
-		hiddenThreadsSection.push(new TextPreference("HIDDEN_KEYWORDS", "", "Por palabras clave <b>(separadas por comas)</b>"));
-		hiddenThreadsSection.push(new BooleanPreference("HIDDEN_KEYWORDS_REGEX", false, "<b>Avanzado:</b> Usar expresión regular en las palabras clave"));
-
-		preferences.push(new SectionPreference("Ocultar hilos", "Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas.", hiddenThreadsSection));
-		
-		var highlightedThreadsSection = [];
-		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_KEYWORDS", "", "Por palabras clave <b>(separadas por comas)</b>"));
-		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_KEYWORDS_REGEX", false, "<b>Avanzado:</b> Usar expresión regular en las palabras clave"));
-		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_COLOR", "#FAF7DD", "Color", "El color de fondo para los hilos resaltados. Por defecto #FAF7DD"));
-		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
-		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_BOLD", true, "Resaltar palabras clave en los títulos de los hilos"));
-		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHTED_TOP", true, "Colocar siempre en primer lugar los hilos resaltados"));
-
-		preferences.push(new SectionPreference("Resaltar hilos", "Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos.", highlightedThreadsSection));
-		
-		var favoriteThreadsSection = [];
-
-		favoriteThreadsSection.push(new TextPreference("FAVORITES_COLOR", "#D5E6EE", "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
-		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
-		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_TOP", true, "Colocar siempre en primer lugar los hilos marcados como favoritos"));
-
-		
-		preferences.push(new SectionPreference("Hilos favoritos", "Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo.", favoriteThreadsSection));
-
-		return preferences;*/
 	};
 		
-	function loadStyles() {
-		var favsColor = mod.helper.getValue("FAVORITES_COLOR", "#D5E6EE");
-		if (favsColor !== "") {
-			if (mod.helper.getValue("FAVORITES_JUST_BORDER", false)) {
-				GM_addStyle(".favorite>td:nth-child(3) {border-left: 4px solid " + favsColor + " !important}");
+	function loadStyles() {		
+		if (mod.preferences.favoritesColor !== "") {
+			if (mod.preferences.favoritesBorderOnly) {
+				GM_addStyle(".favorite>td:nth-child(3) {border-left: 4px solid " + mod.preferences.favoritesColor + " !important}");
 			} else {
-				GM_addStyle(".favorite>td:nth-child(3) {background-color:" + favsColor + " !important;}");
+				GM_addStyle(".favorite>td:nth-child(3) {background-color:" + mod.preferences.favoritesColor + " !important;}");
 			}
 		}
 		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');min-width:20px;}");
@@ -107,16 +96,15 @@
 		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');min-width:20px;}");
 		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
 		
-		var highlightColor = mod.helper.getValue("HIGHLIGHT_COLOR", "#FAF7DD");
-		if (highlightColor !== "") {
-			if (mod.helper.getValue("HIGHLIGHT_JUST_BORDER", false)) {
-				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + highlightColor + "}");
+		if (mod.preferences.highlightColor !== "") {
+			if (mod.preferences.highlightBorderOnly) {
+				GM_addStyle(".highlighted>td:nth-child(3) {border-left: 4px solid " + mod.preferences.highlightColor + "}");
 			} else {
-				GM_addStyle(".highlighted>td:nth-child(3) {background-color:" + highlightColor + ";}");
+				GM_addStyle(".highlighted>td:nth-child(3) {background-color:" + mod.preferences.highlightColor + ";}");
 			}
 		}
 		
-		if (mod.helper.getValue("HIGHLIGHT_BOLD", true)) {
+		if (mod.preferences.highlightBold) {
 			GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
 		}
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
@@ -253,7 +241,7 @@
 		    } else if (favorites.indexOf( hilo.id ) >= 0) { //Después, si es favorito
 	            hilo.isFavorite = true;
 	            
-	            if (favoritesOnTop) { //Lo movemos al principio de la lista
+	            if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
 		        	if ($(".favorite").length > 0) {
 			    		$(".favorite").last().after(hilo.row);
 					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
@@ -281,7 +269,7 @@
 	        	hilo.isHighlighted = true;
 	        	hilo.title_link.html(matchResult);
 	        	
-	        	if (!hilo.isHidden && !hilo.isFavorite && highlightedOnTop) { //Lo movemos al principio de la lista
+	        	if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
 		        	if ($(".highlighted").length > 0) {
 			    		$(".highlighted").last().after(hilo.row);
 					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
@@ -553,11 +541,9 @@
 	/* Crear todas las expresiones regulares segun el input del usuario */
 	function initRegexs() {
 		//Crear regex de hilos ocultos
-		var hiddenKeywords = mod.helper.getValue("HIDDEN_KEYWORDS", "");
-		if (hiddenKeywords && hiddenKeywords != "") {
+		if (mod.preferences.hiddenKeywords && mod.preferences.hiddenKeywords != "") {
 			try {
-				var hiddenKeywordsIsRegex = mod.helper.getValue("HIDDEN_KEYWORDS_REGEX", false);
-				regexHiddenKeywords = getRegex(hiddenKeywords, hiddenKeywordsIsRegex);
+				regexHiddenKeywords = getRegex(mod.preferences.hiddenKeywords, mod.preferences.hiddenKeywordsIsRegex);
 			} catch (e) {
 				regexHiddenKeywords = null;
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para ocultar hilos.");
@@ -574,12 +560,10 @@
 			}
 		}
 		
-		//Crear regex para resaltar hilos 
-		var highlightKeywords = mod.helper.getValue("HIGHLIGHT_KEYWORDS", "");
-		if (highlightKeywords && highlightKeywords != "") {
+		//Crear regex para resaltar hilos
+		if (mod.preferences.highlightKeywords && mod.preferences.highlightKeywords != "") {
 			try {
-				var highlightKeywordsIsRegex = mod.helper.getValue("HIGHLIGHT_KEYWORDS_REGEX", false);
-				regexHighlightKeywords = getRegex(highlightKeywords, highlightKeywordsIsRegex);
+				regexHighlightKeywords = getRegex(mod.preferences.highlightKeywords, mod.preferences.highlightKeywordsIsRegex);
 			} catch (e) {
 				regexHighlightKeywords = null;
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos.");
