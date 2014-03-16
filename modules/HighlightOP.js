@@ -19,7 +19,7 @@ function HighlightOP() {
     this.getPreferences = function() {
         return [
             new ColorPreference('HIGHLIGHT_OP_COLOR', '#DC143C', 'Color de resaltado de los posts del creador del hilo'),
-            new BooleanPreference("HIGHLIGHT_MY_POSTS", true, "Resaltar también mis propios posts."),
+            new BooleanPreference("HIGHLIGHT_MY_POSTS", false, "Resaltar también mis propios posts."),
             new ColorPreference('HIGHLIGHT_MY_POSTS_COLOR', '#1E90FF', 'Color de resaltado de tus posts'),
             new BooleanPreference("HIGHLIGHT_QUOTES", true, "Resaltar también las citas.")
         ];
