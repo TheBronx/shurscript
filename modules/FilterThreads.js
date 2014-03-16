@@ -10,8 +10,11 @@
         description: 'Añade varias opciones a la lista de hilos de un subforo: Marcar hilos como favoritos, resaltarlos, u ocultar los temas que no te interesen. Ya sea de forma manual o automática mediante palabras clave.',
         domain: ['/forumdisplay.php', '/showthread.php', '/search.php'],
         initialPreferences: {
-            enabled: true // Esta es opcional - por defecto true
-        }
+            enabled: true, // Esta es opcional - por defecto true
+			hideReadThreads: false,
+			
+        },
+		preferences: {}
     });
 	
 	var threads = [];
@@ -52,6 +55,11 @@
 	mod.getPreferenceOptions = function () {
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
+
+		return [
+			// Hacemos un header
+			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'})
+		];
 		
 		/*var preferences = new Array();
 		

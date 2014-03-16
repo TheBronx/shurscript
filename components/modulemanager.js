@@ -99,7 +99,7 @@
          * guardadas no tiene una llave, se toma de initialPreferences.
          */
         refreshPreferences: function () {
-
+			console.log("___ leyendo preferencias del modulo "+this.id+" ___");
             var serializedStoredPreferences = this.helper.getValue('__preferences', ''),
                 storedPreferences = {};
 
@@ -200,6 +200,8 @@
             // Intentamos carga.
             try {
 
+				module.refreshPreferences(); //aqui la carga de preferencias ya sí será desde la nube
+				
                 // Si el modulo no esta activado
                 // (nota: el estado del modulo ha sido actualizado
                 // en el .startModulesEagerly
@@ -238,7 +240,7 @@
             // Intentamos carga.
             try {
 
-                module.refreshPreferences();
+                module.refreshPreferences(); //aqui la carga de preferencias sera local (sync.js aun no ha metido la nube por medio)
 
                 // Si el modulo no esta activado
                 if ( ! module.preferences.enabled) {
