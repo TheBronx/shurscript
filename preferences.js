@@ -106,3 +106,19 @@ SectionPreference.prototype.getHTML = function() {
 	section += "</div>";
 	return section;
 }
+
+function ColorPreference(key, defaultValue, name, description) {
+	this.key = key;
+	this.defaultValue = defaultValue;
+	this.name = name;
+    this.description = description;
+}
+
+ColorPreference.prototype.getHTML = function(currentValue) {
+	var value = (typeof currentValue !== 'undefined' ? currentValue : this.defaultValue);
+	var html = '<label>' + this.name + '</label> <input class="form-control" name="' + this.key + '" type="color" value="' + value + '"/>';
+	if (typeof this.description !== 'undefined') {
+		html += '<p class="help-block">' + this.description + '</p>';
+	}
+	return html;
+}

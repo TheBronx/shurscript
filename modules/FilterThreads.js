@@ -649,7 +649,7 @@ if (hilo.originalPosition) {
 		var highlightedThreadsSection = [];
 		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_KEYWORDS", "", "Por palabras clave <b>(separadas por comas)</b>"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_KEYWORDS_REGEX", false, "<b>Avanzado:</b> Usar expresión regular en las palabras clave"));
-		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_COLOR", "#FAF7DD", "Color", "El color de fondo para los hilos resaltados. Por defecto #FAF7DD"));
+		highlightedThreadsSection.push(new ColorPreference("HIGHLIGHT_COLOR", "#FAF7DD", "Color", "El color de fondo para los hilos resaltados. Por defecto #FAF7DD"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_BOLD", true, "Resaltar palabras clave en los títulos de los hilos"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHTED_TOP", true, "Colocar siempre en primer lugar los hilos resaltados"));
@@ -661,7 +661,7 @@ if (hilo.originalPosition) {
 favoriteThreadsSection.push(new BooleanPreference("FAVORITES_SUSCRIBED", true, "Suscribirse automáticamente a todos los hilos marcados como favoritos"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_SUSCRIBED", true, "Resaltar los hilos suscritos como si fueran favoritos"));
 */
-		favoriteThreadsSection.push(new TextPreference("FAVORITES_COLOR", "#D5E6EE", "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
+		favoriteThreadsSection.push(new ColorPreference("FAVORITES_COLOR", "#D5E6EE", "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_TOP", true, "Colocar siempre en primer lugar los hilos marcados como favoritos"));
 
