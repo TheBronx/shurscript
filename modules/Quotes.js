@@ -241,7 +241,7 @@
 			 
 			        if (citas.length > 0) {
 			        	lastReadQuote = new Cita(citas[0]).postLink;
-			        	mod.helper.setValue("LAST_READ_QUOTE", lastReadQuote, true);
+			        	mod.helper.setValue("LAST_READ_QUOTE", lastReadQuote);
 			        }
 			
 			        	    
@@ -261,8 +261,8 @@
 			        arrayQuotes = unreadQuotes.concat(readQuotes.slice(0, 10 - unreadQuotes.length)); //No leídas + Leidas hasta llegar a 10 citas maximo. Si hay 3 no leidas, se rellenaran con 7 leidas. Si hay 15 no leidas, se veran las 15 pero ninguna leída.
 			        
 			        lastQuotesJSON = JSON.stringify(arrayQuotes); //Formateamos a JSON para guardarlo
-		        	mod.helper.setValue("LAST_QUOTES_UPDATE", Date.now().toString(), true);
-		        	mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, true);
+		        	mod.helper.setValue("LAST_QUOTES_UPDATE", Date.now().toString());
+		        	mod.helper.setValue("LAST_QUOTES", lastQuotesJSON);
 		        	
 		        	
 			        populateNotificationsBox(arrayQuotes);
@@ -443,7 +443,7 @@
 /* 		setNotificationsCount(0); */
 		populateNotificationsBox(arrayQuotes);
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
-		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, true);
+		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON);
 		notificationsBox.hide();
 	}
 	
@@ -474,7 +474,7 @@
 		cita.read = true;
 		
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
-    	mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, true);
+    	mod.helper.setValue("LAST_QUOTES", lastQuotesJSON);
     	
     	setNotificationsCount(notificationsCount - 1);
 	}

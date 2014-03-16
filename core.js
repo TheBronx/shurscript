@@ -95,14 +95,8 @@ var SHURSCRIPT = {
             return '[SHURSCRIPT]  [Modulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
         },
 
-        /**
-         *
-         * @param key
-         * @param value
-         * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
-         */
-        setValue: function(key, value, withId) {
-            SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, withId), value);
+        setValue: function(key, value) {
+            SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value);
         },
 
         /**
