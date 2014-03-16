@@ -9,13 +9,7 @@ function NightMode() {
     this.worksInFrontPage = true; // Modulo carga en portada
 
     var helper = new ScriptHelper(this.id);
-    
     var css, icon;
-
-    /* Define una condición a la carga del módulo. Si no se quiere condición, eliminar este metodo o devolver true. */
-    this.shouldLoad = function() {
-        return true;
-    };
 
     /* Método obligatorio y punto de entrada a la lógica del módulo */
     this.load = function() {
@@ -25,14 +19,14 @@ function NightMode() {
 
         // Incluyelo en head
         if (helper.getValue('SHOW_ICON', true)) {
-			icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");	        
-			
+			icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");
+
         	if (helper.getValue('ENABLED', false)) {
 	        	enableNightMode();
         	} else {
 	        	disableNightMode();
         	}
-        	
+
 			icon.click(function(){
 				if (helper.getValue('ENABLED', false)) {
 					disableNightMode();
@@ -41,13 +35,13 @@ function NightMode() {
 	        	}
 			});
 			$(document.body).append(icon);
-			
+
         } else {
         	enableNightMode();
         }
 
     };
-    
+
     var enableNightMode = function() {
 	    if (icon) {
 		    helper.setValue('ENABLED', true);
@@ -56,7 +50,7 @@ function NightMode() {
 		}
 		$('<style id="nightmode-style">' + css + '</style>').appendTo('head');
     };
-    
+
     var disableNightMode = function() {
 	    if (icon) {
 	    	helper.setValue('ENABLED', false);
@@ -65,10 +59,10 @@ function NightMode() {
 		}
     	$("#nightmode-style").remove();
     };
-    
+
     this.getPreferences = function() {
 	    var preferences = new Array();
-		
+
 		preferences.push(new BooleanPreference("SHOW_ICON", true, "<b>Mostrar un icono pequeño arriba a la derecha del foro para activar/desactivar el modo noche rápidamente.</b> Si desmarcas esta opción, tendrás que venir aquí cada vez para activar o desactivar el modo noche."));
 
 		return preferences;

@@ -3,47 +3,48 @@
 // http://www.gnu.org/licenses/gpl-2.0.html
 //
 // ==UserScript==
-// @name			ShurScript
-// @description		Script para ForoCoches
-// @namespace		http://shurscript.es
-// @version			0.10.1
-// @author			TheBronx
-// @author			xusoO
-// @author			Fritanga
-// @author			juno / ikaros45
-// @include			*forocoches.com*
-// @require			http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
-// @require			http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/plugins/bootbox.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/plugins/Markdown.Converter.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/FilterThreads.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BetterPosts.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/Scrollers.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/NestedQuotes.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/RefreshSearch.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/modules/NightMode.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/AutoUpdater.js
-// @require			https://github.com/TheBronx/shurscript/raw/master/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/master/settings_window.js
-// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/master/css/nightmode-min.css
-// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
-// @resource scroller-img https://github.com/TheBronx/shurscript/raw/master/img/scroller.png
-// @resource star-img https://github.com/TheBronx/shurscript/raw/master/img/star.png
-// @resource trash-img https://github.com/TheBronx/shurscript/raw/master/img/trash.png
-// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/master/img/trash-black.png
-// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/master/img/light-on.png
-// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/master/img/light-off.png
-// @grant	GM_log
-// @grant	GM_getValue
-// @grant	GM_setValue
-// @grant	GM_deleteValue
-// @grant	GM_xmlhttpRequest
-// @grant	GM_registerMenuCommand
-// @grant	GM_addStyle
-// @grant 	GM_getResourceText
-// @grant 	GM_getResourceURL
+// @name            ShurScript
+// @description     Script para ForoCoches
+// @namespace       http://shurscript.es
+// @version         0.10.2
+// @author          TheBronx
+// @author          xusoO
+// @author          Fritanga
+// @author          juno / ikaros45
+// @include         *forocoches.com*
+// @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
+// @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NightMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/AutoUpdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/settings_window.js
+// @resource nightmodecss https://github.com/TheBronx/shurscript/raw/dev/css/nightmode-min.css
+// @resource bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource scroller-img https://github.com/TheBronx/shurscript/raw/dev/img/scroller.png
+// @resource star-img https://github.com/TheBronx/shurscript/raw/dev/img/star.png
+// @resource trash-img https://github.com/TheBronx/shurscript/raw/dev/img/trash.png
+// @resource trash-black-img https://github.com/TheBronx/shurscript/raw/dev/img/trash-black.png
+// @resource nightmode-on https://github.com/TheBronx/shurscript/raw/dev/img/light-on.png
+// @resource nightmode-off https://github.com/TheBronx/shurscript/raw/dev/img/light-off.png
+// @grant   GM_log
+// @grant   GM_getValue
+// @grant   GM_setValue
+// @grant   GM_deleteValue
+// @grant   GM_xmlhttpRequest
+// @grant   GM_registerMenuCommand
+// @grant   GM_addStyle
+// @grant   GM_getResourceText
+// @grant   GM_getResourceURL
 // ==/UserScript==
 
 var helper;
@@ -65,7 +66,7 @@ jQuery(document).ready(function(){
     }
 
     if (isLoggedIn() && isCompatible()) {
-	    initialize();
+        initialize();
         loadModules();
 
         AutoUpdater = new AutoUpdater();
@@ -75,14 +76,17 @@ jQuery(document).ready(function(){
 
 function isCompatible() {
     //Comprobamos que está soportada la extensión y de paso recogemos la version del script actual.
-    if (typeof GM_info != 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
-        scriptVersion = GM_info.script.version
-    } else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+    if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+        scriptVersion = GM_info.script.version;
+
+    } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
         scriptVersion = GM_getMetadata('version');
+
     } else {
         alert('El addon de userscripts de tu navegador no está soportado.');
         return false;
     }
+
     return true;
 }
 
@@ -100,24 +104,25 @@ function initialize() {
         locale: "es",
         className: "shurscript",
         closeButton: false
-      });
+    });
 
 }
 
 function isLoggedIn() {
-	var user;
-    if ( ! inFrontPage) {
+    var user;
+
+    if (inFrontPage) {
+        user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
+    } else {
         user = jQuery(".alt2 > .smallfont > strong > a[href*='member.php?u=']").first();
         username = user.text();
-    } else {
-	    user = jQuery("#AutoNumber1 a[href*='member.php?u=']").first();
     }
-    
-    if (user.length > 0) {
-    	userid = user.attr("href").match(/\?u\=(\d*)/)[1];
-    	return true;
+
+    if (user.length) {
+        userid = user.attr("href").match(/\?u\=(\d*)/)[1];
+        return true;
     }
-    
+
     return false;
 }
 
@@ -125,8 +130,7 @@ function loadModules() {
 
     activeModules = getActiveModules();
     var moduleNames = getAllModules(),
-        module,
-        msg;
+        module;
 
     var getModuleInstance = function (moduleName) {
         var module;
@@ -189,17 +193,17 @@ function loadModules() {
 */
 function getAllModules() {
     var modules = [];
-    if (typeof GM_info != 'undefined' ) {
+    if (typeof GM_info !== 'undefined' ) {
         var metas = GM_info.scriptMetaStr.split("// @");
         var meta;
         for (var i = 0; i < metas.length; i++) {
             meta = metas[i].trim();
-            if (meta.indexOf("require") == 0 && meta.match("/modules/")) {
+            if (meta.indexOf("require") === 0 && meta.match("/modules/")) {
                 var moduleName = meta.match(/modules\/(.*)\.js/)[1];
                 modules.push(moduleName.trim());
             }
         }
-    } else if (typeof GM_getMetadata != 'undefined') { //Scriptish
+    } else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
         var requires = GM_getMetadata('require');
         for (var i = 0; i < requires.length; i++) {
             if (requires[i].match("/modules/")) {
@@ -216,16 +220,13 @@ function getAllModules() {
 * Obtienes los modulos que tiene activados el usuario {"modulo1" : true, "modulo2" : false, etc.}
 */
 function getActiveModules() {
-    var activeModules = helper.getValue("MODULES");
-    if (activeModules) {
-        try {
-            activeModules = JSON.parse(activeModules);
-        } catch (e){
-            activeModules = {};
-            helper.deleteValue("MODULES");
-        }
-    } else {
+    var serializedActiveModules = helper.getValue("MODULES"),
         activeModules = {};
+
+    try {
+        activeModules = JSON.parse(serializedActiveModules);
+    } catch (e) {
+        helper.deleteValue("MODULES");
     }
 
     return activeModules;

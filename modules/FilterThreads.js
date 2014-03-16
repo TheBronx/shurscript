@@ -22,9 +22,7 @@ function FilterThreads() {
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
 	
 	var highlightedOnTop, favoritesOnTop;
-	
-	var pinnedThreadsSeparator; //Separador entre chinchetas y hilos normales
-			
+				
 	this.shouldLoad = function() {
 		 return (page == "/forumdisplay.php" || page == "/showthread.php" || page == "/search.php");
 	}
@@ -43,9 +41,7 @@ function FilterThreads() {
 		
 		favoritesOnTop = helper.getValue("FAVORITES_TOP", true);
 		highlightedOnTop = helper.getValue("HIGHLIGHTED_TOP", true);
-		
-		pinnedThreadsSeparator = $("#threadslist > tbody[id^='threadbits_forum'] > tr > .thead").parent();
-				
+						
 		if (page == "/forumdisplay.php" || page == "/search.php") {
 			onForumDisplay();
 		} else if (page == "/showthread.php") {
@@ -86,7 +82,7 @@ function FilterThreads() {
 	/* Funcionalidad de ocultar hilos ya leídos */
 	function createHideReadThreadsButton() {
 	    hideReadThreads = helper.getValue("HIDDEN_READ_THREADS", false);
-	    var forumToolsButton = $("#forumtools");
+	    var forumToolsButton = $("#stickies_collapse");
 	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
 	    hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
 	    hideReadThreadsButton.append(hideReadThreadsLink);
@@ -279,7 +275,7 @@ function FilterThreads() {
 					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
 						$(".highlighted").first().before(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+			    		$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 			    	}
 	        	}
 	            
@@ -308,7 +304,7 @@ function FilterThreads() {
 					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
 						$(".favorite").last().after(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+			    		 $("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
 	        	}
 	        	
@@ -653,7 +649,7 @@ if (hilo.originalPosition) {
 		var highlightedThreadsSection = [];
 		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_KEYWORDS", "", "Por palabras clave <b>(separadas por comas)</b>"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_KEYWORDS_REGEX", false, "<b>Avanzado:</b> Usar expresión regular en las palabras clave"));
-		highlightedThreadsSection.push(new TextPreference("HIGHLIGHT_COLOR", "#FAF7DD", "Color", "El color de fondo para los hilos resaltados. Por defecto #FAF7DD"));
+		highlightedThreadsSection.push(new ColorPreference("HIGHLIGHT_COLOR", "#FAF7DD", "Color", "El color de fondo para los hilos resaltados. Por defecto #FAF7DD"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHT_BOLD", true, "Resaltar palabras clave en los títulos de los hilos"));
 		highlightedThreadsSection.push(new BooleanPreference("HIGHLIGHTED_TOP", true, "Colocar siempre en primer lugar los hilos resaltados"));
@@ -665,7 +661,7 @@ if (hilo.originalPosition) {
 favoriteThreadsSection.push(new BooleanPreference("FAVORITES_SUSCRIBED", true, "Suscribirse automáticamente a todos los hilos marcados como favoritos"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_SUSCRIBED", true, "Resaltar los hilos suscritos como si fueran favoritos"));
 */
-		favoriteThreadsSection.push(new TextPreference("FAVORITES_COLOR", "#D5E6EE", "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
+		favoriteThreadsSection.push(new ColorPreference("FAVORITES_COLOR", "#D5E6EE", "Color de fondo", "El color de fondo para los hilos favoritos. Por defecto #D5E6EE"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_JUST_BORDER", false, "Aplicar color solo al borde izquierdo"));
 		favoriteThreadsSection.push(new BooleanPreference("FAVORITES_TOP", true, "Colocar siempre en primer lugar los hilos marcados como favoritos"));
 
