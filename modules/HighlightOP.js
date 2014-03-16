@@ -1,9 +1,9 @@
 function HighlightOP() {
     this.id = arguments.callee.name;
-    this.name = "Resaltar al creador del hilo";
+    this.name = "Resaltar mensajes míos y del creador del hilo";
     this.author = "Electrosa";
     this.version = "1.0";
-    this.description = "Resalta los mensajes que ha escrito el creador del hilo.";
+    this.description = "Resalta dentro de un hilo, los mensajes que has escrito tú y el creador del hilo, con un borde a la izquierda.";
     this.enabledByDefault = true;
     this.worksInFrontPage = false;
 
@@ -18,8 +18,10 @@ function HighlightOP() {
     
     this.getPreferences = function() {
         return [
-            new BooleanPreference("HIGHLIGHT_MY_POSTS", true, "Resaltar mis propios posts."),
-            new BooleanPreference("HIGHLIGHT_QUOTES", true, "Resaltar citas.")
+            new ColorPreference('HIGHLIGHT_OP_COLOR', '#DC143C', 'Color de resaltado de los posts del creador del hilo'),
+            new BooleanPreference("HIGHLIGHT_MY_POSTS", true, "Resaltar también mis propios posts."),
+            new ColorPreference('HIGHLIGHT_MY_POSTS_COLOR', '#1E90FF', 'Color de resaltado de tus posts'),
+            new BooleanPreference("HIGHLIGHT_QUOTES", true, "Resaltar también las citas.")
         ];
     }
     
@@ -77,8 +79,8 @@ function HighlightOP() {
         }
         
         // Add CSS rules
-        GM_addStyle(".op_post, .op_quote { border-left: 8px solid #D90602 !important; } .op_post td.alt2 { width: 167px; }");
-        GM_addStyle(".my_post, .my_quote { border-left: 8px solid #615662 !important; } .op_post td.alt2 { width: 167px; }");
+        GM_addStyle(".op_post, .op_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C") + " !important; } .op_post td.alt2 { width: 167px; }");
+        GM_addStyle(".my_post, .my_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF") + " !important; } .op_post td.alt2 { width: 167px; }");
         
         // Highlighted posts have "op_post" class
         for (var i = 0, n = users.length; i < n; i++) {
