@@ -13,6 +13,7 @@
 * Algunos usuarios con nombres no alfanuméricos no recibían las citas correctamente (Con las menciones desactivadas)
 * Chrome + Editor de posts mejorado: Al enviar los posts aparecían saltos de línea dobles.
 * Chrome: Al intentar guardar las preferencias había veces que no se guardaban.
+* La recarga automática del buscador no funcionaba correctamente
 * Otras correcciones menores
 
 ### v0.10.1 `01/10/2013`
