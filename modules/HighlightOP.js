@@ -86,7 +86,7 @@ function HighlightOP() {
         for (var i = 0, n = users.length; i < n; i++) {
             var currentUser = users[i].innerHTML;
             
-            if (currentUser === op) {
+            if (currentUser === op && currentUser !== username) {
                 users[i].parentNode.parentNode.parentNode.parentNode.parentNode.classList.add("op_post");
             }
             
@@ -105,7 +105,7 @@ function HighlightOP() {
                 if (elem && elem.length > 0) {
                     var quotedUser = elem[0].innerHTML;
                 
-                    if (quotedUser === op) {
+                    if (quotedUser === op && currentUser !== username) {
                         quotes[i].classList.add("op_quote");
                     }
                     
