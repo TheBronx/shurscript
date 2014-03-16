@@ -81,11 +81,11 @@
     //Punto de entrada al componente.
     sync.loadAndCallback = function(callback) {
         //sobreescribimos las funciones de manejo de preferencias
-        SHURSCRIPT.GreaseMonkey.setValue =  function (key, value) {
+        SHURSCRIPT.GreaseMonkey.setValue = function (key, value) {
             Cloud.setValue(key, value);
         };
         
-        SHURSCRIPT.GreaseMonkey.getValue =  function (key, defaultValue) {
+        SHURSCRIPT.GreaseMonkey.getValue = function (key, defaultValue) {
             //no podemos llamar sin más a getValue, ya que es asincrona.
             //es decir, no podemos simplemente decir "return pref"
             //tampoco podemos tirar de callbacks, complicaría excesivamente los módulos
@@ -96,7 +96,7 @@
             return (Cloud.preferences[key]!=undefined) ? Cloud.preferences[key]:defaultValue;
         };
 
-        SHURSCRIPT.GreaseMonkey.deleteValue =  function (key) {
+        SHURSCRIPT.GreaseMonkey.deleteValue = function (key) {
             Cloud.deleteValue(key);
         };
         

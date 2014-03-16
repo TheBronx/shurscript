@@ -156,19 +156,11 @@ var SHURSCRIPT = {
      * extendido con los nuevos elementos
      */
     var getProtoModuleHelper = function () {
-        // Comprueba que el prototipo que extiende de protoComponentHelper esta creado ya
-        if (getProtoModuleHelper.protoModuleHelper === undefined) {
-
-            // Crea proto que extiende de protoComponentHelper
-            getProtoModuleHelper.protoModuleHelper = Object.create(protoComponentHelper);
-
-            // Metele nuevos atributos
-            getProtoModuleHelper.protoModuleHelper.createPreferenceOption = SHURSCRIPT.preferences.createOption;
-            getProtoModuleHelper.protoModuleHelper.templater = SHURSCRIPT.templater;
-            getProtoModuleHelper.protoModuleHelper.environment = SHURSCRIPT.environment;
-        }
-
-        return getProtoModuleHelper.protoModuleHelper;
+		var moduleHelper = Object.create(protoComponentHelper);
+		moduleHelper.createPreferenceOption = SHURSCRIPT.preferences.createOption;
+		moduleHelper.templater = SHURSCRIPT.templater;
+		moduleHelper.environment = SHURSCRIPT.environment;
+		return moduleHelper;
     };
 
 
