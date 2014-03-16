@@ -1,18 +1,30 @@
 # CHANGELOG
 
-	Última versión estable: v0.10.1 (1 de octubre de 2013)
-	En desarrollo: v0.11
-	
-## v0.10.1
+
+## v0.10.2 `16/03/2014`
+
+**Features**
+
+* Nueva opción para resaltar dentro de un hilo, los mensajes que has escrito tú y el creador del hilo.
+
+**Bugfixes**
+
+* Corregidos fallos provocados por los cambios de Ilitri
+* Algunos usuarios con nombres no alfanuméricos no recibían las citas correctamente (Con las menciones desactivadas)
+* Chrome + Editor de posts mejorado: Al enviar los posts aparecían saltos de línea dobles.
+* Chrome: Al intentar guardar las preferencias había veces que no se guardaban.
+* Otras correcciones menores
+
+### v0.10.1 `01/10/2013`
 
 **Bugfixes**
 
 * El contador de notificaciones pasaba a números negativos si hacías clic en notificaciones ya leídas (Issue #7)
 * Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
 
-### v0.10
+### v0.10 `29/09/2013`
 
-**Changes**
+**Features**
 
 * Nueva opción para notificar solo de lo que son realmente citas y no menciones ni coincidencias con el nick que puede sacar el buscador del foro por error
 * Historial de las últimas citas leídas debajo de las nuevas
