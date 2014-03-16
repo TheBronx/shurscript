@@ -231,7 +231,7 @@
 	
 	/* Aplicar funcionalidad al hilo en cuestion: marcarlo como favorito, ocultarlo, etc.*/
 	function processThread(hilo) {
-        if (page == "/search.php") { //En el buscador solo se activan los favoritos
+        if (mod.helper.environment.page == "/search.php") { //En el buscador solo se activan los favoritos
 	        if (favorites.indexOf( hilo.id ) >= 0) {
 	            hilo.row.addClass("favorite");
 	            hilo.isFavorite = true;
@@ -338,22 +338,22 @@
 	
 	/* Construye el menu que aparece al pulsar sobre el icono del hilo */
 	function getThreadMenu(hilo) {
-		$menu = $("<div class='shurscript'/>");
+		var menu = $("<div class='shurscript'/>");
 		if (!hilo.isHidden || hilo.isHiddenByKeyword) { //No tiene sentido marcar un hilo oculto como favorito
-			$menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', GM_getResourceURL('star-img'), hilo.isFavorite, function(e){
+			menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', GM_getResourceURL('star-img'), hilo.isFavorite, function(e){
 				toggleFavorite(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
 			}));
 		}
-		if (page != "/search.php") {
-			$menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', GM_getResourceURL('trash-img'), hilo.isHidden && !hilo.isHiddenByKeyword, function(e){
+		if (mod.helper.environment.page != "/search.php") {
+			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', GM_getResourceURL('trash-img'), hilo.isHidden && !hilo.isHiddenByKeyword, function(e){
 				toggleHidden(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
 			}, 'btn-danger'));
 		}
-		return $menu;
+		return menu;
 	}
 	
 	/* Marcar o desmarcar un hilo favorito */
@@ -478,7 +478,7 @@
 		var quickFilterWrapper = $("<td class='tcat' style='padding:0px 4px;'/>");
 		quickFilterWrapper.append(quickFilter);
 		
-		if (page == "/search.php") {
+		if (mod.helper.environment.page == "/search.php") {
 			$("#threadslist .tcat span").last().append(quickFilterWrapper);
         } else {
 			hideReadThreadsButton.before(quickFilterWrapper);
