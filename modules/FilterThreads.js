@@ -24,7 +24,6 @@
 	var hideReadThreadsButton;
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
 	var highlightedOnTop, favoritesOnTop;
-	var pinnedThreadsSeparator; //Separador entre chinchetas y hilos normales
 	
 	/**
     * Activamos modo de carga normal (aunque viene activo por defecto)
@@ -41,8 +40,6 @@
 		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]', true));
 		favoritesOnTop = mod.helper.getValue("FAVORITES_TOP", true, true);
 		highlightedOnTop = mod.helper.getValue("HIGHLIGHTED_TOP", true, true);
-		
-		pinnedThreadsSeparator = $("#threadslist > tbody[id^='threadbits_forum'] > tr > .thead").parent();
 				
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -254,7 +251,7 @@
 					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
 						$(".highlighted").first().before(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 			    	}
 	        	}
 	            
@@ -282,7 +279,7 @@
 					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
 						$(".favorite").last().after(hilo.row)
 					} else {
-			    		pinnedThreadsSeparator.after(hilo.row);
+			    		$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
 	        	}
 	        	
@@ -452,7 +449,7 @@
 	/* Funcionalidad de ocultar hilos ya leídos */
 	function createHideReadThreadsButton() {
 	    hideReadThreads = mod.helper.getValue("HIDDEN_READ_THREADS", false, true);
-	    var forumToolsButton = $("#forumtools");
+	    var forumToolsButton = $("#stickies_collapse");
 	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
 	    hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
 	    hideReadThreadsButton.append(hideReadThreadsLink);
