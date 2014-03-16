@@ -12,7 +12,7 @@
         initialPreferences: {
             enabled: true, // Esta es opcional - por defecto true
 			hideReadThreads: false,
-			
+			hiddenUsers: ''
         },
 		preferences: {}
     });
@@ -56,8 +56,9 @@
 		var createPref = mod.helper.createPreferenceOption;
 
 		return [
-			// Hacemos un header
-			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'})
+			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
+			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
+			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>'})
 		];
 		
 		/*var preferences = new Array();
@@ -564,10 +565,9 @@
 		}
 		
 		//Crear regex de hilos ocultos por usuario
-		var hiddenUsers = mod.helper.getValue("HIDDEN_USERS", "");
-		if (hiddenUsers && hiddenUsers != "") {
+		if (mod.preferences.hiddenUsers && mod.preferences.hiddenUsers != "") {
 			try {
-				regexHiddenUsers = getRegex(hiddenUsers, false);
+				regexHiddenUsers = getRegex(mod.preferences.hiddenUsers, false);
 			} catch (e) {
 				regexHiddenUsers = null;
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para ocultar hilos por usuario.");
