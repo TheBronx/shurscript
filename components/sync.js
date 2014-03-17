@@ -20,14 +20,18 @@
         apiKey: "", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
         preferences: {}, //las preferencias sacadas del server
         
-        setValue: function (key, value) {
+        setValue: function (key, value, callback) {
             console.log("Cloud.setValue("+key+", "+value+")");
             $.ajax({
                 type: 'PUT', 
                 url: this.server + 'preferences/'+key+'/?apikey=' + this.apiKey,
                 data: {'value':value},
-                dataType: 'json' 
-            }); 
+                dataType: 'json'
+            }).done(function() {
+				if (typeof callback === 'function') {
+					callback();
+				}
+			}); 
         },
         
         getValue: function (key, defaultValue) {
@@ -57,6 +61,7 @@
         },
         
         deleteValue: function (key) {
+			//TODO
             //set empty
             this.setValue(key,'');
         },
@@ -80,8 +85,9 @@
     //Punto de entrada al componente.
     sync.loadAndCallback = function(callback) {
         //sobreescribimos las funciones de manejo de preferencias
-        SHURSCRIPT.GreaseMonkey.setValue = function (key, value) {
-            Cloud.setValue(key, value);
+		// [cb] es opcional, se ejecuta una vez los datos se guardan en el servidor asíncronamente
+        SHURSCRIPT.GreaseMonkey.setValue = function (key, value, cb) {
+            Cloud.setValue(key, value, cb);
         };
         
         SHURSCRIPT.GreaseMonkey.getValue = function (key, defaultValue) {

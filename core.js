@@ -95,8 +95,14 @@ var SHURSCRIPT = {
             return '[SHURSCRIPT]  [Modulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
         },
 
-        setValue: function(key, value) {
-            SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value);
+        setValue: function(key, value, callback) {
+			if (SHURSCRIPT.GreaseMonkey.setValue == GM_setValue) { //es la funcion original
+				SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value);
+				if (typeof callback === 'function') 
+					callback(); //llamamos al callback ya mismo, ya que GreaseMonkey nunca lo va a hacer
+			} else { //es la funcion para guardar en la nube, le pasamos el callback 
+				SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value, callback);
+			}
         },
 
         /**

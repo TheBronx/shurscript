@@ -85,10 +85,10 @@
         /**
          * Hace persistente el estado del modulo
          */
-        storePreferences: function () {
+        storePreferences: function (callback) {
             var serializedPreferences = JSON.stringify(this.preferences);
 
-            this.helper.setValue('__preferences', serializedPreferences);
+            this.helper.setValue('__preferences', serializedPreferences, callback);
         },
 
         /**
@@ -99,7 +99,6 @@
          * guardadas no tiene una llave, se toma de initialPreferences.
          */
         refreshPreferences: function () {
-			console.log("___ leyendo preferencias del modulo "+this.id+" ___");
             var serializedStoredPreferences = this.helper.getValue('__preferences', ''),
                 storedPreferences = {};
 

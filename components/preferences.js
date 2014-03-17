@@ -62,6 +62,8 @@
      */
     preferences.saveSettings = function () {
 
+		var contadorPreferenciasGuardadas = 0;
+		var totalModulos = preferences.$modal.find('.shur-module-preferences').size();
         // Loop por cada modulo
         preferences.$modal.find('.shur-module-preferences').each(function (index, prefs) {
             var $prefs = $(prefs),
@@ -69,43 +71,43 @@
                 module = SHURSCRIPT.moduleManager.modules[moduleId],
                 modulePreferences = module.preferences;
 
-                modulePreferences .enabled = $prefs.find('.shur-module-enabled').is(':checked');
+			modulePreferences .enabled = $prefs.find('.shur-module-enabled').is(':checked');
 
-                // Loop por las opciones
-                $prefs.find('.shur-option').each(function (index, option) {
-                    var $option = $(option),
-                        $input,
-                        value,
-                        mapsTo;
+			// Loop por las opciones
+			$prefs.find('.shur-option').each(function (index, option) {
+				var $option = $(option),
+					$input,
+					value,
+					mapsTo;
 
-                    if ($option.hasClass('shur-radio-group')) {
-                        $input = $option.find('input[type=radio]:checked');
-                        value = $input.val();
+				if ($option.hasClass('shur-radio-group')) {
+					$input = $option.find('input[type=radio]:checked');
+					value = $input.val();
 
-                    } else if ($option.hasClass('shur-checkbox-group')) {
-                        $input = $option.find('input');
-                        value = $input.is(':checked');
+				} else if ($option.hasClass('shur-checkbox-group')) {
+					$input = $option.find('input');
+					value = $input.is(':checked');
 
-                    } else if ($option.hasClass('shur-text-group')) {
-                        $input = $option.find('input');
-                        value = $input.val();
-                    }
+				} else if ($option.hasClass('shur-text-group')) {
+					$input = $option.find('input');
+					value = $input.val();
+				}
 
-                    mapsTo = $input.data('maps-to');
+				mapsTo = $input.data('maps-to');
 
-                    // Update preferences of module
-                    modulePreferences [mapsTo] = value;
+				// Update preferences of module
+				modulePreferences [mapsTo] = value;
 
-                });
+			});
 
-            // Guarda modulePreferences en el navegador
-            module.storePreferences();
-
-            // Cierra modal
-            preferences.$modal.trigger('hidden.bs.modal');
-
-            // Recarga la pagina
-            preferences.helper.location.reload();
+            // Guarda modulePreferences
+			module.storePreferences(function() {
+				contadorPreferenciasGuardadas++;
+				//esperamos a que se hayan guardado todas las preferencias
+				if (contadorPreferenciasGuardadas>=totalModulos) {
+					preferences.helper.location.reload();
+				}
+			});
         });
     };
 
