@@ -24,8 +24,7 @@
 			favoritesColor: '#D5E6EE',
 			favoritesBorderOnly: false,
 			favoritesOnTop: true
-        },
-		preferences: {}
+        }
     });
 	
 	var threads = [];

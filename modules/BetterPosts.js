@@ -15,9 +15,8 @@
 			multiQuickReply: true,
 			autoSendReply: true,
 			savePosts: true,
-			postOverwrite: 'ASK',
-		},
-		preferences: {}
+			postOverwrite: 'ASK'
+		}
     });
 	
 	var vB_Editor;

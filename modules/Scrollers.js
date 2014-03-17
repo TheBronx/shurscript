@@ -13,8 +13,7 @@
             enabled: false,
 			upOrDown: 'both',
 			side: 'center'
-        },
-		preferences: {}
+        }
     });
 	
 	/**

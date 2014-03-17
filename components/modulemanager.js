@@ -58,6 +58,11 @@
 
             // Guarda preferencias iniciales, si las hay
             this.initialPreferences = specs.initialPreferences || {};
+			
+			// Inicializa las preferencias (FIXES #27)
+			this.preferences = {
+				enabled: true
+			};
 
             // Metele opcionalmente el dominio (por default es NO_FRONTPAGE)
             if (specs.domain !== undefined) {
@@ -72,7 +77,7 @@
 
             // Elimina constructor
             delete this.__init__;
-
+			
             // Devuelve objeto modulo
             return this;
         },
