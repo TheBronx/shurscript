@@ -79,8 +79,8 @@ function HighlightOP() {
         }
         
         // Add CSS rules
-        GM_addStyle(".op_post, .op_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C") + " !important; } .op_post td.alt2 { width: 167px; }");
-        GM_addStyle(".my_post, .my_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF") + " !important; } .op_post td.alt2 { width: 167px; }");
+        GM_addStyle(".op_post, .op_quote { border: 1px solid " + helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C") + " !important; border-left: 5px solid " + helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C") + " !important; } .op_post td.alt2 { width: 167px; }");
+        GM_addStyle(".my_post, .my_quote { border: 1px solid " + helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF") + " !important; border-left: 5px solid " + helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF") + " !important; } .op_post td.alt2 { width: 167px; }");
         
         // Highlighted posts have "op_post" class
         for (var i = 0, n = users.length; i < n; i++) {
