@@ -14,7 +14,7 @@ setTimeout(function(){
 		helper.setValue('SABIAS_QUE_PREF', true);
 		var win = bootbox.dialog({
 			title: '¿Sabías que...', 
-			message: '<p>...Puedes mejorar tu Shurscript todavía más? Simplemente accede a las preferencias pulsando el enlace \'Shurscript\' que aparece arriba a la derecha, y podrás desactivar las funcionalidades que no necesites o configurarlas como tú prefieras.</p><center><img src="https://dl.dropboxusercontent.com/u/1066873/Captura%20de%20pantalla%202014-03-17%20a%20la%28s%29%2020.31.05.png"/></center>',
+			message: '<p>...Puedes mejorar tu Shurscript todavía más? Simplemente accede a las preferencias pulsando el enlace \'Shurscript\' que aparece arriba a la derecha, y podrás desactivar las funcionalidades que no necesites o configurarlas como tú prefieras.</p><center><img src="http://i.imgur.com/y0CjbSq.png"/></center>',
 			buttons:[{
 				label: "No me importa",
 				className: "btn-default",
