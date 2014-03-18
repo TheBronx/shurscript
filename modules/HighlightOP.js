@@ -10,7 +10,7 @@ function HighlightOP() {
     var helper = new ScriptHelper(this.id);
     
     var currentThread, currentPage;
-    var optionMyPosts, optionQuotes;// preferences
+    var optionMyPosts, optionQuotes, optionColorOp, optionColorMy;// preferences
     
     this.shouldLoad = function() {
         return page === "/showthread.php";
@@ -29,13 +29,18 @@ function HighlightOP() {
         currentThread = getCurrentThread();
         currentPage = getCurrentPage();
         
+        // Get preferences
         optionMyPosts = helper.getValue("HIGHLIGHT_MY_POSTS", false);
         optionQuotes = helper.getValue("HIGHLIGHT_QUOTES", true);
+        optionColorOp = helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C");
+        optionColorMy = helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF");
         
-        // If not in first page, we must load it to get OP's name.
-        if (currentPage === 1) {
-            highlightOP(null);
-        } else if (currentThread) {
+        if (currentPage == 1) {
+            op = getOpFrom(document.querySelector("#posts div.page"));
+            sessionStorage["op_" + currentThread] = op;
+            
+            highlightOP(op);
+        } else if (currentThread) {// If not in first page, we must load it to get OP's name.
             // Check if we have the OP's name saved from another time.
             if (sessionStorage["op_" + currentThread]) {
                 highlightOP(sessionStorage["op_" + currentThread]);
@@ -55,7 +60,7 @@ function HighlightOP() {
                 var parser = new DOMParser();
                 var doc = parser.parseFromString(html, "text/html");
                 
-                var username = doc.getElementsByClassName("bigusername")[0].innerHTML;
+                var username = getOpFrom(doc.querySelector("#posts div.page"));
                 sessionStorage["op_" + currentThread] = username;
                 highlightOP(username);
             }
@@ -64,25 +69,29 @@ function HighlightOP() {
         xmlhttp.open("GET", "showthread.php?t=" + thread, true);
         xmlhttp.send();
     }
-
-    function getURLParameter(name) {
-        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))
-            || null;
+    
+    function getOpFrom(node) {
+        var elem;
+        
+        if (elem = node.getElementsByClassName("bigusername")[0]) return elem.innerHTML;
+        
+        // The user can be in the ignore list
+        if (elem = node.querySelector("td.alt2 > a")) return elem.innerHTML;
+        
+        // Error
+        return null;
     }
     
     function highlightOP(op) {
-        var users = document.getElementsByClassName("bigusername");
-        
-        if (! op) {
-            op = users[0].innerHTML;
-            sessionStorage["op_" + currentThread] = op;
-        }
+        if (! op) return;
         
         // Add CSS rules
-        GM_addStyle(".op_post, .op_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_OP_COLOR", "#DC143C") + " !important; } .op_post td.alt2 { width: 166px; }");
-        GM_addStyle(".my_post, .my_quote { border-left: 10px solid " + helper.getValue("HIGHLIGHT_MY_POSTS_COLOR", "#1E90FF") + " !important; } .my_post td.alt2 { width: 166px; }");
+        GM_addStyle(".op_post, .op_quote { border: 1px solid " + optionColorOp + " !important; border-left: 5px solid " + optionColorOp + " !important; } .op_post td.alt2 { width: 171px; }");
+        GM_addStyle(".my_post, .my_quote { border: 1px solid " + optionColorMy + " !important; border-left: 5px solid " + optionColorMy + " !important; } .my_post td.alt2 { width: 171px; }");
         
         // Highlighted posts have "op_post" class
+        var users = document.getElementsByClassName("bigusername");
+        
         for (var i = 0, n = users.length; i < n; i++) {
             var currentUser = users[i].innerHTML;
             
@@ -125,6 +134,11 @@ function HighlightOP() {
         newTd.innerHTML = '<a href="/foro/search.php?do=process&searchthreadid=' + currentThread + '&searchuser=' + escape(op) + '&exactname=1">Buscar posts del OP</a>';
         
         trNode.insertBefore(newTd, tdNextNode);
+    }
+    
+    function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))
+            || null;
     }
 
     function getCurrentPage() {
