@@ -53,13 +53,13 @@
 /**
  * Es imprescindible que los archivos js se carguen en este orden:
  * core > componentes > modulos
-*/
+ */
 
 if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
-    // Lanza la carga prematura
-    SHURSCRIPT.core.initializeEagerly();
+	// Lanza la carga prematura
+	SHURSCRIPT.core.initializeEagerly();
 
-    // Programa la carga normal
-    jQuery(document).ready(SHURSCRIPT.core.initialize);
+	// Programa la carga normal
+	jQuery(document).ready(SHURSCRIPT.core.initialize);
 }
 

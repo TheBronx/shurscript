@@ -1,10 +1,10 @@
 /*
-* Plantilla para la creación de módulos del Shurscript
-*
-* Notas:
-*	- El nombre del fichero .js debe ser IGUAL al nombre de la clase de este modulo (ModuleTemplate)
-*	- Usar el helper para los setValue/getValue en vez de los GM_setValue/GM_getValue
-*/
+ * Plantilla para la creación de módulos del Shurscript
+ *
+ * Notas:
+ *	- El nombre del fichero .js debe ser IGUAL al nombre de la clase de este modulo (ModuleTemplate)
+ *	- Usar el helper para los setValue/getValue en vez de los GM_setValue/GM_getValue
+ */
 
 function ModuleTemplate() {
 
@@ -16,39 +16,38 @@ function ModuleTemplate() {
 	this.enabledByDefault = true; //Define si el modulo vendrá activado por defecto o no
 	this.worksInFrontPage = false; // Modulo carga en portada
 
-
 	var helper = new ScriptHelper(this.id);
 
 	/* Declarar variables globales del módulo (var) */
 	var foo = "bar";
 
 	/* Define una condición a la carga del módulo. Si no se quiere condición, eliminar este metodo o devolver true. */
-	this.shouldLoad = function() {
+	this.shouldLoad = function () {
 		/*
-			Ejemplos:
+		 Ejemplos:
 
-			return page == "/showthread.php"; //Cargar solo el modulo cuando estemos en /showthread.php?...
+		 return page == "/showthread.php"; //Cargar solo el modulo cuando estemos en /showthread.php?...
 
-			o
+		 o
 
-			return (Date.now() - myLastLoadTime) > 60000 //Cargar solo si hace más de un minuto desde la última carga
+		 return (Date.now() - myLastLoadTime) > 60000 //Cargar solo si hace más de un minuto desde la última carga
 
-			Si este metodo devuelve false no se llamara al metodo load()
-		*/
+		 Si este metodo devuelve false no se llamara al metodo load()
+		 */
 
-		 return true;
+		return true;
 	}
 
 	/* Método obligatorio y punto de entrada a la lógica del módulo */
-	this.load = function() {
+	this.load = function () {
 		test();
 	}
 
-	this.getPreferences = function() {
+	this.getPreferences = function () {
 		/*
-		* Definir los ajustes que serán configurables desde el panel de preferencias.
-		* Para más información, GitHub o leer el fichero ../preferences.js
-		*/
+		 * Definir los ajustes que serán configurables desde el panel de preferencias.
+		 * Para más información, GitHub o leer el fichero ../preferences.js
+		 */
 
 		var preferences = [];
 		var currentValue1 = helper.getValue("SETTING_KEY", "defaultValue");
@@ -67,6 +66,5 @@ function ModuleTemplate() {
 	}
 
 }
-
 
 /* NO DECLARAR NADA FUERA DEL MODULO PARA EVITAR COLISIONES DE VARIABLES Y MÉTODOS */
