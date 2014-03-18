@@ -1,7 +1,20 @@
 # CHANGELOG
 
 
-## v0.10.2 `16/03/2014`
+## v0.10.2.1 `18/03/2014`
+
+**Changes**
+
+* Resaltado de los posts del OP más discreto
+
+**Bugfixes**
+
+* Si el OP era un usuario que tenías en Ignorados, el resaltado no funcionaba correctamente
+* La barra de filtrado rápido solo aparecía en la primera página
+
+------------------------------------
+
+### v0.10.2 `16/03/2014`
 
 **Features**
 
