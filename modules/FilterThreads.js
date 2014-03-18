@@ -82,7 +82,7 @@ function FilterThreads() {
 	/* Funcionalidad de ocultar hilos ya leídos */
 	function createHideReadThreadsButton() {
 	    hideReadThreads = helper.getValue("HIDDEN_READ_THREADS", false);
-	    var forumToolsButton = $("#stickies_collapse");
+	    var forumToolsButton = $("#stickies_collapse").length ? $("#stickies_collapse") : $("#forumtools");
 	    var hideReadThreadsLink = $('<a rel="nofollow">' + (hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
 	    hideReadThreadsButton = $('<td class="vbmenu_control" nowrap="nowrap" style="cursor: pointer;"></td>');
 	    hideReadThreadsButton.append(hideReadThreadsLink);
