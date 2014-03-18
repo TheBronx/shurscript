@@ -9,14 +9,16 @@
 		description: 'Cambia la apariencia del foro a colores más oscuros. ' +
 			'Perfecto para leer el foro por la noche sin cansar la' +
 			' vista. <b>BETA</b>',
-		domain: 'ALL'
+		domain: 'ALL',
+		initialPreferences: {
+			enabled: true,
+			active: false
+		}
 	});
 
 	var _$styleTag, _$lightImg, _turnOn, _turnOff, _stateIsOn, _toggle, _setState;
-	/**
-	 * Funcion a la que se llama en modo carga prematuro
-	 */
-	mod.onEagerStart = function () {
+
+	mod.onNormalStart = function () {
 		// Crea tag style y guardalo para luego
 		var css = mod.helper.getResourceText('nightmodecss');
 		_$styleTag = $('<style>' + css + '</style>');
@@ -43,18 +45,8 @@
 
 	};
 
-	/**
-	 * Este modulo debe cargar prematuramente
-	 */
-	mod.eagerStartCheck = function () {
-		return true;
-	};
-
-	/**
-	 * Desactiva el modo de carga normal
-	 */
 	mod.normalStartCheck = function () {
-		return false;
+		return true;
 	};
 
 	/**
@@ -72,14 +64,15 @@
 	 * Lee el ultimo estado guardado en el navegador
 	 */
 	_stateIsOn = function () {
-		return mod.helper.getValue('ENABLED', false);
+		return mod.preferences.active;
 	};
 
 	/**
 	 * Guarda estado (encendido/apagado) en el navegador
 	 */
 	_setState = function (value) {
-		mod.helper.setValue('ENABLED', value);
+		mod.preferences.active = value;
+		mod.storePreferences();
 	};
 
 	_turnOn = function () {
