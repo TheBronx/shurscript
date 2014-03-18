@@ -9,6 +9,29 @@ newMenuItem.click(function(){
 });
 menuItem.parent().append(newMenuItem);
 
+setTimeout(function(){
+	if (!helper.getValue('SABIAS_QUE_PREF')) {
+		helper.setValue('SABIAS_QUE_PREF', true);
+		var win = bootbox.dialog({
+			title: '¿Sabías que...', 
+			message: '<p>...Puedes mejorar tu Shurscript todavía más? Simplemente accede a las preferencias pulsando el enlace \'Shurscript\' que aparece arriba a la derecha, y podrás desactivar las funcionalidades que no necesites o configurarlas como tú prefieras.</p><center><img src="https://dl.dropboxusercontent.com/u/1066873/Captura%20de%20pantalla%202014-03-17%20a%20la%28s%29%2020.31.05.png"/></center>',
+			buttons:[{
+				label: "No me importa",
+				className: "btn-default",
+				callback: function() {
+						win.modal('hide');
+					}
+				},
+				{label: "¡Muéstramelo!",
+				className: "btn-primary",
+				callback: function() {
+						new SettingsWindow();
+					}
+				}]
+		});
+	}
+}, 1000);
+
 GM_addStyle('.disabled-module .btn {display: none !important;}');
 GM_addStyle('#shurscript-settings-window, #shurscript-settings-window .panel {color: #333 !important;}');
 GM_addStyle('#shurscript-settings-window p {margin: 0;}');
