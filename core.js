@@ -75,6 +75,12 @@ var SHURSCRIPT = {
 		},
 		log: function (message) {
 			console.log(this._getCallerDescription() + message);
+			var $log = $('#shurscript_components_log');
+			if ($log.length==0) {
+				$(document.body).append('<div id="shurscript_log" style="display:none;"></div>');
+				$log = $('#shurscript_components_log');
+			}
+			$log.append(message+"<br>");
 		},
 
 		/**
@@ -133,7 +139,7 @@ var SHURSCRIPT = {
 		throw: function (message, exception) {
 			this.log('[EXCEPTION] - ' + message);
 			if (typeof exception !== 'undefined')
-				console.log(exception);
+				this.log(exception);
 		},
 
 		/**
