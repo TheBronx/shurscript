@@ -39,3 +39,9 @@
     margin-left: 20px;
 }
 
+.shur-radio-element label, .shur-checkbox-group label {
+    display: inline;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}

@@ -74,11 +74,13 @@
                             <% } else if (option.type === 'text' || option.type === 'color') { %>
                             <div class="shur-text-group shur-option">
                                 <label><%=option.caption%></label>
-                                <span> <%=option.subCaption%></span>
                                 <input  type="<%=option.type%>"
                                         class="form-control"
                                         data-maps-to="<%=option.mapsTo%>"
                                         value="<%=module.preferences[option.mapsTo]%>">
+                                <% if (option.subCaption) { %>
+                                    <span class="shur-sub-label"><%=option.subCaption%></span>
+                                <% } %>
                             </div>
 
                             <% } else if (option.type === 'header') { %>
@@ -97,15 +99,14 @@
                 <% });%>
             </div>
             <div class="modal-footer">
-            	<div class="col-xs-6 left">
-            		<a href="http://bit.ly/1pbuV65" target="_blank"><img src="http://shurscript.org/img/partner_do.png"/></a>
-            		<a href="http://bit.ly/1nDZOow" target="_blank"><img src="http://shurscript.org/img/partner_espattio.png"/></a>
-			<p>Espattio <a href="http://shurscript.org/colabora">colabora</a> corriendo con los gastos del hosting y VPS :)</p>
-            	</div>
-            	<div class="col-xs-6 right">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<button type="button" class="btn btn-primary" id="save-settings">Guardar cambios</button>
-            	</div>
+                <div class="col-xs-6 left">
+                    <a href="http://bit.ly/1pbuV65" target="_blank"><img src="http://shurscript.org/img/partner_do.png"/></a>
+                    <a href="http://bit.ly/1nDZOow" target="_blank"><img src="http://shurscript.org/img/partner_espattio.png"/></a>
+                </div>
+                <div class="col-xs-6 right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="save-settings">Guardar cambios</button>
+                </div>
             </div>
 
         </div>

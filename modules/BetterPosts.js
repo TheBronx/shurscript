@@ -75,7 +75,7 @@
 					{value: 'APPEND', caption: 'Añadir'},
 					{value: 'OVERWRITE', caption: 'Sobreescribir'}
 				],
-				caption: 'Cuando cites con respuesta rápida y haya texto escrito en el editor <b>¿Quieres añadir la cita al texto actual o sobreescribirlo?:',
+				caption: 'Cuando cites con respuesta rápida y haya texto escrito en el editor ¿Quieres añadir la cita al texto actual o sobreescribirlo?:',
 				mapsTo: 'postOverwrite'
 			})
 		];
