@@ -184,7 +184,7 @@
 	 *
 	 */
 	preferences.createOption = function (specs) {
-		var acceptableTypes = ['checkbox', 'radio', 'text', 'header'],
+		var acceptableTypes = ['checkbox', 'radio', 'text', 'color', 'header'],
 			commonMandatoryKeys = ['type', 'caption'],
 			errorPrefix = 'Error creando opcion: ';
 

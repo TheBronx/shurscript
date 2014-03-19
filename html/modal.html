@@ -71,11 +71,11 @@
                                 <% }); %>
                             </div>
 
-                            <% } else if (option.type === 'text') { %>
+                            <% } else if (option.type === 'text' || option.type === 'color') { %>
                             <div class="shur-text-group shur-option">
                                 <label><%=option.caption%></label>
                                 <span> <%=option.subCaption%></span>
-                                <input  type="text"
+                                <input  type="<%=option.type%>"
                                         class="form-control"
                                         data-maps-to="<%=option.mapsTo%>"
                                         value="<%=module.preferences[option.mapsTo]%>">

@@ -71,12 +71,12 @@
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
-			createPref({type: 'text', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
+			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightBold', caption: 'Resaltar palabras clave en los títulos de los hilos'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightedOnTop', caption: 'Colocar siempre en primer lugar los hilos resaltados'}),
 			createPref({type: 'header', caption: 'Hilos favoritos', subCaption: 'Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo:'}),
-			createPref({type: 'text', mapsTo: 'favoritesColor', caption: 'Color', subCaption: 'Color de fondo", "El color de fondo para los hilos favoritos. Por defecto <span class="badge">' + mod.initialPreferences.favoritesColor + '</span>'}),
+			createPref({type: 'color', mapsTo: 'favoritesColor', caption: 'Color', subCaption: 'Color de fondo", "El color de fondo para los hilos favoritos. Por defecto <span class="badge">' + mod.initialPreferences.favoritesColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'favoritesBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
 			createPref({type: 'checkbox', mapsTo: 'favoritesOnTop', caption: 'Colocar siempre en primer lugar los hilos marcados como favoritos'})
 		];
