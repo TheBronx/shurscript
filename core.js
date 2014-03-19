@@ -75,10 +75,10 @@ var SHURSCRIPT = {
 		},
 		log: function (message) {
 			console.log(this._getCallerDescription() + message);
-			var $log = $('#shurscript_components_log');
+			var $log = $('#shurscript_log');
 			if ($log.length==0) {
-				$(document.body).append('<div id="shurscript_components_log" style="display:none;"></div>');
-				$log = $('#shurscript_components_log');
+				$(document.body).append('<div id="shurscript_log" style="display:none;"></div>');
+				$log = $('#shurscript_log');
 			}
 			$log.append(message+"<br>");
 		},
@@ -135,11 +135,14 @@ var SHURSCRIPT = {
 		 * Lanza excepcion
 		 *
 		 * @param {string} message - mensaje para la excepcion
+		 * @param {object} exception - [opcional] la excepcion
 		 */
 		throw: function (message, exception) {
 			this.log('[EXCEPTION] - ' + message);
-			if (typeof exception !== 'undefined')
+			if (typeof exception !== 'undefined') {
 				this.log(exception);
+				console.log(exception);
+			}
 		},
 
 		/**

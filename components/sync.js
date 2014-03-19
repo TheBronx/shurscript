@@ -21,7 +21,7 @@
 		preferences: {}, //las preferencias sacadas del server
 
 		setValue: function (key, value, callback) {
-			console.log("Cloud.setValue(" + key + ", " + value + ")");
+			sync.helper.log("Cloud.setValue(" + key + ", " + value + ")");
 			$.ajax({
 				type: 'PUT',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
@@ -35,26 +35,26 @@
 		},
 
 		getValue: function (key, defaultValue) {
-			console.log("Cloud.getValue(" + key + ", " + defaultValue + ")");
+			sync.helper.log("Cloud.getValue(" + key + ", " + defaultValue + ")");
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					console.log("Server answer:", data);
+					sync.helper.log("Server answer:", data);
 				});
 		},
 
 		getAll: function (callback) {
-			console.log("Cloud.getAll()");
+			sync.helper.log("Cloud.getAll()");
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/?apikey=' + this.apiKey,
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					console.log("Server answer:", data);
+					sync.helper.log("Server answer:", data);
 					Cloud.preferences = data;
 					callback();
 				});
@@ -67,14 +67,14 @@
 		},
 
 		generateApiKey: function (callback) {
-			console.log("Cloud.generateApiKey()");
+			sync.helper.log("Cloud.generateApiKey()");
 			$.ajax({
 				type: 'POST',
 				url: this.server + 'preferences/',
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					console.log("Server answer:", data);
+					sync.helper.log("Server answer:", data);
 					Cloud.apiKey = data.apikey;
 					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
 					callback();
@@ -97,7 +97,7 @@
 			//por tanto trabajaremos con una copia local de las preferencias de la nube
 			//iremos actualizando esa copia cuando el usuario use set o delete, y al cargar el script
 			//Cloud.getValue(key, defaultValue);
-			console.log("getValue( " + key + " ) = " + Cloud.preferences[key]);
+			sync.helper.log("getValue( " + key + " ) = " + Cloud.preferences[key]);
 			return (Cloud.preferences[key] != undefined) ? Cloud.preferences[key] : defaultValue;
 		};
 
