@@ -1,4 +1,4 @@
-(function (SHURSCRIPT, undefined) {
+(function ($, SHURSCRIPT, undefined) {
 	'use strict';
 
 	var templater = SHURSCRIPT.core.createComponent('templater'),
@@ -66,4 +66,4 @@
 		}
 	};
 
-})(SHURSCRIPT);
+})(jQuery, SHURSCRIPT);
