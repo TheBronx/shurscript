@@ -1,5 +1,5 @@
-.disabled-module {
-    opacity: 0.5;
+.disabled-module .btn, .disabled-module .shur-options-body {
+    display: none !important;
 }
 
 #shurscript-settings-window, #shurscript-settings-window .panel {

@@ -49,8 +49,11 @@
 		});
 
 		$modal.on('click', '.shur-module-enabled', function (event) {
+			var prefPanel = $(event.currentTarget).parents('.shur-module-preferences');
 			// Quita y pon la clase disabled para mostrar que el modulo esta activado o no
-			$(event.currentTarget).parents('.shur-module-preferences').toggleClass('disabled-module');
+			prefPanel.toggleClass('disabled-module');
+			// Muestra u oculta el body del panel si está activado o no
+			prefPanel.find('.panel-body').slideToggle();
 		});
 
 		$modal.modal();
