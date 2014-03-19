@@ -2,7 +2,7 @@
 	'use strict';
 
 	var mod = createModule({
-		id: 'nightMode',
+		id: 'NightMode',
 		name: 'Modo Noche',
 		author: 'Juno / ikaros45',
 		version: '0.2',

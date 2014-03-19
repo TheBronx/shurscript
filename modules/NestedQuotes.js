@@ -1,13 +1,17 @@
-function NestedQuotes() {
+(function ($, createModule, undefined) {
+	'use strict';
 
-	this.id = arguments.callee.name; //ModuleID
-	this.name = "Citas anidadas";
-	this.author = "Fritanga";
-	this.version = "0.1";
-	this.description = "Permite ir anidando citas hacia arriba hasta el post original";
-	this.enabledByDefault = true;
-
-	var helper = new ScriptHelper(this.id);
+	var mod = createModule({
+		id: 'NestedQuotes',
+		name: 'Citas anidadas',
+		author: 'Fritanga',
+		version: '0.1',
+		description: 'Permite ir anidando citas hacia arriba hasta el post original',
+		domain: ['/newreply.php'],
+		initialPreferences: {
+			enabled: true // Esta es opcional - por defecto true
+		}
+	});
 
 	var xmlhttp = null;
 	// Constantes para las Citas Anidadas
@@ -20,13 +24,20 @@ function NestedQuotes() {
 	var preNewline = '\n';
 	var postID = null;
 
-	this.shouldLoad = function () {
-		return page == "/newreply.php";
-	}
+	/**
+	 * Activamos modo de carga normal (aunque viene activo por defecto)
+	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
+	 */
+	mod.normalStartCheck = function () {
+		return true;
+	};
 
-	this.load = function () {
+	/**
+	 * Sobreescribimos la funcion de ejecucion
+	 */
+	mod.onNormalStart = function () {
 		nestedQuotes();
-	}
+	};
 
 	function nestedQuotes() {
 		var textarea = $('#vB_Editor_001_textarea');
@@ -203,4 +214,4 @@ function NestedQuotes() {
 		}
 	}
 
-}
+})(jQuery, SHURSCRIPT.moduleManager.createModule);

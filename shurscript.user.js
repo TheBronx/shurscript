@@ -32,13 +32,15 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/nightmode.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Scrollers.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NightMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
