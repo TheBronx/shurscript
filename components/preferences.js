@@ -48,15 +48,25 @@
 			preferences.saveSettings();
 		});
 
-		$modal.on('click', '.shur-module-enabled', function (event) {
-			var prefPanel = $(event.currentTarget).parents('.shur-module-preferences');
+		//Evento opcion cambiada, se añade un identificativo para saber que esa opcion ha sido modificada
+		$modal.on('change', 'input', function () {
+			$(this).parents('.shur-module-preferences').addClass('changed');
+		});
+
+		$modal.on('click', '.shur-module-enabled', function () {
+			var prefPanel = $(this).parents('.shur-module-preferences');
 			// Quita y pon la clase disabled para mostrar que el modulo esta activado o no
 			prefPanel.toggleClass('disabled-module');
 			// Muestra u oculta el body del panel si está activado o no
 			prefPanel.find('.panel-body').slideToggle();
+
+			//Marcarlo como modificado
+			prefPanel.addClass('changed');
 		});
 
 		$modal.modal();
+		$modal.css("z-index", 1000); //Para no superponerse a la de los alerts
+		$(".modal-backdrop").css("z-index", 999);
 		preferences.$modal = $modal;
 	};
 
@@ -66,52 +76,60 @@
 	preferences.saveSettings = function () {
 
 		var contadorPreferenciasGuardadas = 0;
-		var totalModulos = preferences.$modal.find('.shur-module-preferences').size();
-		// Loop por cada modulo
-		preferences.$modal.find('.shur-module-preferences').each(function (index, prefs) {
-			var $prefs = $(prefs),
-				moduleId = $prefs.data('module-id'),
-				module = SHURSCRIPT.moduleManager.modules[moduleId],
-				modulePreferences = module.preferences;
+		var modulosCambiados = preferences.$modal.find('.shur-module-preferences.changed');
 
-			modulePreferences.enabled = $prefs.find('.shur-module-enabled').is(':checked');
+		if (modulosCambiados.length) {
+			bootbox.dialog({message: '<center>Guardando datos...</center>'});
 
-			// Loop por las opciones
-			$prefs.find('.shur-option').each(function (index, option) {
-				var $option = $(option),
-					$input,
-					value,
-					mapsTo;
+			// Loop por cada modulo
+			modulosCambiados.each(function (index, prefs) {
+				var $prefs = $(prefs),
+					moduleId = $prefs.data('module-id'),
+					module = SHURSCRIPT.moduleManager.modules[moduleId],
+					modulePreferences = module.preferences;
 
-				if ($option.hasClass('shur-radio-group')) {
-					$input = $option.find('input[type=radio]:checked');
-					value = $input.val();
+				modulePreferences.enabled = $prefs.find('.shur-module-enabled').is(':checked');
 
-				} else if ($option.hasClass('shur-checkbox-group')) {
-					$input = $option.find('input');
-					value = $input.is(':checked');
+				// Loop por las opciones
+				$prefs.find('.shur-option').each(function (index, option) {
+					var $option = $(option),
+						$input,
+						value,
+						mapsTo;
 
-				} else if ($option.hasClass('shur-text-group')) {
-					$input = $option.find('input');
-					value = $input.val();
-				}
+					if ($option.hasClass('shur-radio-group')) {
+						$input = $option.find('input[type=radio]:checked');
+						value = $input.val();
 
-				mapsTo = $input.data('maps-to');
+					} else if ($option.hasClass('shur-checkbox-group')) {
+						$input = $option.find('input');
+						value = $input.is(':checked');
 
-				// Update preferences of module
-				modulePreferences [mapsTo] = value;
+					} else if ($option.hasClass('shur-text-group')) {
+						$input = $option.find('input');
+						value = $input.val();
+					}
 
+					mapsTo = $input.data('maps-to');
+
+					// Update preferences of module
+					modulePreferences [mapsTo] = value;
+
+				});
+
+				// Guarda modulePreferences
+				module.storePreferences(function () {
+					contadorPreferenciasGuardadas++;
+					//esperamos a que se hayan guardado todas las preferencias
+					if (contadorPreferenciasGuardadas >= modulosCambiados.length) {
+						preferences.helper.location.reload();
+					}
+				});
 			});
+		} else {
+			preferences.$modal.modal('hide');
+		}
 
-			// Guarda modulePreferences
-			module.storePreferences(function () {
-				contadorPreferenciasGuardadas++;
-				//esperamos a que se hayan guardado todas las preferencias
-				if (contadorPreferenciasGuardadas >= totalModulos) {
-					preferences.helper.location.reload();
-				}
-			});
-		});
 	};
 
 	/**
