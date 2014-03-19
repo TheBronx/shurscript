@@ -503,7 +503,8 @@
 			if (ajax.readyState == 4 && ajax.statusText == "OK") {
 				var documentResponse = jQuery.parseHTML(ajax.responseText);
 				var postContent = jQuery(documentResponse).find("#post_message_" + cita.postID).text();
-				if (postContent.match(RegExp("Originalmente Escrito por " + username, "i"))) {
+				var usernameRegexReady = username.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservados de las regex;
+				if (postContent.match(RegExp("Originalmente Escrito por " + usernameRegexReady, "i"))) {
 					result = true;
 				}
 			}
