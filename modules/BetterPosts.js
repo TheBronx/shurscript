@@ -151,6 +151,15 @@
 			addIcons();
 		}
 
+		//Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
+		//Parece ser un bug del vB en los navegadores que no soportan por defecto el WYSIWYG (Chrome, Opera...) [Tal vez por eso Ilitri no lo tiene activado]
+		//Workaround: buscar y sustituir esos divs antes de enviar la respuesta
+		$("input[name='sbutton'], input[name='preview']").on("click", function() {
+			var contents = getEditorContents();
+			contents = contents.replace(/<div>/g, '<br>').replace(/(<br>)?(<\/div>)/g, '');
+			setEditorContents(contents);
+			reflowTextArea();
+		});
 	}
 
 	/* Cuando se pulsa el botón Editar de un post, se crea un nuevo editor WYSIWYG */
