@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body" style="overflow: auto;">
 
-                <% $.each(modules, function (index, module) { %>
+                <% modules.forEach(function (module, index, arr) { %>
 
                 <!-- Grupo opciones modulo -->
                 <div data-module-id="<%=module.id%>" class="panel shur-module-preferences <%=module.preferences.enabled ? '' : 'disabled-module'%>">
@@ -34,7 +34,7 @@
 
                         <div class="panel-body">
                         <!-- Loop sobre las opciones del modulo (si hay) -->
-                        <% $.each(module.options, function (index, option) { %>
+                        <% module.options.forEach(function (option, index, arr) { %>
 
                             <% if (option.type === 'checkbox') { %>
                             <div class="shur-checkbox-group shur-option">
@@ -53,7 +53,7 @@
                             <div class="shur-radio-group shur-option">
                                 <label><%=option.caption%></label>
 
-                                <% $.each(option.elements, function(index, radio) { %>
+                                <% option.elements.forEach(function(radio, index, arr) { %>
                                 <div class="shur-radio-element">
                                     <input type="radio"
                                            name="<%=option.mapsTo%>"
