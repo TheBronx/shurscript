@@ -545,7 +545,11 @@
 .shurscript .modal-header .close{margin-top:-2px}
 .shurscript .modal-title{margin:0;line-height:1.428571429}
 .shurscript .modal-body{position:relative;padding:20px}
-.shurscript .modal-footer{padding:19px 20px 20px;margin-top:15px;text-align:right;border-top:1px solid #e5e5e5}
+.shurscript .modal-footer{padding:19px 20px 20px;margin-top:15px;border-top:1px solid #e5e5e5}
+.shurscript .modal-footer .col-xs-6.right{text-align: right;}
+.shurscript .modal-footer .col-xs-6.left{text-align: left;}
+.shurscript .modal-footer .col-xs-6.left a{display:inline-block;opacity: .5;transition: opacity .5s ease-out;-moz-transition: opacity .5s ease-out;-webkit-transition: opacity .5s ease-out;-o-transition: opacity .5s ease-out;backface-visibility: hidden;-webkit-backface-visibility: hidden;}
+.shurscript .modal-footer .col-xs-6.left a:hover{opacity: 1;}
 .shurscript .modal-footer:before,.shurscript .modal-footer:after{display:table;content:" "}
 .shurscript .modal-footer:after{clear:both}
 .shurscript .modal-footer:before,.shurscript .modal-footer:after{display:table;content:" "}
