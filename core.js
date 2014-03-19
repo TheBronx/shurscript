@@ -130,9 +130,10 @@ var SHURSCRIPT = {
 		 *
 		 * @param {string} message - mensaje para la excepcion
 		 */
-		throw: function (message) {
+		throw: function (message, exception) {
 			this.log('[EXCEPTION] - ' + message);
-			throw exc;
+			if (typeof exception !== 'undefined')
+				console.log(exception);
 		},
 
 		/**

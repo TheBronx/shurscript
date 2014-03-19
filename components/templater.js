@@ -27,7 +27,7 @@
 		try {
 			return store[tempName].tempFn(data);
 		} catch (e) {
-			templater.helper.throw('Error insertando valores en la plantilla:' + e);
+			templater.helper.throw('Error insertando valores en la plantilla:', e);
 		}
 	};
 
@@ -62,7 +62,7 @@
 
 			template.compiled = true;
 		} catch (e) {
-			templater.helper.throw('Error compilando template [' + tempName + ']: ' + e);
+			templater.helper.throw('Error compilando template [' + tempName + ']: ', e);
 		}
 	};
 
