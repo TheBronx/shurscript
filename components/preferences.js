@@ -79,7 +79,7 @@
 		var modulosCambiados = preferences.$modal.find('.shur-module-preferences.changed');
 
 		if (modulosCambiados.length) {
-			bootbox.dialog({message: '<center>Guardando datos...</center>'});
+			bootbox.dialog({message: '<center>Guardando cambios...</center>'});
 
 			// Loop por cada modulo
 			modulosCambiados.each(function (index, prefs) {
