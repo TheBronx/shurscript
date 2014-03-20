@@ -404,7 +404,7 @@
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
 				mod.helper.deleteValue("POST_BACKUP");
-			}
+			});
 		} else {
 			var $sendButton = $("input[name='sbutton']");
 			var sendForm = $sendButton.parents('form')[0];
