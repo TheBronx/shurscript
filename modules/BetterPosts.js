@@ -398,26 +398,32 @@
 
 		$(getEditor().editdoc.body).on('input', onInputHandler);
 
-		/* Eliminar el backup guardado al enviar la respuesta */
-		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor */
-		var $sendButton = $("input[name='sbutton']");
-		var sendForm = $sendButton.parents('form')[0];
-		var originalSubmitEvent = sendForm.onsubmit;
-		//Devolvemos false en el 'onsubmit' para evitar que se envie el formulario hasta que nuestra llamada vuelva del servidor
-		sendForm.onsubmit = function(e) {
-			if (e.explicitOriginalTarget && e.explicitOriginalTarget.name === "sbutton") { //Boton enviar respuesta
-				return false;
+		/* Eliminar el backup guardado al enviar la Respuesta																		*/
+		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor	*/
+		/* Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página				*/
+		if (isQuickReply()) {
+			$("input[name='sbutton']").on("click", function () {
+				mod.helper.deleteValue("POST_BACKUP");
 			}
+		} else {
+			var $sendButton = $("input[name='sbutton']");
+			var sendForm = $sendButton.parents('form')[0];
+			var originalSubmitEvent = sendForm.onsubmit;
+			//Devolvemos false en el 'onsubmit' para evitar que se envie el formulario hasta que nuestra llamada vuelva del servidor
+			sendForm.onsubmit = function(e) {
+				if (e.explicitOriginalTarget && e.explicitOriginalTarget.name === "sbutton") { //Boton enviar respuesta
+					return false;
+				}
+			}
+			$sendButton.on("click", function (e) {
+				if (originalSubmitEvent()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
+					mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
+						sendForm.onsubmit = originalSubmitEvent; //Le devolvemos el 'onsubmit' original para que se ejecute sin problemas
+						sendForm.submit();
+					});
+				}
+			});
 		}
-		$sendButton.on("click", function (e) {
-			if (originalSubmitEvent()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
-				mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
-					sendForm.onsubmit = originalSubmitEvent; //Le devolvemos el 'onsubmit' original para que se ejecute sin problemas
-					sendForm.submit();
-				});
-			}
-		});
-
 	}
 
 	/* Al enviar la respuesta, se comprueba si nos han hecho esperar */
