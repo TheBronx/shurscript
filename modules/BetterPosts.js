@@ -300,15 +300,10 @@
 			}
 		};
 
+		$('body').on('click', 'a[id^="qr_"]', handler);
+
 		//Ocultamos el check de 'Citar mensaje en respuesta'. No lo eliminamos, si no lo encuentra se va a la respuesta Avanzada.
 		$("#" + getEditor().editorid).siblings().filter('fieldset').first().hide();
-
-		//Lanzamos un timer que va comprobando si se han añadido nuevas respuestas para añadirles el manejador de respuesta rápida
-		setInterval(function () {
-			var buttonsList = $('a[id^="qr_"]').not(".shurscripted");
-			buttonsList.addClass("shurscripted");
-			buttonsList.click(handler);
-		}, 1000);
 
 	}
 
@@ -318,15 +313,6 @@
 
 		//Quitar QUOTEs al post
 		$post.find("div[style*='margin:20px; margin-top:5px;']").remove();
-
-		//Quitar código y reemplazarlos por su BBCode
-		/*
-		 $post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Código')").parent().each(function() {
-		 var code = $(this).find('pre').text();
-		 $(this).replaceWith("[CODE]<pre>" + code + "</pre>[/CODE]");
-		 }
-		 );
-		 */
 
 		//Quitar código y reemplazarlos por su BBCode
 		$post.find("div[style='margin:20px; margin-top:5px'] > .smallfont:contains('Código')").parent().each(function () {
@@ -412,9 +398,24 @@
 
 		$(getEditor().editdoc.body).on('input', onInputHandler);
 
-		//Al enviar la respuesta, se elimina el backup
-		$("input[name='sbutton']").on("click", function () {
-			mod.helper.deleteValue("POST_BACKUP");
+		/* Eliminar el backup guardado al enviar la respuesta */
+		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor */
+		var $sendButton = $("input[name='sbutton']");
+		var sendForm = $sendButton.parents('form')[0];
+		var originalSubmitEvent = sendForm.onsubmit;
+		//Devolvemos false en el 'onsubmit' para evitar que se envie el formulario hasta que nuestra llamada vuelva del servidor
+		sendForm.onsubmit = function(e) {
+			if (e.explicitOriginalTarget && e.explicitOriginalTarget.name === "sbutton") { //Boton enviar respuesta
+				return false;
+			}
+		}
+		$sendButton.on("click", function (e) {
+			if (originalSubmitEvent()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
+				mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
+					sendForm.onsubmit = originalSubmitEvent; //Le devolvemos el 'onsubmit' original para que se ejecute sin problemas
+					sendForm.submit();
+				});
+			}
 		});
 
 	}

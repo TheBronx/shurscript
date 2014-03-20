@@ -127,8 +127,14 @@ var SHURSCRIPT = {
 		 * @param {string} key - nombre llave
 		 * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
 		 */
-		deleteValue: function (key, withId) {
-			SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, withId));
+		deleteValue: function (key, callback) {
+			if (SHURSCRIPT.GreaseMonkey.deleteValue == GM_deleteValue) { //es la funcion original
+				SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false));
+				if (typeof callback === 'function')
+					callback(); //llamamos al callback ya mismo, ya que GreaseMonkey nunca lo va a hacer
+			} else { //es la funcion para guardar en la nube, le pasamos el callback
+				SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false), callback);
+			}
 		},
 
 		/**

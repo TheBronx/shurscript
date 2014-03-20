@@ -60,10 +60,10 @@
 				});
 		},
 
-		deleteValue: function (key) {
+		deleteValue: function (key, callback) {
 			//TODO
 			//set empty
-			this.setValue(key, '');
+			this.setValue(key, '', callback);
 		},
 
 		generateApiKey: function (callback) {
@@ -101,8 +101,8 @@
 			return (Cloud.preferences[key] != undefined) ? Cloud.preferences[key] : defaultValue;
 		};
 
-		SHURSCRIPT.GreaseMonkey.deleteValue = function (key) {
-			Cloud.deleteValue(key);
+		SHURSCRIPT.GreaseMonkey.deleteValue = function (key, callback) {
+			Cloud.deleteValue(key, callback);
 		};
 
 		//ahora necesitamos la API key. ¿existe ya una API Key guardada en las suscripciones?
