@@ -319,6 +319,9 @@ var SHURSCRIPT = {
 				console.log("Cargando componente " + component.id);
 				component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
 			} else {
+				if (typeof(component.load) === 'function') {
+					component.load(); //sin callback
+				}
 				core.loadNextComponent();
 			}
 		} else {
