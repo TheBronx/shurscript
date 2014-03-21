@@ -1,88 +1,113 @@
-//
-//function AutoUpdater() {
-//	var hours = 1, //Buscar actualizaciones cada hora
-//      time = new Date().getTime();
-//
-//	this.check = function(force) {
-//    	if (force) {
-//        	call(true);
-//        } else if (+time > (+helper.getValue('AUTO_UPDATE', 0) + 1000*60*60*hours)) {
-//        	helper.setValue('AUTO_UPDATE', time+'');
-//        	call(false);
-//        }
-//    }
-//
-//    function call(response) {
-//        GM_xmlhttpRequest({
-//            method: 'GET',
-//            url: 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js',
-//            onload: function(xpr) {compare(xpr, response);}
-//        });
-//    }
-//
-//    function compare(xpr,response) {
-//        var xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
-//        var xname=/\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
-//
-//        if (xversion) {
-//            xversion = xversion[1];
-//            xname = xname[1];
-//        } else {
-//            if (xpr.responseText.match('the page you requested doesn\'t exist'))
-//            	helper.setValue('AUTO_UPDATE', 'off');
-//            return false;
-//        }
-//
-//
-//        if (scriptVersion.indexOf("-dev") != -1) { //Si estamos en una version de desarrollo, actualizamos si es igual (0.09-dev -> 0.09) o superior.
-//        	updated = xversion >= scriptVersion.replace("-dev", "");
-//        } else {
-//        	updated = xversion > scriptVersion;
-//        }
-//
-//        if ( updated ) {
-//        	var url = 'https://github.com/TheBronx/shurscript/raw/master/CHANGELOG.md';
-//	        GM_xmlhttpRequest({ //Obtenemos el changelog
-//	            method: 'GET',
-//	            url: url,
-//	            onload: function(resp) {
-//	            	changelog = parseChangelog(resp.responseText, xversion, url.replace('raw', 'blob'));
-//	            	bootbox.dialog({
-//	            			message:'<h4>Hay disponible una nueva versión (' + xversion + ') del Shurscript.</h4><p><br></p>' + changelog,
-//	            			buttons:[{
-//								"label" : "Más tarde",
-//								"className" : "btn-default"
-//								}, {
-//								"label" : "Actualizar",
-//								"className" : "btn-primary",
-//								"callback": function() {
-//										bootbox.hideAll();
-//										location.href = 'https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js';
-//									}
-//								}]
-//							}
-//					);
-//				}
-//
-//	        });
-//        } else if (!updated && response) {
-//            bootbox.alert('No hay actualizaciones disponibles del Shurscript');
-//        }
-//
-//    }
-//
-//    function parseChangelog(changelog, version, fallbackURL) {
-//    	try {
-//	    	version = version.replace(".", "\\.");
-//
-//	    	changelog = changelog.match(RegExp("##[#]? v" + version + ".*([\\s\\S]*?(?=---))"))[1].trim(); //Obtenemos el trozo correspondiente a la version que buscamos
-//
-//	    	changelog = new Markdown.Converter().makeHtml(changelog); //Convertimos de Markdown a HTML
-//
-//	    	return changelog;
-//	    } catch (e) {
-//		    return "Haz clic <a target='_blank' href='" + fallbackURL + "'>aquí</a> para ver los cambios de esta versión.";
-//	    }
-//    }
-//
-//}
+/**
+ * Se encarga de comprobar en el arranque del script si existe una nueva versión del mismo
+ */
+(function ($, SHURSCRIPT, undefined) {
+	'use strict';
+
+	var autoupdater = SHURSCRIPT.core.createComponent('autoupdater');
+
+	var updateInterval = 1000 * 60 * 60, //Buscar actualizaciones cada hora
+	    currentTime = new Date().getTime(),
+	    url = 'https://github.com/TheBronx/shurscript/raw/master/';
+
+	/**
+    * Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
+    * @param {bool} force: Forzar comprobar actualizaciones aunque no haya pasado el tiempo necesario desde la última actualización
+    *
+    * Este método se autoejecuta al arrancar para la comprobación automática
+    */
+	(autoupdater.check = function(force) {
+
+		var callback = function(updated, version) {
+			if (updated) {
+				showChangelog(version);
+			} else if (force) {
+				bootbox.alert('No hay actualizaciones disponibles del Shurscript');
+			}
+		}
+
+		var lastUpdate = autoupdater.helper.getLocalValue('LAST_SCRIPT_UPDATE', 0);
+		if (force || currentTime > (lastUpdate + updateInterval)) {
+			autoupdater.helper.setLocalValue('LAST_SCRIPT_UPDATE', currentTime);
+			checkUpdates(callback);
+		}
+		
+	})(false);
+
+	/**
+	* Descarga la última versión estable liberada y comprueba contra la versión actual instalada
+	*/
+	function checkUpdates(callback) {
+		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
+			method: 'GET',
+			url: url + 'shurscript.user.js',
+			onload: function(xpr) {
+				var version = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText)[1];
+				var updated = compare(SHURSCRIPT.scriptVersion, version);
+				callback(updated, version);
+			}
+		});
+	}
+
+	/**
+	* Compara una versión con otra.
+	* Si estamos en una rama dev/exp, y encontramos la misma versión ya liberada también cuenta como actualización (0.09-dev -> 0.09)
+	*/
+	function compare(currentVersion, newVersion) {
+		var updated;
+		if (SHURSCRIPT.scriptBranch !== "master") {
+			updated = newVersion >= currentVersion;
+		} else {
+			updated = newVersion > currentVersion;
+		}
+		return updated;
+	}
+
+	/**
+	* Recupera el changelog de la nueva versión y lo muestra en una ventana con botones para actualizar o cancelar
+	*/
+	function showChangelog(version) {
+		var changelogUrl = url + 'CHANGELOG.md';
+		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
+			method: 'GET',
+			url: changelogUrl,
+			onload: function(resp) {
+				var changelog = parseChangelog(resp.responseText, version, changelogUrl.replace('raw', 'blob'));
+				bootbox.dialog({
+					message: '<h4>Hay disponible una nueva versión (' + version + ') del Shurscript.</h4><p><br></p>' + changelog,
+					buttons: [{
+							label : "Más tarde",
+							className : "btn-default"
+						}, {
+							label : "Actualizar",
+							className : "btn-primary",
+							callback: function() {
+								bootbox.hideAll();
+								location.href = url + 'shurscript.user.js';
+							}
+						}]
+					}
+				);
+			}
+
+		});
+	}
+
+	/**
+	* Coge solo el changelog de la versión que nos interesa y transforma el Markdown a HTML
+	* @param changelog: Fichero de changelog completo (todas las versiones)
+	* @param version: Versión de la que queremos sacar el changelog
+	* @param fallbackURL: Si algo falla, URL en la que podrá ver el usuario los cambios de esta versión
+	*/
+	function parseChangelog(changelog, version, fallbackURL) {
+		try {
+			version = version.replace(/\./g, "\\.");
+			changelog = changelog.match(RegExp("##[#]? v" + version + ".*([\\s\\S]*?(?=---))"))[1].trim(); //Obtenemos el trozo correspondiente a la version que buscamos
+			changelog = new Markdown.Converter().makeHtml(changelog); //Convertimos de Markdown a HTML
+			return changelog;
+		} catch (e) {
+			return "Haz clic <a target='_blank' href='" + fallbackURL + "'>aquí</a> para ver los cambios de esta versión.";
+		}
+	}
+
+})(jQuery, SHURSCRIPT);

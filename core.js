@@ -124,40 +124,59 @@ var SHURSCRIPT = {
 			return '[SHURSCRIPT]  [Modulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
 		},
 
+		/**
+		 * Almacena un valor en el servidor y ejecuta el callback al terminar
+		 * @param key
+		 * @param value
+		 * @param callback
+		 */
 		setValue: function (key, value, callback) {
-			if (SHURSCRIPT.GreaseMonkey.setValue == GM_setValue) { //es la funcion original
-				SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value);
-				if (typeof callback === 'function')
-					callback(); //llamamos al callback ya mismo, ya que GreaseMonkey nunca lo va a hacer
-			} else { //es la funcion para guardar en la nube, le pasamos el callback
-				SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value, callback);
-			}
+			SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value, callback);
 		},
 
 		/**
-		 *
+		 * Devuelve un valor del servidor, o el defaultValue si no encuentra la clave
 		 * @param key
 		 * @param defaultValue
-		 * @returns {string} - valor leido del navegador
 		 */
 		getValue: function (key, defaultValue) {
 			return SHURSCRIPT.GreaseMonkey.getValue(this._getShurKey(key, false), defaultValue);
 		},
 
 		/**
-		 * Borra una llave guardada en el navegador
+		 * Elimina un valor del servidor
 		 *
-		 * @param {string} key - nombre llave
-		 * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
+		 * @param key
 		 */
 		deleteValue: function (key, callback) {
-			if (SHURSCRIPT.GreaseMonkey.deleteValue == GM_deleteValue) { //es la funcion original
-				SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false));
-				if (typeof callback === 'function')
-					callback(); //llamamos al callback ya mismo, ya que GreaseMonkey nunca lo va a hacer
-			} else { //es la funcion para guardar en la nube, le pasamos el callback
-				SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false), callback);
-			}
+			SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false), callback);
+		},
+
+		/**
+		 * Almacena un valor en el navegador
+		 * @param key
+		 * @param value
+		 */
+		setLocalValue: function (key, value) {
+			GM_setValue(this._getShurKey(key, true), value);
+		},
+
+		/**
+		 * Devuelve un valor del navegador, o el defaultValue si no encuentra la clave
+		 * @param key
+		 * @param defaultValue
+		 */
+		getLocalValue: function (key, defaultValue) {
+			return GM_getValue(this._getShurKey(key, true), defaultValue);
+		},
+
+		/**
+		 * Elimina un valor del navegador
+		 *
+		 * @param key - nombre llave
+		 */
+		deleteLocalValue: function (key) {
+			GM_deleteValue(this._getShurKey(key, true), callback);
 		},
 
 		/**
@@ -287,16 +306,6 @@ var SHURSCRIPT = {
 
 		//lanza la carga de componentes y modulos
 		core.loadNextComponent();
-
-		/*
-		 // Carga componente preferencias
-		 SHURSCRIPT.preferences.load();
-
-		 // Lanza carga modulos
-		 SHURSCRIPT.moduleManager.startOnDocReadyModules();
-		 */
-		// Busca actualizaciones
-		// TODO
 	};
 
 	//Carga el siguiente componente. En caso contrario llama a la carga de módulos.
