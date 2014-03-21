@@ -138,6 +138,7 @@
 	preferences.createModal = function () {
 		var modalData = {
 			scriptVersion: SHURSCRIPT.scriptVersion,
+			scriptBranch: SHURSCRIPT.scriptBranch,
 			modules: []
 		};
 

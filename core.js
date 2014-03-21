@@ -4,7 +4,6 @@
  * Genera el core.
  */
 var SHURSCRIPT = {
-	scriptVersion: '10.5-exp',
 	GreaseMonkey: {
 		log: GM_log,
 		getValue: GM_getValue,
@@ -28,6 +27,30 @@ var SHURSCRIPT = {
 		GM = SHURSCRIPT.GreaseMonkey;
 
 	SHURSCRIPT.core = core;
+
+	/**
+	* Comprobamos que está soportada la extensión y seteamos al objeto SHURSCRIPT la version y la rama del script actual.
+	*/
+	var isCompatible = function() {
+
+		var version;
+		if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
+			version = GM_info.script.version;
+		} else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
+			version = GM_getMetadata('version');
+		}
+
+		if (!version) {
+			return false;
+		}
+
+		//Separamos número de versión y nombre de la rama (master, dev o exp)
+		var splitted = version.split("-");
+		SHURSCRIPT.scriptVersion = splitted[0];
+		SHURSCRIPT.scriptBranch = splitted[1] || "master";
+
+		return true;
+	}
 
 	/**
 	 * Crea un namespace dentro de SHURSCRIPT pasandole
@@ -230,6 +253,11 @@ var SHURSCRIPT = {
 	 * Inicializa la aplicacion de modo normal
 	 */
 	core.initialize = function () {
+
+		if (!isCompatible()) {
+			alert('SHURSCRIPT: El complemento o extensión de userscripts que usas en tu navegador no está soportado.');
+			return false;
+		}
 
 		var body_html = $('body').html();
 

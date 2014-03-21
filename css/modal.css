@@ -45,3 +45,15 @@
     font-weight: normal;
     cursor: pointer;
 }
+
+.label.branch-exp {
+    background-color: #D9534F; //label-danger
+}
+
+.label.branch-dev {
+    background-color: #5CB85C; //label-success
+}
+
+.label.branch-master {
+    display: none; //No mostramos el nombre de la rama si es la master
+}
