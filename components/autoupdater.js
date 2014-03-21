@@ -13,10 +13,8 @@
 	/**
     * Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
     * @param {bool} force: Forzar comprobar actualizaciones aunque no haya pasado el tiempo necesario desde la última actualización
-    *
-    * Este método se autoejecuta al arrancar para la comprobación automática
     */
-	(autoupdater.check = function(force) {
+	autoupdater.check = function(force) {
 
 		var callback = function(updated, version) {
 			if (updated) {
@@ -32,7 +30,14 @@
 			checkUpdates(callback);
 		}
 		
-	})(false);
+	};
+
+	/**
+	* Punto de entrada
+	*/
+	autoupdater.load = function() {
+		autoupdater.check(false);
+	}
 
 	/**
 	* Descarga la última versión estable liberada y comprueba contra la versión actual instalada
