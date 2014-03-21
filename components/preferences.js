@@ -139,6 +139,7 @@
 		var modalData = {
 			scriptVersion: SHURSCRIPT.scriptVersion,
 			scriptBranch: SHURSCRIPT.scriptBranch,
+			windowHeight: $(window).height() - 220,
 			modules: []
 		};
 
