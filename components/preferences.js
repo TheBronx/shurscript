@@ -67,6 +67,14 @@
 		$modal.modal();
 		$modal.css("z-index", 1000); //Para no superponerse a la de los alerts
 		$(".modal-backdrop").css("z-index", 999);
+
+		//Ajustar al tamaño de la ventana
+		var setBodyHeight = function() {
+			$modal.find('.modal-body').css('height', $(window).height() - 220);
+		};
+		$(window).on('resize', setBodyHeight);
+		$(window).trigger('resize');
+
 		preferences.$modal = $modal;
 	};
 
@@ -139,7 +147,6 @@
 		var modalData = {
 			scriptVersion: SHURSCRIPT.scriptVersion,
 			scriptBranch: SHURSCRIPT.scriptBranch,
-			windowHeight: $(window).height() - 220,
 			modules: []
 		};
 
@@ -161,7 +168,7 @@
 	/**
 	 * Puerta de entrada al componente
 	 */
-	preferences.loadAndCallback = function (callback) {
+	preferences.load = function () {
 
 		// Mete link para abrir modal
 		preferences.appendMenuItem();
@@ -169,7 +176,6 @@
 		// Mete CSS para el modal
 		preferences.helper.addStyle('modalcss');
 
-		callback(); //avisa al core de que el componente ha terminado
 	};
 
 	/**
