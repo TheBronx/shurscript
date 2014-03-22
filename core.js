@@ -38,6 +38,7 @@ var SHURSCRIPT = {
 			version = GM_info.script.version;
 		} else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
 			version = GM_getMetadata('version');
+			version = version+"";//getMetadata returns: Object, String or Array
 		}
 
 		if (!version) {
