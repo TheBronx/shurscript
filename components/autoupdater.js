@@ -17,9 +17,9 @@
     */
 	autoupdater.check = function(force, callback) {
 		currentTime = new Date().getTime();
-		var lastUpdate = autoupdater.helper.getLocalValue('LAST_SCRIPT_UPDATE', 0);
+		var lastUpdate = parseInt(autoupdater.helper.getLocalValue('LAST_SCRIPT_UPDATE', 0), 10);
 		if (force || currentTime > (lastUpdate + updateInterval)) {
-			autoupdater.helper.setLocalValue('LAST_SCRIPT_UPDATE', currentTime);
+			autoupdater.helper.setLocalValue('LAST_SCRIPT_UPDATE', currentTime.toString());
 			checkUpdates(function(updated) {
 				if (updated) {
 					showChangelog(version);
