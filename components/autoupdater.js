@@ -7,27 +7,27 @@
 	var autoupdater = SHURSCRIPT.core.createComponent('autoupdater');
 
 	var updateInterval = 1000 * 60 * 60, //Buscar actualizaciones cada hora
-	    currentTime = new Date().getTime(),
+	    currentTime,
 	    url = 'https://github.com/TheBronx/shurscript/raw/master/';
 
 	/**
     * Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
     * @param {bool} force: Forzar comprobar actualizaciones aunque no haya pasado el tiempo necesario desde la última actualización
+    * @param {function} callback: Se ejecutará cuando termine de comprobar actualizaciones (si ha pasado el tiempo denecesario o si se pasa el parametro force)
     */
-	autoupdater.check = function(force) {
-
-		var callback = function(updated, version) {
-			if (updated) {
-				showChangelog(version);
-			} else if (force) {
-				bootbox.alert('No hay actualizaciones disponibles del Shurscript');
-			}
-		}
-
+	autoupdater.check = function(force, callback) {
+		currentTime = new Date().getTime();
 		var lastUpdate = autoupdater.helper.getLocalValue('LAST_SCRIPT_UPDATE', 0);
 		if (force || currentTime > (lastUpdate + updateInterval)) {
 			autoupdater.helper.setLocalValue('LAST_SCRIPT_UPDATE', currentTime);
-			checkUpdates(callback);
+			checkUpdates(function(updated) {
+				if (updated) {
+					showChangelog(version);
+				}
+				if (typeof callback === "function") {
+					callback(updated);
+				}
+			});
 		}
 		
 	};
@@ -45,7 +45,7 @@
 	function checkUpdates(callback) {
 		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
 			method: 'GET',
-			url: url + 'shurscript.user.js',
+			url: url + 'shurscript.user.js?' + currentTime,
 			onload: function(xpr) {
 				var version = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText)[1];
 				var updated = compare(SHURSCRIPT.scriptVersion, version);
@@ -72,7 +72,7 @@
 	* Recupera el changelog de la nueva versión y lo muestra en una ventana con botones para actualizar o cancelar
 	*/
 	function showChangelog(version) {
-		var changelogUrl = url + 'CHANGELOG.md';
+		var changelogUrl = url + 'CHANGELOG.md?' + currentTime;
 		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
 			method: 'GET',
 			url: changelogUrl,
@@ -88,7 +88,7 @@
 							className : "btn-primary",
 							callback: function() {
 								bootbox.hideAll();
-								location.href = url + 'shurscript.user.js';
+								location.href = url + 'shurscript.user.js?' + currentTime;
 							}
 						}]
 					}

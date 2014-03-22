@@ -38,6 +38,11 @@
 			$modal.remove();
 		});
 
+		// Click en boton "Comprobar actualizaciones"
+		$modal.on('click', '#check-shurscript-updates', function () {
+			preferences.checkUpdates();
+		});
+
 		// Click en botones "Opciones"
 		$modal.on('click', '.shur-btn-options', function () {
 			$(this).parent().siblings('.shur-options-body').slideToggle(300);
@@ -76,6 +81,17 @@
 		$(window).trigger('resize');
 
 		preferences.$modal = $modal;
+	};
+
+	preferences.checkUpdates = function() {
+		var $btn = $('#check-shurscript-updates');
+		$btn.button('loading');
+		SHURSCRIPT.autoupdater.check(true, function(updated) {
+			$btn.button('reset');
+			if (!updated) {
+				bootbox.alert('No hay actualizaciones disponibles del Shurscript');
+			}
+		});
 	};
 
 	/**
