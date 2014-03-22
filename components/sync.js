@@ -42,7 +42,7 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Server answer:" + data);
+					sync.helper.log("Server answer:" + JSON.stringify(data));
 				});
 		},
 
@@ -54,7 +54,7 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Server answer:" + data);
+					sync.helper.log("Server answer:" + JSON.stringify(data));
 					Cloud.preferences = data;
 					callback();
 				});
@@ -74,7 +74,7 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Server answer:" + data);
+					sync.helper.log("Server answer:" + JSON.stringify(data));
 					Cloud.apiKey = data.apikey;
 					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
 					callback();
