@@ -17,7 +17,7 @@
 
 	var Cloud = {
 		server: "http://cloud.shurscript.org:8080/",
-		apiKey: "", //que pasa si llegan peticiones get/set mientras estamos consiguiendo/generando la apiKey???
+		apiKey: "",
 		preferences: {}, //las preferencias sacadas del server
 
 		setValue: function (key, value, callback) {
@@ -91,12 +91,7 @@
 		};
 
 		SHURSCRIPT.GreaseMonkey.getValue = function (key, defaultValue) {
-			//no podemos llamar sin más a getValue, ya que es asincrona.
-			//es decir, no podemos simplemente decir "return pref"
-			//tampoco podemos tirar de callbacks, complicaría excesivamente los módulos
-			//por tanto trabajaremos con una copia local de las preferencias de la nube
-			//iremos actualizando esa copia cuando el usuario use set o delete, y al cargar el script
-			//Cloud.getValue(key, defaultValue);
+			//utilizamos la copia local de esa clave (si leyésemos del server los getValue serían asíncronos)
 			sync.helper.log("getValue( " + key + " ) = " + Cloud.preferences[key]);
 			return (Cloud.preferences[key] != undefined) ? Cloud.preferences[key] : defaultValue;
 		};
@@ -115,8 +110,8 @@
 			//hay que pedirle una al server y guardarla en las suscripciones
 			//una vez tengamos la apiKey, la usamos
 			Cloud.generateApiKey(function () {
-				Cloud.getAll(callback);
-			}); //usamos las preferencias y despues notificamos al core
+				Cloud.getAll(callback); //notificamos al core, el siguiente componente ya puede cargar
+			});
 		}
 	};
 
@@ -148,7 +143,7 @@
 	 */
 	function saveApiKey(apiKey) {
 		var ajax = new XMLHttpRequest();
-		ajax.open("POST", "http://www.forocoches.com/foro/subscription.php?do=doeditfolders", false); //Si no existe es que es la primera instalación. Generamos una, creamos la carpeta fake y guardamos la clave en el navegador para futuros usos.
+		ajax.open("POST", "http://www.forocoches.com/foro/subscription.php?do=doeditfolders", false);
 		ajax.onreadystatechange = function () {
 			if (ajax.readyState == 4 && ajax.statusText == "OK") {
 				if (getApiKey() == false) { //comprobamos que se ha guardado. si no se ha guardado
