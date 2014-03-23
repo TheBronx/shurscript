@@ -130,7 +130,7 @@
 					oldPrefName += newPrefName[i].toUpperCase();
 				}
 				var oldPref = this.helper.getLocalValue(oldPrefName);
-				if (oldPref) {
+				if (typeof oldPref !== "undefined") {
 					this.preferences[newPrefName] = oldPref;
 					this.helper.log("Migrada: " + oldPrefName + " = " + oldPref);
 				}

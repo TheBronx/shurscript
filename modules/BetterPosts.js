@@ -2,7 +2,7 @@
 	'use strict';
 
 	var mod = createModule({
-		id: 'betterPosts',
+		id: 'BetterPosts',
 		name: 'Editor de posts mejorado',
 		author: 'xuso0',
 		version: '0.2',

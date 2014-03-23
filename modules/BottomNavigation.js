@@ -2,7 +2,7 @@
 	'use strict';
 
 	var mod = createModule({
-		id: 'bottomNavigation',
+		id: 'BottomNavigation',
 		name: 'Barra de navegación duplicada debajo',
 		author: 'TheBronx + Fritanga',
 		version: '1.0',
