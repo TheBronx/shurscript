@@ -134,7 +134,7 @@
 				var folder = $(documentResponse).find("input[name='folderlist[50]']");
 				if (folder.length > 0) {
 					//la API key existe
-					apiKey = folder.val().replace("shurscript-", "");
+					apiKey = folder.val().replace("shurkey-", "");
 				}
 			}
 		}
@@ -156,7 +156,7 @@
 				}
 			}
 		}
-		var folderName = "shurscript-" + apiKey;
+		var folderName = "shurkey-" + apiKey;
 		var securitytoken = $("input[name='securitytoken']").val(); //Numero de seguridad que genera el vbulletin para autenticar las peticiones
 		var params = "s=&securitytoken=" + securitytoken + "&do=doeditfolders&folderlist[50]=" + folderName + "&do=doeditfolders";
 		ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
