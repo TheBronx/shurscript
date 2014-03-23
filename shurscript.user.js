@@ -51,6 +51,7 @@
 // @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
 // @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
+// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
 // ==/UserScript==
 
 /**

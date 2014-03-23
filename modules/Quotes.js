@@ -106,26 +106,24 @@
 		}
 
 		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
-		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE", undefined);
-		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE", undefined);
-		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES", undefined);
+		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE");
+		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE");
+		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES");
 		arrayQuotes = new Array();
 		if (lastQuotesJSON) {
-			try {
-				arrayQuotes = JSON.parse(lastQuotesJSON);
-			} catch (e) {
-				mod.helper.log("Error parsing JSON");
-				mod.helper.deleteValue("LAST_QUOTES", true);
-			}
+			arrayQuotes = JSON.parse(lastQuotesJSON);
 		}
 
 		refreshEvery = mod.preferences.refreshEvery;
 		if (refreshEvery != 'off') {
 			refreshEvery = parseInt(refreshEvery);
-			if (refreshEvery.toString() == 'NaN') {
-				refreshEvery = 2;
-			}
 		}
+
+		// Precarga la plantilla de las citas y la compila
+		var tempName = 'quote',
+			templateText = mod.helper.getResourceText('quotehtml');
+		SHURSCRIPT.templater.storeTemplate(tempName, templateText);
+		SHURSCRIPT.templater.compile(tempName);
 
 		createNotificationsBox();
 		showNotifications();
@@ -139,11 +137,11 @@
 
 		//creamos la celda de notificaciones
 		if (mod.helper.environment.page === '/') { //Portada
-			jQuery("#AutoNumber1.contenido tr:first-child").append('<td style="padding: 0px;" rowspan=3 class="alt2"><div class="notifications">0</div></td>')
+			$("#AutoNumber1.contenido tr:first-child").append('<td style="padding: 0px;" rowspan=3 class="alt2"><div class="notifications">0</div></td>')
 		} else {
-			jQuery(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
+			$(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 		}
-		jQuery('.notifications').click(function () {
+		$('.notifications').click(function () {
 			if (currentStatus == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();
 			}
@@ -166,7 +164,7 @@
 	function updateNotifications(firstLoad) {
 		firstLoad = typeof firstLoad != 'undefined' ? firstLoad : false;
 
-		jQuery('.notifications').html("...");
+		$('.notifications').html("...");
 		currentStatus = "QUERY";
 
 		ajax = new XMLHttpRequest();
@@ -175,20 +173,20 @@
 				try {
 					lastUpdate = Date.now();
 
-					var documentResponse = jQuery.parseHTML(ajax.responseText);
-					var citas = jQuery(documentResponse).find("#inlinemodform table[id*='post']");
+					var documentResponse = $.parseHTML(ajax.responseText);
+					var citas = $(documentResponse).find("#inlinemodform table[id*='post']");
 
 					if (citas.length == 0) {
 
 						if (ajax.responseText.indexOf("debes estar registrado o identificado") != -1) {
 							currentStatus = "ERROR";
-							var notificationsDiv = jQuery(".notifications");
+							var notificationsDiv = $(".notifications");
 							notificationsDiv.attr("title", "Ha ocurrido un error al cargar las notificaciones. Contacta con los desarrolladores en el hilo oficial del Shurscript (ForoCoches).");
 							notificationsDiv.html("X");
 							return;
 						}
 
-						var tooManyQueriesError = jQuery(documentResponse).find(".page li").text();
+						var tooManyQueriesError = $(documentResponse).find(".page li").text();
 						//Hemos recibido un error debido a demasidas peticiones seguidas. Esperamos el tiempo que nos diga ilitri y volvemos a lanzar la query.
 						if (tooManyQueriesError && !firstLoad) {
 							tooManyQueriesError = tooManyQueriesError.substring(tooManyQueriesError.indexOf("aún") + 4);
@@ -207,7 +205,6 @@
 						} else if (firstLoad && arrayQuotes.length > 0) {
 							//Si en la primera carga falla, no dejamos esperando al usuario
 							populateNotificationsBox(arrayQuotes);
-							//setNotificationsCount(arrayQuotes.length);
 
 							currentStatus = "OK";
 
@@ -267,30 +264,32 @@
 							bootbox.dialog({message: "El usuario <b>" + cita.userName + "</b> te ha citado en el hilo <b>" + cita.threadName + "</b><p><br></p><i>" + cita.postText + "</i><p><br></p>¿Quieres ver el post ahora?",
 								buttons: [
 									{
-										"label": "Ya leída",
-										"className": "btn-default",
-										"callback": function () {
-											markAllAsRead();
+										label: "Ya leída",
+										className: "btn-default",
+										callback: function () {
+											markAsRead(cita);
 										}
 									},
 									{
-										"label": "Más tarde",
-										"className": "btn-default"
+										label: "Más tarde",
+										className: "btn-default"
 									},
 									{
-										"label": "Abrir post",
-										"className": "btn-default",
-										"callback": function () {
-											markAsRead(cita);
-											window.open(cita.postLink, "_self");
+										label: "Abrir post",
+										className: "btn-default",
+										callback: function () {
+											markAsRead(cita, function(){
+												window.open(cita.postLink, "_self");
+											});
 										}
 									},
 									{
-										"label": "En nueva ventana",
-										"className": "btn-primary",
-										"callback": function () {
-											markAsRead(cita);
-											window.open(cita.postLink, "_blank");
+										label: "En nueva ventana",
+										className: "btn-primary",
+										callback: function () {
+											markAsRead(cita, function() {
+												window.open(cita.postLink, "_blank");
+											});
 										}
 									}
 								]
@@ -299,31 +298,32 @@
 							bootbox.dialog({message: "Tienes <b>" + newQuotes.length + " citas nuevas</b> en el foro ¿Quieres verlas ahora?",
 								buttons: [
 									{
-										"label": "Ya leídas",
-										"className": "btn-default",
-										"callback": function () {
+										label: "Ya leídas",
+										className: "btn-default",
+										callback: function () {
 											markAllAsRead();
 										}
 									},
 									{
-										"label": "Más tarde",
-										"className": "btn-default"
+										label: "Más tarde",
+										className: "btn-default"
 									},
 									{
-										"label": "Ver lista",
-										"className": "btn-default",
-										"callback": function () {
+										label: "Ver lista",
+										className: "btn-default",
+										callback: function () {
 											$("html, body").animate({ scrollTop: 0 }, "slow");
 											showNotificationsBox();
 										}
 									},
 									{
-										"label": "Abrir todas en pestañas",
-										"className": "btn-primary",
-										"callback": function () {
-											markAllAsRead();
-											newQuotes.forEach(function (cita) {
-												window.open(cita.postLink, "_blank");
+										label: "Abrir todas en pestañas",
+										className: "btn-primary",
+										callback: function () {
+											markAllAsRead(function(){
+												newQuotes.forEach(function (cita) {
+													window.open(cita.postLink, "_blank");
+												});
 											});
 										}
 									}
@@ -344,7 +344,7 @@
 	}
 
 	function setNotificationsCount(count) {
-		var notificationsDiv = jQuery(".notifications");
+		var notificationsDiv = $(".notifications");
 		if (count > 0) {
 
 			document.title = "(" + count + ") - " + originalTitle;
@@ -364,8 +364,8 @@
 	}
 
 	function createNotificationsBox() {
-		notificationsBox = jQuery("<div id='notificationsBox'/>");
-		notificationsList = jQuery("<div id='notificationsList'/>");
+		notificationsBox = $("<div id='notificationsBox'/>");
+		notificationsList = $("<div id='notificationsList'/>");
 
 		$(document.body).append(notificationsBox);
 		notificationsBox.append(notificationsList);
@@ -383,7 +383,7 @@
 	}
 
 	function showNotificationsBox() {
-		notificationsBox.css("top", jQuery(".notifications").offset().top + jQuery(".notifications").height() + 20);
+		notificationsBox.css("top", $(".notifications").offset().top + $(".notifications").height() + 20);
 		notificationsBox.show();
 	}
 
@@ -399,25 +399,25 @@
 		setNotificationsCount(count);
 
 		if (!notificationsListButtons) {
-			notificationsListButtons = jQuery("<table id='notificationsListButtons' border='0' cellspacing='0'><tr></tr></table>");
+			notificationsListButtons = $("<table id='notificationsListButtons' border='0' cellspacing='0'><tr></tr></table>");
 
-			var markAsReadButton = jQuery("<td title='Marcar todas las citas como leídas'/>");
+			var markAsReadButton = $("<td title='Marcar todas las citas como leídas'/>");
 			markAsReadButton.html("Marcar como leídas");
-			markAsReadButton.click(function () {
+			markAsReadButton.click(function() {
 				markAllAsRead();
 			});
 			notificationsListButtons.append(markAsReadButton);
 
 			if (mod.preferences.openInTabsButton) {
-				var openInTabsButton = jQuery("<td title='Abrir todas las citas no leídas en diferentes pestañas'/>");
+				var openInTabsButton = $("<td title='Abrir todas las citas no leídas en diferentes pestañas'/>");
 				openInTabsButton.html("Abrir en pestañas");
 				openInTabsButton.click(function () {
-					arrayQuotes.forEach(function (cita) {
-						if (!cita.read) {
+					var unread = getUnreadQuotes();
+					markAllAsRead(function() {
+						unread.forEach(function (cita) {
 							window.open(cita.postLink, "_blank");
-						}
+						});
 					});
-					markAllAsRead();
 				});
 				notificationsListButtons.append(openInTabsButton);
 			}
@@ -425,54 +425,65 @@
 			notificationsBox.append(notificationsListButtons);
 		}
 
-		if (count > 0) {
+		if (count > 1) {
 			notificationsListButtons.show();
 		} else {
 			notificationsListButtons.hide();
 		}
 	}
 
-	function markAllAsRead() {
+	function getUnreadQuotes() {
+		var unread = [];
+		arrayQuotes.forEach(function (cita) {
+			if (!cita.read) {
+				unread.push(cita);
+			}
+		});
+		return unread;
+	}
+
+	function markAllAsRead(callback) {
 		for (var i = 0; i < arrayQuotes.length; i++) {
 			arrayQuotes[i].read = true;
 		}
 
-		/* 		setNotificationsCount(0); */
 		populateNotificationsBox(arrayQuotes);
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
-		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON);
+		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 		notificationsBox.hide();
 	}
 
 	function addToNotificationsBox(cita) {
-		jQuery("#noNotificationsMessage").hide();
-		var row = jQuery("<div class='notificationRow " + (cita.read ? "read" : "") + "'><div><b>El usuario <a href='" + cita.userLink + "'>" + cita.userName + "</a> te ha citado</div><div><a href='" + cita.threadLink + "'>" + cita.threadName + "</a></b></div><div></div></div>");
-		var link = jQuery("<a href='" + cita.postLink + "' style='color:#444;'>" + cita.postText + "</a>");
+		$("#noNotificationsMessage").hide();
+		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita}));
 
-		if (!cita.read) {
-			link.mousedown(function (e) {
-				if (e.which != 3) {
-					if (!cita.read) {
-						$(this).parent().parent().addClass("read");
-						markAsRead(cita);
-					}
-					$(this).off("mousedown");
+		//Necesitamos esperar a que se marque como leída antes de abrir el link
+		//Mousedown es el único que se ejecuta también con el botón central
+		row.on('mousedown', '.postLink', function (e) {
+			if (e.which != 3) { //Botón derecho
+				if (!cita.read) {
+					$(this).parent().parent().addClass("read");
+					markAsRead(cita, function(){
+						if (e.which == 1) { //Solo botón izquierdo. Si se ha hecho clic con el central, ya se habrá abierto automáticamente (Clic central -> Abrir en nueva pestaña)
+							window.open(cita.postLink, '_self');
+						}
+					});
+				} else {
+					window.open(cita.postLink, '_self');
 				}
-			});
-		}
-
-		link.appendTo(row.find("div").get(2));
+			}
+		});
 
 		notificationsList.append(row);
 	}
 
-	function markAsRead(cita) {
+	function markAsRead(cita, callback) {
 
 		cita.read = true;
 
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
-		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON);
-
+		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
+		
 		setNotificationsCount(notificationsCount - 1);
 	}
 
@@ -501,8 +512,8 @@
 		ajax = new XMLHttpRequest();
 		ajax.onreadystatechange = function () {
 			if (ajax.readyState == 4 && ajax.statusText == "OK") {
-				var documentResponse = jQuery.parseHTML(ajax.responseText);
-				var postContent = jQuery(documentResponse).find("#post_message_" + cita.postID).text();
+				var documentResponse = $.parseHTML(ajax.responseText);
+				var postContent = $(documentResponse).find("#post_message_" + cita.postID).text();
 				var usernameRegexReady = username.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservados de las regex;
 				if (postContent.match(RegExp("Originalmente Escrito por " + usernameRegexReady, "i"))) {
 					result = true;
