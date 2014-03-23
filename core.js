@@ -177,7 +177,7 @@ var SHURSCRIPT = {
 		 * @param key - nombre llave
 		 */
 		deleteLocalValue: function (key) {
-			GM_deleteValue(this._getShurKey(key, true), callback);
+			GM_deleteValue(this._getShurKey(key, true));
 		},
 
 		/**

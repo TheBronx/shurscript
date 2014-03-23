@@ -63,7 +63,7 @@
 			// Quita y pon la clase disabled para mostrar que el modulo esta activado o no
 			prefPanel.toggleClass('disabled-module');
 			// Muestra u oculta el body del panel si está activado o no
-			prefPanel.find('.panel-body').slideToggle();
+			prefPanel.children('.panel-body').slideToggle();
 
 			//Marcarlo como modificado
 			prefPanel.addClass('changed');

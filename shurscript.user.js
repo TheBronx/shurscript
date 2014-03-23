@@ -3,7 +3,7 @@
 // http://www.gnu.org/licenses/gpl-2.0.html
 //
 // ==UserScript==
-// @name            ShurScript-Experimental
+// @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
 // @version         0.11.0-exp

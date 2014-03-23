@@ -87,6 +87,7 @@
 		//sobreescribimos las funciones de manejo de preferencias
 		// [cb] es opcional, se ejecuta una vez los datos se guardan en el servidor asíncronamente
 		SHURSCRIPT.GreaseMonkey.setValue = function (key, value, cb) {
+			Cloud.preferences[key] = value; //Copia local
 			Cloud.setValue(key, value, cb);
 		};
 
