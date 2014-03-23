@@ -1,11 +1,13 @@
 ![Shurscript Logo by Fritanga](http://dl.dropboxusercontent.com/u/1066873/shurheading.png)
 
   
-shurscript
+.shurscript
 ==========
 
-Script de usuario para ForoCoches.com
-Hilo oficial: [ForoCoches.com ShurScript](http://www.forocoches.com/foro/showthread.php?t=3372750)
+Script de usuario para ForoCoches.com  
+Hilo oficial: [ForoCoches.com ShurScript](http://www.forocoches.com/foro/showthread.php?t=3558434)  
+Web: [shurscript.org](http://shurscript.org)  
+Sugerencias: [shurscript en uservoice](https://shurscript.uservoice.com/)
 
 
 <h2>Características:</h2>
@@ -18,7 +20,7 @@ que tarda el foro en indexar los nuevos posts.)
  * Flechas para ir al final y al principio de la página
  * Mejorar el editor de posts (WYSIWYG, Multi-Cita rápida y mucho más)
 
-<h2>Cómo se usa</h2>
+<h2>Cómo lo instalo</h2>
 Para instalar el script necesitas solamente dos cosas:
  * Navegador compatible (preferiblemente Firefox o Chrome aunque funciona también en Opera y Safari)
  * Extensión correspondiente para ejecutar scripts de usuario:
@@ -26,8 +28,8 @@ Para instalar el script necesitas solamente dos cosas:
 [GreaseMonkey](https://addons.mozilla.org/es/firefox/addon/greasemonkey/)
    + Para Chrome: [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=es)
    + Para Opera: [Violent Monkey](https://addons.opera.com/es/extensions/details/violent-monkey/?display=en)
-   + Para Safari: [NinjaKit](http://ss-o.net/safari/extension/NinjaKit.safariextz) o bien 
-[GreaseKit](http://safariaddons.com/en-US/safari/addon/43)
+   + Para Maxthon: [Violent Monkey](http://extension.maxthon.com/detail/index.php?view_id=1680&category_id=)
+   + Para Safari: **No soportado**
 
 Una vez instalada la extensión para tu navegador simplemente instala Shurscript abriendo el siguiente enlace 
 (puede que tengas que esperar unos segundos):<br>
