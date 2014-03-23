@@ -60,7 +60,7 @@
                                            name="<%=option.mapsTo%>"
                                            data-maps-to="<%=option.mapsTo%>"
                                            value="<%=radio.value%>"
-                                           <%=radio.value === module.preferences[option.mapsTo] ? 'checked' : ''%>> <!-- Si el valor de este radio es igual al de las preferencias del modulo, marca como checked -->
+                                           <%=radio.value == module.preferences[option.mapsTo] ? 'checked' : ''%>> <!-- Si el valor de este radio es igual al de las preferencias del modulo, marca como checked -->
 
                                     <%=radio.caption%>
 
