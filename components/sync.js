@@ -47,17 +47,36 @@
 		},
 
 		getAll: function (callback) {
-			sync.helper.log("Cloud.getAll()");
+			sync.helper.log("Cloud.getAll() using API key: " + this.apiKey);
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/?apikey=' + this.apiKey,
 				data: "",
 				dataType: 'json'
-			}).done(function (data) {
-					sync.helper.log("Server answer:" + JSON.stringify(data));
-					Cloud.preferences = data;
-					callback();
-				});
+			})
+			.done(function (data) {
+				sync.helper.log("Server answer:" + JSON.stringify(data));
+				Cloud.preferences = data;
+				callback();
+			})
+			.error(function(error){
+				switch (error.status) {
+					case 404:
+						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
+							if (res) {
+								sync.helper.deleteLocalValue("API_KEY");
+								Cloud.generateApiKey(function () {
+									Cloud.getAll(callback);
+								});
+							}
+						});
+					break;
+					case 500:
+					default:
+						bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='http://www.forocoches.com/foro/showthread.php?t=3558434'>hilo oficial</a>.</p></center>");
+					break;
+				}
+			});
 		},
 
 		deleteValue: function (key, callback) {
@@ -103,7 +122,7 @@
 
 		//ahora necesitamos la API key. ¿existe ya una API Key guardada en las suscripciones?
 		var apiKey = getApiKey();
-		if (apiKey !== false) {
+		if (apiKey) {
 			//tenemos apikey, usémosla
 			Cloud.apiKey = apiKey;
 			Cloud.getAll(callback);//una vez recuperadas las preferencias notificamos al core para que cargue el siguiente componente
@@ -118,23 +137,27 @@
 
 	/**
 	 * Devuelve la API key guardada en las suscripciones del foro.
-	 * Si no existe, devuelve 'false'
 	 */
 	function getApiKey() {
-		var apiKey = false;
-		var ajax = new XMLHttpRequest();
-		ajax.open("GET", "http://www.forocoches.com/foro/subscription.php?do=editfolders", false); //La buscamos en la carpeta falsa que se crea en las suscripciones
-		ajax.onreadystatechange = function () {
-			if (ajax.readyState == 4 && ajax.statusText == "OK") {
-				var documentResponse = $.parseHTML(ajax.responseText);
-				var folder = $(documentResponse).find("input[name='folderlist[50]']");
-				if (folder.length > 0) {
-					//la API key existe
-					apiKey = folder.val().replace("shurkey-", "");
+		var apiKey = sync.helper.getLocalValue("API_KEY");
+
+		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones 
+		if (!apiKey) {
+			var ajax = new XMLHttpRequest();
+			ajax.open("GET", "http://www.forocoches.com/foro/subscription.php?do=editfolders", false); //La buscamos en la carpeta falsa que se crea en las suscripciones
+			ajax.onreadystatechange = function () {
+				if (ajax.readyState == 4 && ajax.statusText == "OK") {
+					var documentResponse = $.parseHTML(ajax.responseText);
+					var folder = $(documentResponse).find("input[name='folderlist[50]']");
+					if (folder.length > 0) {
+						//la API key existe
+						apiKey = folder.val().replace("shurkey-", "");
+						sync.helper.setLocalValue("API_KEY", apiKey);
+					}
 				}
 			}
+			ajax.send();
 		}
-		ajax.send();
 		return apiKey;
 	}
 
