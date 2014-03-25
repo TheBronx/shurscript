@@ -309,7 +309,7 @@
 			hiddenThreadsList.append(threadsList.find('tbody').first().clone()); //Añadimos el nombre de las columnas
 
 			var threadsListHeader = threadsList.prev();
-			var hiddenThreadsHeader = $('<table id="hiddenthreadsheader" class="tborder" cellspacing="1" cellpadding="5" border="0" width="100%" align="center" style="cursor: pointer;"><tr><td class="tcat" width="100%"><span style="background: url(\'' + GM_getResourceURL('trash-black-img') + '\') no-repeat scroll 0% 0% transparent; height: 16px; display: inline-block; vertical-align: middle; width: 20px; margin-top: -2px;"></span><span id="numhiddenthreads">0</span> Hilo(s) oculto(s)</td></tr></table>');
+			var hiddenThreadsHeader = $('<table id="hiddenthreadsheader" class="tborder" cellspacing="1" cellpadding="5" border="0" width="100%" align="center" style="cursor: pointer;"><tr><td class="tcat" width="100%"><span style="background: url(\'' + SHURSCRIPT.config.imagesURL + 'trash-black.png\') no-repeat scroll 0% 0% transparent; height: 16px; display: inline-block; vertical-align: middle; width: 20px; margin-top: -2px;"></span><span id="numhiddenthreads">0</span> Hilo(s) oculto(s)</td></tr></table>');
 			hiddenThreadsHeader.click(function () {
 				hiddenThreadsList.parent().slideToggle();
 			});
@@ -338,14 +338,14 @@
 	function getThreadMenu(hilo) {
 		var menu = $("<div class='shurscript'/>");
 		if (!hilo.isHidden || hilo.isHiddenByKeyword) { //No tiene sentido marcar un hilo oculto como favorito
-			menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', GM_getResourceURL('star-img'), hilo.isFavorite, function (e) {
+			menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', SHURSCRIPT.config.imagesURL + 'star.png', hilo.isFavorite, function (e) {
 				toggleFavorite(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
 			}));
 		}
 		if (mod.helper.environment.page != "/search.php") {
-			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', GM_getResourceURL('trash-img'), hilo.isHidden && !hilo.isHiddenByKeyword, function (e) {
+			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', hilo.isHidden && !hilo.isHiddenByKeyword, function (e) {
 				toggleHidden(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();

@@ -77,13 +77,13 @@
 
 	_turnOn = function () {
 		$('head').append(_$styleTag);
-		_$lightImg.attr('src', mod.helper.getResourceURL('nightmode-on'));
+		_$lightImg.attr('src', SHURSCRIPT.config.imagesURL + 'light-on.png');
 		_setState(true);
 	};
 
 	_turnOff = function () {
 		_$styleTag.remove();
-		_$lightImg.attr('src', mod.helper.getResourceURL('nightmode-off'));
+		_$lightImg.attr('src', SHURSCRIPT.config.imagesURL + 'light-off.png');
 		_setState(false);
 	};
 

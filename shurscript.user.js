@@ -44,12 +44,6 @@
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
-// @resource        scroller-img https://github.com/TheBronx/shurscript/raw/experimental/img/scroller.png
-// @resource        star-img https://github.com/TheBronx/shurscript/raw/experimental/img/star.png
-// @resource        trash-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash.png
-// @resource        trash-black-img https://github.com/TheBronx/shurscript/raw/experimental/img/trash-black.png
-// @resource        nightmode-on https://github.com/TheBronx/shurscript/raw/experimental/img/light-on.png
-// @resource        nightmode-off https://github.com/TheBronx/shurscript/raw/experimental/img/light-off.png
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
 // ==/UserScript==

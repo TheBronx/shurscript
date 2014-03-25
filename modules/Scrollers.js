@@ -28,42 +28,16 @@
 	 */
 	mod.onNormalStart = function () {
 		if (mod.preferences.side != "center") {
-			GM_addStyle('#scrollers {\
-				opacity: 0.5;\
-				bottom: 5px;\
-				' + mod.preferences.side + ': 13px;\
-				position: fixed;\
-			}');
+			GM_addStyle('#scrollers {opacity: 0.5;bottom: 5px;' + mod.preferences.side + ': 13px;position: fixed;}');
 		} else {
-			GM_addStyle('#scrollers {\
-				opacity: 0.5;\
-				bottom: 5px;\
-				left: calc(50% - 55px);\
-				position: fixed;\
-			}');
+			GM_addStyle('#scrollers {opacity: 0.5;bottom: 5px;left: calc(50% - 55px);position: fixed;}');
 		}
 
-		GM_addStyle('#scrollers:hover {\
-						opacity: 0.9;\
-					}');
-		GM_addStyle('.scrollerArrow {\
-						background: url("' + GM_getResourceURL('scroller-img') + '") no-repeat scroll 0 0 transparent;\
-						background-size: 50px;\
-						cursor: pointer;\
-						height: 50px;\
-						width: 50px;\
-						display: inline-block;\
-						margin: 5px;\
-						opacity: 0.4;\
-					}');
-		GM_addStyle('.scrollerArrow:hover {\
-						opacity: 0.7;\
-					}');
+		GM_addStyle('#scrollers:hover {opacity: 0.9;}');
+		GM_addStyle('.scrollerArrow {background: url("' + SHURSCRIPT.config.imagesURL + 'scroller.png") no-repeat scroll 0 0 transparent;background-size: 50px;cursor: pointer;height: 50px;width: 50px;display: inline-block;margin: 5px;opacity: 0.4;}');
+		GM_addStyle('.scrollerArrow:hover {opacity: 0.7;}');
 
-		GM_addStyle('.scrollerArrow#scrollToBottomArrow {\
-						transform: rotate(180deg);\
-						-webkit-transform: rotate(180deg);\
-					}');
+		GM_addStyle('.scrollerArrow#scrollToBottomArrow {transform: rotate(180deg);-webkit-transform: rotate(180deg);}');
 
 		var container = $("<div id='scrollers'></div>");
 		var topArrow = $("<div class='scrollerArrow' id='scrollToTopArrow'></div>");
