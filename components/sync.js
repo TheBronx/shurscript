@@ -16,7 +16,7 @@
 	};
 
 	var Cloud = {
-		server: "http://cloud.shurscript.org:8080/",
+		server: SHURSCRIPT.config.server,
 		apiKey: "",
 		preferences: {}, //las preferencias sacadas del server
 
@@ -73,7 +73,7 @@
 					break;
 					case 500:
 					default:
-						bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='http://www.forocoches.com/foro/showthread.php?t=3558434'>hilo oficial</a>.</p></center>");
+						bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.</p></center>");
 					break;
 				}
 			});

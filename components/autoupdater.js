@@ -7,8 +7,7 @@
 	var autoupdater = SHURSCRIPT.core.createComponent('autoupdater');
 
 	var updateInterval = 1000 * 60 * 60, //Buscar actualizaciones cada hora
-	    currentTime,
-	    url = 'https://github.com/TheBronx/shurscript/raw/master/';
+	    currentTime;
 
 	/**
     * Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
@@ -45,7 +44,7 @@
 	function checkUpdates(callback) {
 		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
 			method: 'GET',
-			url: url + 'shurscript.user.js?' + currentTime,
+			url: SHURSCRIPT.config.updateURL + '?' + currentTime,
 			onload: function(xpr) {
 				var version = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText)[1];
 				var updated = compare(SHURSCRIPT.scriptVersion, version);
@@ -72,12 +71,16 @@
 	* Recupera el changelog de la nueva versión y lo muestra en una ventana con botones para actualizar o cancelar
 	*/
 	function showChangelog(version) {
-		var changelogUrl = url + 'CHANGELOG.md?' + currentTime;
 		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
 			method: 'GET',
-			url: changelogUrl,
+			url: SHURSCRIPT.config.rawChangelog + '?' + currentTime,
 			onload: function(resp) {
-				var changelog = parseChangelog(resp.responseText, version, changelogUrl.replace('raw', 'blob'));
+				var changelog;
+				try {
+					changelog = parseChangelog(resp.responseText, version);
+				} catch (e) {
+					changelog = "Haz clic <a target='_blank' href='" + SHURSCRIPT.config.visualChangelog + "'>aquí</a> para ver los cambios de esta versión.";
+				}
 				bootbox.dialog({
 					message: '<h4>Hay disponible una nueva versión (' + version + ') del Shurscript.</h4><p><br></p>' + changelog,
 					buttons: [{
@@ -88,7 +91,7 @@
 							className : "btn-primary",
 							callback: function() {
 								bootbox.hideAll();
-								location.href = url + 'shurscript.user.js?' + currentTime;
+								location.href = SHURSCRIPT.config.installURL + '?' + currentTime;
 							}
 						}]
 					}
@@ -102,17 +105,12 @@
 	* Coge solo el changelog de la versión que nos interesa y transforma el Markdown a HTML
 	* @param changelog: Fichero de changelog completo (todas las versiones)
 	* @param version: Versión de la que queremos sacar el changelog
-	* @param fallbackURL: Si algo falla, URL en la que podrá ver el usuario los cambios de esta versión
 	*/
-	function parseChangelog(changelog, version, fallbackURL) {
-		try {
-			version = version.replace(/\./g, "\\.");
-			changelog = changelog.match(RegExp("##[#]? v" + version + ".*([\\s\\S]*?(?=---))"))[1].trim(); //Obtenemos el trozo correspondiente a la version que buscamos
-			changelog = new Markdown.Converter().makeHtml(changelog); //Convertimos de Markdown a HTML
-			return changelog;
-		} catch (e) {
-			return "Haz clic <a target='_blank' href='" + fallbackURL + "'>aquí</a> para ver los cambios de esta versión.";
-		}
+	function parseChangelog(changelog, version) {
+		version = version.replace(/\./g, "\\.");
+		changelog = changelog.match(RegExp("##[#]? v" + version + "[ \n].*([\\s\\S]*?(?=---))"))[1].trim(); //Obtenemos el trozo correspondiente a la version que buscamos
+		changelog = new Markdown.Converter().makeHtml(changelog); //Convertimos de Markdown a HTML
+		return changelog;
 	}
 
 })(jQuery, SHURSCRIPT);

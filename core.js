@@ -15,6 +15,9 @@ var SHURSCRIPT = {
 		getResourceText: GM_getResourceText,
 		getResourceURL: GM_getResourceURL
 	},
+	config: {
+		server: "http://cloud.shurscript.org:8080/"
+	},
 	environment: {
 		page: location.pathname.replace("/foro", "")
 	}
@@ -305,8 +308,18 @@ var SHURSCRIPT = {
 			closeButton: false
 		});
 
-		//lanza la carga de componentes y modulos
-		core.loadNextComponent();
+		//Recuperamos las configuraciones del servidor
+		$.ajax({
+			type: 'GET',
+			url: SHURSCRIPT.config.server + 'config',
+			dataType: 'json'
+		}).done(function (data) {
+			$.extend(SHURSCRIPT.config, data);
+			
+			//lanza la carga de componentes y modulos
+			core.loadNextComponent();
+		});
+		
 	};
 
 	//Carga el siguiente componente. En caso contrario llama a la carga de módulos.
