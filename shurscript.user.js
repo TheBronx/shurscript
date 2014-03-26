@@ -23,7 +23,7 @@
 // @grant           GM_getResourceURL
 // @run-at          document-end
 // @require         http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
-// @require         http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js
+// @require         https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
