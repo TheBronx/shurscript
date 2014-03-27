@@ -376,13 +376,13 @@
 			threadId = 'new_thread';
 
 		var currentPostBackup = mod.helper.getValue("POST_BACKUP");
-		if (currentPostBackup) {
+		
+		if (currentPostBackup && isQuickReply()) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
 				if (getEditorContents().trim().replace(/\<br\>/g, '') == '') {
 					setEditorContents(currentPostBackup.postContents)
-				}
-				;
+				};
 				reflowTextArea();
 			}
 		}
@@ -407,19 +407,13 @@
 			});
 		} else {
 			var $sendButton = $("input[name='sbutton']");
+			$sendButton.attr("type", "button"); //Le quitamos el type 'submit' para que no envie el formulario
 			var sendForm = $sendButton.parents('form')[0];
-			var originalSubmitEvent = sendForm.onsubmit;
-			//Devolvemos false en el 'onsubmit' para evitar que se envie el formulario hasta que nuestra llamada vuelva del servidor
-			sendForm.onsubmit = function(e) {
-				if (e.explicitOriginalTarget && e.explicitOriginalTarget.name === "sbutton") { //Boton enviar respuesta
-					return false;
-				}
-			}
+			
 			$sendButton.on("click", function (e) {
-				if (originalSubmitEvent()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
+				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
 					mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
-						sendForm.onsubmit = originalSubmitEvent; //Le devolvemos el 'onsubmit' original para que se ejecute sin problemas
-						sendForm.submit();
+						sendForm.submit(); //Submit manual
 					});
 				}
 			});
