@@ -115,7 +115,7 @@
 
 		//Evento para cerrar todos los popups abiertos al hacer clic en cualquier sitio (body)
 		$('body').click(function (e) {
-			if (e.target.className.indexOf("popover") == -1 && !jQuery.contains($(".popover")[0], e.target)) { //No estamos dentro del popup abierto
+			if (e.target.className.indexOf("popover") == -1 && $(".popover").length && !jQuery.contains($(".popover")[0], e.target)) { //No estamos dentro del popup abierto
 				$(".shurmenu_opened").not(e.target.id != "" ? "#" + e.target.id : "").removeClass("shurmenu_opened");
 
 				if (e.target.id.indexOf("statusicon") == -1) { //No estamos clicando en un icono del hilo (este ya tiene el manejador de abrir y cerrar el popup)
