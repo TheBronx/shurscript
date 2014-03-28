@@ -90,10 +90,10 @@
 				GM_addStyle(".favorite>td:nth-child(3) {background-color:" + mod.preferences.favoritesColor + " !important;}");
 			}
 		}
-		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/star.png');min-width:20px;}");
-		GM_addStyle(".shurmenu_trigger img, .shurmenu_opened img {display:none;} .shurmenu_trigger, .shurmenu_opened {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://i.imgur.com/CCQcR98.gif');min-width:20px;}");
-		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png');min-width:20px;}");
-		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('http://salvatorelab.es/images/nostar.png'); margin:0 auto;} .shur_estrella a.fav {background-image:url('http://salvatorelab.es/images/star.png');}");
+		GM_addStyle(".fav img {display:none;} .fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('" + SHURSCRIPT.config.imagesURL + 'fav.png' + "');min-width:20px;}");
+		GM_addStyle(".shurmenu_trigger img, .shurmenu_opened img {display:none;} .shurmenu_trigger, .shurmenu_opened {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('" + SHURSCRIPT.config.imagesURL + 'roto2.gif' + "');min-width:20px;}");
+		GM_addStyle(".not_fav img {display:none;} .not_fav {cursor: pointer; background-repeat:no-repeat; background-position: center; background-image:url('" + SHURSCRIPT.config.imagesURL + 'nofav.png' + "');min-width:20px;}");
+		GM_addStyle(".shur_estrella {width:30px;vertical-align:middle;} .shur_estrella a {cursor: pointer; width:20px; height:20px; display:block; background-repeat:no-repeat; background-position: center; background-image:url('" + SHURSCRIPT.config.imagesURL + 'nofav.png' + "'); margin:0 auto;} .shur_estrella a.fav {background-image:url('" + SHURSCRIPT.config.imagesURL + 'fav.png' + "');}");
 
 		if (mod.preferences.highlightColor !== "") {
 			if (mod.preferences.highlightBorderOnly) {
