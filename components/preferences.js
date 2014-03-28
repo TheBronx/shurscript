@@ -186,6 +186,7 @@
 			scriptVersion: SHURSCRIPT.scriptVersion,
 			scriptBranch: SHURSCRIPT.scriptBranch,
 			apiKey: SHURSCRIPT.config.apiKey,
+			visualChangelog: SHURSCRIPT.config.visualChangelog,
 			modules: []
 		};
 
