@@ -89,7 +89,7 @@
 
 		// Click en boton "Generar nueva API Key"
 		$modal.on('click', '#change-api-key', function () {
-			bootbox.confirm("¿Está seguro de querer generar una nueva API Key? Recuerde que perderá todos sus datos y configuraciones si continúa con el proceso.", function(res) {
+			bootbox.confirm("Recuerde que generar una nueva API Key elimina todos sus datos y configuraciones. Pulse en Aceptar para continuar con el proceso.", function(res) {
 				if (res) {
 					bootbox.hideAll();
 					bootbox.dialog({message: '<center>Generando API Key...</center>'});
