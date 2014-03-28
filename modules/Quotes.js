@@ -425,7 +425,7 @@
 			notificationsBox.append(notificationsListButtons);
 		}
 
-		if (count > 1) {
+		if (count > 0) {
 			notificationsListButtons.show();
 		} else {
 			notificationsListButtons.hide();
