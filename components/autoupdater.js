@@ -39,6 +39,26 @@
 	}
 
 	/**
+	* Devuelve el changelog de la versión actual como HTML
+	*/
+	autoupdater.getChangelog = function(callback, version) {
+		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
+			method: 'GET',
+			url: SHURSCRIPT.config.rawChangelog + '?' + currentTime,
+			onload: function(resp) {
+				var changelog;
+				try {
+					changelog = parseChangelog(resp.responseText, version || SHURSCRIPT.scriptVersion);
+				} catch (e) {
+					changelog = "Haz clic <a target='_blank' href='" + SHURSCRIPT.config.visualChangelog + "'>aquí</a> para ver los cambios de esta versión.";
+				}
+				callback(changelog);
+			}
+
+		});
+	}
+
+	/**
 	* Descarga la última versión estable liberada y comprueba contra la versión actual instalada
 	*/
 	function checkUpdates(callback) {
@@ -71,34 +91,23 @@
 	* Recupera el changelog de la nueva versión y lo muestra en una ventana con botones para actualizar o cancelar
 	*/
 	function showChangelog(version) {
-		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
-			method: 'GET',
-			url: SHURSCRIPT.config.rawChangelog + '?' + currentTime,
-			onload: function(resp) {
-				var changelog;
-				try {
-					changelog = parseChangelog(resp.responseText, version);
-				} catch (e) {
-					changelog = "Haz clic <a target='_blank' href='" + SHURSCRIPT.config.visualChangelog + "'>aquí</a> para ver los cambios de esta versión.";
+		autoupdater.getChangelog(function() {
+			bootbox.dialog({
+				message: '<h4>Hay disponible una nueva versión (' + version + ') del Shurscript.</h4><p><br></p>' + changelog,
+				buttons: [{
+						label : "Más tarde",
+						className : "btn-default"
+					}, {
+						label : "Actualizar",
+						className : "btn-primary",
+						callback: function() {
+							bootbox.hideAll();
+							location.href = SHURSCRIPT.config.installURL + '?' + currentTime;
+						}
+					}]
 				}
-				bootbox.dialog({
-					message: '<h4>Hay disponible una nueva versión (' + version + ') del Shurscript.</h4><p><br></p>' + changelog,
-					buttons: [{
-							label : "Más tarde",
-							className : "btn-default"
-						}, {
-							label : "Actualizar",
-							className : "btn-primary",
-							callback: function() {
-								bootbox.hideAll();
-								location.href = SHURSCRIPT.config.installURL + '?' + currentTime;
-							}
-						}]
-					}
-				);
-			}
-
-		});
+			);
+		}, version);
 	}
 
 	/**

@@ -312,12 +312,13 @@ var SHURSCRIPT = {
 		$.ajax({
 			type: 'GET',
 			url: SHURSCRIPT.config.server + 'config',
-			dataType: 'json'
 		}).done(function (data) {
 			$.extend(SHURSCRIPT.config, data);
-			
+
 			//lanza la carga de componentes y modulos
 			core.loadNextComponent();
+		}).error(function(error){
+			bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.</p></center>");
 		});
 		
 	};

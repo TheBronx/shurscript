@@ -6,12 +6,16 @@
     color: #333 !important;
 }
 
-#shurscript-settings-window p {
+#shurscript-settings-window .shur-module-preferences p {
     margin: 0;
 }
 
 #shurscript-settings-window, #shurscript-settings-window .panel-body > p, #shurscript-settings-window .help-block {
     font-size: 13px !important;
+}
+
+#shurscript-settings-window .lead.modal-title {
+    font-size: 24px !important;
 }
 
 #shurscript-settings-window .panel-heading > h3 {
@@ -56,4 +60,24 @@
 
 .label.branch-master {
     display: none; /* No mostramos el nombre de la rama si es la master */
+}
+
+#shurscript-settings-window .modal-header {
+    border-bottom: none;
+}
+
+#shurscript-settings-window .nav > li > a:focus {
+    outline: none;
+}
+
+#shurscript-settings-window .nav.nav-tabs {
+    padding-left: 20px;
+}
+
+#shurscript-settings-window .modal-body p {
+    font: inherit;
+}
+
+#tab-collaborate h4 {
+    margin-top: 20px;
 }

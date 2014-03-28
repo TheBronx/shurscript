@@ -47,6 +47,8 @@
 		},
 
 		getAll: function (callback) {
+			SHURSCRIPT.config.apiKey = this.apiKey;
+
 			sync.helper.log("Cloud.getAll() using API key: " + this.apiKey);
 			$.ajax({
 				type: 'get',
@@ -61,10 +63,9 @@
 			})
 			.error(function(error){
 				switch (error.status) {
-					case 404:
+					case 403:
 						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
 							if (res) {
-								sync.helper.deleteLocalValue("API_KEY");
 								Cloud.generateApiKey(function () {
 									Cloud.getAll(callback);
 								});
@@ -86,6 +87,7 @@
 		},
 
 		generateApiKey: function (callback) {
+			sync.helper.deleteLocalValue("API_KEY");
 			sync.helper.log("Cloud.generateApiKey()");
 			$.ajax({
 				type: 'POST',
@@ -133,7 +135,12 @@
 				Cloud.getAll(callback); //notificamos al core, el siguiente componente ya puede cargar
 			});
 		}
+
 	};
+
+	sync.generateApiKey = function(callback) {
+		Cloud.generateApiKey(callback);
+	}
 
 	/**
 	 * Devuelve la API key guardada en las suscripciones del foro.

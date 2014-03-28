@@ -273,6 +273,11 @@
 	 */
 	moduleManager.startOnDocReadyModules = function () {
 
+		//Se ha generado una nueva key, manualmente. No hacemos migración.
+		if (moduleManager.helper.location.hash.indexOf("newkey") != -1) {
+			moduleManager.helper.setValue("MIGRATION_DONE", true);
+		}
+
 		//Migramos las antiguas preferencias (Antes de que se sincronizaran en la nube)
 		if (!moduleManager.helper.getValue("MIGRATION_DONE")) {
 			moduleManager.migratePreferences(function(){

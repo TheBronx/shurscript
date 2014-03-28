@@ -74,11 +74,33 @@
 		$(".modal-backdrop").css("z-index", 999);
 
 		//Ajustar al tamaño de la ventana
-		var setBodyHeight = function() {
-			$modal.find('.modal-body').css('height', $(window).height() - 220);
-		};
-		$(window).on('resize', setBodyHeight);
+		$(window).on('resize', function() {
+			$modal.find('.modal-body').css('height', $(window).height() - 280);
+		});
 		$(window).trigger('resize');
+
+		//Recuperar el changelog para la pestaña 'Acerca de'
+		$modal.find('a[data-toggle="tab"][href="#tab-about"]').on('shown.bs.tab', function (e) {
+			SHURSCRIPT.autoupdater.getChangelog(function(changelog) {
+				$modal.find('#shur-changelog .panel-body').html(changelog);
+			});
+			$(this).off('shown.bs.tab')
+		});
+
+		// Click en boton "Generar nueva API Key"
+		$modal.on('click', '#change-api-key', function () {
+			bootbox.confirm("¿Está seguro de querer generar una nueva API Key? Recuerde que perderá todos sus datos y configuraciones si continúa con el proceso.", function(res) {
+				if (res) {
+					bootbox.hideAll();
+					bootbox.dialog({message: '<center>Generando API Key...</center>'});
+					SHURSCRIPT.sync.generateApiKey(function(){
+						preferences.helper.location.href = "#newkey";
+						preferences.helper.location.reload();
+					});
+				}
+			});
+		});
+
 
 		preferences.$modal = $modal;
 	};
@@ -163,6 +185,7 @@
 		var modalData = {
 			scriptVersion: SHURSCRIPT.scriptVersion,
 			scriptBranch: SHURSCRIPT.scriptBranch,
+			apiKey: SHURSCRIPT.config.apiKey,
 			modules: []
 		};
 
@@ -192,6 +215,12 @@
 		// Mete CSS para el modal
 		preferences.helper.addStyle('modalcss');
 
+		// Reabrir las preferencias en la pestaña 'Acerca de' si se acaba de generar una nueva key
+		if (preferences.helper.location.hash.indexOf("newkey") != -1) {
+			preferences.onShow();
+			preferences.$modal.find('a[data-toggle="tab"][href="#tab-about"]').tab('show');
+			setTimeout(function(){preferences.helper.location.href = "#"}, 1000);
+		}
 	};
 
 	/**
