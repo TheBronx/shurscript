@@ -13,7 +13,9 @@ var SHURSCRIPT = {
 		registerMenuCommand: GM_registerMenuCommand,
 		addStyle: GM_addStyle,
 		getResourceText: GM_getResourceText,
-		getResourceURL: GM_getResourceURL
+		getResourceURL: GM_getResourceURL,
+        info: GM_info,
+//        getMetadata: GM_getMetadata
 	},
 	config: {
 		server: "http://cloud.shurscript.org:8080/"
@@ -23,7 +25,14 @@ var SHURSCRIPT = {
 	}
 };
 
-(function ($, SHURSCRIPT, bootbox, console, undefined) {
+/**
+ * @param {object} $ - jQuery object
+ * @param {object} _ - underscore object
+ * @param {object} bootbox - bootbox object
+ * @param {object} console - console object
+ * @param {undefined} undefined - safe reference to undefined
+ */
+(function ($, _, SHURSCRIPT, bootbox, console, undefined) {
 	'use strict';
 
 	var core = {},
@@ -34,19 +43,16 @@ var SHURSCRIPT = {
 	/**
 	* Comprobamos que está soportada la extensión y seteamos al objeto SHURSCRIPT la version y la rama del script actual.
 	*/
-	var isCompatible = function() {
+	var isCompatible = function () {
 
 		var version;
-		if (typeof GM_info !== 'undefined' ) { //GreaseMonkey, TamperMonkey, ...
-			version = GM_info.script.version;
-		} else if (typeof GM_getMetadata !== 'undefined') { //Scriptish
-			version = GM_getMetadata('version');
-			version = version+"";//getMetadata returns: Object, String or Array
-		}
-
-		if (!version) {
-			return false;
-		}
+		if (GM.info !== undefined) { // GreaseMonkey, TamperMonkey, ...
+			version = GM.info.script.version;
+		} else if (GM_getMetadata !== undefined) { // Scriptish
+			version = GM_getMetadata('version') + ''; // getMetadata returns: Object, String or Array
+		} else {
+            return false;
+        }
 
 		//Separamos número de versión y nombre de la rama (master, dev o exp)
 		var splitted = version.split("-");
@@ -54,7 +60,7 @@ var SHURSCRIPT = {
 		SHURSCRIPT.scriptBranch = splitted[1] || "master";
 
 		return true;
-	}
+	};
 
 	/**
 	 * Crea un namespace dentro de SHURSCRIPT pasandole
@@ -72,7 +78,7 @@ var SHURSCRIPT = {
 			segments = segments.slice(1);
 		}
 
-		$.each(segments, function (index, nameNS) {
+		_.each(segments, function (nameNS) {
 			// Inicializa si no existe
 			parent[nameNS] = parent[nameNS] || {};
 
@@ -89,7 +95,7 @@ var SHURSCRIPT = {
 	var protoComponentHelper = {
 		/**
 		 * Inicializa el objeto
-		 * @param specs.id - id del propietario de este helper
+		 * @param moduleId - id del propietario de este helper
 		 */
 		__init__: function (moduleId) {
 			this.moduleId = moduleId;
@@ -103,18 +109,19 @@ var SHURSCRIPT = {
 		log: function (message) {
 			console.log(this._getCallerDescription() + message);
 			var $log = $('#shurscript_log');
-			if ($log.length==0) {
+
+			if ($log.length === 0) {
 				$(document.body).append('<div id="shurscript_log" style="display:none;"></div>');
 				$log = $('#shurscript_log');
 			}
-			$log.append(message+"<br>");
+			$log.append(message + "<br>");
 		},
 
 		/**
 		 * Compone el string para este modulo + usuario + key
 		 *
 		 * @param {string} key - nombre de la llave
-		 * @param {bool} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
+		 * @param {boolean} [withId] - bool para incluir o no el ID del usuario en la llave. Default: false
 		 */
 		_getShurKey: function (key, withId) {
 			var id = (withId === true) ? '_' + SHURSCRIPT.environment.user.id : '';
@@ -135,7 +142,7 @@ var SHURSCRIPT = {
 		 * @param callback
 		 */
 		setValue: function (key, value, callback) {
-			SHURSCRIPT.GreaseMonkey.setValue(this._getShurKey(key, false), value, callback);
+			GM.setValue(this._getShurKey(key, false), value, callback);
 		},
 
 		/**
@@ -144,16 +151,17 @@ var SHURSCRIPT = {
 		 * @param defaultValue
 		 */
 		getValue: function (key, defaultValue) {
-			return SHURSCRIPT.GreaseMonkey.getValue(this._getShurKey(key, false), defaultValue);
+			return GM.getValue(this._getShurKey(key, false), defaultValue);
 		},
 
-		/**
-		 * Elimina un valor del servidor
-		 *
-		 * @param key
-		 */
+        /**
+         * Elimina un valor del servidor
+         *
+         * @param key
+         * @param {function} callback - funcion a ejecutar despues de la operacion
+         */
 		deleteValue: function (key, callback) {
-			SHURSCRIPT.GreaseMonkey.deleteValue(this._getShurKey(key, false), callback);
+			GM.deleteValue(this._getShurKey(key, false), callback);
 		},
 
 		/**
@@ -161,8 +169,9 @@ var SHURSCRIPT = {
 		 * @param key
 		 * @param value
 		 */
+        // TODO [ikaros45 28.03.2014]: si es en el servidor, por que se llama local?
 		setLocalValue: function (key, value) {
-			GM_setValue(this._getShurKey(key, true), value);
+			GM.setValue(this._getShurKey(key, true), value);
 		},
 
 		/**
@@ -171,7 +180,7 @@ var SHURSCRIPT = {
 		 * @param defaultValue
 		 */
 		getLocalValue: function (key, defaultValue) {
-			return GM_getValue(this._getShurKey(key, true), defaultValue);
+			return GM.getValue(this._getShurKey(key, true), defaultValue);
 		},
 
 		/**
@@ -180,7 +189,7 @@ var SHURSCRIPT = {
 		 * @param key - nombre llave
 		 */
 		deleteLocalValue: function (key) {
-			GM_deleteValue(this._getShurKey(key, true));
+			GM.deleteValue(this._getShurKey(key, true));
 		},
 
 		/**
@@ -191,7 +200,7 @@ var SHURSCRIPT = {
 		 */
 		throw: function (message, exception) {
 			this.log('[EXCEPTION] - ' + message);
-			if (typeof exception !== 'undefined') {
+			if (exception !== undefined) {
 				this.log(exception);
 				console.log(exception);
 			}
@@ -249,13 +258,11 @@ var SHURSCRIPT = {
 	/**
 	 * Crea un componente para la aplicacion
 	 *
-	 * @param {string} specs.id - id componente
-	 * @param {string} specs.name - nombre componente
-	 * @param {string} specs.description - que hace este componente
+	 * @param {string} id - id componente
 	 */
 	core.createComponent = function (id) {
 		if (id === undefined) {
-			core.helper.throw('Error al crear componente. La propiedad ' + prop + ' no ha sido definida.');
+			core.helper.throw('Error al crear componente. El ID no ha sido definido.');
 		}
 
 		// Crea namespace y copiale las propiedades
@@ -263,7 +270,9 @@ var SHURSCRIPT = {
 		comp.id = id;
 
 		//Registra el componente
-		if (core.components === undefined) core.components = [];
+		if (core.components === undefined) {
+            core.components = [];
+        }
 		core.components.push(id);
 
 		// Metele un helper
@@ -279,7 +288,7 @@ var SHURSCRIPT = {
 
 		if (!isCompatible()) {
 			alert('SHURSCRIPT: El complemento o extensión de userscripts que usas en tu navegador no está soportado.');
-			return false;
+			return;
 		}
 
 		var body_html = $('body').html();
@@ -289,7 +298,7 @@ var SHURSCRIPT = {
 
 		// Si el usuario no está logueado, aborta.
 		if (!id_regex_results) {
-			return false;
+			return;
 		}
 
 		// Guarda info usuario
@@ -311,9 +320,9 @@ var SHURSCRIPT = {
 		//Recuperamos las configuraciones del servidor
 		$.ajax({
 			type: 'GET',
-			url: SHURSCRIPT.config.server + 'config-' + SHURSCRIPT.scriptBranch,
+			url: SHURSCRIPT.config.server + 'config-' + SHURSCRIPT.scriptBranch
 		}).done(function (data) {
-			$.extend(SHURSCRIPT.config, data);
+			_.extend(SHURSCRIPT.config, data);
 
 			//lanza la carga de componentes y modulos
 			core.loadNextComponent();
@@ -323,27 +332,33 @@ var SHURSCRIPT = {
 		
 	};
 
-	//Carga el siguiente componente. En caso contrario llama a la carga de módulos.
-	//La carga de componentes se hace asíncronamente y por orden de "registro" (SHURSCRIPT.core.createComponent())
-	//cada componente debe implementar un método load(callback) y llamar a dicho callback cuando termine
-	//Así se permite que los componentes puedan bloquear la carga del resto de scripts y módulos
+	// Carga el siguiente componente. En caso contrario llama a la carga de módulos.
+	// La carga de componentes se hace asíncronamente y por orden de "registro" (SHURSCRIPT.core.createComponent())
+	// cada componente debe implementar un método load(callback) y llamar a dicho callback cuando termine
+	// Así se permite que los componentes puedan bloquear la carga del resto de scripts y módulos
 	core.loadNextComponent = function () {
 		var component = core.getNextComponent();
-		if (component !== undefined) {
-			if (typeof(component.loadAndCallback) === 'function') { //existe funcion de carga?
-				console.log("Cargando componente " + component.id);
-				component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
-			} else {
-				if (typeof(component.load) === 'function') {
-					component.load(); //sin callback
-				}
-				core.loadNextComponent();
-			}
-		} else {
-			// no quedan componentes
-			// Lanza carga modulos
-			SHURSCRIPT.moduleManager.startOnDocReadyModules();
-		}
+
+        if (component === undefined) {
+			// No quedan componentes, lanza carga modulos
+            SHURSCRIPT.moduleManager.startOnDocReadyModules();
+            return;
+        }
+
+        // TODO [ikaros45 28.03.2014]: No hay que comprobar si la funcion existe, sino definir una
+        // funcion dummy en el prototype que puede ser sobreescrita por los modulos
+
+        if (_.isFunction(component.loadAndCallback)) { // existe funcion de carga?
+            console.log("Cargando componente " + component.id);
+            component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
+            return;
+        }
+
+        // TODO [ikaros45 28.03.2014]: lo mismo aqui... no hay que comprobar si existe!
+        if (_.isFunction(component.load)) {
+            component.load(); // sin callback
+        }
+        core.loadNextComponent();
 	};
 
 	// devuelve el siguiente componente en el proceso de carga
@@ -356,7 +371,6 @@ var SHURSCRIPT = {
 			}
 			return SHURSCRIPT[core.components[core.componentIndex]];
 		}
-		return;
 	};
 
 	/**
@@ -367,4 +381,4 @@ var SHURSCRIPT = {
 		SHURSCRIPT.moduleManager.startEagerModules();
 	};
 
-})(jQuery, SHURSCRIPT, bootbox, console);
+})(jQuery, _, SHURSCRIPT, bootbox, console);
