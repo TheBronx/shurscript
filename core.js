@@ -311,7 +311,7 @@ var SHURSCRIPT = {
 		//Recuperamos las configuraciones del servidor
 		$.ajax({
 			type: 'GET',
-			url: SHURSCRIPT.config.server + 'config',
+			url: SHURSCRIPT.config.server + 'config-' + SHURSCRIPT.scriptBranch,
 		}).done(function (data) {
 			$.extend(SHURSCRIPT.config, data);
 
