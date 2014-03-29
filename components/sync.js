@@ -74,7 +74,7 @@
 					break;
 					case 500:
 					default:
-						bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.</p></center>");
+						bootbox.alert("<h3>Oops...</h3><center><p>Parece que hay tormenta en el cloud de Shurscript... <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.</p></center>");
 					break;
 				}
 			});
