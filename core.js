@@ -13,9 +13,7 @@ var SHURSCRIPT = {
 		registerMenuCommand: GM_registerMenuCommand,
 		addStyle: GM_addStyle,
 		getResourceText: GM_getResourceText,
-		getResourceURL: GM_getResourceURL,
-//        info: GM_info,
-//        getMetadata: GM_getMetadata
+		getResourceURL: GM_getResourceURL
 	},
 	config: {
 		server: "http://cloud.shurscript.org:8080/"
@@ -46,9 +44,9 @@ var SHURSCRIPT = {
 	var isCompatible = function () {
 
 		var version;
-		if (GM.info !== undefined) { // GreaseMonkey, TamperMonkey, ...
-			version = GM.info.script.version;
-		} else if (GM_getMetadata !== undefined) { // Scriptish
+		if (typeof GM_info !== "undefined") { // GreaseMonkey, TamperMonkey, ...
+			version = GM_info.script.version;
+		} else if (typeof GM_getMetadata !== "undefined") { // Scriptish
 			version = GM_getMetadata('version') + ''; // getMetadata returns: Object, String or Array
 		} else {
             return false;
