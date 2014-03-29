@@ -167,9 +167,8 @@ var SHURSCRIPT = {
 		 * @param key
 		 * @param value
 		 */
-        // TODO [ikaros45 28.03.2014]: si es en el servidor, por que se llama local?
 		setLocalValue: function (key, value) {
-			GM.setValue(this._getShurKey(key, true), value);
+			GM_setValue(this._getShurKey(key, true), value);
 		},
 
 		/**
@@ -178,7 +177,7 @@ var SHURSCRIPT = {
 		 * @param defaultValue
 		 */
 		getLocalValue: function (key, defaultValue) {
-			return GM.getValue(this._getShurKey(key, true), defaultValue);
+			return GM_getValue(this._getShurKey(key, true), defaultValue);
 		},
 
 		/**
@@ -187,7 +186,7 @@ var SHURSCRIPT = {
 		 * @param key - nombre llave
 		 */
 		deleteLocalValue: function (key) {
-			GM.deleteValue(this._getShurKey(key, true));
+			GM_deleteValue(this._getShurKey(key, true));
 		},
 
 		/**
@@ -213,6 +212,20 @@ var SHURSCRIPT = {
 			var css = GM.getResourceText(styleResource);
 			GM.addStyle(css);
 		},
+		
+		/**
+		 * Muestra un mensaje al usuario en una barra arriba de la página
+		 *
+		 * @param {object} properties { 
+		 *						message: "Mensaje a mostrar",
+		 *						type: ["info", "success", "warning", "danger"],
+		 *						onClose: "Función a ejecutar después al hacer clic en el aspa de cerrar"
+		 *                 }
+		 */
+		showMessageBar: function (properties) {
+			SHURSCRIPT.topbar.showMessage(properties);
+		},
+		
 		getResourceText: GM.getResourceText,
 		getResourceURL: GM.getResourceURL,
 		bootbox: bootbox,
@@ -324,8 +337,18 @@ var SHURSCRIPT = {
 
 			//lanza la carga de componentes y modulos
 			core.loadNextComponent();
+			
+			core.helper.deleteLocalValue('SERVER_DOWN_ALERT');
 		}).error(function(error){
-			bootbox.alert("<h3>Oops...</h3><center><p>Algo no funciona como debería en el servidor del Shurscript <img src='http://cdn.forocoches.com/foro/images/smilies/frown.gif' alt=':('/> </p><p>Inténtalo de nuevo en unos instantes o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.</p></center>");
+			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
+				core.helper.showMessageBar({
+					message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",
+					type: "danger",
+					onClose: function() {
+						core.helper.setLocalValue('SERVER_DOWN_ALERT', true);
+					}
+				});
+			}
 		});
 
 	};
