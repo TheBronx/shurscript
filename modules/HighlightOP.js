@@ -119,9 +119,9 @@
 				var elem = quotes[i].getElementsByTagName("B");
 				
 				if (elem && elem.length > 0) {
-					var quotedUser = elem[0].innerHTML;
+					var quotedUser = elem[0].textContent;
 				
-					if (quotedUser === op && currentUser !== username) {
+					if (quotedUser === op && quotedUser !== username) {
 						quotes[i].classList.add("op_quote");
 					}
 					
