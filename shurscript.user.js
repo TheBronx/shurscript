@@ -23,7 +23,7 @@
 // @grant           GM_getResourceURL
 // @grant           GM_getMetadata
 // @run-at          document-end
-// @require         http://cdnjs.cloudflare.com/ajax/libs/underscore-contrib/0.1.4/underscore-contrib.min.js
+// @require         http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
 // @require         http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
