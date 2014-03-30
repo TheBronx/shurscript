@@ -70,7 +70,6 @@
 		qmbutton.value = buttonText;
 
 		fieldsetb.appendChild(qmbutton); // Añade el botón al fieldset
-		console.log("fieldset agregado textarea");
 	}
 
 	/**
@@ -127,7 +126,6 @@
 	}
 
 	function findFirstQuote() {
-		console.log(xmlhttp);
 		if (xmlhttp.readyState == 4) {// 4 = "loaded"
 			// Comprueba el retorno, si no es un post, salta un aviso.
 			var gotPostOK = true;
