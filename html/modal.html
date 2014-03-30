@@ -14,6 +14,7 @@
 				<li class="active"><a href="#tab-pref" data-toggle="tab">Preferencias</a></li>
 				<li><a href="#tab-about" data-toggle="tab">Acerca de</a></li>
 				<li><a href="#tab-collaborate" data-toggle="tab">Colabora</a></li>
+				<li><a href="#tab-debug" data-toggle="tab">Reportar fallo</a></li>
 			</ul>
 
 			<div class="tab-content">
@@ -175,6 +176,36 @@
 				</div>
 
 				<center><h5>¡Muchas gracias!</h5></center>
+			</div>
+			
+			<!-- Pestaña de Reportar fallo -->
+			<div class="modal-body tab-pane" id="tab-debug" style="overflow: auto;">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Enviar informe de errores</strong>
+					</div>
+					<div class="panel-body">
+						<form role="form" method="post" id="debug-form">
+							<div class="form-group">
+								<label for="shurscript-log">Usuario</label>
+								<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=SHURSCRIPT.environment.user.name%>" readonly/>
+							</div>
+							<div class="form-group">
+								<label for="shurscript-log">Detalles de lo ocurrido</label>
+								<textarea class="form-control" id="debug-details" name="debug-details" rows="4" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
+							</div>
+							<div class="form-group">
+								<label for="shurscript-log">Registro de shurscript</label>
+								<textarea class="form-control" id="debug-log" name="debug-log" rows="6" readonly></textarea>
+							</div>
+							<input type="button" class="btn btn-block btn-success" id="debug-send" name="debug-send" value="Enviar a los desarrolladores"/>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<strong>Importante:</strong> El contenido del registro de shurscript contiene tu API key y, por tanto, no deberías hacerlo público. Puedes mandarlo a los desarrolladores con este formulario pero <u>nunca</u> lo pegues en ForoCoches.
+					</div>
+				</div>
 			</div>
 
 		</div>
