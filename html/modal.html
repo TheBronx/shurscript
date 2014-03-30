@@ -1,0 +1,228 @@
+<div style="z-index:1020" class="shurscript modal fade" id="shurscript-settings-window" tabindex="-1" role="dialog" data-backdrop="true">
+	<div class="modal-dialog" style="width:800px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="lead modal-title">
+					<center>
+						<img src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="margin-bottom: 2px;">&nbsp;shurscript
+					</center>
+				</h3>
+			</div>
+
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab-pref" data-toggle="tab">Preferencias</a></li>
+				<li><a href="#tab-about" data-toggle="tab">Acerca de</a></li>
+				<li><a href="#tab-collaborate" data-toggle="tab">Colabora</a></li>
+				<li><a href="#tab-debug" data-toggle="tab">Reportar fallo</a></li>
+			</ul>
+
+			<div class="tab-content">
+				<!-- Pestaña de Preferencias -->
+				<div class="modal-body tab-pane active" id="tab-pref" style="overflow: auto;">
+
+					<% modules.forEach(function (module, index, arr) { %>
+
+					<!-- Grupo opciones modulo -->
+					<div data-module-id="<%=module.id%>" class="panel shur-module-preferences <%=module.preferences.enabled ? '' : 'disabled-module'%>">
+
+						<div class="panel-heading row-fluid">
+							<input class="shur-module-enabled" type="checkbox" <%=module.preferences.enabled ? 'checked' : ''%>>
+							<h3 class="panel-title"><%=module.name%></h3>
+							<% if (module.options.length > 0) { %>
+							<button data-toggle="button"
+							class="btn btn-default btn-sm pull-right shur-btn-options">
+							Opciones
+						</button>
+						<% } %>
+					</div>
+
+					<div class="panel-body" <%=module.preferences.enabled ? '' : 'style="display: none;"'%>>
+						<p><%=module.description%></p>
+					</div>
+
+					<div class="shur-options-body" style="display: none;">
+						<hr style="margin:0">
+
+						<div class="panel-body">
+							<!-- Loop sobre las opciones del modulo (si hay) -->
+							<% module.options.forEach(function (option, index, arr) { %>
+
+							<% if (option.type === 'checkbox') { %>
+							<div class="shur-checkbox-group shur-option">
+
+								<input data-maps-to="<%=option.mapsTo%>" type="checkbox"
+								<%=module.preferences[option.mapsTo] ? 'checked' : ''%>>
+
+								<label><%=option.caption%></label>
+
+								<% if (option.subCaption) { %>
+								<span class="shur-sub-label"><%=option.subCaption%></span>
+								<% } %>
+							</div>
+
+							<% } else if (option.type === 'radio') { %>
+							<div class="shur-radio-group shur-option">
+								<label><%=option.caption%></label>
+
+								<% option.elements.forEach(function(radio, index, arr) { %>
+								<div class="shur-radio-element">
+									<input type="radio"
+									name="<%=option.mapsTo%>"
+									data-maps-to="<%=option.mapsTo%>"
+									value="<%=radio.value%>"
+									<%=radio.value == module.preferences[option.mapsTo] ? 'checked' : ''%>> <!-- Si el valor de este radio es igual al de las preferencias del modulo, marca como checked -->
+
+									<%=radio.caption%>
+
+									<% if (radio.subCaption) { %>
+									<span class="shur-sub-label"><%=radio.subCaption%></span>
+									<% } %>
+								</div>
+
+								<% }); %>
+							</div>
+
+							<% } else if (option.type === 'text' || option.type === 'color') { %>
+							<div class="shur-text-group shur-option">
+								<label><%=option.caption%></label>
+								<input  type="<%=option.type%>"
+								class="form-control"
+								data-maps-to="<%=option.mapsTo%>"
+								value="<%=module.preferences[option.mapsTo]%>">
+								<% if (option.subCaption) { %>
+								<span class="shur-sub-label"><%=option.subCaption%></span>
+								<% } %>
+							</div>
+
+							<% } else if (option.type === 'header') { %>
+							<h4 class="shur-header"><%=option.caption%></h4>
+							<%=option.subCaption%>
+							<% } %>
+
+							<hr>
+
+							<% }); %>
+						</div>
+					</div>
+
+
+				</div>
+				<% });%>
+			</div>
+			
+			<!-- Pestaña de Acerca de -->
+			<div class="modal-body tab-pane" id="tab-about" style="overflow: auto;">
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<strong>Versión instalada:</strong> <%=scriptVersion%> <span class="label branch-<%=scriptBranch%>"><%=scriptBranch%></span>
+						<a style="margin-left:15px;" class="btn btn-default btn-sm" data-loading-text="Comprobando actualizaciones..." id="check-shurscript-updates">Comprobar actualizaciones</a>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>API Key:</strong> <span id="current-api-key"><%=apiKey%></span>
+						<a style="margin-left:15px;" class="btn btn-default btn-sm" id="change-api-key">Generar una nueva</a>
+					</div>
+					<div class="panel-body">
+						Cada usuario del script tiene asociada una clave única con la que se almacenan y sincronizan todos sus valores y ajustes. Pulsa el botón de "Generar una nueva" solo si quieres resetear todas tus preferencias o tienes algún problema con las mismas y/o algún desarrollador del script te lo ha recomendado.
+					</div>
+				</div>
+				<div class="panel panel-default" id="shur-changelog">
+					<div class="panel-heading"><strong>Changelog</strong></div>
+					<div class="panel-body">
+						Cargando...
+					</div>
+					<div class="panel-footer">
+						<a href="<%=visualChangelog%>" target="_blank">Ver changelog de todas las versiones</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Pestaña de Colabora -->
+			<div class="modal-body tab-pane" id="tab-collaborate" style="overflow: auto;">
+				<div style="padding: 0 15px;">
+					<p><strong>.shurscript</strong> es un proyecto desarrollado de forma completamente voluntaria por algunos usuarios de ForoCoches y que requiere de ayuda para continuar mejorando.</p>
+
+					<p>Puedes colaborar con .shurscript de tres maneras: ayudando con el desarrollo, reportando bugs o sugiriendo características y, por último, ayudando económicamente al mantenimiento del servidor.</p>
+				</div>
+				<br>
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>Ayudando con el desarrollo</strong></div>
+					<div class="panel-body">
+						<p>Si tienes conocimientos de HTML, CSS y/o Javascript, ¡echa un ojo al <a href="https://github.com/TheBronx/shurscript/" target="_blank">código de <strong>.shurscript</strong></a> y échanos una mano! El script está completamente modularizado, de forma que puedes desarrollar nuevos módulos siguiendo nuestra plantilla, que gustosos incluiremos a la rama principal. Si quieres colaborar y no sabes por donde empezar, <a href="https://shurscript.uservoice.com" target="_blank">nuestro UserVoice</a> tienes ideas propuestas por algunos foreros que puedes implementar.</p>
+					</div>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>Reportando bugs o sugiriendo nuevas funcionalidades</strong></div>
+					<div class="panel-body">
+						<p>Estamos seguros de que el script puede mejorar mucho más. Ayúdanos a hacerlo reportando fallos o comportamientos no deseados de algún componente del script <a href="https://github.com/TheBronx/shurscript/issues" target="_blank">en nuestro GitHub</a> y trataremos de arreglarlos lo antes posible.</p>
+
+						<p>Además, si te gustaría ver alguna novedad en <strong>.shurscript</strong>, deja constancia de ella en <a href="https://shurscript.uservoice.com" target="_blank">nuestro UserVoice</a> o vota por las ya peticiones ya existentes. Evaluaremos las más votadas frecuentemente y trataremos de desarrollarlas lo mejor posible.</p>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>Económicamente</strong></div>
+					<div class="panel-body">
+						<p>Nuestro script desde la versión 0.20, lleva asociados algunos costes económicos que deben ser cubiertos para que su funcionamiento sea aún más impresionante, como el servidor que utilizamos para sincronizar tus preferencias, alojar las imágenes y desde el que lanzamos las nuevas versiones.</p>
+
+						<p>Todo esto supone unos costes fijos mensuales que alguien ha de afrontar y que con una pequeña donación ayudarás a cubrir. Cubrir estos gastos nos permitirá no solo mantener funcionando el script, sino añadir nuevas e interesantes mejoras que nos proporciona el tener un servidor externo y por otro lado, ganar en rendimiento. Puedes realizar una donación utilizando PayPal y dejarnos un mensaje de agradecimiento desde <a href="http://shurscript.org/colabora" target="_blank">nuestra página de colaboraciones</a>.</p>
+
+						<p>Por otra parte, en la zona inferior de la ventana de preferencias tienes dos banners de empresas que están colaborando de forma directa o indirecta con nosotros. Si por algún casual te interesan los productos que ofrecen, ser cliente ayuda indirectamente a <strong>.shurscript</strong> a hacerse cargo de estos gastos.</p>
+					</div>
+				</div>
+
+				<center><h5>¡Muchas gracias!</h5></center>
+			</div>
+			
+			<!-- Pestaña de Reportar fallo -->
+			<div class="modal-body tab-pane" id="tab-debug" style="overflow: auto;">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Enviar informe de errores</strong>
+					</div>
+					<div class="panel-body">
+						<form role="form" method="post" id="debug-form">
+							<div class="form-group">
+								<label for="debug-user">Usuario</label>
+								<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=userDebug%>" readonly/>
+							</div>
+							<div class="form-group">
+								<label for="debug-url">URL</label>
+								<input type="text" name="debug-url" class="form-control" id="debug-url" value="<%=urlDebug%>" readonly/>
+							</div>
+							<div class="form-group">
+								<label for="debug-log">Registro de shurscript</label>
+								<textarea class="form-control" id="debug-log" name="debug-log" rows="4" readonly></textarea>
+							</div>
+							<div class="form-group">
+								<label for="debug-details">Detalles de lo ocurrido</label>
+								<textarea class="form-control" id="debug-details" name="debug-details" rows="5" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
+							</div>
+							<input type="button" class="btn btn-block btn-success" id="debug-send" name="debug-send" value="Enviar a los desarrolladores"/>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<strong>Importante:</strong> El contenido del registro de shurscript contiene tu API key y, por tanto, no deberías hacerlo público. Puedes mandarlo a los desarrolladores con este formulario pero <u>nunca</u> lo pegues en ForoCoches.
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<div class="col-xs-6 left">
+				<a href="http://bit.ly/1pbuV65" target="_blank"><img src="http://shurscript.org/img/partner_do.png"/></a>
+				<a href="http://bit.ly/1nDZOow" target="_blank"><img src="http://shurscript.org/img/partner_espattio.png"/></a>
+				<p>Espattio <a href="http://shurscript.org/colabora">colabora</a> corriendo con los gastos del hosting y VPS :)</p>
+			</div>
+			<div class="col-xs-6 right">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" id="save-settings">Guardar cambios</button>
+			</div>
+		</div>
+	</div>
+</div>

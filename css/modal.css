@@ -1,0 +1,83 @@
+.disabled-module .btn, .disabled-module .shur-options-body {
+    display: none !important;
+}
+
+#shurscript-settings-window, #shurscript-settings-window .panel {
+    color: #333 !important;
+}
+
+#shurscript-settings-window .shur-module-preferences p {
+    margin: 0;
+}
+
+#shurscript-settings-window, #shurscript-settings-window .panel-body > p, #shurscript-settings-window .help-block {
+    font-size: 13px !important;
+}
+
+#shurscript-settings-window .lead.modal-title {
+    font-size: 24px !important;
+}
+
+#shurscript-settings-window .panel-heading > h3 {
+    font-size: 15px !important;
+}
+
+.modal-backdrop {
+    z-index: 1010;
+}
+
+.shur-module-enabled {
+    float: right;
+}
+
+.shur-btn-options {
+    float:right;
+    margin: -23px 24px !important;
+}
+
+.shur-sub-label {
+    color: gray;
+}
+
+.shur-radio-element {
+    margin-left: 20px;
+}
+
+.shur-radio-element label, .shur-checkbox-group label {
+    display: inline;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.label.branch-exp {
+    background-color: #D9534F; /* label-danger */
+}
+
+.label.branch-dev {
+    background-color: #5CB85C; /* label-success */
+}
+
+.label.branch-master {
+    display: none; /* No mostramos el nombre de la rama si es la master */
+}
+
+#shurscript-settings-window .modal-header {
+    border-bottom: none;
+}
+
+#shurscript-settings-window .nav > li > a:focus {
+    outline: none;
+}
+
+#shurscript-settings-window .nav.nav-tabs {
+    padding-left: 20px;
+}
+
+#shurscript-settings-window .modal-body p {
+    font: inherit;
+}
+
+#tab-collaborate h4 {
+    margin-top: 20px;
+}

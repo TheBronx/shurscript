@@ -1,70 +1,90 @@
-function NightMode() {
+(function ($, createModule, undefined) {
+	'use strict';
 
-    this.id = arguments.callee.name; //ModuleTemplate
-    this.name = 'Modo noche';
-    this.author = 'ikaros45 / Juno';
-    this.version = '0.1';
-    this.description = 'Cambia la apariencia del foro a colores más oscuros. Perfecto para leer el foro por la noche sin cansar la vista. <b>BETA</b>';
-    this.enabledByDefault = true; //Define si el modulo vendrá activado por defecto o no
-    this.worksInFrontPage = true; // Modulo carga en portada
-
-    var helper = new ScriptHelper(this.id);
-    var css, icon;
-
-    /* Método obligatorio y punto de entrada a la lógica del módulo */
-    this.load = function() {
-
-        // Carga CSS
-        css = GM_getResourceText('nightmodecss');
-
-        // Incluyelo en head
-        if (helper.getValue('SHOW_ICON', true)) {
-			icon = $("<img width='24px' style='position: fixed; top: 2px; right: 0px; cursor: pointer;'>");
-
-        	if (helper.getValue('ENABLED', false)) {
-	        	enableNightMode();
-        	} else {
-	        	disableNightMode();
-        	}
-
-			icon.click(function(){
-				if (helper.getValue('ENABLED', false)) {
-					disableNightMode();
-	        	} else {
-					enableNightMode();
-	        	}
-			});
-			$(document.body).append(icon);
-
-        } else {
-        	enableNightMode();
-        }
-
-    };
-
-    var enableNightMode = function() {
-	    if (icon) {
-		    helper.setValue('ENABLED', true);
-			icon.attr('src', GM_getResourceURL('nightmode-off'));
-			icon.attr('title', 'Desactivar modo noche');
+	var mod = createModule({
+		id: 'NightMode',
+		name: 'Modo Noche',
+		author: 'Juno / ikaros45',
+		version: '0.2',
+		description: 'Cambia la apariencia del foro a colores más oscuros. ' +
+			'Perfecto para leer el foro por la noche sin cansar la' +
+			' vista. <b>BETA</b>',
+		domain: 'ALL',
+		initialPreferences: {
+			enabled: true,
+			active: false
 		}
-		$('<style id="nightmode-style">' + css + '</style>').appendTo('head');
-    };
+	});
 
-    var disableNightMode = function() {
-	    if (icon) {
-	    	helper.setValue('ENABLED', false);
-			icon.attr('src', GM_getResourceURL('nightmode-on'));
-			icon.attr('title', 'Activar modo noche');
+	var _$styleTag, _$lightImg, _turnOn, _turnOff, _stateIsOn, _toggle, _setState;
+
+	mod.onNormalStart = function () {
+		// Crea tag style y guardalo para luego
+		var css = mod.helper.getResourceText('nightmodecss');
+		_$styleTag = $('<style>' + css + '</style>');
+
+		// $('head').append(_$styleTag);
+
+		// Crea tag imagen y guarda
+		_$lightImg = $('<img id="night-mode-icon" width="24px" style="position: fixed; top: 2px; right: 0px; cursor: pointer;">');
+
+		// Registra evento para meter imagen cuando cuando el documento este cargado... antes no se puede
+		$(document).ready(function () {
+			$('body').append(_$lightImg);
+		});
+
+		// Asigna eventos
+		_$lightImg.click(_toggle);
+
+		// Enciende si la ultima vez estaba encendido
+		if (_stateIsOn()) {
+			_turnOn();
+		} else {
+			_turnOff();
 		}
-    	$("#nightmode-style").remove();
-    };
 
-    this.getPreferences = function() {
-	    var preferences = new Array();
+	};
 
-		preferences.push(new BooleanPreference("SHOW_ICON", true, "<b>Mostrar un icono pequeño arriba a la derecha del foro para activar/desactivar el modo noche rápidamente.</b> Si desmarcas esta opción, tendrás que venir aquí cada vez para activar o desactivar el modo noche."));
+	mod.normalStartCheck = function () {
+		return true;
+	};
 
-		return preferences;
-    };
-}
+	/**
+	 * Invierte estado
+	 */
+	_toggle = function () {
+		if (_stateIsOn()) {
+			_turnOff();
+		} else {
+			_turnOn();
+		}
+	};
+
+	/**
+	 * Lee el ultimo estado guardado en el navegador
+	 */
+	_stateIsOn = function () {
+		return mod.preferences.active;
+	};
+
+	/**
+	 * Guarda estado (encendido/apagado) en el navegador
+	 */
+	_setState = function (value) {
+		mod.preferences.active = value;
+		mod.storePreferences();
+	};
+
+	_turnOn = function () {
+		$('head').append(_$styleTag);
+		_$lightImg.attr('src', SHURSCRIPT.config.imagesURL + 'light-on.png');
+		_setState(true);
+	};
+
+	_turnOff = function () {
+		_$styleTag.remove();
+		_$lightImg.attr('src', SHURSCRIPT.config.imagesURL + 'light-off.png');
+		_setState(false);
+	};
+
+})(jQuery, SHURSCRIPT.moduleManager.createModule);

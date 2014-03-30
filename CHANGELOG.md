@@ -1,7 +1,27 @@
 # CHANGELOG
 
 
-## v0.10.2.1 `18/03/2014`
+## v0.20 `30/03/2014`
+
+**Features**
+
+* Añadida sincronización en la nube de las preferencias de usuario
+* Re-escritura de los módulos acorde a plantilla
+
+**Cambios**
+
+* Reorganizado el panel de preferencias con pestañas separadas
+* Actualizado bootstrap.min.js a versión 3.1.1
+* Centralizadas y movidas las imágenes que utilizan los módulos a un servidor externo
+* El script para uso final se entrega ahora minificado en un único archivo
+
+**Bugfixes**
+
+* Muchos y muy variados, ver commits en GitHub
+
+------------------------------------
+
+### v0.10.2.1 `18/03/2014`
 
 **Changes**
 
@@ -39,6 +59,8 @@
 * Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
 
 ------------------------------------
+
+### v0.10 `29/09/2013`
 
 ### v0.10 `29/09/2013`
 
