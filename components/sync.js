@@ -57,7 +57,7 @@
 				dataType: 'json'
 			})
 			.done(function (data) {
-				sync.helper.log("Server answer:" + JSON.stringify(data));
+				//sync.helper.log("Server answer:" + JSON.stringify(data));
 				Cloud.preferences = data;
 				callback();
 			})
