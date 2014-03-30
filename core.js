@@ -339,7 +339,7 @@ var SHURSCRIPT = {
 			core.loadNextComponent();
 			
 			core.helper.deleteLocalValue('SERVER_DOWN_ALERT');
-		}).error(function(error){
+		}).fail(function(error){
 			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
 				core.helper.showMessageBar({
 					message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",

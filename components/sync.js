@@ -21,7 +21,6 @@
 		preferences: {}, //las preferencias sacadas del server
 
 		setValue: function (key, value, callback) {
-			sync.helper.log("Cloud.setValue(" + key + ", " + value + ")");
 			$.ajax({
 				type: 'PUT',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
@@ -31,7 +30,6 @@
 		},
 
 		getValue: function (key, callback, defaultValue) {
-			sync.helper.log("Cloud.getValue(" + key + ", " + defaultValue + ")");
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
@@ -51,11 +49,10 @@
 				dataType: 'json'
 			})
 			.done(function (data) {
-				//sync.helper.log("Server answer:" + JSON.stringify(data));
 				Cloud.preferences = data;
 				callback();
 			})
-			.error(function(error){
+			.fail(function(error){
 				switch (error.status) {
 					case 403:
 						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
@@ -71,6 +68,7 @@
 						sync.helper.showMessageBar({message: "<strong>Oops...</strong> Parece que hay tormenta en el cloud de Shurscript... Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.", type: "danger"});
 					break;
 				}
+                sync.helper.throw("Error al recuperar las preferencias", error)
 			});
 		},
 
@@ -89,7 +87,7 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Server answer:" + JSON.stringify(data));
+					sync.helper.log("Generated API Key:" + JSON.stringify(data));
 					Cloud.apiKey = data.apikey;
 					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
 					callback();
@@ -108,7 +106,6 @@
 
 		SHURSCRIPT.GreaseMonkey.getValue = function (key, defaultValue) {
 			//utilizamos la copia local de esa clave (si leyésemos del server los getValue serían asíncronos)
-			sync.helper.log("getValue( " + key + " )");
 			return (Cloud.preferences[key] != undefined) ? Cloud.preferences[key] : defaultValue;
 		};
 
