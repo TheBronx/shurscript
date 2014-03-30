@@ -27,23 +27,17 @@
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
 				data: {'value': value},
 				dataType: 'json'
-			}).done(function () {
-					if (typeof callback === 'function') {
-						callback();
-					}
-				});
+			}).done(callback);
 		},
 
-		getValue: function (key, defaultValue) {
+		getValue: function (key, callback, defaultValue) {
 			sync.helper.log("Cloud.getValue(" + key + ", " + defaultValue + ")");
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
 				data: "",
 				dataType: 'json'
-			}).done(function (data) {
-					sync.helper.log("Server answer:" + JSON.stringify(data));
-				});
+			}).done(callback);
 		},
 
 		getAll: function (callback) {
@@ -114,7 +108,7 @@
 
 		SHURSCRIPT.GreaseMonkey.getValue = function (key, defaultValue) {
 			//utilizamos la copia local de esa clave (si leyésemos del server los getValue serían asíncronos)
-			sync.helper.log("getValue( " + key + " ) = " + Cloud.preferences[key]);
+			sync.helper.log("getValue( " + key + " )");
 			return (Cloud.preferences[key] != undefined) ? Cloud.preferences[key] : defaultValue;
 		};
 
