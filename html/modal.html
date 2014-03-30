@@ -188,16 +188,20 @@
 					<div class="panel-body">
 						<form role="form" method="post" id="debug-form">
 							<div class="form-group">
-								<label for="shurscript-log">Usuario</label>
+								<label for="debug-user">Usuario</label>
 								<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=userDebug%>" readonly/>
 							</div>
 							<div class="form-group">
-								<label for="shurscript-log">Detalles de lo ocurrido</label>
-								<textarea class="form-control" id="debug-details" name="debug-details" rows="4" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
+								<label for="debug-url">URL</label>
+								<input type="text" name="debug-url" class="form-control" id="debug-url" value="<%=urlDebug%>" readonly/>
 							</div>
 							<div class="form-group">
-								<label for="shurscript-log">Registro de shurscript</label>
-								<textarea class="form-control" id="debug-log" name="debug-log" rows="6" readonly></textarea>
+								<label for="debug-log">Registro de shurscript</label>
+								<textarea class="form-control" id="debug-log" name="debug-log" rows="4" readonly></textarea>
+							</div>
+							<div class="form-group">
+								<label for="debug-details">Detalles de lo ocurrido</label>
+								<textarea class="form-control" id="debug-details" name="debug-details" rows="5" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
 							</div>
 							<input type="button" class="btn btn-block btn-success" id="debug-send" name="debug-send" value="Enviar a los desarrolladores"/>
 						</form>

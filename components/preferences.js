@@ -202,6 +202,7 @@
 			apiKey: SHURSCRIPT.config.apiKey,
 			visualChangelog: SHURSCRIPT.config.visualChangelog,
 			userDebug: SHURSCRIPT.environment.user.name,
+			urlDebug: SHURSCRIPT.environment.page,
 			modules: []
 		};
 
