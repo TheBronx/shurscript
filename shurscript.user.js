@@ -42,7 +42,6 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NightMode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
 // @resource        nightmodecss https://github.com/TheBronx/shurscript/raw/experimental/css/nightmode-min.css
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
