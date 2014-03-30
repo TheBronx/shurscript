@@ -201,6 +201,7 @@
 			scriptBranch: SHURSCRIPT.scriptBranch,
 			apiKey: SHURSCRIPT.config.apiKey,
 			visualChangelog: SHURSCRIPT.config.visualChangelog,
+			userDebug: SHURSCRIPT.environment.user.name,
 			modules: []
 		};
 
