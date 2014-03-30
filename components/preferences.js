@@ -111,7 +111,7 @@
 			bootbox.confirm("Por el bien de la comunidad, no abuse de esta utilidad y trate de ser todo lo conciso posible para ayudar a resolver el problema. Confirme que desea enviar el registro de shurscript y el suceso que ha escrito.", function(res) {
 				if (res) {
 					$.post('http://shurscript.org/report.php', $('#debug-form').serialize());
-					$('#debug-send').attr({disabled: 'disabled', value: '¡Enviado!'});
+					$('#debug-send').attr({disabled: 'disabled', value: 'Reporte enviado correctamente'});
 				}
 			});
 		});
