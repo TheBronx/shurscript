@@ -370,7 +370,7 @@ var SHURSCRIPT = {
         // funcion dummy en el prototype que puede ser sobreescrita por los modulos
 
         if (_.isFunction(component.loadAndCallback)) { // existe funcion de carga?
-            console.log("Cargando componente " + component.id);
+            core.helper.log("Cargando componente " + component.id);
             component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
             return;
         }
