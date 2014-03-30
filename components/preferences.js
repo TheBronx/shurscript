@@ -202,7 +202,7 @@
 			apiKey: SHURSCRIPT.config.apiKey,
 			visualChangelog: SHURSCRIPT.config.visualChangelog,
 			userDebug: SHURSCRIPT.environment.user.name,
-			urlDebug: SHURSCRIPT.environment.page,
+			urlDebug: SHURSCRIPT.preferences.helper.location.href,
 			modules: []
 		};
 
