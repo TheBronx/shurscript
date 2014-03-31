@@ -180,36 +180,83 @@
 			
 			<!-- Pestaña de Reportar fallo -->
 			<div class="modal-body tab-pane" id="tab-debug" style="overflow: auto;">
+				<form role="form" method="post" id="debug-form">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Reporte de error
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-xs-3">
+									<div class="form-group">
+										<label for="debug-user">Usuario</label>
+										<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=userDebug%>" readonly/>
+									</div>
+								</div>
+								<div class="col-xs-9">
+									<div class="form-group">
+										<label for="debug-url">URL</label>
+										<input type="text" name="debug-url" class="form-control" id="debug-url" value="<%=urlDebug%>" readonly/>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-xs-9">
+									<div class="form-group">
+										<label for="debug-agent">User Agent</label>
+										<input type="text" name="debug-agent" class="form-control" id="debug-agent" value="<%=agentDebug%>" readonly/>
+									</div>
+								</div>
+								<div class="col-xs-3">
+									<div class="form-group">
+										<label for="debug-extension">Extensión</label>
+										<select class="form-control" name="debug-extension">
+											<option>GreaseMonkey</option>
+											<option>Scriptish</option>
+											<option>TamperMonkey</option>
+											<option>ViolentMonkey</option>
+											<option>Otro (especificar)</option>
+										</select>
+									</div>
+								</div>
+							</div>
 
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<strong>Enviar informe de errores</strong>
+							<div class="row">
+								<div class="col-xs-12">
+									<div class="form-group">
+										<label for="debug-details">Detalles de lo ocurrido</label>
+										<textarea class="form-control" id="debug-details" name="debug-details" rows="3" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12">
+									<input type="button" class="btn btn-success btn-block" id="debug-send" name="debug-send" value="Enviar a los desarrolladores"/>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="panel-body">
-						<form role="form" method="post" id="debug-form">
-							<div class="form-group">
-								<label for="debug-user">Usuario</label>
-								<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=userDebug%>" readonly/>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Registro de shurscript
+								<a data-toggle="collapse" href="#registro" style="margin-left:15px;" class="btn btn-default btn-sm">Ver</a>
+							</h3>
+						</div>
+						<div id="registro" class="panel-collapse collapse">
+							<div class="panel-body">
+								<textarea class="form-control" id="debug-log" name="debug-log" rows="6" readonly></textarea>
 							</div>
-							<div class="form-group">
-								<label for="debug-url">URL</label>
-								<input type="text" name="debug-url" class="form-control" id="debug-url" value="<%=urlDebug%>" readonly/>
+							<div class="panel-footer">
+								<strong>Importante:</strong>
+								El contenido del registro de shurscript contiene tu API key y, por tanto, no deberías hacerlo público. Puedes mandarlo a los desarrolladores con este formulario pero <u>nunca</u> lo pegues en ForoCoches.
 							</div>
-							<div class="form-group">
-								<label for="debug-log">Registro de shurscript</label>
-								<textarea class="form-control" id="debug-log" name="debug-log" rows="4" readonly></textarea>
-							</div>
-							<div class="form-group">
-								<label for="debug-details">Detalles de lo ocurrido</label>
-								<textarea class="form-control" id="debug-details" name="debug-details" rows="5" placeholder="Cuéntanos un poco más acerca del problema..."></textarea>
-							</div>
-							<input type="button" class="btn btn-block btn-success" id="debug-send" name="debug-send" value="Enviar a los desarrolladores"/>
-						</form>
+						</div>
 					</div>
-					<div class="panel-footer">
-						<strong>Importante:</strong> El contenido del registro de shurscript contiene tu API key y, por tanto, no deberías hacerlo público. Puedes mandarlo a los desarrolladores con este formulario pero <u>nunca</u> lo pegues en ForoCoches.
-					</div>
-				</div>
+				</form>
 			</div>
 
 		</div>

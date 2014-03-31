@@ -317,6 +317,10 @@ var SHURSCRIPT = {
 			id: id_regex_results[1],
 			name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
 		};
+		
+		SHURSCRIPT.environment.browser = {
+			name: navigator.userAgent,
+		};
 
 		// Mete bootstrap
 		core.helper.addStyle('bootstrapcss');
