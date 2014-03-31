@@ -139,6 +139,13 @@
 			this.storePreferences(callback);
 		},
 
+		/**
+		* Migra los valores propios del módulo, que no se guardan en las preferencias
+		*/
+		migrateValues: function (callback) {
+			callback && callback();
+		},
+
 		// Por defecto los modulos arrancan fuera de la portada
 		domain: moduleManager.NO_FRONTPAGE,
 
@@ -235,7 +242,7 @@
 		var completedCallback = function() {
 			migratedCount++;
 			if (migratedCount == numModules) {
-				moduleManager.helper.setValue("MIGRATION_DONE", true, function(){
+				moduleManager.helper.setValue("MIGRATION_DONE_2", true, function(){
 					callback();
 					bootbox.hideAll();
 				});
@@ -260,7 +267,9 @@
 		$.each(moduleManager.modules, function (moduleName, module) {
 			try {
 				numModules++;
-				module.migratePreferences(completedCallback);
+				module.migratePreferences(function() {
+					module.migrateValues(completedCallback);
+				});
 			} catch (e) {
 				moduleManager.helper.throw("Error migrando las preferencias antiguas del modulo " + moduleName, e);
 			}
@@ -275,11 +284,11 @@
 
 		//Se ha generado una nueva key, manualmente. No hacemos migración.
 		if (moduleManager.helper.location.hash.indexOf("newkey") != -1) {
-			moduleManager.helper.setValue("MIGRATION_DONE", true);
+			moduleManager.helper.setValue("MIGRATION_DONE_2", true);
 		}
 
 		//Migramos las antiguas preferencias (Antes de que se sincronizaran en la nube)
-		if (!moduleManager.helper.getValue("MIGRATION_DONE")) {
+		if (!moduleManager.helper.getValue("MIGRATION_DONE_2")) {
 			moduleManager.migratePreferences(function(){
 				moduleManager.startOnDocReadyModules(); 
 			});

@@ -36,6 +36,15 @@
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
 
 	/**
+	* Método temporal de migración de valores
+	*/
+	mod.migrateValues = function (callback) {
+		mod.helper.setValue("FAVORITES", mod.helper.getLocalValue("FAVORITES"), function(){
+			mod.helper.setValue("HIDDEN_THREADS", mod.helper.getLocalValue("HIDDEN_THREADS"), callback);
+		});
+	};
+
+	/**
 	 * Activamos modo de carga normal (aunque viene activo por defecto)
 	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
 	 */
