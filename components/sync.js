@@ -87,11 +87,11 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Generated API Key:" + JSON.stringify(data));
-					Cloud.apiKey = data.apikey;
-					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
-					callback();
-				});
+                sync.helper.log("Generated API Key:" + JSON.stringify(data));
+                Cloud.apiKey = data.apikey;
+                saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
+                callback();
+            });
 		}
 	};
 

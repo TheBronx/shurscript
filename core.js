@@ -33,7 +33,10 @@ var SHURSCRIPT = {
 (function ($, _, SHURSCRIPT, bootbox, console, undefined) {
 	'use strict';
 
-	var core = {},
+	var core = {
+            components: [],
+            componentIndex: 0
+        },
 		GM = SHURSCRIPT.GreaseMonkey;
 
 	SHURSCRIPT.core = core;
@@ -254,10 +257,6 @@ var SHURSCRIPT = {
         var comp = {id: id};
         SHURSCRIPT[id] = comp;
 
-		// Registra el componente
-		if (core.components === undefined) {
-            core.components = [];
-        }
 		core.components.push(id);
 
 		// Metele un helper
@@ -293,7 +292,7 @@ var SHURSCRIPT = {
 		};
 		
 		SHURSCRIPT.environment.browser = {
-			name: navigator.userAgent,
+			name: navigator.userAgent
 		};
 
 		// Mete bootstrap
@@ -306,20 +305,21 @@ var SHURSCRIPT = {
 			closeButton: false
 		});
 
-		//Recuperamos las configuraciones del servidor
+		// Recuperamos las configuraciones del servidor
 		$.ajax({
 			type: 'GET',
 			url: SHURSCRIPT.config.server + 'config-' + SHURSCRIPT.scriptBranch
+
 		}).done(function (data) {
 			_.extend(SHURSCRIPT.config, data);
 
-			//lanza la carga de componentes y modulos
+			// lanza la carga de componentes y modulos
 			core.loadNextComponent();
-			
 			core.helper.deleteLocalValue('SERVER_DOWN_ALERT');
+
 		}).fail(function(error){
 			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
-				setTimeout(function () { //Timeout para evitar falsos positivos al cambiar de página rápidamente cortando la llamada asíncrona
+				setTimeout(function () { // Timeout para evitar falsos positivos al cambiar de página rápidamente cortando la llamada asíncrona
 					core.helper.showMessageBar({
 						message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",
 						type: "danger",
@@ -364,14 +364,8 @@ var SHURSCRIPT = {
 
 	// devuelve el siguiente componente en el proceso de carga
 	core.getNextComponent = function () {
-		if (core.components !== undefined) {
-			if (core.componentIndex === undefined) {
-				core.componentIndex = 0;
-			} else {
-				core.componentIndex += 1;
-			}
-			return SHURSCRIPT[core.components[core.componentIndex]];
-		}
+        core.componentIndex += 1;
+        return SHURSCRIPT[core.components[core.componentIndex]];
 	};
 
 	/**
