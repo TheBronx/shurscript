@@ -9,6 +9,8 @@
 * Arreglado problema con la migración de preferencias _(nuevas instalaciones)_
 	* Ahora se migrarán los hilos favoritos/ocultados manualmente e historial de citas
 
+------------------------------------
+
 ### v0.20 `30/03/2014`
 
 **Features**
