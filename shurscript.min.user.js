@@ -1,4 +1,4 @@
-// Shur Scripts SA
+﻿// Shur Scripts SA
 // GPLv2 Licensed
 // http://www.gnu.org/licenses/gpl-2.0.html
 //
