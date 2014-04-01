@@ -64,7 +64,7 @@
 	function checkUpdates(callback) {
 		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
 			method: 'GET',
-			url: SHURSCRIPT.config.updateURL + '?' + currentTime,
+			url: SHURSCRIPT.config.updateURL,
 			onload: function(xpr) {
 				var version = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText)[1];
 				var branch = version.split('-')[1];
@@ -107,7 +107,7 @@
 						className : "btn-primary",
 						callback: function() {
 							bootbox.hideAll();
-							location.href = SHURSCRIPT.config.installURL + '?' + currentTime;
+							location.href = SHURSCRIPT.config.installURL;
 						}
 					}]
 				}
