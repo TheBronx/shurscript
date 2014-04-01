@@ -7,19 +7,19 @@
 	var autoupdater = SHURSCRIPT.core.createComponent('autoupdater');
 
 	var updateInterval = 1000 * 60 * 60, //Buscar actualizaciones cada hora
-	    currentTime;
+		currentTime;
 
 	/**
-    * Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
-    * @param {bool} force: Forzar comprobar actualizaciones aunque no haya pasado el tiempo necesario desde la última actualización
-    * @param {function} callback: Se ejecutará cuando termine de comprobar actualizaciones (si ha pasado el tiempo denecesario o si se pasa el parametro force)
-    */
+	* Lanza la comprobación de actualizaciones si ha pasado una hora desde la última comprobación
+	* @param {bool} force: Forzar comprobar actualizaciones aunque no haya pasado el tiempo necesario desde la última actualización
+	* @param {function} callback: Se ejecutará cuando termine de comprobar actualizaciones (si ha pasado el tiempo denecesario o si se pasa el parametro force)
+	*/
 	autoupdater.check = function(force, callback) {
 		currentTime = new Date().getTime();
 		var lastUpdate = parseInt(autoupdater.helper.getLocalValue('LAST_SCRIPT_UPDATE', 0), 10);
 		if (force || currentTime > (lastUpdate + updateInterval)) {
 			autoupdater.helper.setLocalValue('LAST_SCRIPT_UPDATE', currentTime.toString());
-			checkUpdates(function(updated) {
+			checkUpdates(function(updated, version) {
 				if (updated) {
 					showChangelog(version);
 				}
@@ -36,7 +36,7 @@
 	*/
 	autoupdater.load = function() {
 		autoupdater.check(false);
-	}
+	};
 
 	/**
 	* Devuelve el changelog de la versión actual como HTML
@@ -56,7 +56,7 @@
 			}
 
 		});
-	}
+	};
 
 	/**
 	* Descarga la última versión estable liberada y comprueba contra la versión actual instalada
@@ -67,7 +67,9 @@
 			url: SHURSCRIPT.config.updateURL + '?' + currentTime,
 			onload: function(xpr) {
 				var version = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText)[1];
-				var updated = compare(SHURSCRIPT.scriptVersion, version);
+				var branch = version.split('-')[1];
+				version = version.split('-')[0];
+				var updated = shouldUpdate(version, branch);
 				callback(updated, version);
 			}
 		});
@@ -77,9 +79,12 @@
 	* Compara una versión con otra.
 	* Si estamos en una rama dev/exp, y encontramos la misma versión ya liberada también cuenta como actualización (0.09-dev -> 0.09)
 	*/
-	function compare(currentVersion, newVersion) {
+	function shouldUpdate(newVersion, newBranch) {
+		var currentVersion = SHURSCRIPT.scriptVersion;
+		var currentBranch = SHURSCRIPT.scriptBranch;
+
 		var updated;
-		if (SHURSCRIPT.scriptBranch !== "master") {
+		if ((currentBranch == "exp" && newBranch == "dev") || (currentBranch == "dev" && !newBranch)) { //Saltamos de rama (0.09-exp -> 0.09-dev || 0.09-dev -> 0.09)
 			updated = newVersion >= currentVersion;
 		} else {
 			updated = newVersion > currentVersion;
@@ -91,7 +96,7 @@
 	* Recupera el changelog de la nueva versión y lo muestra en una ventana con botones para actualizar o cancelar
 	*/
 	function showChangelog(version) {
-		autoupdater.getChangelog(function() {
+		autoupdater.getChangelog(function(changelog) {
 			bootbox.dialog({
 				message: '<h4>Hay disponible una nueva versión (' + version + ') del Shurscript.</h4><p><br></p>' + changelog,
 				buttons: [{
