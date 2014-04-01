@@ -52,39 +52,13 @@ var SHURSCRIPT = {
             return false;
         }
 
+        // TODO [ikaros45 29.03.2014]: los side-effects hacen llorar al ninyo jesus.
 		//Separamos número de versión y nombre de la rama (master, dev o exp)
 		var splitted = version.split("-");
 		SHURSCRIPT.scriptVersion = splitted[0];
 		SHURSCRIPT.scriptBranch = splitted[1] || "master";
 
 		return true;
-	};
-
-	/**
-	 * Crea un namespace dentro de SHURSCRIPT pasandole
-	 * un string de forma 'SHURSCRIPT.nombreNameSpace'
-	 * o simplemente 'nombreNameSpace' o 'nameSpace.subNameSpace.subSub...'
-	 *
-	 * @param {string} ns - nombre/ruta del nameSpace
-	 */
-	var createNameSpace = function (ns) {
-		var segments = ns.split('.'),
-			parent = SHURSCRIPT;
-
-		// Si se ha pasado SHURSCRIPT, quitalo del medio
-		if (segments[0] === 'SHURSCRIPT') {
-			segments = segments.slice(1);
-		}
-
-		_.each(segments, function (nameNS) {
-			// Inicializa si no existe
-			parent[nameNS] = parent[nameNS] || {};
-
-			// Referencia para el siguiente ciclo (pseudorecursividad)
-			parent = parent[nameNS];
-		});
-
-		return parent;
 	};
 
 	/**
@@ -277,10 +251,10 @@ var SHURSCRIPT = {
 		}
 
 		// Crea namespace y copiale las propiedades
-		var comp = createNameSpace(id);
-		comp.id = id;
+        var comp = {id: id};
+        SHURSCRIPT[id] = comp;
 
-		//Registra el componente
+		// Registra el componente
 		if (core.components === undefined) {
             core.components = [];
         }
