@@ -1,7 +1,13 @@
 # CHANGELOG
 
+## v0.20.1 `02/04/2014`
 
-## v0.20 `30/03/2014`
+**Bugfixes**
+
+* Solucionado problema con las notificaciones
+* Arreglado componente encargado de las actualizaciones
+
+### v0.20 `30/03/2014`
 
 **Features**
 
