@@ -529,7 +529,7 @@
 			if (ajax.readyState == 4 && ajax.statusText == "OK") {
 				var documentResponse = $.parseHTML(ajax.responseText);
 				var postContent = $(documentResponse).find("#post_message_" + cita.postID).text();
-				var usernameRegexReady = username.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservados de las regex;
+				var usernameRegexReady = mod.helper.environment.user.name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); //Escapar caracteres reservados de las regex;
 				if (postContent.match(RegExp("Originalmente Escrito por " + usernameRegexReady, "i"))) {
 					result = true;
 				}
