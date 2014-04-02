@@ -19,7 +19,7 @@ var SHURSCRIPT = {
 		server: "http://cloud.shurscript.org:8080/"
 	},
 	environment: {
-		page: location.pathname.replace("/foro", "")
+		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage";
 	}
 };
 

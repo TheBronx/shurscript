@@ -151,7 +151,7 @@
 	function showNotifications() {
 
 		//creamos la celda de notificaciones
-		if (mod.helper.environment.page === '/') { //Portada
+		if (mod.helper.environment.page === 'frontpage') { //Portada
 			$("#AutoNumber1.contenido tr:first-child").append('<td style="padding: 0px;" rowspan=3 class="alt2"><div class="notifications">0</div></td>')
 		} else {
 			$(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
