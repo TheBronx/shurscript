@@ -43,10 +43,13 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/dev/css/modal.css
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/dev/html/modal.html
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/dev/html/quote.html
+// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
+// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
 // ==/UserScript==
 
 /**
