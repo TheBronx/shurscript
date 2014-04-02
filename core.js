@@ -19,7 +19,7 @@ var SHURSCRIPT = {
 		server: "http://cloud.shurscript.org:8080/"
 	},
 	environment: {
-		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage";
+		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage"
 	}
 };
 
@@ -287,9 +287,15 @@ var SHURSCRIPT = {
 		}
 
 		// Guarda info usuario
+		var username;
+		if (SHURSCRIPT.environment.page === "frontpage") {
+			username = $(".cajascat td.cat:nth-child(1)").text().substr(3);
+		} else {
+			username = /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1];
+		}
 		SHURSCRIPT.environment.user = {
 			id: id_regex_results[1],
-			name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
+			name: username
 		};
 		
 		SHURSCRIPT.environment.browser = {
