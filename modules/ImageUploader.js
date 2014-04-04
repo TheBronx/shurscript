@@ -24,27 +24,18 @@
 
 		mod.helper.addStyle('imageuploadercss');
 
-		/* SUBIDA MANUAL, REEMPLAZANDO EL BOTON 'Insertar Imagen' */
+		/* SUBIDA MANUAL, CAMBIANDO EL EVENTO DEL BOTON 'Insertar Imagen' */
 		try {
-			//Clonamos el botón y le añadimos nuestro manejador. Cosas raras de vBulletin
-			var $oldButton = $(".imagebutton[id$='_cmd_insertimage']");
-			var newButton = $oldButton.clone().get(0);
-			newButton.editorid = getEditor().editorid;
-			newButton.cmd = 'insertimage';
-			newButton.onmousedown = newButton.onmouseover = newButton.onmouseout = function (A) {
-				A = unsafeWindow.do_an_e(A);
-				unsafeWindow.vB_Editor[getEditor().editorid].button_context(this, A.type);
-			};
-			newButton.onclick = function () {
-				showImageUploader();
-			};
-			$oldButton.replaceWith(newButton);
+			//Quitamos el evento original y le damos uno nuevo
+			$(".imagebutton[id$='_cmd_insertimage']").get(0).onclick = undefined;
+			$('body').on('click', ".imagebutton[id$='_cmd_insertimage']", showImageUploader);
 		} catch (e) {
-			mod.helper.throw("Error al reemplazar el boton de 'Insertar imagen' por el de Imgur", e);
+			mod.helper.throw("Error al cambiar evento del boton 'Insertar imagen'", e);
 		}
 
 		/* ESTILOS Y EVENTOS PARA EL DRAG AND DROP */
 		try {
+			//Capa por encima para droppear
 			$dropZone = $("<div id='dropzone' style='display: none;'>Suelta aqu&iacute; las im&aacute;genes para subirlas a</div>");
 			$('body').append($dropZone);
 
@@ -75,8 +66,16 @@
 				}
 			});
 		} catch (e) {
-			mod.helper.throw("Error al activar eventos de drag and drop de Imgur", e);
+			mod.helper.throw("Error al activar eventos de drag and drop", e);
 		}
+
+		//Si se activa el WYSIWYG, nos deshará los cambios que hemos hecho sobre el editor. Nos preparamos:
+		SHURSCRIPT.eventbus.on('editorReady', function() {
+			$(".imagebutton[id$='_cmd_insertimage']").get(0).onclick = undefined;
+			$(getEditor().editdoc).on('dragover', function(e){
+				$('body').trigger(e);
+			});
+		});
 	};
 
 	function showImageUploader () {

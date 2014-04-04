@@ -101,6 +101,9 @@
 	/* Funcionalidades que funcionan solo bajo el editor WYSIWYG */
 	function enableWYSIWYGDependantFeatures() {
 
+		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
+		SHURSCRIPT.eventbus.trigger('editorReady');
+
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
 		}
