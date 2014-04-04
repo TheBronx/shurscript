@@ -13,15 +13,6 @@
 		}
 	});
 
-	// Precarga asincronamente la plantilla y compila
-	setTimeout(function () {
-		var tempName = 'imageuploader',
-			templateText = mod.helper.getResourceText('imageuploaderhtml');
-
-		SHURSCRIPT.templater.storeTemplate(tempName, templateText);
-		SHURSCRIPT.templater.compile(tempName);
-	}, 0);
-
 	var $uploadWindow;
 
 	var totalFiles = 0, 
@@ -78,7 +69,7 @@
 	function showImageUploader () {
 
 		if (!$uploadWindow) {
-			$uploadWindow = $(SHURSCRIPT.templater.fillOut('imageuploader'));
+			$uploadWindow = $(mod.helper.getResourceText('imageuploaderhtml'));
 			$('body').append($uploadWindow);
 			
 			var $urlInput = $('#imageurl', $uploadWindow);
