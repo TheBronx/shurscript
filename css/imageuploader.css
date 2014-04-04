@@ -1,0 +1,27 @@
+body.dragover:before {
+	z-index: 2000;
+	color: white;
+	font-size: 40px;
+	text-align: center;
+	padding-top: 150px;
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0.7;
+	background: url('http://s.imgur.com/images/imgur.gif') no-repeat scroll center 220px #121211;
+	content: 'Suelta aquí las imágenes para subirlas a';
+}
+
+#shurscript-image-uploader .help-block {
+	color: #333 !important;
+}
+
+#shurscript-image-uploader #imgur_button {
+	width: 100%;
+}
+
+#shurscript-image-uploader textarea {
+	resize: vertical;
+}
