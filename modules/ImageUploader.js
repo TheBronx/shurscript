@@ -13,57 +13,70 @@
 		}
 	});
 
-	var $uploadWindow;
+	var $uploadWindow,
+	    $dropZone;
 
 	var totalFiles = 0, 
-		fileCount = 0,
-		alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
+	    fileCount = 0,
+	    alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
 
 	mod.onNormalStart = function () {
 
 		mod.helper.addStyle('imageuploadercss');
 
-		/* SUBIDA MANUAL, VIA BOTON 'Insertar Imagen' */
-
-		//Clonamos el botón y le añadimos nuestro manejador. Cosas raras de vBulletin
-		var $oldButton = $(".imagebutton[id$='_cmd_insertimage']");
-		var newButton = $oldButton.clone().get(0);
-		newButton.editorid = getEditor().editorid;
-		newButton.cmd = 'insertimage';
-		newButton.onmousedown = newButton.onmouseover = newButton.onmouseout = function (A) {
-			A = unsafeWindow.do_an_e(A);
-			unsafeWindow.vB_Editor[getEditor().editorid].button_context(this, A.type);
-		};
-		newButton.onclick = function () {
-			showImageUploader();
-		};
-		$oldButton.replaceWith(newButton);
-
+		/* SUBIDA MANUAL, REEMPLAZANDO EL BOTON 'Insertar Imagen' */
+		try {
+			//Clonamos el botón y le añadimos nuestro manejador. Cosas raras de vBulletin
+			var $oldButton = $(".imagebutton[id$='_cmd_insertimage']");
+			var newButton = $oldButton.clone().get(0);
+			newButton.editorid = getEditor().editorid;
+			newButton.cmd = 'insertimage';
+			newButton.onmousedown = newButton.onmouseover = newButton.onmouseout = function (A) {
+				A = unsafeWindow.do_an_e(A);
+				unsafeWindow.vB_Editor[getEditor().editorid].button_context(this, A.type);
+			};
+			newButton.onclick = function () {
+				showImageUploader();
+			};
+			$oldButton.replaceWith(newButton);
+		} catch (e) {
+			mod.helper.throw("Error al reemplazar el boton de 'Insertar imagen' por el de Imgur", e);
+		}
 
 		/* ESTILOS Y EVENTOS PARA EL DRAG AND DROP */
+		try {
+			$dropZone = $("<div id='dropzone' style='display: none;'><span>Suelta aqu&iacute; las im&aacute;genes para subirlas a<span></div>");
+			$('body').append($dropZone);
 
-		$('body').on('dragover', function (evt) {
-			//Solo activar evento DND si se arrastran ficheros desde fuera
-			var dragTypes = evt.originalEvent.dataTransfer.types;
-			if ($.inArray("Files", dragTypes) != -1 && $.inArray("text/html", dragTypes) == -1) {
-				evt.stopPropagation();
-				evt.preventDefault();
-				$('body').addClass('dragover');
-				evt.originalEvent.dataTransfer.dropEffect = 'copy';
-			}
-		});
+			$('body').on('dragover', function (evt) {
+				//Solo activar evento DND si se arrastran ficheros desde fuera
+				var dragTypes = evt.originalEvent.dataTransfer.types;
+				if ($.inArray("Files", dragTypes) != -1 && $.inArray("text/html", dragTypes) == -1) {
+					evt.stopPropagation();
+					evt.preventDefault();
+					$dropZone.show();
+					evt.originalEvent.dataTransfer.dropEffect = 'copy';
+				}
+			});
 
-		$('body').on('dragleave dragend drop', function (evt) {
-			$('body').removeClass('dragover');
-		});
+			//Delegamos el evento de drag sobre el iframe WYSIWYG sobre el body, porque si no se come el evento
+			$(getEditor().editdoc).on('dragover', function(e){
+				$('body').trigger(e);
+			});
 
-		$('body').on('drop', function(evt) {
-			if (handleFileSelect(evt.originalEvent.dataTransfer.files, evt)) {
-				$uploadWindow && $uploadWindow.modal('hide');
-				$('html').animate({scrollTop: $("#qrform").offset().top + 'px'}, 800);
-			}
-		});
+			$dropZone.on('dragleave dragend drop', function (evt) {
+				$dropZone.hide();
+			});
 
+			$dropZone.on('drop', function(evt) {
+				if (handleFileSelect(evt.originalEvent.dataTransfer.files, evt)) {
+					$uploadWindow && $uploadWindow.modal('hide');
+					$('html').animate({scrollTop: $("#qrform").offset().top + 'px'}, 800);
+				}
+			});
+		} catch (e) {
+			mod.helper.throw("Error al activar eventos de drag and drop de Imgur", e);
+		}
 	};
 
 	function showImageUploader () {
