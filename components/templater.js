@@ -25,7 +25,7 @@
 		}
 
 		try {
-			return store[tempName].tempFn(data);
+			return store[tempName].tempFn(data || {});
 		} catch (e) {
 			templater.helper.throw('Error insertando valores en la plantilla:', e);
 		}
