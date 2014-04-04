@@ -263,18 +263,41 @@
 		}
 	}
 
+
+	/* Métodos relacionados con el editor. TODO: Mover a un helper y reutilizarlo en todos los módulos */
 	function getEditor() {
 		return mod.helper.environment.page == "/showthread.php" ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
-	function postImage(link) {
-		var text = '<br/>';
-		if (mod.preferences.embedding == 'preview') {
-			text += '<img src="' + link + '"/>';
-		} else {
-			text += '[IMG]' + link + "[/IMG]";
-		}
+	function isWYSIWYG() {
+		return getEditor().wysiwyg_mode == 1;
+	}
+
+	function getEditorContents() {
+		return getEditor().get_editor_contents();
+	}
+
+	function setEditorContents(text) {
+		getEditor().set_editor_contents(text)
+	}
+
+	function appendTextToEditor(text) {
 		getEditor().insert_text(text);
+	}
+
+	function postImage(link) {
+		if (!isWYSIWYG()) { //Sin WYSIWYG, el método insert_text reemplaza el contenido :roto2nuse:
+			setEditorContents(getEditorContents() + '\n[IMG]' + link + '[/IMG]'); 
+		} else {
+			var text = '<br/>';
+			if (mod.preferences.embedding == 'preview') {
+				text += '<img src="' + link + '"/>';
+			} else {
+				text += '[IMG]' + link + '[/IMG]'; 
+			}
+			appendTextToEditor(text);
+		}
+		
 	}
 
 	mod.getPreferenceOptions = function () {
@@ -285,7 +308,7 @@
 				type: 'radio',
 				elements: [
 					{value: 'preview', caption: 'Previsualizarla dentro de la caja de texto'},
-					{value: 'bbcode', caption: 'Mostrarla solo entre etiquetas [IMG][/IMG]'}
+					{value: 'bbcode', caption: 'Mostrarla simplemente entre etiquetas [IMG][/IMG]'}
 				],
 				caption: 'Al insertar la imagen:',
 				mapsTo: 'embedding'
