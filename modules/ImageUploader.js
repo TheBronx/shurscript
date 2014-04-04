@@ -45,7 +45,7 @@
 
 		/* ESTILOS Y EVENTOS PARA EL DRAG AND DROP */
 		try {
-			$dropZone = $("<div id='dropzone' style='display: none;'><span>Suelta aqu&iacute; las im&aacute;genes para subirlas a<span></div>");
+			$dropZone = $("<div id='dropzone' style='display: none;'>Suelta aqu&iacute; las im&aacute;genes para subirlas a</div>");
 			$('body').append($dropZone);
 
 			$('body').on('dragover', function (evt) {
