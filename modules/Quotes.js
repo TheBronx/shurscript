@@ -52,7 +52,7 @@
 	};
 
 	/* Estilos propios del módulo */
-	GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 7px 15px; width: 40px; background: #CECECE; color: gray; font-size: 24pt;}");
+	GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 3px 15px; width: 40px; background: #CECECE; color: gray; font-size: 24pt;}");
 	GM_addStyle(".notifications.unread {background: #CC3300; color: white;}");
 	GM_addStyle(".notifications.unread:hover {background: #E64D1A; color: white;}");
 	GM_addStyle(".notifications sup {font-size: 10px;}");
