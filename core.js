@@ -39,13 +39,6 @@ var SHURSCRIPT = {
 	SHURSCRIPT.core = core;
 
 	/**
-	* Crear el Event Bus que compartirán todos los componentes y módulos para lanzar y escuchar eventos. 
-	* Aunque lo ideal es que solo lo lancen los componentes o los helpers y no los módulos que pueden o no estar activados.
-	* Uso, como cualquier event handler de jQuery: eventbus.on('myevent') se llamará cuando alguien ejecute eventbus.trigger('myevent')
-	*/
-	SHURSCRIPT.eventbus = $({});
-
-	/**
 	* Comprobamos que está soportada la extensión y seteamos al objeto SHURSCRIPT la version y la rama del script actual.
 	*/
 	var isCompatible = function () {
