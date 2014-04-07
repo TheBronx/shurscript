@@ -1,26 +1,74 @@
 /**
- * Módulo de sincronización de preferencias en la nube
- * Sobreescribe los métodos getValue, setValue y deleteValue del objeto core.GreaseMonkey
- * IMPORTANTE: debe cargarse antes que cualquier otro componente/módulo que no sea el propio core
+ * Modulo de persistencia
  */
-(function ($, SHURSCRIPT, undefined) {
+(function ($, SHURSCRIPT, localStorage, undefined) {
 	'use strict';
 
-	var sync = SHURSCRIPT.core.createComponent('sync');
+    var Persist = {};
+    SHURSCRIPT.Persist = Persist;
 
-	//por si queremos usar los get/set/delete que trabajan en local y no en la nube
-	var noCloud = {
-		setValue: SHURSCRIPT.GreaseMonkey.setValue,
-		getValue: SHURSCRIPT.GreaseMonkey.getValue,
-		deleteValue: SHURSCRIPT.GreaseMonkey.deleteValue
-	};
+    /**
+     * Devuelve un valor
+     *
+     * @param key Key a extraer
+     * @param def Default value (opcional)
+     */
+    Persist.getValue = function (key, def) {
+        var val = localStorage.getItem(key);
+
+
+        if (val === undefined) {return def;}
+
+        return JSON.parse(val);
+    };
+
+    /**
+     * Guarda un par key-value
+     *
+     * @param key
+     * @param value
+     */
+    Persist.setValue = function (key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+
+    };
+
+    var _setServerValue = function (key, value) {
+
+    };
+
+
+    var _getAll = function () {};
+
+    Persist.synchronize = function () {};
+
+    var _getApiKey = function () {};
+
+    var _setApiKey = function () {};
+
+    var _generateApiKey = function (callback) {
+        Persist.helper.deleteLocalValue("API_KEY");
+        Persist.helper.log("Cloud.generateApiKey()");
+
+        $.ajax({
+            type: 'POST',
+            url: this.server + 'preferences/',
+            data: "",
+            dataType: 'json'
+        }).done(function (data) {
+            Persist.helper.log("Generated API Key:" + JSON.stringify(data));
+            Cloud.apiKey = data.apikey;
+            saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
+            callback();
+        });
+    };
 
 	var Cloud = {
 		server: SHURSCRIPT.config.server,
 		apiKey: "",
 		preferences: {}, //las preferencias sacadas del server
 
-		setValue: function (key, value, callback) {
+		setValue: function (key, value) {
 			$.ajax({
 				type: 'PUT',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
@@ -29,7 +77,7 @@
 			}).done(callback);
 		},
 
-		getValue: function (key, callback, defaultValue) {
+		getValue: function (key) {
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
@@ -41,7 +89,7 @@
 		getAll: function (callback) {
 			SHURSCRIPT.config.apiKey = this.apiKey;
 
-			sync.helper.log("Cloud.getAll() using API key: " + this.apiKey);
+			Persist.helper.log("Cloud.getAll() using API key: " + this.apiKey);
 			$.ajax({
 				type: 'get',
 				url: this.server + 'preferences/?apikey=' + this.apiKey,
@@ -65,10 +113,10 @@
 					break;
 					case 500:
 					default:
-						sync.helper.showMessageBar({message: "<strong>Oops...</strong> Parece que hay tormenta en el cloud de Shurscript... Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.", type: "danger"});
+						Persist.helper.showMessageBar({message: "<strong>Oops...</strong> Parece que hay tormenta en el cloud de Shurscript... Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.", type: "danger"});
 					break;
 				}
-                sync.helper.throw("Error al recuperar las preferencias", error)
+                Persist.helper.throw("Error al recuperar las preferencias", error)
 			});
 		},
 
@@ -78,25 +126,11 @@
 			this.setValue(key, '', callback);
 		},
 
-		generateApiKey: function (callback) {
-			sync.helper.deleteLocalValue("API_KEY");
-			sync.helper.log("Cloud.generateApiKey()");
-			$.ajax({
-				type: 'POST',
-				url: this.server + 'preferences/',
-				data: "",
-				dataType: 'json'
-			}).done(function (data) {
-                sync.helper.log("Generated API Key:" + JSON.stringify(data));
-                Cloud.apiKey = data.apikey;
-                saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
-                callback();
-            });
-		}
+
 	};
 
 	//Punto de entrada al componente.
-	sync.loadAndCallback = function (callback) {
+	Persist.loadAndCallback = function (callback) {
 		//sobreescribimos las funciones de manejo de preferencias
 		// [cb] es opcional, se ejecuta una vez los datos se guardan en el servidor asíncronamente
 		SHURSCRIPT.GreaseMonkey.setValue = function (key, value, cb) {
@@ -129,7 +163,7 @@
 
 	};
 
-	sync.generateApiKey = function(callback) {
+	Persist.generateApiKey = function(callback) {
 		Cloud.generateApiKey(callback);
 	}
 
@@ -137,7 +171,7 @@
 	 * Devuelve la API key guardada en las suscripciones del foro.
 	 */
 	function getApiKey() {
-		var apiKey = sync.helper.getLocalValue("API_KEY");
+		var apiKey = Persist.helper.getLocalValue("API_KEY");
 
 		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones 
 		if (!apiKey) {
@@ -150,7 +184,7 @@
 					if (folder.length > 0) {
 						//la API key existe
 						apiKey = folder.val().replace("shurkey-", "");
-						sync.helper.setLocalValue("API_KEY", apiKey);
+						Persist.helper.setLocalValue("API_KEY", apiKey);
 					}
 				}
 			}
@@ -182,4 +216,4 @@
 		ajax.send(params); //Creamos la carpeta
 	}
 
-})(jQuery, SHURSCRIPT);
+})(jQuery, SHURSCRIPT, window.localStorage);

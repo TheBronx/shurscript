@@ -12,10 +12,6 @@
 // @author          Fritanga
 // @author          juno / ikaros45
 // @include         *forocoches.com*
-// @grant           GM_log
-// @grant           GM_getValue
-// @grant           GM_setValue
-// @grant           GM_deleteValue
 // @grant           GM_xmlhttpRequest
 // @grant           GM_registerMenuCommand
 // @grant           GM_addStyle
@@ -28,6 +24,9 @@
 // @require         http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/init.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/helper.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/persistence.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/topbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/sync.js
@@ -51,7 +50,7 @@
 
 /**
  * Es imprescindible que los archivos js se carguen en este orden:
- * core > componentes > modulos
+ * init > helper > persist > core > componentes > modulos
  */
 
 if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG

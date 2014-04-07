@@ -3,25 +3,6 @@
  * Empaqueta las funciones de GreaseMonkey en un objeto
  * Genera el core.
  */
-var SHURSCRIPT = {
-	GreaseMonkey: {
-		log: GM_log,
-		getValue: GM_getValue,
-		setValue: GM_setValue,
-		deleteValue: GM_deleteValue,
-		xmlhttpRequest: GM_xmlhttpRequest,
-		registerMenuCommand: GM_registerMenuCommand,
-		addStyle: GM_addStyle,
-		getResourceText: GM_getResourceText,
-		getResourceURL: GM_getResourceURL
-	},
-	config: {
-		server: "http://cloud.shurscript.org:8080/"
-	},
-	environment: {
-		page: location.pathname.replace("/foro", "")
-	}
-};
 
 /**
  * @param {object} $ - jQuery object
