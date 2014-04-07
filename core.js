@@ -325,7 +325,7 @@ var SHURSCRIPT = {
 			core.helper.deleteLocalValue('SERVER_DOWN_ALERT');
 		}).fail(function(error){
 			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
-				setTimeout(function () { //Timeout para evitar falsos positivos al cambiar de página rápidamente cortando la llamada asíncrona
+				if (error.getAllResponseHeaders()) { //Distinguir si ha sido el usuario quien ha cortado la llamada
 					core.helper.showMessageBar({
 						message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",
 						type: "danger",
@@ -333,7 +333,7 @@ var SHURSCRIPT = {
 							core.helper.setLocalValue('SERVER_DOWN_ALERT', true);
 						}
 					});
-				}, 2000);
+				}
 			}
 		});
 
