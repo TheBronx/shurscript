@@ -29,9 +29,10 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/topbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/topbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
