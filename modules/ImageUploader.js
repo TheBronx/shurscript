@@ -17,8 +17,8 @@
 	    $dropZone;
 
 	var totalFiles = 0, 
-	    fileCount = 0,
-	    alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
+		fileCount = 0,
+		alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
 
 	mod.onNormalStart = function () {
 
@@ -244,7 +244,7 @@
 			alreadyUploading = true;
 			bootbox.dialog({message: '<center>Subiendo im&aacute;genes...'
 				+ '<div id="uploadprogress" style="margin-top: 10px;" class="hidden progress progress-striped active">'
-	  			+ '<div class="progress-bar" style="width: 0%"></div></div></center>'});
+				+ '<div class="progress-bar" style="width: 0%"></div></div></center>'});
 		}
 		updateCounter();
 	}
@@ -281,11 +281,17 @@
 	}
 
 	function setEditorContents(text) {
+		focusEditor();
 		getEditor().set_editor_contents(text)
 	}
 
 	function appendTextToEditor(text) {
+		focusEditor();
 		getEditor().insert_text(text);
+	}
+	
+	function focusEditor() {
+		isWYSIWYG() && getEditor().editdoc.body.focus();
 	}
 
 	function postImage(link) {

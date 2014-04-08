@@ -104,9 +104,6 @@
 		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
 		SHURSCRIPT.eventbus.trigger('editorReady');
 
-		//Workaround para el caso de que Chrome no deja insertar contenido hasta que la caja de respuesta no coja al menos una vez el foco
-		setTimeout(function(){getEditor().editdoc.body.focus(); getEditor().editdoc.body.blur()}, 1000);
-
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
 		}
@@ -260,7 +257,7 @@
 
 				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
 
-				if (getEditorContents().trim().replace(/\<br\>/g, '') != '') {
+				if (trim(getEditorContents())) {
 					var postOverwrite = mod.preferences.postOverwrite;
 					switch (postOverwrite) {
 						case 'ASK':
@@ -386,7 +383,7 @@
 		if (currentPostBackup && isQuickReply()) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
-				if (getEditorContents().trim().replace(/\<br\>/g, '') == '') {
+				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) { 
 					setEditorContents(currentPostBackup.postContents)
 				};
 				reflowTextArea();
@@ -568,11 +565,21 @@
 	}
 
 	function setEditorContents(text) {
+		focusEditor();
 		getEditor().set_editor_contents(text)
 	}
 
 	function appendTextToEditor(text) {
+		focusEditor();
 		getEditor().insert_text(text);
+	}
+	
+	function focusEditor() {
+		getEditor().editdoc.body.focus();
+	}
+	
+	function trim(text) {
+		return text.trim().replace(/\<br\>/g, '');
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
