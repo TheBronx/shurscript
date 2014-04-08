@@ -53,4 +53,14 @@
 		_bus.trigger(eventName, extraParams);
 	};
 
+	/**
+	 * Lanza un evento igual que el trigger, pero de forma retrasada
+	 * @param {int} delay: Milisegundos que se retrasará el evento
+	 */
+	eventbus.triggerDelayed = function (eventName, delay, extraParams) {
+		setTimeout(function () {
+			eventbus.trigger(eventName, extraParams);
+		}, delay);
+	};
+
 })(jQuery, SHURSCRIPT);

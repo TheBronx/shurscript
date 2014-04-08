@@ -50,11 +50,6 @@
 				}
 			});
 
-			//Delegamos el evento de drag sobre el iframe WYSIWYG sobre el body, porque si no se come el evento
-			$(getEditor().editdoc).on('dragover', function(e){
-				$('body').trigger(e);
-			});
-
 			$dropZone.on('dragleave dragend drop', function (evt) {
 				$dropZone.hide();
 			});
@@ -72,6 +67,8 @@
 		//Si se activa el WYSIWYG, nos deshará los cambios que hemos hecho sobre el editor. Nos preparamos:
 		SHURSCRIPT.eventbus.on('editorReady', function() {
 			$(".imagebutton[id$='_cmd_insertimage']").get(0).onclick = undefined;
+
+			//Si además hay iframe WYSIWYG, delegamos el evento de drag sobre este al body, para que no se coma el evento
 			$(getEditor().editdoc).on('dragover', function(e){
 				$('body').trigger(e);
 			});

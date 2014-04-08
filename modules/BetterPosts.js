@@ -102,7 +102,7 @@
 	function enableWYSIWYGDependantFeatures() {
 
 		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
-		SHURSCRIPT.eventbus.trigger('editorReady');
+		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 0);
 
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
@@ -397,9 +397,9 @@
 			}, 3000);
 		});
 
-		/* Eliminar el backup guardado al enviar la Respuesta                                                                       */
-		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor */
-		/* Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página              */
+		/* Eliminar el backup guardado al enviar la Respuesta																		*/
+		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor	*/
+		/* Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página				*/
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
 				mod.helper.deleteValue("POST_BACKUP");
