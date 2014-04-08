@@ -91,6 +91,14 @@
 		];
 	};
 
+	mod.shurbarIcon = function() {
+		return {
+			name: 'Favoritos',
+			description: 'Hilos favoritos',
+			image: 'http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif'
+		};
+	};
+
 	function loadStyles() {
 		if (mod.preferences.favoritesColor !== "") {
 			if (mod.preferences.favoritesBorderOnly) {
