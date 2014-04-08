@@ -105,7 +105,7 @@
 		SHURSCRIPT.eventbus.trigger('editorReady');
 
 		//Workaround para el caso de que Chrome no deja insertar contenido hasta que la caja de respuesta no coja al menos una vez el foco
-		getEditor().editdoc.body.focus(); getEditor().editdoc.body.blur();
+		setTimeout(function(){getEditor().editdoc.body.focus(); getEditor().editdoc.body.blur()}, 1000);
 
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
