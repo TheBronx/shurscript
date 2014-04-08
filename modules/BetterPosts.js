@@ -535,7 +535,7 @@
 	/* Fuerza la caja a adaptarse al contenido */
 	function reflowTextArea() {
 		if (checkAutoGrow && checkAutoGrow.checked) {
-			getEditor().editbox.style.height = Math.max(getTextAreaHeight() + 30, minHeightTextArea) + "px";
+			getEditor().editbox.style.height = Math.min(600, Math.max(getTextAreaHeight() + 30, minHeightTextArea)) + "px";
 		}
 	}
 
