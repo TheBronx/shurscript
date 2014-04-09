@@ -8,7 +8,6 @@
 
 	var html = '<div id="shurbar" class="shurscript" style="position:fixed;bottom:25px;left:20px;">' +
 		'<img id="shurpop" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
-		'<ul class="shurbar-icons"></ul>' +
 		'</div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
@@ -57,8 +56,6 @@
 	};
 
 	shurbar.updateBar = function() {
-		$('#shurbar ul.shurbar-icons').html('');
-
 		function buildPopoverContent() {
 			var popover = $('<div class="shurscript"/>');
 			var ul = $('<ul class="shurbar-icons"/>');
@@ -77,10 +74,9 @@
 			$(".popover").remove();
 			$(this).popover('show');
 			$(".popover .popover-content").html(buildPopoverContent());
+			//escuchar evento on click en todos los <li> que estan dentro del popover
+			$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
 		});
-
-		//escuchar evento on click en todos los <li>
-		$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
 	};
 
 	//punto de entrada
