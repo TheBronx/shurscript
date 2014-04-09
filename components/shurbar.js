@@ -7,7 +7,7 @@
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
 	var html = '<div id="shurbar" class="shurscript" style="position:fixed;bottom:25px;left:20px;">' +
-		'<img src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
+		'<img id="shurpop" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
 		'<ul class="shurbar-icons"></ul>' +
 		'</div>';
 	var icons = [];
@@ -60,7 +60,7 @@
 		$('#shurbar ul.shurbar-icons').html('');
 
 		function buildPopoverContent() {
-			var popover = $("<div class='shurscript'/>");
+			var popover = $('<div class="shurscript"/>');
 			var ul = $('<ul class="shurbar-icons"/>');
 
 			for(var i=0; i<icons.length; i++) {
