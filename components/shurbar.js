@@ -6,7 +6,7 @@
 
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
-	var html = '<div id="shurbar" class="shurscript" style="position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0px 5px #000000; border-radius:0 4px 4px 0;">' +
+	var html = '<div id="shurbar" class="shurscript" style="visibility:hidden; position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0 5px #000000; border-radius:0 4px 4px 0;">' +
 		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:5px; transition: width 1s ease 0s;"></ul>' +
 		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:5px; cursor:pointer;"/>' +
 		'</div>';
@@ -86,7 +86,7 @@
 	};
 	shurbar.hide = function() {
 		var width = $('#shurbar ul.shurbar-icons').width();
-		$('#shurbar ul.shurbar-icons').animate({'margin-left':'-'+width+'px'}, function() {$('#shurbar ul.shurbar-icons').css({'visibility':'hidden'});});
+		$('#shurbar ul.shurbar-icons').animate({'margin-left':'-'+width+'px'}, function() {$('#shurbar ul.shurbar-icons').css({'visibility':'hidden'}); $('#shurbar').css({'visibility':'visible'});});
 		isHidden = true;
 	};
 
