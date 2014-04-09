@@ -6,9 +6,9 @@
 
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
-	var html = '<div id="shurbar" class="shurscript" style="visibility:hidden; position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0 5px #000000; border-radius:0 4px 4px 0;">' +
-		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:5px; transition: width 1s ease 0s;"></ul>' +
-		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:5px; cursor:pointer;"/>' +
+	var html = '<div id="shurbar" class="shurscript" style="visibility:hidden; position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0 5px #838383; border-radius:0 4px 4px 0;">' +
+		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:8px 5px; transition: width 1s ease 0s;"></ul>' +
+		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:10px; cursor:pointer;border-left: 1px dashed #dfdfdf;"/>' +
 		'</div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
@@ -61,7 +61,7 @@
 		$('#shurbar ul.shurbar-icons').html('');
 
 		for(var i=0; i<icons.length; i++) {
-			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" class="btn btn-default btn-xs" style="display:inline-table;"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
+			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" class="btn btn-default btn-xs" style="display: inline-block;padding: 5px 10px;margin: 0 5px 0 5px;color: #606060;font-size:11px;"><img src="' + icons[i].image + '" style="margin-right: 5px;width: 16px;height: 16px;" /> ' + icons[i].name + '</li>');
 		}
 
 		//escuchar evento on click en todos los <li>
