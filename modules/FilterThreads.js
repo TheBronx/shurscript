@@ -91,11 +91,17 @@
 		];
 	};
 
+	mod.onShurbarClick = function() {
+		console.log("Do something!");
+	};
+
 	mod.shurbarIcon = function() {
 		return {
 			name: 'Favoritos',
 			description: 'Hilos favoritos',
-			image: 'http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif'
+			image: 'http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif',
+			actionType: 'popover',
+			handler: mod.onShurbarClick
 		};
 	};
 
