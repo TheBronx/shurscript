@@ -80,14 +80,12 @@
 	};
 
 	shurbar.show = function() {
-		$('#shurbar ul.shurbar-icons').css({'visibility':'visible'});
 		$('#shurbar ul.shurbar-icons').animate({'margin-left':'0px'});
 		isHidden = false;
 	};
 	shurbar.hide = function() {
-		var width = $('#shurbar ul.shurbar-icons').width();
+		var width = $('#shurbar ul.shurbar-icons').outerWidth();
 		$('#shurbar ul.shurbar-icons').animate({'margin-left':'-'+width+'px'}, function() {
-			$('#shurbar ul.shurbar-icons').css({'visibility':'hidden'});
 			$('#shurbar').css({'visibility':'visible'}); //la shurbar esta oculta al cargar, con esto la mostramos una vez replegada
 		});
 		isHidden = true;

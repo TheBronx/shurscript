@@ -99,7 +99,7 @@
 		return {
 			name: 'Favoritos',
 			description: 'Hilos favoritos',
-			image: 'http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif',
+			image: 'http://static.shurscript.org/img/fav.png',
 			actionType: 'popover',
 			handler: mod.onShurbarClick
 		};
