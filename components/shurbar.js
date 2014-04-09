@@ -7,7 +7,8 @@
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
 	var html = '<div id="shurbar" class="shurscript" style="position:fixed;bottom:25px;left:20px;">' +
-		'<img id="shurpop" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
+		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
+		'<ul class="shurbar-icons"></ul>' +
 		'</div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
@@ -17,6 +18,7 @@
 		this.image = image;
 		this.handler = handler;
 	};
+	var isHidden = true;
 
 	//called when a module is loading
 	shurbar.loadingModule = function(event, module) {
@@ -56,32 +58,30 @@
 	};
 
 	shurbar.updateBar = function() {
-		function buildPopoverContent() {
-			var popover = $('<div class="shurscript"/>');
-			var ul = $('<ul class="shurbar-icons"/>');
+		$('#shurbar ul.shurbar-icons').html('');
 
-			for(var i=0; i<icons.length; i++) {
-				ul.append('<li id="'+icons[i].name+'"><img src="'+icons[i].image+'" data-toggle="tooltip" data-placement="bottom" title="'+icons[i].name+'" /></li>');
-			}
-
-			popover.append(ul);
-			return popover;
+		for(var i=0; i<icons.length; i++) {
+			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
 		}
 
-		$('#shurpop').popover({content: buildPopoverContent(), container: '#shurbar', placement: 'right', html: true, trigger: 'manual'});
+		//escuchar evento on click en todos los <li>
+		$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
+	};
 
-		$('#shurpop').click(function (e) {
-			$(".popover").remove();
-			$(this).popover('show');
-			$(".popover .popover-content").html(buildPopoverContent());
-			//escuchar evento on click en todos los <li> que estan dentro del popover
-			$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
-		});
+	shurbar.toggle = function() {
+		if(isHidden) {
+			$('#shurbar ul.shurbar-icons').show('slide',{direction:'right'},1000, function() { isHidden = !isHidden; });
+		} else {
+			$('#shurbar ul.shurbar-icons').hide('slide',{direction:'left'},1000, function() { isHidden = !isHidden; });
+		}
 	};
 
 	//punto de entrada
 	shurbar.load = function() {
 		$(document.body).append(html);
+		//escuchar evento on click en roto2
+		$('#shurbar-roto2').click(shurbar.toggle);
+
 		SHURSCRIPT.eventbus.on('loadingModule', shurbar.loadingModule);
 	};
 
