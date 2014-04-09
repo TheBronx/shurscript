@@ -61,7 +61,7 @@
 		$('#shurbar ul.shurbar-icons').html('');
 
 		for(var i=0; i<icons.length; i++) {
-			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" style="display:inline;"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
+			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" class="btn btn-default btn-xs" style="display:inline-table;"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
 		}
 
 		//escuchar evento on click en todos los <li>
