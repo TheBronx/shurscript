@@ -7,8 +7,8 @@
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
 	var html = '<div id="shurbar" class="shurscript" style="position:fixed;bottom:25px;left:20px;">' +
-		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif"/>' +
-		'<ul class="shurbar-icons"></ul>' +
+		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline;"/>' +
+		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:5px; transition: width 1s ease 0s;"></ul>' +
 		'</div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
@@ -70,9 +70,11 @@
 
 	shurbar.toggle = function() {
 		if(isHidden) {
-			$('#shurbar ul.shurbar-icons').show('slide',{direction:'right'},1000, function() { isHidden = !isHidden; });
+			$('#shurbar ul.shurbar-icons').animate({'margin-left':'0px'});
+			isHidden = false;
 		} else {
-			$('#shurbar ul.shurbar-icons').hide('slide',{direction:'left'},1000, function() { isHidden = !isHidden; });
+			$('#shurbar ul.shurbar-icons').animate({'margin-left':'-1000px'});
+			isHidden = true;
 		}
 	};
 
