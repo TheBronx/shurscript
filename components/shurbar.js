@@ -65,7 +65,6 @@
 
 			for(var i=0; i<icons.length; i++) {
 				ul.append('<li id="'+icons[i].name+'"><img src="'+icons[i].image+'" data-toggle="tooltip" data-placement="bottom" title="'+icons[i].name+'" /></li>');
-				//TODO agregar eventos onclick y notificar al modulo de turno via trigger() o directamente...
 			}
 
 			popover.append(ul);
