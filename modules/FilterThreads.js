@@ -99,7 +99,7 @@
 		return {
 			name: 'Favoritos',
 			description: 'Hilos favoritos',
-			image: 'http://static.shurscript.org/img/fav.png',
+			image: 'http://static.shurscript.org/img/star.png',
 			actionType: 'popover',
 			handler: mod.onShurbarClick
 		};
