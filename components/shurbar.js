@@ -6,9 +6,9 @@
 
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
-	var html = '<div id="shurbar" class="shurscript" style="position:fixed;bottom:25px;left:20px;">' +
-		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline;"/>' +
+	var html = '<div id="shurbar" class="shurscript" style="position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0px 5px #000000; border-radius:0 4px 4px 0;">' +
 		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:5px; transition: width 1s ease 0s;"></ul>' +
+		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:5px; cursor:pointer;"/>' +
 		'</div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
@@ -61,21 +61,33 @@
 		$('#shurbar ul.shurbar-icons').html('');
 
 		for(var i=0; i<icons.length; i++) {
-			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
+			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" style="display:inline;"><img src="' + icons[i].image + '" /> ' + icons[i].name + '</li>');
 		}
 
 		//escuchar evento on click en todos los <li>
 		$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
+
+		//hide bar
+		shurbar.hide();
 	};
 
 	shurbar.toggle = function() {
 		if(isHidden) {
-			$('#shurbar ul.shurbar-icons').animate({'margin-left':'0px'});
-			isHidden = false;
+			shurbar.show();
 		} else {
-			$('#shurbar ul.shurbar-icons').animate({'margin-left':'-1000px'});
-			isHidden = true;
+			shurbar.hide();
 		}
+	};
+
+	shurbar.show = function() {
+		$('#shurbar ul.shurbar-icons').css({'visibility':'visible'});
+		$('#shurbar ul.shurbar-icons').animate({'margin-left':'0px'});
+		isHidden = false;
+	};
+	shurbar.hide = function() {
+		var width = $('#shurbar ul.shurbar-icons').width();
+		$('#shurbar ul.shurbar-icons').animate({'margin-left':'-'+width+'px'}, function() {$('#shurbar ul.shurbar-icons').css({'visibility':'hidden'});});
+		isHidden = true;
 	};
 
 	//punto de entrada
