@@ -32,7 +32,7 @@
 		return [
 
 			creOpt({type: 'checkbox', mapsTo: 'showAlerts', caption: 'Mostrar una alerta en el navegador cada vez que llegue una nueva notificación'}),
-			creOpt({type: 'checkbox', mapsTo: 'mentionsToo', caption: 'Notificar también las menciones, no solo las citas', subCaption: 'Si se desactiva puede ralentizar la recuperación de las notificaciones'}),
+			creOpt({type: 'checkbox', mapsTo: 'mentionsToo', caption: 'Notificarme también cuando alguien me mencione en un hilo, no solo cuando me citen', subCaption: '<br/>Desmarca esta opci&oacute;n si tienes problemas con tu nick o te llegan citas que no deber&iacute;an llegarte'}),
 
 			creOpt({type: 'checkbox', mapsTo: 'openInTabsButton', caption: "Mostrar botón en la lista de notificaciones para abrir las no leídas en pestañas. <b style='text-decoration:underline;' onclick='chromeTabsWarning()'>Leer usuarios de Chrome</b>"}),
 
@@ -52,15 +52,15 @@
 	};
 
 	/* Estilos propios del módulo */
-	GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 3px 15px; width: 40px; background: #CECECE; color: gray; font-size: 24pt;}");
+	GM_addStyle(".notifications {cursor: pointer; text-align: center; padding: 3px 0px; width: 70px; background: #CECECE; color: gray; font-size: 24pt;}");
 	GM_addStyle(".notifications.unread {background: #CC3300; color: white;}");
 	GM_addStyle(".notifications.unread:hover {background: #E64D1A; color: white;}");
 	GM_addStyle(".notifications sup {font-size: 10px;}");
 	GM_addStyle("#notificationsBox {background: #FFF;border: 1px solid #C30;position: absolute;display: none;box-shadow: 0 2px 4px -2px;right: 11px;font:10pt verdana,geneva,lucida,'lucida grande',arial,helvetica,sans-serif}");
 	GM_addStyle("#notificationsBox #notificationsList{overflow: auto;max-height: 380px;min-height: 83px;width: 340px;}");
 	GM_addStyle("#notificationsBox:after, #notificationsBox:before {bottom: 100%;border: solid transparent;content: ' ';height: 0;width: 0;position: absolute;pointer-events: none;}");
-	GM_addStyle("#notificationsBox:after {border-color: rgba(255, 255, 255, 0);border-bottom-color: #fff;border-width: 10px;left: 92%;margin-left: -10px;}");
-	GM_addStyle("#notificationsBox:before {border-color: rgba(204, 51, 0, 0);border-bottom-color: #CC3300;border-width: 11px;left: 92%;margin-left: -11px;}");
+	GM_addStyle("#notificationsBox:after {border-color: rgba(255, 255, 255, 0);border-bottom-color: #fff;border-width: 10px;left: 92%;margin-left: -13px;}");
+	GM_addStyle("#notificationsBox:before {border-color: rgba(204, 51, 0, 0);border-bottom-color: #CC3300;border-width: 11px;left: 92%;margin-left: -14px;}");
 	GM_addStyle(".notificationRow {overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
 	GM_addStyle(".notificationRow > div {margin-top: 2px;}");
 	GM_addStyle(".notificationRow.read {color: #AAA !important;}");
@@ -71,6 +71,10 @@
 	GM_addStyle("#notificationsListButtons td:last-child {border: none;}");
 	GM_addStyle("#notificationsListButtons td:hover {background: #E64D1A;}");
 	GM_addStyle("#notificationsListButtons {width: 100%;}");
+	
+	/* Estilos para la portada */
+	GM_addStyle("#AutoNumber1.contenido .notifications {padding: 6px 0px;}");
+
 
 	/* Variables globales del módulo */
 	var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
@@ -153,6 +157,7 @@
 		//creamos la celda de notificaciones
 		if (mod.helper.environment.page === 'frontpage') { //Portada
 			$("#AutoNumber1.contenido tr:first-child").append('<td style="padding: 0px;" rowspan=3 class="alt2"><div class="notifications">0</div></td>')
+			GM_addStyle("#notificationsBox {right: 19px;}");
 		} else {
 			$(".page table td.alt2[nowrap]").first().parent().append('<td style="padding: 0px;" class="alt2"><div class="notifications">0</div></td>');
 		}
@@ -294,7 +299,7 @@
 										className: "btn-default",
 										callback: function () {
 											markAsRead(cita, function(){
-												window.open(cita.postLink, "_self");
+												openQuote(cita, "_self");
 											});
 										}
 									},
@@ -303,7 +308,7 @@
 										className: "btn-primary",
 										callback: function () {
 											markAsRead(cita, function() {
-												window.open(cita.postLink, "_blank");
+												openQuote(cita, "_blank");
 											});
 										}
 									}
@@ -337,7 +342,7 @@
 										callback: function () {
 											markAllAsRead(function(){
 												newQuotes.forEach(function (cita) {
-													window.open(cita.postLink, "_blank");
+													openQuote(cita, "_blank");
 												});
 											});
 										}
@@ -398,7 +403,7 @@
 	}
 
 	function showNotificationsBox() {
-		notificationsBox.css("top", $(".notifications").offset().top + $(".notifications").height() + 20);
+		notificationsBox.css("top", $(".notifications").offset().top + $(".notifications").outerHeight() + 6);
 		notificationsBox.show();
 	}
 
@@ -430,7 +435,7 @@
 					var unread = getUnreadQuotes();
 					markAllAsRead(function() {
 						unread.forEach(function (cita) {
-							window.open(cita.postLink, "_blank");
+							openQuote(cita, "_blank");
 						});
 					});
 				});
@@ -470,21 +475,22 @@
 
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
-		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita}));
+		var link = cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink;
+		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link}));
 
 		//Necesitamos esperar a que se marque como leída antes de abrir el link
-		//Mousedown es el único que se ejecuta también con el botón central
-		row.on('mousedown', '.postLink', function (e) {
+		//No usamos click porque no ejecuta el evento con el botón central
+		row.on('mouseup', '.postLink', function (e) {
 			if (e.which != 3) { //Botón derecho
 				if (!cita.read) {
 					$(this).parent().parent().addClass("read");
 					markAsRead(cita, function(){
 						if (e.which == 1) { //Solo botón izquierdo. Si se ha hecho clic con el central, ya se habrá abierto automáticamente (Clic central -> Abrir en nueva pestaña)
-							window.open(cita.postLink, '_self');
+							openQuote(cita, '_self');
 						}
 					});
-				} else {
-					window.open(cita.postLink, '_self');
+				} else if (e.which == 1) {
+					openQuote(cita, '_self');
 				}
 			}
 		});
@@ -500,6 +506,10 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 		
 		setNotificationsCount(notificationsCount - 1);
+	}
+
+	function openQuote(cita, target) {
+		window.open(cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink, target);
 	}
 
 	function Cita(el, read) {
