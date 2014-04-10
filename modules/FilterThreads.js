@@ -178,6 +178,7 @@
 						$(".popover").remove();
 						$(this).popover('show');
 						$(".popover .popover-content").html(getThreadMenu(hilo));
+						$(".popover .popover-content").css({height: '30px'});
 						$(this).addClass("shurmenu_opened");
 					});
 
