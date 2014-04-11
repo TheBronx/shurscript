@@ -192,7 +192,9 @@
 					contacts.push(elems[i].textContent);
 				}
 				
-				mod.preferences.contacts = contacts.toString();
+				// Update textbox contents and mark module as modified
+				document.querySelector("input[data-maps-to='contacts']").value = contacts.toString();
+				document.querySelector("div[data-module-id='HighlightOP']").classList.add('changed');
 			}
 		};
 		
