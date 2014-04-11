@@ -6,21 +6,13 @@
 
 	var preferences = SHURSCRIPT.core.createComponent('preferences');
 
-	/**
-	 * Mete elemento <Shurscript> en barra de FC para acceder a las preferencias
-	 */
-	preferences.appendMenuItem = function () {
-
-		var menuItem = $('.vbmenu_control').first(),
-			newMenuItem = menuItem.clone();
-
-		// TODO: mete el estilo por css
-		newMenuItem.css('cursor', 'pointer');
-		newMenuItem.html('<a>Shurscript</a>');
-		menuItem.parent().append(newMenuItem);
-
-		// Mete el evento para lanzar el modal
-		newMenuItem.click(preferences.onShow);
+	preferences.shurbarIcon = function () {
+		return {
+			name: 'Shurscript',
+			description: 'Abrir preferencias',
+			image: 'http://cdn.forocoches.com/foro/images/smilies/goofy.gif',
+			handler: preferences.onShow
+		};
 	};
 
 	/**
@@ -226,10 +218,6 @@
 	 * Puerta de entrada al componente
 	 */
 	preferences.load = function () {
-
-		// Mete link para abrir modal
-		preferences.appendMenuItem();
-
 		// Mete CSS para el modal
 		preferences.helper.addStyle('modalcss');
 
@@ -309,3 +297,4 @@
 	}, 0);
 
 })(jQuery, SHURSCRIPT);
+

@@ -352,6 +352,8 @@ var SHURSCRIPT = {
 			return;
 		}
 
+		SHURSCRIPT.eventbus.trigger('loadingComponent', component);
+
 		// TODO [ikaros45 28.03.2014]: No hay que comprobar si la funcion existe, sino definir una
 		// funcion dummy en el prototype que puede ser sobreescrita por los modulos
 
@@ -365,6 +367,7 @@ var SHURSCRIPT = {
 		if (_.isFunction(component.load)) {
 			component.load(); // sin callback
 		}
+		
 		core.loadNextComponent();
 	};
 

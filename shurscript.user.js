@@ -31,12 +31,12 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/shurbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/topbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/shurbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
@@ -48,6 +48,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
+// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
 // @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css

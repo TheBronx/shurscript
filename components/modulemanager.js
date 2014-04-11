@@ -330,6 +330,9 @@
 				moduleManager.helper.log('Fallo cargando modulo ' + module.id + '\nRazon: ' + e);
 			}
 		});
+
+		//loading module event
+		SHURSCRIPT.eventbus.trigger('allModulesLoaded');
 	};
 
 	/**

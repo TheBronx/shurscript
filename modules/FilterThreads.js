@@ -92,13 +92,13 @@
 	};
 
 	mod.onShurbarClick = function() {
-		console.log("Do something!");
+		alert("Do something!");
 	};
 
 	mod.shurbarIcon = function() {
 		return {
-			name: 'Favoritos',
-			description: 'Hilos favoritos',
+			name: 'Hilos favoritos',
+			description: 'Ver la lista de todos tus hilos favoritos',
 			image: 'http://static.shurscript.org/img/star.png',
 			actionType: 'popover',
 			handler: mod.onShurbarClick

@@ -1,15 +1,15 @@
 /**
- *
+ * Barra que contendrá botones personalizables por cada módulo y cada componente
  */
 (function ($, SHURSCRIPT, undefined) {
 	'use strict';
 
 	var shurbar = SHURSCRIPT.core.createComponent('shurbar');
 
-	var html = '<div id="shurbar" class="shurscript" style="visibility:hidden; position:fixed; bottom:25px; left:0px; background-color:#fefefe; box-shadow:1px 0 5px #838383; border-radius:0 4px 4px 0;">' +
-		'<ul class="shurbar-icons" style="list-style:none; display:inline-block; margin:0; padding:8px 5px; transition: width 1s ease 0s;"></ul>' +
-		'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:10px; cursor:pointer;border-left: 1px dashed #dfdfdf;"/>' +
-		'</div>';
+	var html = '<div id="shurbar" class="shurscript"><div class="pull-right">' +
+		'<ul class="nav navbar-nav shurbar-items"></ul>' +
+		/*'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:7px; cursor:pointer;border-left: 1px dashed #dfdfdf;"/>' +*/
+		'</div></div>';
 	var icons = [];
 	var Icon = function(moduleId, name, description, image, handler) {
 		this.moduleId = moduleId;
@@ -20,84 +20,90 @@
 	};
 	var isHidden = true;
 
-	//called when a module is loading
-	shurbar.loadingModule = function(event, module) {
-		//comprobar si el modulo esta habilitado
+	/**
+	* Se llama cuando un módulo empieza a cargarse
+	*/
+	function loadingModule (event, module) {
 		if (!module.preferences.enabled) {
 			return;
 		}
 
-		//comprobar si el modulo quiere agregar algo a la shurbar
-		if('undefined' !== typeof module.shurbarIcon) {
-			var iconData = module.shurbarIcon();
-			var icon;
-			if ($.isArray(iconData)) { //agregar multiples iconos
-				for(var i=0; i<iconData.length; i++) {
-					icon = new Icon(module.id, iconData[i].name, iconData[i].description, iconData[i].image, iconData[i].handler);
-					icons.push(icon);
-				}
-			} else { //agregar un unico icono para este modulo
-				icon = new Icon(module.id, iconData.name, iconData.description, iconData.image, iconData.handler);
-				icons.push(icon);
-			}
-			shurbar.updateBar();
+		checkAndAddIcons(module);
+	}
+
+	/**
+	* Se llama cuando un componente empieza a cargarse
+	*/
+	function loadingComponent (event, component) {
+		checkAndAddIcons(component);
+	}
+
+	/**
+	* Comprueba si el módulo o el componente tiene algo que añadir a la shurbar y si es así, lo añade.
+	*/
+	function checkAndAddIcons(moduleOrComponent) {
+		if('undefined' !== typeof moduleOrComponent.shurbarIcon) {	
+			addIcons(moduleOrComponent.shurbarIcon(), moduleOrComponent);
 		}
-	};
+	}
 
-	shurbar.iconClicked = function() {
-		var icon;
-		var iconId = $(this).attr('id');
-		for(var i=0; i<icons.length; i++) {
-			if (icons[i].name == iconId) {
-				icon = icons[i];
-				//notify module
-				icon.handler();
-				break;
-			}
-		}
-	};
-
-	shurbar.updateBar = function() {
-		$('#shurbar ul.shurbar-icons').html('');
-
-		for(var i=0; i<icons.length; i++) {
-			$('#shurbar ul.shurbar-icons').append('<li id="' + icons[i].name + '" class="btn btn-default btn-xs" style="display: inline-block;padding: 5px 10px;margin: 0 5px 0 5px;color: #000000;font-size:11px;"><img src="' + icons[i].image + '" style="margin-right: 5px;width: 16px;height: 16px;margin-top:-2px;" /> ' + icons[i].name + '</li>');
+	/**
+	* Añadir iconos a la lista que más tarde se añadirá la barra
+	*/
+	function addIcons (iconData, module) {
+		if (!$.isArray(iconData)) { //Convertirlo en array para reutilizar el bucle
+			iconData = [iconData];
 		}
 
-		//escuchar evento on click en todos los <li>
-		$('#shurbar ul.shurbar-icons li').click(shurbar.iconClicked);
-
-		//hide bar
-		shurbar.hide();
-	};
-
-	shurbar.toggle = function() {
-		if(isHidden) {
-			shurbar.show();
-		} else {
-			shurbar.hide();
-		}
-	};
-
-	shurbar.show = function() {
-		$('#shurbar ul.shurbar-icons').animate({'margin-left':'0px'});
-		isHidden = false;
-	};
-	shurbar.hide = function() {
-		var width = $('#shurbar ul.shurbar-icons').outerWidth();
-		$('#shurbar ul.shurbar-icons').animate({'margin-left':'-'+width+'px'}, function() {
-			$('#shurbar').css({'visibility':'visible'}); //la shurbar esta oculta al cargar, con esto la mostramos una vez replegada
+		iconData.forEach(function (data) {
+			icons.push(new Icon(module && module.id, data.name, data.description, data.image, data.handler));
 		});
-		isHidden = true;
-	};
+	}
 
-	//punto de entrada
+	/**
+	* Añade todos los iconos a la barra definitivamente (cuando ya se han cargado todos los módulos)
+	*/
+	function updateBar () {
+		icons.forEach(function (icon) {
+			$('<li class="shurbar-item" id="' + icon.name + '" data-placement="top" data-toggle="tooltip" title="' + icon.description + '"><img src="' + icon.image + '"/><a href="#">' + icon.name + '</a></li>')
+			.prependTo($('#shurbar ul.shurbar-items'))
+			.click(icon.handler).tooltip({delay: 300});
+		});
+	}
+
+	/**
+	* Punto de entrada del componente
+	*/
 	shurbar.load = function() {
-		$(document.body).append(html);
-		//escuchar evento on click en roto2
-		$('#shurbar-roto2').click(shurbar.toggle);
 
-		SHURSCRIPT.eventbus.on('loadingModule', shurbar.loadingModule);
+		shurbar.helper.addStyle('shurbarcss');
+
+		//Reducir padding de la cabecera
+		$('#AutoNumber9').attr('cellpadding', 0);
+
+		var $oldBar = $('#AutoNumber7').parents('.cajasprin');
+		var $buscador = $('<div id="quick-search-form">' + $oldBar.find('form').parent().html() + '</div>');
+		// Cambiar estilos del buscador
+		$buscador.find('.cbutton').addClass('btn btn-default');
+		// $buscador.find('.cbutton[type=submit]').addClass('btn-primary');
+		 $buscador.find('.cfield').addClass('form-control');
+
+		var $shurbar = $(html);
+		$shurbar.append($buscador);
+
+		//Hacemos el cambiazo
+		$oldBar.replaceWith($shurbar);
+
+		//Cada componente que se cargue, podrá añadir si quiere un botón a la barra
+		SHURSCRIPT.eventbus.on('loadingComponent', loadingComponent);
+
+		//Lo mismo con los módulos
+		SHURSCRIPT.eventbus.on('loadingModule', loadingModule);
+
+		//Cuando se carguen todos los módulos, pintamos la barra
+		SHURSCRIPT.eventbus.one('allModulesLoaded', function () {
+			updateBar();
+		});
 	};
 
 })(jQuery, SHURSCRIPT);
