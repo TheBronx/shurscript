@@ -10,6 +10,7 @@ lib-cov
 *.sublime-project
 *.sublime-workspace
 .idea/*
+composed.user.js
 *~
 
 pids

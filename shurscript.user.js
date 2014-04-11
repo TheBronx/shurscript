@@ -50,7 +50,7 @@
 
 /**
  * Es imprescindible que los archivos js se carguen en este orden:
- * init > helper > persist > core > componentes > modulos
+ * init > system > persistence > core > componentes > modulos
  */
 
 if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los iframes WYSIWYG
