@@ -147,7 +147,7 @@
 
 			for (var i = 0, n = quotes.length; i < n; i++) {
 				var elem = quotes[i].getElementsByTagName("B");
-				
+
 				if (elem && elem.length > 0) {
 					var quotedUser = elem[0].textContent;
 
@@ -158,7 +158,7 @@
 					} else {
 						for (var j = 0, m = contacts.length; j < m; j++) {
 							if (quotedUser === contacts[j]) {
-								node.classList.add("contacts_quote");
+								quotes[i].classList.add("contacts_quote");
 								break;
 							}
 						}
