@@ -85,6 +85,11 @@
 		var $oldbar;
 		if (SHURSCRIPT.environment.page == 'frontpage') {
 			$oldbar = $('.cajastip');
+			//Movemos de sitio las estadísticas para no perderlas
+			var stats = $oldbar.find('.texto:nth-child(2)').html();
+			$('#AutoNumber8').html(stats.replace('|', '<br/>'));
+			$('#AutoNumber8').addClass('texto');
+			$('#AutoNumber8').css('margin', '7px 0 0 7px');
 		} else {
 			$oldbar = $('#AutoNumber7').parents('.cajasprin');
 		}
