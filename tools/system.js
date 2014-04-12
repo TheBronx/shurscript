@@ -33,6 +33,10 @@
          * Loguea y lanza excepcion
          */
         throw: function (name, description) {
+            if (description === undefined) {
+                description = '';
+            }
+
             var exc = '[EXCEPTION]' + this._getCallerDescription() + name + ' --- ' + description;
             this.log(exc);
             throw new Error(exc);
