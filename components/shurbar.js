@@ -100,6 +100,9 @@
 		// $buscador.find('.cbutton[type=submit]').addClass('btn-primary');
 		$buscador.find('.cfield').addClass('form-control');
 
+		//Metemos todos los inputs dentro del formulario
+		$buscador.find('form').append($buscador.find('input'));
+
 		var $shurbar = $(html);
 		$shurbar.append($buscador);
 
