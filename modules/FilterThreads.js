@@ -193,6 +193,8 @@
 	};
 
 	mod.onShurbarClick = function() {
+		if (favorites == undefined)
+			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
 		//para cada hilo favorito:
 		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
 		// b) tenemos todos sus datos
