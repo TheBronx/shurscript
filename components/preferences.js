@@ -10,7 +10,7 @@
 		return {
 			name: 'Shurscript',
 			description: 'Abrir preferencias',
-			image: 'http://cdn.forocoches.com/foro/images/smilies/goofy.gif',
+			image: SHURSCRIPT.config.imagesURL + 'roto2.gif',
 			handler: preferences.onShow
 		};
 	};
