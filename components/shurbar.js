@@ -81,18 +81,25 @@
 		//Reducir padding de la cabecera
 		$('#AutoNumber9').attr('cellpadding', 0);
 
-		var $oldBar = $('#AutoNumber7').parents('.cajasprin');
-		var $buscador = $('<div id="quick-search-form">' + $oldBar.find('form').parent().html() + '</div>');
+		//Reutilizamos la barra dónde está el buscador para poner la nuestra
+		var $oldbar;
+		if (SHURSCRIPT.environment.page == 'frontpage') {
+			$oldbar = $('.cajastip');
+		} else {
+			$oldbar = $('#AutoNumber7').parents('.cajasprin');
+		}
+
+		var $buscador = $('<div id="quick-search-form" class="pull-left">' + $oldbar.find('form').parent().html() + '</div>');
 		// Cambiar estilos del buscador
 		$buscador.find('.cbutton').addClass('btn btn-default');
 		// $buscador.find('.cbutton[type=submit]').addClass('btn-primary');
-		 $buscador.find('.cfield').addClass('form-control');
+		$buscador.find('.cfield').addClass('form-control');
 
 		var $shurbar = $(html);
 		$shurbar.append($buscador);
 
 		//Hacemos el cambiazo
-		$oldBar.replaceWith($shurbar);
+		$oldbar.replaceWith($shurbar);
 
 		//Cada componente que se cargue, podrá añadir si quiere un botón a la barra
 		SHURSCRIPT.eventbus.on('loadingComponent', loadingComponent);
