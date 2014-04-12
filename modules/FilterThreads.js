@@ -30,10 +30,6 @@
 		var _this = this;
 		this.favs = [];
 
-		this.size = function() {
-			return favs.length;
-		};
-
 		this.isFavorite = function(thread) {
 			var threadId;
 			if (typeof thread === 'number') {
@@ -78,7 +74,50 @@
 			}
 		};
 
-		//init
+		this.update = function(fav) {
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == fav.id) {
+					_this.favs[i] = fav;
+				}
+			}
+		};
+
+		this.populate = function(fav, callback) {
+			$.ajax({
+				url: "/foro/showthread.php?t="+fav.id
+			}).done(function(result) {
+				var title = $(result).find('div.page td.thead span.cmega').html();
+				title = title.replace("<!-- google_ad_section_start -->","");
+				title = title.replace("<!-- google_ad_section_end -->","");
+
+				var author = $(result).find('.bigusername').first().html();
+
+				var section = $(result).find('.navbar').last().find('a').html();
+
+				fav.title = title;
+				fav.author = author;
+				fav.section = section;
+				callback(fav);
+			});
+		};
+
+		this.getHTML = function(fav) {
+			var html = '<div id="shurscript-fav-'+fav.id+'"><a href="{link}">{title}</a> &bull; <span class="badge">{author}</span></div>';
+			if (fav.hasOwnProperty('title'))
+				html = html.replace("{title}",fav.title);
+			else
+				html = html.replace("{title}","Cargando datos del hilo...");
+
+			if (fav.hasOwnProperty('author'))
+				html = html.replace("{author}",fav.author);
+			else
+				html = html.replace("{author}","---");
+
+			html = html.replace("{link}",'http://www.forocoches.com/foro/showthread.php?t='+fav.id);
+			return html;
+		};
+
+		//init favs array
 		if (favorites.favs !== undefined) {
 			_this.favs = favorites.favs; //objeto favs
 		} else {
@@ -155,11 +194,43 @@
 
 	mod.onShurbarClick = function() {
 		//para cada hilo favorito:
-		// a) tenemos solo su ID -> ajax para sacar titulo y seccion
+		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
 		// b) tenemos todos sus datos
-		console.dir(favorites);
-		//mostramos lista de títulos agrupados por secciones
-		alert("Do something!");
+		//pintar sus datos o placeholders para cuando carguen
+		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">'+
+			'<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>'+
+			'<div class="modal-body"><p>No tienes favoritos :(</p></div></div></div></div>');
+		var fav, html = '';
+		for (var i=0; i<favorites.favs.length; i++) {
+			fav = favorites.favs[i];
+			if(!('title' in fav) || !('section' in fav) || !('author' in fav)) {
+				favorites.populate(fav, mod.favPopulated);
+			}
+			html += favorites.getHTML(fav);
+		}
+		//mostramos lista de hilos TODO agrupados por secciones
+		if (html != '')
+			modal.find('.modal-body').html(html);
+		$('body').append(modal);
+		modal.on('hidden.bs.modal', function () {
+			//Eliminar al cerrar
+			modal.remove();
+		});
+		modal.modal('show');
+	};
+
+	mod.favPopulated = function(fav) {
+		console.log(fav);
+		//hemos sacado los datos de un favorito, los guardamos
+		favorites.update(fav);
+		saveFavorites();
+		//mostramos sus datos en el desplegable si es que existe
+		var modal = $('#shurscript-favs');
+		if (modal.length>0) { //modal still exists
+			modal.find('#shurscript-fav-'+fav.id).replaceWith(favorites.getHTML(fav));
+		}
 	};
 
 	mod.shurbarIcon = function() {
@@ -320,7 +391,7 @@
 			}
 		} else {
 			var matchResult;
-			
+
 			if (hiddenThreads.indexOf(hilo.id) >= 0) { //Si está oculto manualmente, prevalece sobretodo lo demas
 				addToHiddenThreads(hilo);
 				hilo.isHidden = true;
