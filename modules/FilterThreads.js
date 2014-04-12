@@ -26,6 +26,68 @@
 		}
 	});
 
+	var Favorites = function(favorites) {
+		var _this = this;
+		this.favs = [];
+
+		this.size = function() {
+			return favs.length;
+		};
+
+		this.isFavorite = function(thread) {
+			var threadId;
+			if (typeof thread === 'number') {
+				threadId = thread; //ya es un ID
+			} else if (thread.id !== undefined) {
+				threadId = thread.id; //es un objeto, sacamos ID
+			} else {
+				return false;
+			}
+			//buscamos en el array de favs aquel que tenga ID = threadId
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == threadId) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		this.add = function(thread) {
+			var fav = {};
+			if (typeof thread === 'number') {
+				fav.id = thread;
+			} else {
+				fav = thread;
+			}
+			_this.favs.push(fav);
+		};
+
+		this.remove = function(thread) {
+			var threadId;
+			if (typeof thread === 'number') {
+				threadId = thread; //ya es un ID
+			} else if (thread.id !== undefined) {
+				threadId = thread.id; //es un objeto, sacamos ID
+			}
+			//borramos del array de favs aquel que tenga ID = threadId
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == threadId) {
+					_this.favs.splice(i, 1);
+					break;
+				}
+			}
+		};
+
+		//init
+		if (favorites.favs !== undefined) {
+			_this.favs = favorites.favs; //objeto favs
+		} else {
+			for(var i=0; i<favorites.length; i++) {
+				this.add(favorites[i]); //lista de ids de hilos (sistema antiguo)
+			}
+		}
+	};
+
 	var threads = [];
 	var favorites;
 	var readThreads = [];
@@ -58,7 +120,7 @@
 	mod.onNormalStart = function () {
 		loadStyles();
 
-		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]'));
+		favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
 
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -92,6 +154,11 @@
 	};
 
 	mod.onShurbarClick = function() {
+		//para cada hilo favorito:
+		// a) tenemos solo su ID -> ajax para sacar titulo y seccion
+		// b) tenemos todos sus datos
+		console.dir(favorites);
+		//mostramos lista de títulos agrupados por secciones
 		alert("Do something!");
 	};
 
@@ -210,14 +277,7 @@
 			var t_id = parseInt(href.replace("poll.php?do=newpoll&t=", ""), 10);
 		}
 		//vale, ahora que sabemos que hilo es, ¿es favorito?
-		var is_favorite = false;
-		if (favorites.indexOf(t_id) >= 0) {
-			//es un hilo favorito
-			is_favorite = true;
-		} else {
-			//no es un hilo favorito
-			is_favorite = false;
-		}
+		var is_favorite = favorites.isFavorite(t_id);
 		//agregamos la estrella junto a los botones de responder
 		var estrella = '<td class="shur_estrella"><a href="#" class="' + (is_favorite ? 'fav' : '') + '"></a></td>';
 		//boton de arriba
@@ -231,7 +291,7 @@
 				if (is_favorite) {
 					is_favorite = false;
 					//borramos de favoritos
-					removeElementFromArray(t_id, favorites);
+					favorites.remove(t_id);
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
@@ -239,7 +299,7 @@
 				} else {
 					is_favorite = true;
 					//agregamos a favoritos
-					favorites.push(t_id);
+					favorites.add(t_id);
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
@@ -254,17 +314,17 @@
 	/* Aplicar funcionalidad al hilo en cuestion: marcarlo como favorito, ocultarlo, etc.*/
 	function processThread(hilo) {
 		if (mod.helper.environment.page == "/search.php") { //En el buscador solo se activan los favoritos
-			if (favorites.indexOf(hilo.id) >= 0) {
+			if (favorites.isFavorite(hilo.id)) {
 				hilo.row.addClass("favorite");
 				hilo.isFavorite = true;
 			}
 		} else {
 			var matchResult;
-
+			
 			if (hiddenThreads.indexOf(hilo.id) >= 0) { //Si está oculto manualmente, prevalece sobretodo lo demas
 				addToHiddenThreads(hilo);
 				hilo.isHidden = true;
-			} else if (favorites.indexOf(hilo.id) >= 0) { //Después, si es favorito
+			} else if (favorites.isFavorite(hilo.id)) { //Después, si es favorito
 				hilo.isFavorite = true;
 
 				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
@@ -405,14 +465,14 @@
 	}
 
 	function markAsFavorite(hilo) {
-		favorites.push(hilo.id);
+		favorites.add(hilo.id);
 		$(hilo.row).addClass("favorite");
 		hilo.isFavorite = true;
 		saveFavorites();
 	}
 
 	function unmarkAsFavorite(hilo) {
-		removeElementFromArray(hilo.id, favorites);
+		favorites.remove(hilo.id);
 		$(hilo.row).removeClass("favorite");
 		hilo.isFavorite = false;
 		saveFavorites();
@@ -422,7 +482,7 @@
 	function markAsHiddenThread(hilo) {
 		hilo.isHidden = true;
 		hiddenThreads.push(hilo.id);
-		if (hilo.isFavorite || favorites.indexOf(hilo.id) >= 0) { //Si era favorito
+		if (hilo.isFavorite || favorites.isFavorite(hilo.id)) { //Si era favorito
 			unmarkAsFavorite(hilo); //Ya no lo es
 		}
 		addToHiddenThreads(hilo);
