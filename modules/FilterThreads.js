@@ -130,7 +130,7 @@
 		};
 
 		this.getSectionHTML = function(sectionName) {
-			var sectionId = sectionName.replace(/[\s\/]/gi, "");
+			var sectionId = sectionName.replace(/[\s\/]/gi, ""); //si cambias esto, cambialo en mod.favPopulated() tmb
 			var sectionTable = '<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
 
 			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + sectionId + '">'+
@@ -260,7 +260,7 @@
 	};
 
 	mod.favPopulated = function(fav) {
-		console.log(fav);
+		var sectionId = fav.section.replace(/[\s\/]/gi, "");
 		//hemos sacado los datos de un favorito, los guardamos
 		favorites.update(fav);
 		saveFavorites();
@@ -268,7 +268,7 @@
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
 			//puede que la seccion exista, o puede que no
-			var $sectionElement = $('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, ""));
+			var $sectionElement = $('#shurscript-favs-section-' + sectionId);
 			if ($sectionElement.length <= 0) {
 				$sectionElement = $(favorites.getSectionHTML(fav.section));
 				modal.find('.modal-body').append($sectionElement);
