@@ -559,7 +559,7 @@
 .shurscript .modal-footer .btn+.btn{margin-bottom:0;margin-left:5px}
 .shurscript .modal-footer .btn-group .btn+.btn{margin-left:-1px}
 .shurscript .modal-footer .btn-block+.btn-block{margin-left:0}
-@media screen and (min-width:768px){.shurscript .modal-dialog{right:auto;left:50%;width:600px;padding-top:30px;padding-bottom:30px} .shurscript .modal-content{-webkit-box-shadow:0 5px 15px rgba(0,0,0,0.5);box-shadow:0 5px 15px rgba(0,0,0,0.5)}}.shurscript .tooltip{position:absolute;z-index:1030;display:block;font-size:12px;line-height:1.4;opacity:0;filter:alpha(opacity=0);visibility:visible}
+@media screen and (min-width:768px){.shurscript .modal-dialog{right:auto;left:50%;width:600px;padding-top:30px;padding-bottom:30px} .shurscript .modal-content{-webkit-box-shadow:0 5px 15px rgba(0,0,0,0.5);box-shadow:0 5px 15px rgba(0,0,0,0.5)} .shurscript .modal-dialog.modal-favs{width: 700px;} }.shurscript .tooltip{position:absolute;z-index:1030;display:block;font-size:12px;line-height:1.4;opacity:0;filter:alpha(opacity=0);visibility:visible}
 .shurscript .tooltip.in{opacity:0.9;filter:alpha(opacity=90)}
 .shurscript .tooltip.top{padding:5px 0;margin-top:-3px}
 .shurscript .tooltip.right{padding:0 5px;margin-left:3px}

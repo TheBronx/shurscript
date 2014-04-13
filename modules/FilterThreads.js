@@ -102,7 +102,7 @@
 		};
 
 		this.getHTML = function(fav) {
-			var html = '<tr id="shurscript-fav-'+fav.id+'"><td style="vertical-align:middle;"><a href="#"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td><td><a href="{link}">{title}</a></td><td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:8px;">{author}</span></td></tr>';
+			var html = '<tr id="shurscript-fav-'+fav.id+'"><td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td><td><a href="{link}">{title}</a></td><td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
 			if (fav.hasOwnProperty('title'))
 				html = html.replace("{title}",fav.title);
 			else
@@ -200,11 +200,11 @@
 		// b) tenemos todos sus datos
 		//pintar sus datos o placeholders para cuando carguen
 		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">'+
-			'<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
+			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">'+
 			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
 			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>'+
 			'<div class="modal-body"><p>No tienes favoritos :(</p></div></div></div></div>');
-		var table = $('<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Post</th><th style="text-align:center;font-size:12px;">Autor</th></table>');
+		var table = $('<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>');
 		var fav, html = '';
 		for (var i=0; i<favorites.favs.length; i++) {
 			fav = favorites.favs[i];
