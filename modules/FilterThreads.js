@@ -82,6 +82,18 @@
 			}
 		};
 
+		this.getSections = function() {
+			var sections =  [];
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].section != undefined) {
+					if (sections.indexOf(_this.favs[i].section) == -1) {
+						sections.push(_this.favs[i].section);
+					}
+				}
+			}
+			return sections;
+		};
+
 		this.populate = function(fav, callback) {
 			$.ajax({
 				url: "/foro/showthread.php?t="+fav.id
@@ -101,7 +113,7 @@
 			});
 		};
 
-		this.getHTML = function(fav) {
+		this.getFavHTML = function(fav) {
 			var html = '<tr id="shurscript-fav-'+fav.id+'"><td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td><td><a href="{link}">{title}</a></td><td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
 			if (fav.hasOwnProperty('title'))
 				html = html.replace("{title}",fav.title);
@@ -115,6 +127,12 @@
 
 			html = html.replace("{link}",'http://www.forocoches.com/foro/showthread.php?t='+fav.id);
 			return html;
+		};
+
+		this.getSectionHTML = function(sectionName) {
+			var sectionTable = '<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
+			var sectionHTML = $('<div id="shurscript-favs-section-' + sectionName.replace(/[\s\/]/gi, "") + '"><h3>'+sectionName+'</h3>'+sectionTable+'</div>');
+			return sectionHTML;
 		};
 
 		//init favs array
@@ -195,29 +213,37 @@
 	mod.onShurbarClick = function() {
 		if (favorites == undefined)
 			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
+
+		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">' +
+			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
+			'<div class="modal-body"></div></div></div></div>');
+		$('body').append(modal);
+
+		//para cada seccion hacemos una capa y metemos dentro la tabla
+		var sections = favorites.getSections();
+		sections.forEach(function (section) {
+			modal.find('.modal-body').append(favorites.getSectionHTML(section));
+		});
+
 		//para cada hilo favorito:
 		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
 		// b) tenemos todos sus datos
 		//pintar sus datos o placeholders para cuando carguen
-		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">'+
-			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">'+
-			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>'+
-			'<div class="modal-body"><p>No tienes favoritos :(</p></div></div></div></div>');
-		var table = $('<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>');
-		var fav, html = '';
-		for (var i=0; i<favorites.favs.length; i++) {
+		var fav;
+		for (var i = 0; i < favorites.favs.length; i++) {
 			fav = favorites.favs[i];
-			if(!('title' in fav) || !('section' in fav) || !('author' in fav)) {
+			if (!('title' in fav) || !('section' in fav) || !('author' in fav)) {
+				//nos faltan datos, populate
 				favorites.populate(fav, mod.favPopulated);
+				//y cuando esté completo ya lo meteremos donde toque
+			} else {
+				//metemos el hilo en su correspondiente seccion
+				$('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, "") + ' table').append(favorites.getFavHTML(fav));
 			}
-			html += favorites.getHTML(fav);
 		}
-		//mostramos lista de hilos TODO agrupados por secciones
-		if (html != '')
-			table.append(html);
-			modal.find('.modal-body').html(table);
-		$('body').append(modal);
+
 		modal.on('hidden.bs.modal', function () {
 			//Eliminar al cerrar
 			modal.remove();
@@ -233,7 +259,15 @@
 		//mostramos sus datos en el desplegable si es que existe
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
-			modal.find('#shurscript-fav-'+fav.id).replaceWith(favorites.getHTML(fav));
+			//puede que la seccion exista, o puede que no
+			var $sectionElement = $('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, ""));
+			if ($sectionElement.length <= 0) {
+				$sectionElement = $(favorites.getSectionHTML(fav.section));
+				modal.find('.modal-body').append($sectionElement);
+			}
+
+			//metemos el hilo en su seccion
+			$sectionElement.find('table').append(favorites.getFavHTML(fav));
 		}
 	};
 
