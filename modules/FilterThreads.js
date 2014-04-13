@@ -130,8 +130,16 @@
 		};
 
 		this.getSectionHTML = function(sectionName) {
+			var sectionId = sectionName.replace(/[\s\/]/gi, "");
 			var sectionTable = '<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
-			var sectionHTML = $('<div id="shurscript-favs-section-' + sectionName.replace(/[\s\/]/gi, "") + '"><h3>'+sectionName+'</h3>'+sectionTable+'</div>');
+
+			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + sectionId + '">'+
+			 '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-'+sectionId+'">'+sectionName+'</a></h4></div>'+
+			 '<div id="collapse-'+sectionId+'" class="panel-collapse collapse">'+
+			 '<div class="panel-body">'+sectionTable+'</div>'+
+			 '</div>'+
+			 '</div>');
+
 			return sectionHTML;
 		};
 
@@ -218,7 +226,7 @@
 			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">' +
 			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
 			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
-			'<div class="modal-body"></div></div></div></div>');
+			'<div class="modal-body panel-group" id="accordion"></div></div></div></div>');
 		$('body').append(modal);
 
 		//para cada seccion hacemos una capa y metemos dentro la tabla
