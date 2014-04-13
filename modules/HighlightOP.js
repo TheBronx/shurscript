@@ -3,10 +3,10 @@
 
 	var mod = createModule({
 		id: 'HighlightOP',
-		name: 'Resaltar mensajes míos y del creador del hilo',
+		name: 'Resaltar ciertos mensajes de un hilo',
 		author: 'Electrosa',
 		version: '1.1',
-		description: 'Resalta con un borde a la izquierda mis posts, los posts del creador del hilo y los posts de los usuarios deseados.',
+		description: 'Resalta tus posts, los posts del creador del hilo y los posts de los usuarios seleccionados.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
 			enabled: true,
@@ -15,7 +15,7 @@
 			myPosts: false,
 			myPostsColor: '#1E90FF',
 			contacts: '',
-			contactsColor: '#29DF05'
+			contactsColor: '#2FC726'
 		},
 		preferences: {}
 	});
@@ -41,11 +41,11 @@
 
 		return [
 			creOpt({type: 'checkbox', mapsTo: 'quotes', caption: 'Resaltar también las citas.'}),
-			creOpt({type: 'text', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
+			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
-			creOpt({type: 'text', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
+			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
 			creOpt({type: 'text', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios, separados por comas [<a href="#" onclick="importBuddyListWarning(); return false;">Importar de la lista de contactos…</a>]:'}),
-			creOpt({type: 'text', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
+			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
 	};
 
@@ -195,7 +195,7 @@
 				}
 
 				// Update textbox contents and mark module as modified
-				document.querySelector("input[data-maps-to='contacts']").value = contacts.toString();
+				document.querySelector("input[data-maps-to='contacts']").value = contacts.join(', ');
 				document.querySelector("div[data-module-id='HighlightOP']").classList.add('changed');
 			}
 		};
