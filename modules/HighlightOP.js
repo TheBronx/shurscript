@@ -113,7 +113,7 @@
 		}
 
 		var username = mod.helper.environment.user.name;
-		var contacts = mod.preferences.contacts.split(",");
+		var contacts = mod.preferences.contacts.split(/\s*,\s*/);
 
 		// Add CSS rules
 		GM_addStyle(".op_post, .op_quote { border: 1px solid " + mod.preferences.opPostsColor + " !important; border-left: 5px solid " + mod.preferences.opPostsColor + " !important; } .op_post td.alt2 { width: 171px; }");
