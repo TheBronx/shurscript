@@ -290,6 +290,16 @@
 
 			//metemos el hilo en su seccion
 			$sectionElement.find('table').append(favorites.getFavHTML(fav));
+			//evento click al borrar hilo
+			$sectionElement.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+				var threadID = $(this).attr('id');
+				bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function(res) {
+					if (res) {
+						bootbox.hideAll();
+						mod.favRemove(threadID);
+					}
+				});
+			});
 		}
 	};
 
