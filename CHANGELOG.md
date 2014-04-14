@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.20.1
+## v0.20.2 `14/04/2014`
 
 **Features**
 
@@ -12,6 +12,17 @@
 **Bugfixes**
 
 * Hacer que el script funcione correctamente en la portada
+
+------------------------------------
+
+### v0.20.1 `02/04/2014`
+
+**Bugfixes**
+
+* Solucionado problema con las notificaciones
+* Arreglado componente encargado de las actualizaciones
+* Arreglado problema con la migración de preferencias _(nuevas instalaciones)_
+	* Ahora se migrarán los hilos favoritos/ocultados manualmente e historial de citas
 
 ------------------------------------
 
