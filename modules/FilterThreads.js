@@ -83,12 +83,18 @@
 		};
 
 		this.getSections = function() {
-			var sections =  [];
+			var sections = [];
 			for (var i=0; i<_this.favs.length; i++) {
 				if (_this.favs[i].section != undefined) {
-					if (sections.indexOf(_this.favs[i].section) == -1) {
-						sections.push(_this.favs[i].section);
+					var found = false;
+					for (var j=0; j<sections.length; j++) {
+						if (_this.favs[i].section.id == sections[j].id) {
+							found = true;
+							break;
+						}
 					}
+					if (!found)
+						sections.push(_this.favs[i].section);
 				}
 			}
 			return sections;
@@ -284,7 +290,7 @@
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
 			//puede que la seccion exista, o puede que no
-			var $sectionElement = $('#shurscript-favs-section-' + section.id);
+			var $sectionElement = $('#shurscript-favs-section-' + fav.section.id);
 			if ($sectionElement.length <= 0) {
 				$sectionElement = $(favorites.getSectionHTML(fav.section));
 				modal.find('.modal-body').append($sectionElement);
