@@ -61,6 +61,7 @@
 	GM_addStyle("#notificationsBox:after, #notificationsBox:before {bottom: 100%;border: solid transparent;content: ' ';height: 0;width: 0;position: absolute;pointer-events: none;}");
 	GM_addStyle("#notificationsBox:after {border-color: rgba(255, 255, 255, 0);border-bottom-color: #fff;border-width: 10px;left: 92%;margin-left: -13px;}");
 	GM_addStyle("#notificationsBox:before {border-color: rgba(204, 51, 0, 0);border-bottom-color: #CC3300;border-width: 11px;left: 92%;margin-left: -14px;}");
+	GM_addStyle("#notificationsList a.postLink {font-weight: normal;}");
 	GM_addStyle(".notificationRow {overflow: visible; padding: 6px; font-size: 9pt; color: #444;border-bottom:1px solid lightgray;}");
 	GM_addStyle(".notificationRow > div {margin-top: 2px;}");
 	GM_addStyle(".notificationRow.read {color: #AAA !important;}");
