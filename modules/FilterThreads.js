@@ -377,48 +377,44 @@
 
 		//Recorremos todos los hilos de la lista
 		$('#threadslist tr').each(function (index) {
-			try {
-				var hilo = {};
-				hilo.row = $(this);
+			var hilo = {};
+			hilo.row = $(this);
 
-				hilo.title_td = $(this).find('td[id^="td_threadtitle_"]');
+			hilo.title_td = $(this).find('td[id^="td_threadtitle_"]');
 
-				if (hilo.title_td.length != 0) {
-					hilo.title_link = hilo.title_td.find('div > a[id^="thread_title_"]').first();
-					hilo.href = hilo.title_link.attr('href');
-					hilo.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(hilo.href)[1]);
-					hilo.title = hilo.title_link.html();
-					hilo.creator_span = hilo.title_td.find("div.smallfont > span:last-child");
-					hilo.creator = hilo.creator_span.text();
+			if (hilo.title_td.length != 0) {
+				hilo.title_link = hilo.title_td.find('div > a[id^="thread_title_"]').first();
+				hilo.href = hilo.title_link.attr('href');
+				hilo.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(hilo.href)[1]);
+				hilo.title = hilo.title_link.html();
+				hilo.creator_span = hilo.title_td.find("div.smallfont > span:last-child");
+				hilo.creator = hilo.creator_span.text();
 
-					hilo.icon_td = $(this).find('#td_threadstatusicon_' + hilo.id);
+				hilo.icon_td = $(this).find('#td_threadstatusicon_' + hilo.id);
 
-					processThread(hilo);
+				processThread(hilo);
 
-					hilo.icon_td.popover({content: getThreadMenu(hilo), container: 'body', placement: 'right', html: true, trigger: 'manual'});
+				hilo.icon_td.popover({content: getThreadMenu(hilo), container: 'body', placement: 'right', html: true, trigger: 'manual'});
 
-					hilo.icon_td.click(function (e) {
-						$(".popover").remove();
-						$(this).popover('show');
-						$(".popover .popover-content").html(getThreadMenu(hilo));
-						$(".popover .popover-content").css({height: '30px'});
-						$(this).addClass("shurmenu_opened");
-					});
+				hilo.icon_td.click(function (e) {
+					$(".popover").remove();
+					$(this).popover('show');
+					$(".popover .popover-content").html(getThreadMenu(hilo));
+					$(".popover .popover-content").css({height: '30px'});
+					$(this).addClass("shurmenu_opened");
+				});
 
-					hilo.icon_td.hover(
-						function () {//mouse in
-							$(this).addClass("shurmenu_trigger");
-						},
-						function () {//mouse out
-							$(this).removeClass("shurmenu_trigger");
-						}
-					);
+				hilo.icon_td.hover(
+					function () {//mouse in
+						$(this).addClass("shurmenu_trigger");
+					},
+					function () {//mouse out
+						$(this).removeClass("shurmenu_trigger");
+					}
+				);
 
-					threads.push(hilo);
+				threads.push(hilo);
 
-				}
-			} catch (e) {
-				alert(e);
 			}
 		});
 	}
@@ -486,7 +482,7 @@
 				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
 					if ($(".favorite").length > 0) {
 						$(".favorite").last().after(hilo.row);
-					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
+					} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
 						$(".highlighted").first().before(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
@@ -514,7 +510,7 @@
 				if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
 					if ($(".highlighted").length > 0) {
 						$(".highlighted").last().after(hilo.row);
-					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
+					} else if ($(".favorite").not('.hiddenThread').length > 0) { //Tiene que estar por debajo de los favoritos
 						$(".favorite").last().after(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
@@ -539,6 +535,7 @@
 
 	/* Lo añade al menu de hilos ocultos desde donde podra ser mostrado de nuevo */
 	function addToHiddenThreads(hilo) {
+
 		var hiddenThreadsList = $("#hiddenthreadslist");
 
 		if (hiddenThreadsList.length == 0) {
@@ -563,6 +560,8 @@
 			hiddenThreadsBlock = $("#hiddenthreads");
 
 		}
+
+		hilo.row.addClass('hiddenThread');
 
 		hiddenThreadsList.append(hilo.row);
 		hiddenThreadsCount++;
