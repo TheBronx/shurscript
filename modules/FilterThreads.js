@@ -244,6 +244,16 @@
 			modal.find('.modal-body').append(favorites.getSectionHTML(section));
 		});
 
+		try {
+			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i);
+			var currentSection = match && match[1];
+			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
+			if (!defaultSection.length) {
+				defaultSection = $("#shurscript-favs .collapse").first();
+			}
+			defaultSection.collapse('show');
+		} catch (e){}
+
 		//para cada hilo favorito:
 		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
 		// b) tenemos todos sus datos
