@@ -105,10 +105,14 @@
 				var author = $(result).find('.bigusername').first().html();
 
 				var section = $(result).find('.navbar').last().find('a').html();
+				var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=','');
 
 				fav.title = title;
 				fav.author = author;
-				fav.section = section;
+				fav.section = {
+					'name':section,
+					'id':sectionId,
+				};
 				callback(fav);
 			});
 		};
@@ -129,13 +133,12 @@
 			return html;
 		};
 
-		this.getSectionHTML = function(sectionName) {
-			var sectionId = sectionName.replace(/[\s\/]/gi, ""); //si cambias esto, cambialo en mod.favPopulated() tmb
+		this.getSectionHTML = function(section) {
 			var sectionTable = '<table class="table table-striped table-bordered"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
 
-			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + sectionId + '">'+
-			 '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-'+sectionId+'">'+sectionName+'</a></h4></div>'+
-			 '<div id="collapse-'+sectionId+'" class="panel-collapse collapse">'+
+			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + section.id + '">'+
+			 '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-'+section.id+'">'+section.name+'</a></h4></div>'+
+			 '<div id="collapse-'+section.id+'" class="panel-collapse collapse">'+
 			 '<div class="panel-body">'+sectionTable+'</div>'+
 			 '</div>'+
 			 '</div>');
@@ -248,7 +251,7 @@
 				//y cuando esté completo ya lo meteremos donde toque
 			} else {
 				//metemos el hilo en su correspondiente seccion
-				var $sectionTable = $('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, "") + ' table');
+				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
 				$sectionTable.append(favorites.getFavHTML(fav));
 				//evento click al borrar hilo
 				$sectionTable.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
@@ -274,7 +277,6 @@
 	};
 
 	mod.favPopulated = function(fav) {
-		var sectionId = fav.section.replace(/[\s\/]/gi, "");
 		//hemos sacado los datos de un favorito, los guardamos
 		favorites.update(fav);
 		saveFavorites();
@@ -282,7 +284,7 @@
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
 			//puede que la seccion exista, o puede que no
-			var $sectionElement = $('#shurscript-favs-section-' + sectionId);
+			var $sectionElement = $('#shurscript-favs-section-' + section.id);
 			if ($sectionElement.length <= 0) {
 				$sectionElement = $(favorites.getSectionHTML(fav.section));
 				modal.find('.modal-body').append($sectionElement);
