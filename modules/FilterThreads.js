@@ -228,8 +228,6 @@
 			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
 			'<div class="modal-body panel-group" id="accordion"></div></div></div></div>');
 		$('body').append(modal);
-		modal.css('z-index', 1000);
-		$('.modal-backdrop').css('z-index', 999);
 
 		//para cada seccion hacemos una capa y metemos dentro la tabla
 		var sections = favorites.getSections();
@@ -269,6 +267,9 @@
 			modal.remove();
 		});
 		modal.modal('show');
+
+		modal.css('z-index', 1000);
+		$('.modal-backdrop').css('z-index', 999);
 	};
 
 	mod.favPopulated = function(fav) {
