@@ -248,7 +248,12 @@
 				//y cuando esté completo ya lo meteremos donde toque
 			} else {
 				//metemos el hilo en su correspondiente seccion
-				$('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, "") + ' table').append(favorites.getFavHTML(fav));
+				var $sectionTable = $('#shurscript-favs-section-' + fav.section.replace(/[\s\/]/gi, "") + ' table');
+				$sectionTable.append(favorites.getFavHTML(fav));
+				//evento click al borrar hilo
+				$sectionTable.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+					mod.favRemove($(this).attr('id'));
+				});
 			}
 		}
 
@@ -277,6 +282,13 @@
 			//metemos el hilo en su seccion
 			$sectionElement.find('table').append(favorites.getFavHTML(fav));
 		}
+	};
+
+	mod.favRemove = function(id) {
+		id = parseInt(id); //importante, el favorites.remove no funciona igual con strings
+		favorites.remove(id);
+		saveFavorites();
+		$('#shurscript-fav-'+id).remove();
 	};
 
 	mod.shurbarIcon = function() {
