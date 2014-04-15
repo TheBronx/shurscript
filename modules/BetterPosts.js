@@ -101,6 +101,9 @@
 	/* Funcionalidades que funcionan solo bajo el editor WYSIWYG */
 	function enableWYSIWYGDependantFeatures() {
 
+		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
+		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 0);
+
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
 		}
@@ -254,7 +257,7 @@
 
 				quote += "<br>"; //Dejar espacio entre las citas y el cursor de texto para que escriba el usuario
 
-				if (getEditorContents().trim().replace(/\<br\>/g, '') != '') {
+				if (trim(getEditorContents())) {
 					var postOverwrite = mod.preferences.postOverwrite;
 					switch (postOverwrite) {
 						case 'ASK':
@@ -380,23 +383,19 @@
 		if (currentPostBackup && isQuickReply()) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
-				if (getEditorContents().trim().replace(/\<br\>/g, '') == '') {
+				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) { 
 					setEditorContents(currentPostBackup.postContents)
 				};
 				reflowTextArea();
 			}
 		}
 
-		//Temporizador de auto-guardado cada vez que se escribe
-		var backupScheduler;
-		var onInputHandler = function () {
-			clearTimeout(backupScheduler);
-			backupScheduler = setTimeout(function () { //
+		//Temporizador de auto-guardado
+		$(getEditor().editdoc.body).one('input', function () {
+			setInterval(function () {
 				mod.helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));
-			}, 500);
-		};
-
-		$(getEditor().editdoc.body).on('input', onInputHandler);
+			}, 3000);
+		});
 
 		/* Eliminar el backup guardado al enviar la Respuesta																		*/
 		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor	*/
@@ -536,7 +535,7 @@
 	/* Fuerza la caja a adaptarse al contenido */
 	function reflowTextArea() {
 		if (checkAutoGrow && checkAutoGrow.checked) {
-			getEditor().editbox.style.height = Math.max(getTextAreaHeight() + 30, minHeightTextArea) + "px";
+			getEditor().editbox.style.height = Math.min(600, Math.max(getTextAreaHeight() + 30, minHeightTextArea)) + "px";
 		}
 	}
 
@@ -562,11 +561,21 @@
 	}
 
 	function setEditorContents(text) {
+		focusEditor();
 		getEditor().set_editor_contents(text)
 	}
 
 	function appendTextToEditor(text) {
+		focusEditor();
 		getEditor().insert_text(text);
+	}
+	
+	function focusEditor() {
+		getEditor().editdoc.body.focus();
+	}
+	
+	function trim(text) {
+		return text.trim().replace(/\<br\>/g, '');
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

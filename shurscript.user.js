@@ -6,12 +6,12 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.1-dev
+// @version         0.20.2-dev
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
 // @author          juno / ikaros45
-// @include         *forocoches.com*
+// @include         *www.forocoches.com*
 // @grant           GM_log
 // @grant           GM_getValue
 // @grant           GM_setValue
@@ -29,9 +29,11 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/dev/components/topbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/eventbus.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/sync.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/shurbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/modulemanager.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/topbar.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/preferences.js
@@ -43,10 +45,14 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ImageUploader.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/dev/css/modal.css
+// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/dev/css/shurbar.css
 // @resource        modalhtml https://github.com/TheBronx/shurscript/raw/dev/html/modal.html
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/dev/html/quote.html
+// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/dev/css/imageuploader.css
+// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/dev/html/imageuploader.html
 // ==/UserScript==
 
 /**

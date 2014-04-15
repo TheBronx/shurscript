@@ -1,0 +1,33 @@
+<div style="z-index:1020" class="shurscript modal fade" id="shurscript-image-uploader" tabindex="-1" role="dialog" data-backdrop="true">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div>
+					<span class="help-block"><strong>Puedes seguir usando el m&eacute;todo por defecto de Forocoches...</strong></span>
+					<input type="text" class="form-control" id="imageurl" placeholder="URL a la imagen"/>
+				</div>
+				<div style="border-top: 1px solid #E5E5E5; padding-top: 20px; margin-top: 30px;">
+					<span class="help-block"><strong>... o subir tus im&aacute;genes directamente a Imgur:</strong></span>
+					<div class="form-group">
+						<span class="help-block">Desde tu equipo</span>
+						<button type="button" class="btn btn-success btn-sm" id="imgur_button">&nbsp;<!-- Texto del boton desde ImageUploader.js--></button>
+						<input type="file" accept="image/*" class="form-control" style="display: none;" multiple id="imgur_file" />
+					</div>
+					<div class="form-group">
+						<span class="help-block">O desde URL</span>
+						<textarea class="form-control" id="imgur_url" rows="3" placeholder="Puedes escribir varias. Una por línea."/>
+					</div>
+					<br>
+					<p class="help-block" style="text-align: center;">
+					<em>&iexcl;Recuerda que puedes <strong>arrastrar y soltar</strong> las im&aacute;genes al navegador para insertarlas autom&aacute;ticamente!</em>
+					</p>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="insert-images">Insertar</button>
+			</div>
+		</div>
+	</div>
+</div>

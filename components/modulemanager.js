@@ -274,7 +274,7 @@
 				moduleManager.helper.throw("Error migrando las preferencias antiguas del modulo " + moduleName, e);
 			}
 		});
-		
+
 	}
 
 	/**
@@ -290,7 +290,7 @@
 		//Migramos las antiguas preferencias (Antes de que se sincronizaran en la nube)
 		if (!moduleManager.helper.getValue("MIGRATION_DONE")) {
 			moduleManager.migratePreferences(function(){
-				moduleManager.startOnDocReadyModules(); 
+				moduleManager.startOnDocReadyModules();
 			});
 			return;
 		}
@@ -302,6 +302,9 @@
 			try {
 
 				module.refreshPreferences(); //aqui la carga de preferencias ya sí será desde la nube
+
+				//loading module event
+				SHURSCRIPT.eventbus.trigger('loadingModule', [module]);
 
 				// Si el modulo no esta activado
 				// (nota: el estado del modulo ha sido actualizado
@@ -327,6 +330,9 @@
 				moduleManager.helper.log('Fallo cargando modulo ' + module.id + '\nRazon: ' + e);
 			}
 		});
+
+		//loading module event
+		SHURSCRIPT.eventbus.trigger('allModulesLoaded');
 	};
 
 	/**

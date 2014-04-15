@@ -19,7 +19,7 @@ var SHURSCRIPT = {
 		server: "http://cloud.shurscript.org:8080/"
 	},
 	environment: {
-		page: location.pathname.replace("/foro", "")
+		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage"
 	}
 };
 
@@ -39,8 +39,8 @@ var SHURSCRIPT = {
 	SHURSCRIPT.core = core;
 
 	/**
-	* Comprobamos que está soportada la extensión y seteamos al objeto SHURSCRIPT la version y la rama del script actual.
-	*/
+	 * Comprobamos que está soportada la extensión y seteamos al objeto SHURSCRIPT la version y la rama del script actual.
+	 */
 	var isCompatible = function () {
 
 		var version;
@@ -49,42 +49,16 @@ var SHURSCRIPT = {
 		} else if (typeof GM_getMetadata !== "undefined") { // Scriptish
 			version = GM_getMetadata('version') + ''; // getMetadata returns: Object, String or Array
 		} else {
-            return false;
-        }
+			return false;
+		}
 
+		// TODO [ikaros45 29.03.2014]: los side-effects hacen llorar al ninyo jesus.
 		//Separamos número de versión y nombre de la rama (master, dev o exp)
 		var splitted = version.split("-");
 		SHURSCRIPT.scriptVersion = splitted[0];
 		SHURSCRIPT.scriptBranch = splitted[1] || "master";
 
 		return true;
-	};
-
-	/**
-	 * Crea un namespace dentro de SHURSCRIPT pasandole
-	 * un string de forma 'SHURSCRIPT.nombreNameSpace'
-	 * o simplemente 'nombreNameSpace' o 'nameSpace.subNameSpace.subSub...'
-	 *
-	 * @param {string} ns - nombre/ruta del nameSpace
-	 */
-	var createNameSpace = function (ns) {
-		var segments = ns.split('.'),
-			parent = SHURSCRIPT;
-
-		// Si se ha pasado SHURSCRIPT, quitalo del medio
-		if (segments[0] === 'SHURSCRIPT') {
-			segments = segments.slice(1);
-		}
-
-		_.each(segments, function (nameNS) {
-			// Inicializa si no existe
-			parent[nameNS] = parent[nameNS] || {};
-
-			// Referencia para el siguiente ciclo (pseudorecursividad)
-			parent = parent[nameNS];
-		});
-
-		return parent;
 	};
 
 	/**
@@ -152,12 +126,12 @@ var SHURSCRIPT = {
 			return GM.getValue(this._getShurKey(key, false), defaultValue);
 		},
 
-        /**
-         * Elimina un valor del servidor
-         *
-         * @param key
-         * @param {function} callback - funcion a ejecutar despues de la operacion
-         */
+		/**
+		 * Elimina un valor del servidor
+		 *
+		 * @param key
+		 * @param {function} callback - funcion a ejecutar despues de la operacion
+		 */
 		deleteValue: function (key, callback) {
 			GM.deleteValue(this._getShurKey(key, false), callback);
 		},
@@ -212,11 +186,11 @@ var SHURSCRIPT = {
 			var css = GM.getResourceText(styleResource);
 			GM.addStyle(css);
 		},
-		
+
 		/**
 		 * Muestra un mensaje al usuario en una barra arriba de la página
 		 *
-		 * @param {object} properties { 
+		 * @param {object} properties {
 		 *						message: "Mensaje a mostrar",
 		 *						type: ["info", "success", "warning", "danger"],
 		 *						onClose: "Función a ejecutar después al hacer clic en el aspa de cerrar"
@@ -225,7 +199,7 @@ var SHURSCRIPT = {
 		showMessageBar: function (properties) {
 			SHURSCRIPT.topbar.showMessage(properties);
 		},
-		
+
 		getResourceText: GM.getResourceText,
 		getResourceURL: GM.getResourceURL,
 		bootbox: bootbox,
@@ -277,13 +251,13 @@ var SHURSCRIPT = {
 		}
 
 		// Crea namespace y copiale las propiedades
-		var comp = createNameSpace(id);
-		comp.id = id;
+		var comp = {id: id};
+		SHURSCRIPT[id] = comp;
 
-		//Registra el componente
+		// Registra el componente
 		if (core.components === undefined) {
-            core.components = [];
-        }
+			core.components = [];
+		}
 		core.components.push(id);
 
 		// Metele un helper
@@ -313,13 +287,19 @@ var SHURSCRIPT = {
 		}
 
 		// Guarda info usuario
+		var username;
+		if (SHURSCRIPT.environment.page === "frontpage") {
+			username = $(".cajascat td.cat:nth-child(1)").text().substr(3);
+		} else {
+			username = /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1];
+		}
 		SHURSCRIPT.environment.user = {
 			id: id_regex_results[1],
-			name: /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1]
+			name: username
 		};
-		
+
 		SHURSCRIPT.environment.browser = {
-			name: navigator.userAgent,
+			name: navigator.userAgent
 		};
 
 		// Mete bootstrap
@@ -341,19 +321,19 @@ var SHURSCRIPT = {
 
 			//lanza la carga de componentes y modulos
 			core.loadNextComponent();
-			
+
 			core.helper.deleteLocalValue('SERVER_DOWN_ALERT');
-		}).fail(function(error){
+		}).fail(function (error) {
 			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
-				setTimeout(function () { //Timeout para evitar falsos positivos al cambiar de página rápidamente cortando la llamada asíncrona
+				if (error.getAllResponseHeaders()) { //Distinguir si ha sido el usuario quien ha cortado la llamada
 					core.helper.showMessageBar({
 						message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",
 						type: "danger",
-						onClose: function() {
+						onClose: function () {
 							core.helper.setLocalValue('SERVER_DOWN_ALERT', true);
 						}
 					});
-				}, 2000);
+				}
 			}
 		});
 
@@ -366,26 +346,29 @@ var SHURSCRIPT = {
 	core.loadNextComponent = function () {
 		var component = core.getNextComponent();
 
-        if (component === undefined) {
+		if (component === undefined) {
 			// No quedan componentes, lanza carga modulos
-            SHURSCRIPT.moduleManager.startOnDocReadyModules();
-            return;
-        }
+			SHURSCRIPT.moduleManager.startOnDocReadyModules();
+			return;
+		}
 
-        // TODO [ikaros45 28.03.2014]: No hay que comprobar si la funcion existe, sino definir una
-        // funcion dummy en el prototype que puede ser sobreescrita por los modulos
+		SHURSCRIPT.eventbus.trigger('loadingComponent', component);
 
-        if (_.isFunction(component.loadAndCallback)) { // existe funcion de carga?
-            core.helper.log("Cargando componente " + component.id);
-            component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
-            return;
-        }
+		// TODO [ikaros45 28.03.2014]: No hay que comprobar si la funcion existe, sino definir una
+		// funcion dummy en el prototype que puede ser sobreescrita por los modulos
 
-        // TODO [ikaros45 28.03.2014]: lo mismo aqui... no hay que comprobar si existe!
-        if (_.isFunction(component.load)) {
-            component.load(); // sin callback
-        }
-        core.loadNextComponent();
+		if (_.isFunction(component.loadAndCallback)) { // existe funcion de carga?
+			core.helper.log("Cargando componente " + component.id);
+			component.loadAndCallback(core.loadNextComponent); //carga y una vez termines llama a loadNextComponent
+			return;
+		}
+
+		// TODO [ikaros45 28.03.2014]: lo mismo aqui... no hay que comprobar si existe!
+		if (_.isFunction(component.load)) {
+			component.load(); // sin callback
+		}
+		
+		core.loadNextComponent();
 	};
 
 	// devuelve el siguiente componente en el proceso de carga

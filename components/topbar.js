@@ -2,13 +2,14 @@
 	'use strict';
 
 	var topbar = SHURSCRIPT.core.createComponent('topbar'),
-	    $bar;
+	    $bar,
+	    timer;
 	
 	topbar.showMessage = function (properties) {
 		ensureProperties(properties);
 		
 		if (!$bar) {
-			$('<div class="shurscript">').prependTo($('body')).append($bar = $('<div style="padding: 10px; text-align: center;"><span class="message"/><button type="button" class="close" style="position: absolute; right: 15px; line-height: 15px">&times;</button></div>'));
+			$('<div class="shurscript" style="height: 62px;">').prependTo($('body')).append($bar = $('<div style="padding: 10px; text-align: center; position: fixed; width: 99%;"><span class="message"/><button type="button" class="close" style="position: absolute; right: 15px; line-height: 15px">&times;</button></div>'));
 			$bar.hide();
 		}
 
@@ -17,10 +18,21 @@
 
 		$bar.slideDown();
 
-		$bar.on('click', '.close', function() {
+		var close = function () {
 			$bar.slideUp();
 			properties.onClose && properties.onClose();
+		}
+
+		$bar.on('click', '.close', function() {
+			close();
 		});
+
+		if (typeof properties.timeout === 'number') {
+			if (timer) clearTimeout(timer);
+			timer = setTimeout(function () {
+				close();
+			}, properties.timeout);
+		}
 	};
 	
 	function ensureProperties (properties) {

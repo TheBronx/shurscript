@@ -26,6 +26,145 @@
 		}
 	});
 
+	var Favorites = function(favorites) {
+		var _this = this;
+		this.favs = [];
+
+		this.isFavorite = function(thread) {
+			var threadId;
+			if (typeof thread === 'number') {
+				threadId = thread; //ya es un ID
+			} else if (thread.id !== undefined) {
+				threadId = thread.id; //es un objeto, sacamos ID
+			} else {
+				return false;
+			}
+			//buscamos en el array de favs aquel que tenga ID = threadId
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == threadId) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		this.add = function(thread) {
+			var fav = {};
+			if (typeof thread === 'number') {
+				fav.id = thread;
+			} else {
+				fav = thread;
+			}
+			_this.favs.push(fav);
+		};
+
+		this.remove = function(thread) {
+			var threadId;
+			if (typeof thread === 'number') {
+				threadId = thread; //ya es un ID
+			} else if (thread.id !== undefined) {
+				threadId = thread.id; //es un objeto, sacamos ID
+			}
+			//borramos del array de favs aquel que tenga ID = threadId
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == threadId) {
+					_this.favs.splice(i, 1);
+					break;
+				}
+			}
+		};
+
+		this.update = function(fav) {
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].id == fav.id) {
+					_this.favs[i] = fav;
+				}
+			}
+		};
+
+		this.getSections = function() {
+			var sections = [];
+			for (var i=0; i<_this.favs.length; i++) {
+				if (_this.favs[i].section != undefined) {
+					var found = false;
+					for (var j=0; j<sections.length; j++) {
+						if (_this.favs[i].section.id == sections[j].id) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						sections.push(_this.favs[i].section);
+				}
+			}
+			return sections;
+		};
+
+		this.populate = function(fav, callback) {
+			$.ajax({
+				url: "/foro/showthread.php?t="+fav.id
+			}).done(function(result) {
+				var title = $(result).find('div.page td.thead span.cmega').html();
+				title = title.replace("<!-- google_ad_section_start -->","");
+				title = title.replace("<!-- google_ad_section_end -->","");
+
+				var author = $(result).find('.bigusername').first().html();
+
+				var section = $(result).find('.navbar').last().find('a').html();
+				var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=','');
+
+				fav.title = title;
+				fav.author = author;
+				fav.section = {
+					'name':section,
+					'id':sectionId,
+				};
+				callback(fav);
+			});
+		};
+
+		this.getFavHTML = function(fav) {
+			var html = '<tr id="shurscript-fav-'+fav.id+'">' +
+				'<td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td>' +
+				'<td><a href="{link}">{title}</a> <a href="{link}&goto=newpost" class="lastpost-tooltip" data-placement="bottom" data-toggle="tooltip" title="Ir al último mensaje leído">»</a></td>' +
+				'<td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
+			if (fav.hasOwnProperty('title'))
+				html = html.replace("{title}",fav.title);
+			else
+				html = html.replace("{title}","Cargando datos del hilo...");
+
+			if (fav.hasOwnProperty('author'))
+				html = html.replace("{author}",fav.author);
+			else
+				html = html.replace("{author}","---");
+
+			html = html.replace(/\{link\}/g,'http://www.forocoches.com/foro/showthread.php?t='+fav.id);
+			return html;
+		};
+
+		this.getSectionHTML = function(section) {
+			var sectionTable = '<table class="table table-striped table-bordered" style="margin-bottom: 0;"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
+
+			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + section.id + '">'+
+			 '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-'+section.id+'">'+section.name+'</a></h4></div>'+
+			 '<div id="collapse-'+section.id+'" class="panel-collapse collapse">'+
+			 '<div class="panel-body">'+sectionTable+'</div>'+
+			 '</div>'+
+			 '</div>');
+
+			return sectionHTML;
+		};
+
+		//init favs array
+		if (favorites.favs !== undefined) {
+			_this.favs = favorites.favs; //objeto favs
+		} else {
+			for(var i=0; i<favorites.length; i++) {
+				this.add(favorites[i]); //lista de ids de hilos (sistema antiguo)
+			}
+		}
+	};
+
 	var threads = [];
 	var favorites;
 	var readThreads = [];
@@ -58,7 +197,7 @@
 	mod.onNormalStart = function () {
 		loadStyles();
 
-		favorites = JSON.parse(mod.helper.getValue("FAVORITES", '[]'));
+		favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
 
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -89,6 +228,119 @@
 			createPref({type: 'checkbox', mapsTo: 'favoritesBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
 			createPref({type: 'checkbox', mapsTo: 'favoritesOnTop', caption: 'Colocar siempre en primer lugar los hilos marcados como favoritos'})
 		];
+	};
+
+	mod.onShurbarClick = function() {
+		if (favorites == undefined)
+			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
+
+		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">' +
+			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
+			'<div class="modal-body panel-group" id="accordion"></div></div></div></div>');
+		$('body').append(modal);
+
+		//para cada seccion hacemos una capa y metemos dentro la tabla
+		var sections = favorites.getSections();
+		sections.forEach(function (section) {
+			modal.find('.modal-body').append(favorites.getSectionHTML(section));
+		});
+
+		try {
+			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i);
+			var currentSection = match && match[1];
+			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
+			if (!defaultSection.length) {
+				defaultSection = $("#shurscript-favs .collapse").first();
+			}
+			defaultSection.collapse('show');
+		} catch (e){}
+
+		//para cada hilo favorito:
+		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
+		// b) tenemos todos sus datos
+		//pintar sus datos o placeholders para cuando carguen
+		var fav;
+		for (var i = 0; i < favorites.favs.length; i++) {
+			fav = favorites.favs[i];
+			if (!('title' in fav) || !('section' in fav) || !('author' in fav)) {
+				//nos faltan datos, populate
+				favorites.populate(fav, mod.favPopulated);
+				//y cuando esté completo ya lo meteremos donde toque
+			} else {
+				//metemos el hilo en su correspondiente seccion
+				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
+				$sectionTable.append(favorites.getFavHTML(fav));
+				//evento click al borrar hilo
+				$sectionTable.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+					var threadID = $(this).attr('id');
+					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function(res) {
+						if (res) {
+							bootbox.hideAll();
+							mod.favRemove(threadID);
+						}
+					});
+				});
+			}
+		}
+
+		modal.on('hidden.bs.modal', function () {
+			//Eliminar al cerrar
+			modal.remove();
+		});
+		modal.find('.lastpost-tooltip').tooltip({delay: 300});
+		modal.modal('show');
+
+		modal.css('z-index', 1000);
+		$('.modal-backdrop').css('z-index', 999);
+	};
+
+	mod.favPopulated = function(fav) {
+		//hemos sacado los datos de un favorito, los guardamos
+		favorites.update(fav);
+		saveFavorites();
+		//mostramos sus datos en el desplegable si es que existe
+		var modal = $('#shurscript-favs');
+		if (modal.length>0) { //modal still exists
+			//puede que la seccion exista, o puede que no
+			var $sectionElement = $('#shurscript-favs-section-' + fav.section.id);
+			if ($sectionElement.length <= 0) {
+				$sectionElement = $(favorites.getSectionHTML(fav.section));
+				modal.find('.modal-body').append($sectionElement);
+				modal.find('.lastpost-tooltip').tooltip({delay: 300});
+			}
+
+			//metemos el hilo en su seccion
+			$sectionElement.find('table').append(favorites.getFavHTML(fav));
+			//evento click al borrar hilo
+			$sectionElement.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+				var threadID = $(this).attr('id');
+				bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function(res) {
+					if (res) {
+						bootbox.hideAll();
+						mod.favRemove(threadID);
+					}
+				});
+			});
+		}
+	};
+
+	mod.favRemove = function(id) {
+		id = parseInt(id); //importante, el favorites.remove no funciona igual con strings
+		favorites.remove(id);
+		saveFavorites();
+		$('#shurscript-fav-'+id).remove();
+	};
+
+	mod.shurbarIcon = function() {
+		return {
+			name: 'Hilos favoritos',
+			description: 'Ver la lista de todos tus hilos favoritos',
+			image: SHURSCRIPT.config.imagesURL + 'star.png',
+			actionType: 'popover',
+			handler: mod.onShurbarClick
+		};
 	};
 
 	function loadStyles() {
@@ -140,47 +392,44 @@
 
 		//Recorremos todos los hilos de la lista
 		$('#threadslist tr').each(function (index) {
-			try {
-				var hilo = {};
-				hilo.row = $(this);
+			var hilo = {};
+			hilo.row = $(this);
 
-				hilo.title_td = $(this).find('td[id^="td_threadtitle_"]');
+			hilo.title_td = $(this).find('td[id^="td_threadtitle_"]');
 
-				if (hilo.title_td.length != 0) {
-					hilo.title_link = hilo.title_td.find('div > a[id^="thread_title_"]').first();
-					hilo.href = hilo.title_link.attr('href');
-					hilo.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(hilo.href)[1]);
-					hilo.title = hilo.title_link.html();
-					hilo.creator_span = hilo.title_td.find("div.smallfont > span:last-child");
-					hilo.creator = hilo.creator_span.text();
+			if (hilo.title_td.length != 0) {
+				hilo.title_link = hilo.title_td.find('div > a[id^="thread_title_"]').first();
+				hilo.href = hilo.title_link.attr('href');
+				hilo.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(hilo.href)[1]);
+				hilo.title = hilo.title_link.html();
+				hilo.creator_span = hilo.title_td.find("div.smallfont > span:last-child");
+				hilo.creator = hilo.creator_span.text();
 
-					hilo.icon_td = $(this).find('#td_threadstatusicon_' + hilo.id);
+				hilo.icon_td = $(this).find('#td_threadstatusicon_' + hilo.id);
 
-					processThread(hilo);
+				processThread(hilo);
 
-					hilo.icon_td.popover({content: getThreadMenu(hilo), container: 'body', placement: 'right', html: true, trigger: 'manual'});
+				hilo.icon_td.popover({content: getThreadMenu(hilo), container: 'body', placement: 'right', html: true, trigger: 'manual'});
 
-					hilo.icon_td.click(function (e) {
-						$(".popover").remove();
-						$(this).popover('show');
-						$(".popover .popover-content").html(getThreadMenu(hilo));
-						$(this).addClass("shurmenu_opened");
-					});
+				hilo.icon_td.click(function (e) {
+					$(".popover").remove();
+					$(this).popover('show');
+					$(".popover .popover-content").html(getThreadMenu(hilo));
+					$(".popover .popover-content").css({height: '30px'});
+					$(this).addClass("shurmenu_opened");
+				});
 
-					hilo.icon_td.hover(
-						function () {//mouse in
-							$(this).addClass("shurmenu_trigger");
-						},
-						function () {//mouse out
-							$(this).removeClass("shurmenu_trigger");
-						}
-					);
+				hilo.icon_td.hover(
+					function () {//mouse in
+						$(this).addClass("shurmenu_trigger");
+					},
+					function () {//mouse out
+						$(this).removeClass("shurmenu_trigger");
+					}
+				);
 
-					threads.push(hilo);
+				threads.push(hilo);
 
-				}
-			} catch (e) {
-				alert(e);
 			}
 		});
 	}
@@ -195,14 +444,7 @@
 			var t_id = parseInt(href.replace("poll.php?do=newpoll&t=", ""), 10);
 		}
 		//vale, ahora que sabemos que hilo es, ¿es favorito?
-		var is_favorite = false;
-		if (favorites.indexOf(t_id) >= 0) {
-			//es un hilo favorito
-			is_favorite = true;
-		} else {
-			//no es un hilo favorito
-			is_favorite = false;
-		}
+		var is_favorite = favorites.isFavorite(t_id);
 		//agregamos la estrella junto a los botones de responder
 		var estrella = '<td class="shur_estrella"><a href="#" class="' + (is_favorite ? 'fav' : '') + '"></a></td>';
 		//boton de arriba
@@ -216,7 +458,7 @@
 				if (is_favorite) {
 					is_favorite = false;
 					//borramos de favoritos
-					removeElementFromArray(t_id, favorites);
+					favorites.remove(t_id);
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
@@ -224,7 +466,7 @@
 				} else {
 					is_favorite = true;
 					//agregamos a favoritos
-					favorites.push(t_id);
+					favorites.add(t_id);
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
@@ -239,7 +481,7 @@
 	/* Aplicar funcionalidad al hilo en cuestion: marcarlo como favorito, ocultarlo, etc.*/
 	function processThread(hilo) {
 		if (mod.helper.environment.page == "/search.php") { //En el buscador solo se activan los favoritos
-			if (favorites.indexOf(hilo.id) >= 0) {
+			if (favorites.isFavorite(hilo.id)) {
 				hilo.row.addClass("favorite");
 				hilo.isFavorite = true;
 			}
@@ -249,13 +491,13 @@
 			if (hiddenThreads.indexOf(hilo.id) >= 0) { //Si está oculto manualmente, prevalece sobretodo lo demas
 				addToHiddenThreads(hilo);
 				hilo.isHidden = true;
-			} else if (favorites.indexOf(hilo.id) >= 0) { //Después, si es favorito
+			} else if (favorites.isFavorite(hilo.id)) { //Después, si es favorito
 				hilo.isFavorite = true;
 
 				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
 					if ($(".favorite").length > 0) {
 						$(".favorite").last().after(hilo.row);
-					} else if ($(".highlighted").length > 0) { //Tiene que estar por encima de los resaltados
+					} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
 						$(".highlighted").first().before(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
@@ -283,7 +525,7 @@
 				if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
 					if ($(".highlighted").length > 0) {
 						$(".highlighted").last().after(hilo.row);
-					} else if ($(".favorite").length > 0) { //Tiene que estar por debajo de los favoritos
+					} else if ($(".favorite").not('.hiddenThread').length > 0) { //Tiene que estar por debajo de los favoritos
 						$(".favorite").last().after(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
@@ -308,6 +550,7 @@
 
 	/* Lo añade al menu de hilos ocultos desde donde podra ser mostrado de nuevo */
 	function addToHiddenThreads(hilo) {
+
 		var hiddenThreadsList = $("#hiddenthreadslist");
 
 		if (hiddenThreadsList.length == 0) {
@@ -332,6 +575,8 @@
 			hiddenThreadsBlock = $("#hiddenthreads");
 
 		}
+
+		hilo.row.addClass('hiddenThread');
 
 		hiddenThreadsList.append(hilo.row);
 		hiddenThreadsCount++;
@@ -390,14 +635,14 @@
 	}
 
 	function markAsFavorite(hilo) {
-		favorites.push(hilo.id);
+		favorites.add(hilo.id);
 		$(hilo.row).addClass("favorite");
 		hilo.isFavorite = true;
 		saveFavorites();
 	}
 
 	function unmarkAsFavorite(hilo) {
-		removeElementFromArray(hilo.id, favorites);
+		favorites.remove(hilo.id);
 		$(hilo.row).removeClass("favorite");
 		hilo.isFavorite = false;
 		saveFavorites();
@@ -407,7 +652,7 @@
 	function markAsHiddenThread(hilo) {
 		hilo.isHidden = true;
 		hiddenThreads.push(hilo.id);
-		if (hilo.isFavorite || favorites.indexOf(hilo.id) >= 0) { //Si era favorito
+		if (hilo.isFavorite || favorites.isFavorite(hilo.id)) { //Si era favorito
 			unmarkAsFavorite(hilo); //Ya no lo es
 		}
 		addToHiddenThreads(hilo);

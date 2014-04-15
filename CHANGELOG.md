@@ -1,6 +1,21 @@
 # CHANGELOG
 
-## v0.20.1 `02/04/2014`
+## v0.20.2 `15/04/2014`
+
+**Features**
+
+* Nueva opción para subir imágenes a Imgur y postearlas en el foro
+* Poder ver el listado completo de Hilos favoritos categorizados por subforo
+* Nueva barra en la parte superior para acceder a las preferencias y cualquier nueva funcionalidad que vayamos añadiendo
+* Resaltar en un hilo los posts de los usuarios que quieras, con la posibilidad de importarlos desde tu la lista de contactos
+
+**Bugfixes**
+
+* Hacer que el script funcione correctamente en la portada
+
+------------------------------------
+
+### v0.20.1 `02/04/2014`
 
 **Bugfixes**
 
