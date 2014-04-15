@@ -124,7 +124,10 @@
 		};
 
 		this.getFavHTML = function(fav) {
-			var html = '<tr id="shurscript-fav-'+fav.id+'"><td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td><td><a href="{link}">{title}</a> <a href="{link}&goto=newpost">»</a></td><td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
+			var html = '<tr id="shurscript-fav-'+fav.id+'">' +
+				'<td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td>' +
+				'<td><a href="{link}">{title}</a> <a href="{link}&goto=newpost">»</a></td>' +
+				'<td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
 			if (fav.hasOwnProperty('title'))
 				html = html.replace("{title}",fav.title);
 			else
