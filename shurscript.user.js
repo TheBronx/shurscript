@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.2-exp
+// @version         0.20.2-dev
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
@@ -26,33 +26,33 @@
 // @require         http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
 // @require         http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require         http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/shurbar.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/topbar.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Scrollers.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
-// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
-// @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
-// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
-// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
-// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
-// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
-// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
+// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/bootbox.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/eventbus.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/sync.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/shurbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/modulemanager.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/topbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/templater.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/autoupdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Scrollers.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/NestedQuotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ImageUploader.js
+// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
+// @resource        modalcss https://github.com/TheBronx/shurscript/raw/dev/css/modal.css
+// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/dev/css/shurbar.css
+// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/dev/html/modal.html
+// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/dev/html/quote.html
+// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/dev/css/imageuploader.css
+// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/dev/html/imageuploader.html
 // ==/UserScript==
 
 /**
