@@ -289,6 +289,14 @@
 			}
 		}
 
+		//Mostrar mensaje informativo si no tiene ningún favorito
+		if (!favorites.favs.length) {
+			modal.find('.modal-body').css('text-align', 'center');
+			modal.find('.modal-body').html('<span style="color: gray; font-size: 14pt; display: inline-block; font-weight: 200; margin-bottom: 10px;">'
+			+ 'Todav&iacute;a no has a&ntilde;adido ning&uacute;n hilo como favorito :('
+			+ '</span><img src="' + SHURSCRIPT.config.imagesURL + 'howtofav.gif' + '">');
+		}
+
 		modal.on('hidden.bs.modal', function () {
 			//Eliminar al cerrar
 			modal.remove();
