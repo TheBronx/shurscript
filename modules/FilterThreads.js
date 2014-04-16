@@ -14,15 +14,13 @@
 			hiddenUsers: '',
 			hiddenKeywords: '',
 			hiddenKeywordsIsRegex: false,
+			highlightUsers: '',
 			highlightKeywords: '',
 			highlightKeywordsIsRegex: false,
 			highlightColor: '#FAF7DD',
 			highlightBorderOnly: false,
-			highlightBold: true,
-			highlightedOnTop: true,
 			favoritesColor: '#D5E6EE',
 			favoritesBorderOnly: false,
-			favoritesOnTop: true
 		}
 	});
 
@@ -172,7 +170,7 @@
 	var hiddenThreadsCount = 0;
 	var hiddenThreadsBlock;
 	var hideReadThreadsButton;
-	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
+	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords, regexHighlightUsers;
 
 	/**
 	* Método temporal de migración de valores
@@ -217,16 +215,14 @@
 			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
+			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
-			createPref({type: 'checkbox', mapsTo: 'highlightBold', caption: 'Resaltar palabras clave en los títulos de los hilos'}),
-			createPref({type: 'checkbox', mapsTo: 'highlightedOnTop', caption: 'Colocar siempre en primer lugar los hilos resaltados'}),
 			createPref({type: 'header', caption: 'Hilos favoritos', subCaption: 'Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo:'}),
 			createPref({type: 'color', mapsTo: 'favoritesColor', caption: 'Color', subCaption: 'Color de fondo", "El color de fondo para los hilos favoritos. Por defecto <span class="badge">' + mod.initialPreferences.favoritesColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'favoritesBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
-			createPref({type: 'checkbox', mapsTo: 'favoritesOnTop', caption: 'Colocar siempre en primer lugar los hilos marcados como favoritos'})
 		];
 	};
 
@@ -376,9 +372,8 @@
 			}
 		}
 
-		if (mod.preferences.highlightBold) {
-			GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
-		}
+		GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
+		
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
 	}
 
@@ -506,14 +501,13 @@
 			} else if (favorites.isFavorite(hilo.id)) { //Después, si es favorito
 				hilo.isFavorite = true;
 
-				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
-					if ($(".favorite").not('.hiddenThread').length > 0) {
-						$(".favorite").not('.hiddenThread').last().after(hilo.row);
-					} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
-						$(".highlighted").not('.hiddenThread').first().before(hilo.row)
-					} else {
-						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
-					}
+				//Lo movemos al principio de la lista
+				if ($(".favorite").not('.hiddenThread').length > 0) {
+					$(".favorite").not('.hiddenThread').last().after(hilo.row);
+				} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
+					$(".highlighted").not('.hiddenThread').first().before(hilo.row)
+				} else {
+					$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 				}
 
 				hilo.row.addClass("favorite");
@@ -530,11 +524,17 @@
 				hilo.title_link.html(matchResult);
 			}
 
-			if (regexHighlightKeywords && (matchResult = matchKeywords(hilo.title, regexHighlightKeywords, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
+			var matchUserResult;
+			if (regexHighlightKeywords && (matchResult = matchKeywords(hilo.title, regexHighlightKeywords, "highlightKeyword"))
+				|| regexHighlightUsers && (matchUserResult = matchKeywords(hilo.creator, regexHighlightUsers, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
 				hilo.isHighlighted = true;
-				hilo.title_link.html(matchResult);
+				if (matchUserResult) {
+					hilo.creator_span.html(matchUserResult);
+				} else {
+					hilo.title_link.html(matchResult);
+				}
 
-				if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
+				if (!hilo.isHidden && !hilo.isFavorite) { //Lo movemos al principio de la lista
 					if ($(".highlighted").not('.hiddenThread').length > 0) {
 						$(".highlighted").not('.hiddenThread').last().after(hilo.row);
 					} else if ($(".favorite").not('.hiddenThread').length > 0) { //Tiene que estar por debajo de los favoritos
@@ -812,7 +812,7 @@
 	/* Crear todas las expresiones regulares segun el input del usuario */
 	function initRegexs() {
 		//Crear regex de hilos ocultos
-		if (mod.preferences.hiddenKeywords && mod.preferences.hiddenKeywords != "") {
+		if (mod.preferences.hiddenKeywords) {
 			try {
 				regexHiddenKeywords = getRegex(mod.preferences.hiddenKeywords, mod.preferences.hiddenKeywordsIsRegex);
 			} catch (e) {
@@ -822,7 +822,7 @@
 		}
 
 		//Crear regex de hilos ocultos por usuario
-		if (mod.preferences.hiddenUsers && mod.preferences.hiddenUsers != "") {
+		if (mod.preferences.hiddenUsers) {
 			try {
 				regexHiddenUsers = getRegex(mod.preferences.hiddenUsers, false);
 			} catch (e) {
@@ -832,12 +832,22 @@
 		}
 
 		//Crear regex para resaltar hilos
-		if (mod.preferences.highlightKeywords && mod.preferences.highlightKeywords != "") {
+		if (mod.preferences.highlightKeywords) {
 			try {
 				regexHighlightKeywords = getRegex(mod.preferences.highlightKeywords, mod.preferences.highlightKeywordsIsRegex);
 			} catch (e) {
 				regexHighlightKeywords = null;
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos.");
+			}
+		}
+
+		//Crear regex para resaltar hilos
+		if (mod.preferences.highlightUsers) {
+			try {
+				regexHighlightUsers = getRegex(mod.preferences.highlightUsers, false);
+			} catch (e) {
+				regexHighlightUsers = null;
+				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos por usuario.");
 			}
 		}
 	}
