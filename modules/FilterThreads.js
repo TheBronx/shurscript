@@ -507,10 +507,10 @@
 				hilo.isFavorite = true;
 
 				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
-					if ($(".favorite").length > 0) {
-						$(".favorite").last().after(hilo.row);
+					if ($(".favorite").not('.hiddenThread').length > 0) {
+						$(".favorite").not('.hiddenThread').last().after(hilo.row);
 					} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
-						$(".highlighted").first().before(hilo.row)
+						$(".highlighted").not('.hiddenThread').first().before(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
@@ -535,10 +535,10 @@
 				hilo.title_link.html(matchResult);
 
 				if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
-					if ($(".highlighted").length > 0) {
-						$(".highlighted").last().after(hilo.row);
+					if ($(".highlighted").not('.hiddenThread').length > 0) {
+						$(".highlighted").not('.hiddenThread').last().after(hilo.row);
 					} else if ($(".favorite").not('.hiddenThread').length > 0) { //Tiene que estar por debajo de los favoritos
-						$(".favorite").last().after(hilo.row)
+						$(".favorite").not('.hiddenThread').last().after(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
@@ -603,7 +603,7 @@
 	/* Construye el menu que aparece al pulsar sobre el icono del hilo */
 	function getThreadMenu(hilo) {
 		var menu = $("<div class='shurscript'/>");
-		if (!hilo.isHidden || hilo.isHiddenByKeyword) { //No tiene sentido marcar un hilo oculto como favorito
+		if (!hilo.isHidden || hilo.isHiddenByKeywords) { //No tiene sentido marcar un hilo oculto como favorito
 			menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', SHURSCRIPT.config.imagesURL + 'star.png', hilo.isFavorite, function (e) {
 				toggleFavorite(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
@@ -611,7 +611,7 @@
 			}));
 		}
 		if (mod.helper.environment.page != "/search.php") {
-			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', hilo.isHidden && !hilo.isHiddenByKeyword, function (e) {
+			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', hilo.isHidden && !hilo.isHiddenByKeywords, function (e) {
 				toggleHidden(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
