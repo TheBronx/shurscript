@@ -248,8 +248,12 @@
 		});
 
 		try {
-			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i);
+			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i); //De la URL
 			var currentSection = match && match[1];
+			if (!currentSection) {
+				currentSection = $(".fjsel").val(); //Del <select> para cambiar de subforo al final del hilo
+			}
+			
 			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
 			if (!defaultSection.length) {
 				defaultSection = $("#shurscript-favs .collapse").first();
