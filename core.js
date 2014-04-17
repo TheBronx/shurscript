@@ -286,15 +286,18 @@ var SHURSCRIPT = {
 			return;
 		}
 
+		var userid = id_regex_results[1];
+
 		// Guarda info usuario
 		var username;
 		if (SHURSCRIPT.environment.page === "frontpage") {
 			username = $(".cajascat td.cat:nth-child(1)").text().substr(3);
 		} else {
-			username = /Hola, <(?:.*?)>(\w*)<\/(?:.*?)>/.exec(body_html)[1];
+			username = $(".smallfont a[href='member.php?u=" + userid + "']").text();
 		}
+
 		SHURSCRIPT.environment.user = {
-			id: id_regex_results[1],
+			id: userid,
 			name: username
 		};
 
