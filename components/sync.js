@@ -83,12 +83,12 @@
 			this.setValue(key, '', callback);
 		},
 
-		generateApiKey: function (callback) {
+		generateApiKey: function (callback, oldKey) {
 			sync.helper.deleteLocalValue("API_KEY");
 			sync.helper.log("Cloud.generateApiKey()");
 			$.ajax({
 				type: 'POST',
-				url: this.server + 'preferences/',
+				url: this.server + 'preferences/' + (oldKey !== undefined ? "?apikey=" + oldKey : ""),
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
@@ -134,8 +134,11 @@
 
 	};
 
-	sync.generateApiKey = function(callback) {
-		Cloud.generateApiKey(callback);
+	/**
+	* Genera una nueva API key e invalida la antigua
+	*/
+	sync.generateNewApiKey = function(callback) {
+		Cloud.generateApiKey(callback, getApiKey()); //Le pasamos la antigua para que la invalide
 	}
 
 	/**
