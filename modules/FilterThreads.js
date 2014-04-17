@@ -98,7 +98,7 @@
 			return sections;
 		};
 
-		this.populate = function(fav, callback) {
+		this.populateAndSave = function(fav, callback) {
 			$.ajax({
 				url: "/foro/showthread.php?t="+fav.id
 			}).done(function(result) {
@@ -117,7 +117,11 @@
 					'name':section,
 					'id':sectionId,
 				};
-				callback(fav);
+				//guardamos
+				_this.update(fav);
+				saveFavorites();
+				if (callback != undefined)
+					callback(fav);
 			});
 		};
 
@@ -249,7 +253,7 @@
 			if (!currentSection) {
 				currentSection = $(".fjsel").val(); //Del <select> para cambiar de subforo al final del hilo
 			}
-			
+
 			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
 			if (!defaultSection.length) {
 				defaultSection = $("#shurscript-favs .collapse").first();
@@ -266,7 +270,7 @@
 			fav = favorites.favs[i];
 			if (!('title' in fav) || !('section' in fav) || !('author' in fav)) {
 				//nos faltan datos, populate
-				favorites.populate(fav, mod.favPopulated);
+				favorites.populateAndSave(fav, mod.favPopulated);
 				//y cuando esté completo ya lo meteremos donde toque
 			} else {
 				//metemos el hilo en su correspondiente seccion
@@ -305,9 +309,6 @@
 	};
 
 	mod.favPopulated = function(fav) {
-		//hemos sacado los datos de un favorito, los guardamos
-		favorites.update(fav);
-		saveFavorites();
 		//mostramos sus datos en el desplegable si es que existe
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
@@ -373,7 +374,7 @@
 		}
 
 		GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
-		
+
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
 	}
 
@@ -466,6 +467,7 @@
 					is_favorite = false;
 					//borramos de favoritos
 					favorites.remove(t_id);
+					saveFavorites();
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
@@ -474,12 +476,12 @@
 					is_favorite = true;
 					//agregamos a favoritos
 					favorites.add(t_id);
+					favorites.populateAndSave({'id':t_id});
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
 					});
 				}
-				saveFavorites();
 				return false;
 			});
 		});
@@ -648,9 +650,9 @@
 
 	function markAsFavorite(hilo) {
 		favorites.add(hilo.id);
+		favorites.populateAndSave({'id':hilo.id});
 		$(hilo.row).addClass("favorite");
 		hilo.isFavorite = true;
-		saveFavorites();
 	}
 
 	function unmarkAsFavorite(hilo) {
