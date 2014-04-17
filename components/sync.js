@@ -54,7 +54,7 @@
 			})
 			.fail(function(error){
 				switch (error.status) {
-					case 403:
+					case 403: //API Key no encontrada
 						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
 							if (res) {
 								Cloud.generateApiKey(function () {
@@ -63,7 +63,12 @@
 							}
 						});
 					break;
-					case 500:
+					case 410: //API Key invalidada
+						sync.helper.deleteLocalValue("API_KEY");
+						this.apiKey = getApiKey();
+						Cloud.getAll(callback);
+					break;
+					case 500: //Error general
 					default:
 						sync.helper.showMessageBar({message: "<strong>Oops...</strong> Parece que hay tormenta en el cloud de Shurscript... Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.", type: "danger"});
 					break;
