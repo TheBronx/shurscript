@@ -11,7 +11,7 @@
 // @author          xusoO
 // @author          Fritanga
 // @author          juno / ikaros45
-// @include         *www.forocoches.com*
+// @include         http://www.forocoches.com*
 // @include         http://forocoches.com*
 // @grant           GM_log
 // @grant           GM_getValue
