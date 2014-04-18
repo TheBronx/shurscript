@@ -470,6 +470,7 @@
 					is_favorite = false;
 					//borramos de favoritos
 					favorites.remove(t_id);
+					saveFavorites();
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
@@ -480,12 +481,12 @@
 					is_favorite = true;
 					//agregamos a favoritos
 					favorites.add(t_id);
+					favorites.populateAndSave({'id':t_id});
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
 					});
 				}
-				saveFavorites();
 				return false;
 			});
 		});
