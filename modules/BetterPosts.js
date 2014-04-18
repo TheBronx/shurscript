@@ -159,7 +159,9 @@
 		//Workaround: buscar y sustituir esos divs antes de enviar la respuesta
 		$("input[name='sbutton'], input[name='preview']").on("click", function() {
 			var contents = getEditorContents();
-			contents = contents.replace(/<div>/g, '<br>').replace(/(<br>)?(<\/div>)/g, '');
+			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match){
+				return match.substring(5,match.length-6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
+			});
 			setEditorContents(contents);
 			reflowTextArea();
 		});
@@ -379,11 +381,11 @@
 			threadId = 'new_thread';
 
 		var currentPostBackup = mod.helper.getValue("POST_BACKUP");
-		
+
 		if (currentPostBackup && isQuickReply()) {
 			currentPostBackup = JSON.parse(currentPostBackup);
 			if (currentPostBackup.threadId == threadId) {
-				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) { 
+				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) {
 					setEditorContents(currentPostBackup.postContents)
 				};
 				reflowTextArea();
@@ -408,7 +410,7 @@
 			var $sendButton = $("input[name='sbutton']");
 			$sendButton.attr("type", "button"); //Le quitamos el type 'submit' para que no envie el formulario
 			var sendForm = $sendButton.parents('form')[0];
-			
+
 			$sendButton.on("click", function (e) {
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
 					mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
@@ -569,11 +571,11 @@
 		focusEditor();
 		getEditor().insert_text(text);
 	}
-	
+
 	function focusEditor() {
 		getEditor().editdoc.body.focus();
 	}
-	
+
 	function trim(text) {
 		return text.trim().replace(/\<br\>/g, '');
 	}
