@@ -160,7 +160,9 @@
 		$("input[name='sbutton'], input[name='preview']").on("click", function() {
 			var contents = getEditorContents();
 			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match){
-				return "<br>"+match.substring(5,match.length-6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
+				var contenidoDivInutil = match.substring(5,match.length-6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
+				if (contenidoDivInutil=='<br>') return contenidoDivInutil;
+				else return "<br>"+contenidoDivInutil;
 			});
 			setEditorContents(contents);
 			reflowTextArea();
