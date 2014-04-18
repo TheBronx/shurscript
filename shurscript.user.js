@@ -6,12 +6,13 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.2-dev
+// @version         0.20.3-dev
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
 // @author          juno / ikaros45
-// @include         *www.forocoches.com*
+// @include         http://www.forocoches.com*
+// @include         http://forocoches.com*
 // @grant           GM_log
 // @grant           GM_getValue
 // @grant           GM_setValue

@@ -14,15 +14,13 @@
 			hiddenUsers: '',
 			hiddenKeywords: '',
 			hiddenKeywordsIsRegex: false,
+			highlightUsers: '',
 			highlightKeywords: '',
 			highlightKeywordsIsRegex: false,
 			highlightColor: '#FAF7DD',
 			highlightBorderOnly: false,
-			highlightBold: true,
-			highlightedOnTop: true,
 			favoritesColor: '#D5E6EE',
 			favoritesBorderOnly: false,
-			favoritesOnTop: true
 		}
 	});
 
@@ -100,7 +98,7 @@
 			return sections;
 		};
 
-		this.populate = function(fav, callback) {
+		this.populateAndSave = function(fav, callback) {
 			$.ajax({
 				url: "/foro/showthread.php?t="+fav.id
 			}).done(function(result) {
@@ -119,7 +117,11 @@
 					'name':section,
 					'id':sectionId,
 				};
-				callback(fav);
+				//guardamos
+				_this.update(fav);
+				saveFavorites();
+				if (callback != undefined)
+					callback(fav);
 			});
 		};
 
@@ -172,7 +174,7 @@
 	var hiddenThreadsCount = 0;
 	var hiddenThreadsBlock;
 	var hideReadThreadsButton;
-	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords;
+	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords, regexHighlightUsers;
 
 	/**
 	* Método temporal de migración de valores
@@ -217,16 +219,14 @@
 			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
+			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
-			createPref({type: 'checkbox', mapsTo: 'highlightBold', caption: 'Resaltar palabras clave en los títulos de los hilos'}),
-			createPref({type: 'checkbox', mapsTo: 'highlightedOnTop', caption: 'Colocar siempre en primer lugar los hilos resaltados'}),
 			createPref({type: 'header', caption: 'Hilos favoritos', subCaption: 'Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo:'}),
 			createPref({type: 'color', mapsTo: 'favoritesColor', caption: 'Color', subCaption: 'Color de fondo", "El color de fondo para los hilos favoritos. Por defecto <span class="badge">' + mod.initialPreferences.favoritesColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'favoritesBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
-			createPref({type: 'checkbox', mapsTo: 'favoritesOnTop', caption: 'Colocar siempre en primer lugar los hilos marcados como favoritos'})
 		];
 	};
 
@@ -248,8 +248,12 @@
 		});
 
 		try {
-			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i);
+			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i); //De la URL
 			var currentSection = match && match[1];
+			if (!currentSection) {
+				currentSection = $(".fjsel").val(); //Del <select> para cambiar de subforo al final del hilo
+			}
+
 			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
 			if (!defaultSection.length) {
 				defaultSection = $("#shurscript-favs .collapse").first();
@@ -266,7 +270,7 @@
 			fav = favorites.favs[i];
 			if (!('title' in fav) || !('section' in fav) || !('author' in fav)) {
 				//nos faltan datos, populate
-				favorites.populate(fav, mod.favPopulated);
+				favorites.populateAndSave(fav, mod.favPopulated);
 				//y cuando esté completo ya lo meteremos donde toque
 			} else {
 				//metemos el hilo en su correspondiente seccion
@@ -285,6 +289,14 @@
 			}
 		}
 
+		//Mostrar mensaje informativo si no tiene ningún favorito
+		if (!favorites.favs.length) {
+			modal.find('.modal-body').css('text-align', 'center');
+			modal.find('.modal-body').html('<span style="color: gray; font-size: 14pt; display: inline-block; font-weight: 200; margin-bottom: 10px;">'
+			+ 'Todav&iacute;a no has a&ntilde;adido ning&uacute;n hilo como favorito :('
+			+ '</span><img src="' + SHURSCRIPT.config.imagesURL + 'howtofav.gif' + '">');
+		}
+
 		modal.on('hidden.bs.modal', function () {
 			//Eliminar al cerrar
 			modal.remove();
@@ -297,9 +309,6 @@
 	};
 
 	mod.favPopulated = function(fav) {
-		//hemos sacado los datos de un favorito, los guardamos
-		favorites.update(fav);
-		saveFavorites();
 		//mostramos sus datos en el desplegable si es que existe
 		var modal = $('#shurscript-favs');
 		if (modal.length>0) { //modal still exists
@@ -364,9 +373,8 @@
 			}
 		}
 
-		if (mod.preferences.highlightBold) {
-			GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
-		}
+		GM_addStyle(".highlightKeyword {text-decoration: underline; color: black;}");
+
 		GM_addStyle(".hiddenKeyword {text-decoration: line-through; color: black;}");
 	}
 
@@ -446,33 +454,39 @@
 		//vale, ahora que sabemos que hilo es, ¿es favorito?
 		var is_favorite = favorites.isFavorite(t_id);
 		//agregamos la estrella junto a los botones de responder
-		var estrella = '<td class="shur_estrella"><a href="#" class="' + (is_favorite ? 'fav' : '') + '"></a></td>';
+		var estrella = '<td class="shur_estrella shurscript"><a href="#" class="' + (is_favorite ? 'fav' : '') + '" data-placement="top" data-toggle="tooltip"></a></td>';
 		//boton de arriba
 		$("#poststop").next().find("td.smallfont").first().before(estrella);
 		//boton de abajo
 		$("#posts").next().find("table td.smallfont").first().before(estrella);
 
 		//eventos
+		$(".shur_estrella a").tooltip({delay: 300, title: (is_favorite ? 'Desmarcar como favorito' : 'Marcar como favorito')});
 		$(".shur_estrella a").each(function () {
 			$(this).click(function () {
 				if (is_favorite) {
+					$(this).tooltip('destroy');
+					$(this).tooltip({delay: 300, title: 'Marcar como favorito'});
 					is_favorite = false;
 					//borramos de favoritos
 					favorites.remove(t_id);
+					saveFavorites();
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
 					});
 				} else {
+					$(this).tooltip('destroy');
+					$(this).tooltip({delay: 300, title: 'Desmarcar como favorito'});
 					is_favorite = true;
 					//agregamos a favoritos
 					favorites.add(t_id);
+					favorites.populateAndSave({'id':t_id});
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
 					});
 				}
-				saveFavorites();
 				return false;
 			});
 		});
@@ -494,14 +508,13 @@
 			} else if (favorites.isFavorite(hilo.id)) { //Después, si es favorito
 				hilo.isFavorite = true;
 
-				if (mod.preferences.favoritesOnTop) { //Lo movemos al principio de la lista
-					if ($(".favorite").length > 0) {
-						$(".favorite").last().after(hilo.row);
-					} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
-						$(".highlighted").first().before(hilo.row)
-					} else {
-						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
-					}
+				//Lo movemos al principio de la lista
+				if ($(".favorite").not('.hiddenThread').length > 0) {
+					$(".favorite").not('.hiddenThread').last().after(hilo.row);
+				} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
+					$(".highlighted").not('.hiddenThread').first().before(hilo.row)
+				} else {
+					$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 				}
 
 				hilo.row.addClass("favorite");
@@ -518,15 +531,21 @@
 				hilo.title_link.html(matchResult);
 			}
 
-			if (regexHighlightKeywords && (matchResult = matchKeywords(hilo.title, regexHighlightKeywords, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
+			var matchUserResult;
+			if (regexHighlightKeywords && (matchResult = matchKeywords(hilo.title, regexHighlightKeywords, "highlightKeyword"))
+				|| regexHighlightUsers && (matchUserResult = matchKeywords(hilo.creator, regexHighlightUsers, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
 				hilo.isHighlighted = true;
-				hilo.title_link.html(matchResult);
+				if (matchUserResult) {
+					hilo.creator_span.html(matchUserResult);
+				} else {
+					hilo.title_link.html(matchResult);
+				}
 
-				if (!hilo.isHidden && !hilo.isFavorite && mod.preferences.highlightedOnTop) { //Lo movemos al principio de la lista
-					if ($(".highlighted").length > 0) {
-						$(".highlighted").last().after(hilo.row);
+				if (!hilo.isHidden && !hilo.isFavorite) { //Lo movemos al principio de la lista
+					if ($(".highlighted").not('.hiddenThread').length > 0) {
+						$(".highlighted").not('.hiddenThread').last().after(hilo.row);
 					} else if ($(".favorite").not('.hiddenThread').length > 0) { //Tiene que estar por debajo de los favoritos
-						$(".favorite").last().after(hilo.row)
+						$(".favorite").not('.hiddenThread').last().after(hilo.row)
 					} else {
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(hilo.row); //El primero de la lista
 					}
@@ -591,7 +610,7 @@
 	/* Construye el menu que aparece al pulsar sobre el icono del hilo */
 	function getThreadMenu(hilo) {
 		var menu = $("<div class='shurscript'/>");
-		if (!hilo.isHidden || hilo.isHiddenByKeyword) { //No tiene sentido marcar un hilo oculto como favorito
+		if (!hilo.isHidden || hilo.isHiddenByKeywords) { //No tiene sentido marcar un hilo oculto como favorito
 			menu.append(getThreadMenuToggle(hilo, 'Quitar favorito', 'Favorito', SHURSCRIPT.config.imagesURL + 'star.png', hilo.isFavorite, function (e) {
 				toggleFavorite(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
@@ -599,7 +618,7 @@
 			}));
 		}
 		if (mod.helper.environment.page != "/search.php") {
-			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', hilo.isHidden && !hilo.isHiddenByKeyword, function (e) {
+			menu.append(getThreadMenuToggle(hilo, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', hilo.isHidden && !hilo.isHiddenByKeywords, function (e) {
 				toggleHidden(hilo);
 				hilo.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
@@ -636,9 +655,9 @@
 
 	function markAsFavorite(hilo) {
 		favorites.add(hilo.id);
+		favorites.populateAndSave({'id':hilo.id});
 		$(hilo.row).addClass("favorite");
 		hilo.isFavorite = true;
-		saveFavorites();
 	}
 
 	function unmarkAsFavorite(hilo) {
@@ -800,7 +819,7 @@
 	/* Crear todas las expresiones regulares segun el input del usuario */
 	function initRegexs() {
 		//Crear regex de hilos ocultos
-		if (mod.preferences.hiddenKeywords && mod.preferences.hiddenKeywords != "") {
+		if (mod.preferences.hiddenKeywords) {
 			try {
 				regexHiddenKeywords = getRegex(mod.preferences.hiddenKeywords, mod.preferences.hiddenKeywordsIsRegex);
 			} catch (e) {
@@ -810,7 +829,7 @@
 		}
 
 		//Crear regex de hilos ocultos por usuario
-		if (mod.preferences.hiddenUsers && mod.preferences.hiddenUsers != "") {
+		if (mod.preferences.hiddenUsers) {
 			try {
 				regexHiddenUsers = getRegex(mod.preferences.hiddenUsers, false);
 			} catch (e) {
@@ -820,12 +839,22 @@
 		}
 
 		//Crear regex para resaltar hilos
-		if (mod.preferences.highlightKeywords && mod.preferences.highlightKeywords != "") {
+		if (mod.preferences.highlightKeywords) {
 			try {
 				regexHighlightKeywords = getRegex(mod.preferences.highlightKeywords, mod.preferences.highlightKeywordsIsRegex);
 			} catch (e) {
 				regexHighlightKeywords = null;
 				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos.");
+			}
+		}
+
+		//Crear regex para resaltar hilos
+		if (mod.preferences.highlightUsers) {
+			try {
+				regexHighlightUsers = getRegex(mod.preferences.highlightUsers, false);
+			} catch (e) {
+				regexHighlightUsers = null;
+				bootbox.alert("Ha ocurrido un error. Revisa la expresión regular que has introducido para resaltar hilos por usuario.");
 			}
 		}
 	}

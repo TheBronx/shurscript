@@ -85,7 +85,7 @@
 				if (res) {
 					bootbox.hideAll();
 					bootbox.dialog({message: '<center>Generando API Key...</center>'});
-					SHURSCRIPT.sync.generateApiKey(function(){
+					SHURSCRIPT.sync.generateNewApiKey(function(){
 						preferences.helper.location.href = "#newkey";
 						preferences.helper.location.reload();
 					});

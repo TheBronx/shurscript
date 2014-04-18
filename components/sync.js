@@ -54,7 +54,7 @@
 			})
 			.fail(function(error){
 				switch (error.status) {
-					case 403:
+					case 403: //API Key no encontrada
 						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
 							if (res) {
 								Cloud.generateApiKey(function () {
@@ -63,7 +63,12 @@
 							}
 						});
 					break;
-					case 500:
+					case 410: //API Key invalidada
+						sync.helper.deleteLocalValue("API_KEY");
+						Cloud.apiKey = getApiKey();
+						Cloud.getAll(callback);
+					break;
+					case 500: //Error general
 					default:
 						sync.helper.showMessageBar({message: "<strong>Oops...</strong> Parece que hay tormenta en el cloud de Shurscript... Prueba de nuevo en unos instantes o deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>.", type: "danger"});
 					break;
@@ -78,12 +83,12 @@
 			this.setValue(key, '', callback);
 		},
 
-		generateApiKey: function (callback) {
+		generateApiKey: function (callback, oldKey) {
 			sync.helper.deleteLocalValue("API_KEY");
 			sync.helper.log("Cloud.generateApiKey()");
 			$.ajax({
 				type: 'POST',
-				url: this.server + 'preferences/',
+				url: this.server + 'preferences/' + (oldKey !== undefined ? "?apikey=" + oldKey : ""),
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
@@ -129,9 +134,12 @@
 
 	};
 
-	sync.generateApiKey = function(callback) {
-		Cloud.generateApiKey(callback);
-	}
+	/**
+	* Genera una nueva API key e invalida la antigua
+	*/
+	sync.generateNewApiKey = function(callback) {
+		Cloud.generateApiKey(callback, getApiKey()); //Le pasamos la antigua para que la invalide
+	};
 
 	/**
 	 * Devuelve la API key guardada en las suscripciones del foro.
@@ -139,7 +147,7 @@
 	function getApiKey() {
 		var apiKey = sync.helper.getLocalValue("API_KEY");
 
-		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones 
+		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones
 		if (!apiKey) {
 			var ajax = new XMLHttpRequest();
 			ajax.open("GET", "http://www.forocoches.com/foro/subscription.php?do=editfolders", false); //La buscamos en la carpeta falsa que se crea en las suscripciones
@@ -153,7 +161,7 @@
 						sync.helper.setLocalValue("API_KEY", apiKey);
 					}
 				}
-			}
+			};
 			ajax.send();
 		}
 		return apiKey;
@@ -172,7 +180,7 @@
 					saveApiKey(apiKey); //insistimos, hasta que se guarde o algo pete xD
 				}
 			}
-		}
+		};
 		var folderName = "shurkey-" + apiKey;
 		var securitytoken = $("input[name='securitytoken']").val(); //Numero de seguridad que genera el vbulletin para autenticar las peticiones
 		var params = "s=&securitytoken=" + securitytoken + "&do=doeditfolders&folderlist[50]=" + folderName + "&do=doeditfolders";
