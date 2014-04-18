@@ -454,34 +454,38 @@
 		//vale, ahora que sabemos que hilo es, ¿es favorito?
 		var is_favorite = favorites.isFavorite(t_id);
 		//agregamos la estrella junto a los botones de responder
-		var estrella = '<td class="shur_estrella"><a href="#" class="' + (is_favorite ? 'fav' : '') + '"></a></td>';
+		var estrella = '<td class="shur_estrella shurscript"><a href="#" class="' + (is_favorite ? 'fav' : '') + '" data-placement="top" data-toggle="tooltip"></a></td>';
 		//boton de arriba
 		$("#poststop").next().find("td.smallfont").first().before(estrella);
 		//boton de abajo
 		$("#posts").next().find("table td.smallfont").first().before(estrella);
 
 		//eventos
+		$(".shur_estrella a").tooltip({delay: 300, title: (is_favorite ? 'Desmarcar como favorito' : 'Marcar como favorito')});
 		$(".shur_estrella a").each(function () {
 			$(this).click(function () {
 				if (is_favorite) {
+					$(this).tooltip('destroy');
+					$(this).tooltip({delay: 300, title: 'Marcar como favorito'});
 					is_favorite = false;
 					//borramos de favoritos
 					favorites.remove(t_id);
-					saveFavorites();
 					//quitamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).removeClass('fav')
 					});
 				} else {
+					$(this).tooltip('destroy');
+					$(this).tooltip({delay: 300, title: 'Desmarcar como favorito'});
 					is_favorite = true;
 					//agregamos a favoritos
 					favorites.add(t_id);
-					favorites.populateAndSave({'id':t_id});
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
 					});
 				}
+				saveFavorites();
 				return false;
 			});
 		});
