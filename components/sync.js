@@ -65,7 +65,7 @@
 					break;
 					case 410: //API Key invalidada
 						sync.helper.deleteLocalValue("API_KEY");
-						this.apiKey = getApiKey();
+						Cloud.apiKey = getApiKey();
 						Cloud.getAll(callback);
 					break;
 					case 500: //Error general
@@ -139,7 +139,7 @@
 	*/
 	sync.generateNewApiKey = function(callback) {
 		Cloud.generateApiKey(callback, getApiKey()); //Le pasamos la antigua para que la invalide
-	}
+	};
 
 	/**
 	 * Devuelve la API key guardada en las suscripciones del foro.
@@ -147,7 +147,7 @@
 	function getApiKey() {
 		var apiKey = sync.helper.getLocalValue("API_KEY");
 
-		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones 
+		//Si no la tenemos guardada en local la buscamos en las suscripciones y la guardamos en local para evitar hacer cada vez una llamada para recuperar las suscripciones
 		if (!apiKey) {
 			var ajax = new XMLHttpRequest();
 			ajax.open("GET", "http://www.forocoches.com/foro/subscription.php?do=editfolders", false); //La buscamos en la carpeta falsa que se crea en las suscripciones
@@ -161,7 +161,7 @@
 						sync.helper.setLocalValue("API_KEY", apiKey);
 					}
 				}
-			}
+			};
 			ajax.send();
 		}
 		return apiKey;
@@ -180,7 +180,7 @@
 					saveApiKey(apiKey); //insistimos, hasta que se guarde o algo pete xD
 				}
 			}
-		}
+		};
 		var folderName = "shurkey-" + apiKey;
 		var securitytoken = $("input[name='securitytoken']").val(); //Numero de seguridad que genera el vbulletin para autenticar las peticiones
 		var params = "s=&securitytoken=" + securitytoken + "&do=doeditfolders&folderlist[50]=" + folderName + "&do=doeditfolders";
