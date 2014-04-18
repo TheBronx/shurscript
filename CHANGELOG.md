@@ -1,6 +1,26 @@
 # CHANGELOG
 
-## v0.20.2 `14/04/2014`
+## v0.20.3 `18/04/2014`
+
+**Features**
+
+* Nueva opción para resaltar hilos por autor (usuario)
+
+**Cambios**
+
+* Añadido enlace al último post leído de un hilo desde el panel favoritos
+* Añadido tooltip aclaratorio en la estrella para marcar como favorito dentro de un hilo
+
+**Bugfixes**
+
+* Añadido un include para que el script funcionase tanto si la URL tenía www como si no
+* Solucionado error que detenía la ejecución del script a usuarios con caracteres extraños
+* Añadido manejador para invalidar apikey si se ha generado una nueva
+* Otros arreglos menores
+
+------------------------------------
+
+### v0.20.2 `14/04/2014`
 
 **Features**
 
