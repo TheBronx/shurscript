@@ -5,7 +5,7 @@
 ==========
 
 Script de usuario para ForoCoches.com  
-Hilo oficial: [ForoCoches.com ShurScript](http://www.forocoches.com/foro/showthread.php?t=3558434)  
+Hilo oficial: [ForoCoches.com ShurScript](http://shurscript.org/hilo)  
 Web: [shurscript.org](http://shurscript.org)  
 Sugerencias: [shurscript en uservoice](https://shurscript.uservoice.com/)
 

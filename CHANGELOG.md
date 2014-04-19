@@ -1,86 +1,7 @@
 # CHANGELOG
 
-## v0.20.4 `19/04/2014`
 
-**Features**
-
-* Añadida sincronización en la nube de las preferencias de usuario
-* Re-escritura de los módulos acorde a plantilla
-* Nueva opción para subir imágenes a Imgur y postearlas en el foro
-* Poder ver el listado completo de Hilos favoritos categorizados por subforo
-* Nueva barra en la parte superior para acceder a las preferencias y cualquier nueva funcionalidad que vayamos añadiendo
-* Resaltar en un hilo los posts de los usuarios que quieras, con la posibilidad de importarlos desde tu la lista de contactos
-* Nueva opción para resaltar hilos por autor (usuario)
-
-------------------------------------
-
-### v0.20.3 `18/04/2014`
-
-**Features**
-
-* Nueva opción para resaltar hilos por autor (usuario)
-
-**Cambios**
-
-* Añadido enlace al último post leído de un hilo desde el panel favoritos
-* Añadido tooltip aclaratorio en la estrella para marcar como favorito dentro de un hilo
-
-**Bugfixes**
-
-* Añadido un include para que el script funcionase tanto si la URL tenía www como si no
-* Solucionado error que detenía la ejecución del script a usuarios con caracteres extraños
-* Añadido manejador para invalidar apikey si se ha generado una nueva
-* Otros arreglos menores
-
-------------------------------------
-
-### v0.20.2 `14/04/2014`
-
-**Features**
-
-* Nueva opción para subir imágenes a Imgur y postearlas en el foro
-* Poder ver el listado completo de Hilos favoritos categorizados por subforo
-* Nueva barra en la parte superior para acceder a las preferencias y cualquier nueva funcionalidad que vayamos añadiendo
-* Resaltar en un hilo los posts de los usuarios que quieras, con la posibilidad de importarlos desde tu la lista de contactos
-
-**Bugfixes**
-
-* Hacer que el script funcione correctamente en la portada
-
-------------------------------------
-
-### v0.20.1 `02/04/2014`
-
-**Bugfixes**
-
-* Solucionado problema con las notificaciones
-* Arreglado componente encargado de las actualizaciones
-* Arreglado problema con la migración de preferencias _(nuevas instalaciones)_
-	* Ahora se migrarán los hilos favoritos/ocultados manualmente e historial de citas
-
-------------------------------------
-
-### v0.20 `30/03/2014`
-
-**Features**
-
-* Añadida sincronización en la nube de las preferencias de usuario
-* Re-escritura de los módulos acorde a plantilla
-
-**Cambios**
-
-* Reorganizado el panel de preferencias con pestañas separadas
-* Actualizado bootstrap.min.js a versión 3.1.1
-* Centralizadas y movidas las imágenes que utilizan los módulos a un servidor externo
-* El script para uso final se entrega ahora minificado en un único archivo
-
-**Bugfixes**
-
-* Muchos y muy variados, ver commits en GitHub
-
-------------------------------------
-
-### v0.10.2.1 `18/03/2014`
+## v0.10.2.1 `18/03/2014`
 
 **Changes**
 
@@ -118,8 +39,6 @@
 * Los posts enviados anteriormente desde la respuesta avanzada aparecía luego en la caja de respuesta rápida
 
 ------------------------------------
-
-### v0.10 `29/09/2013`
 
 ### v0.10 `29/09/2013`
 
