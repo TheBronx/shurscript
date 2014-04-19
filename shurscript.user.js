@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.3-exp
+// @version         0.20.3
 // @author          TheBronx
 // @author          xusoO
 // @author          Fritanga
@@ -47,13 +47,13 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
-// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
-// @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
-// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
-// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
-// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
-// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
-// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
+// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/master-release/css/bootstrap.css
+// @resource        modalcss https://github.com/TheBronx/shurscript/raw/master-release/css/modal.css
+// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/master-release/css/shurbar.css
+// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/master-release/html/modal.html
+// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/master-release/html/quote.html
+// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/master-release/css/imageuploader.css
+// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/master-release/html/imageuploader.html
 // ==/UserScript==
 
 /**
