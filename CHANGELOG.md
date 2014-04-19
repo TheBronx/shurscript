@@ -1,6 +1,20 @@
 # CHANGELOG
 
-## v0.20.3 `18/04/2014`
+## v0.20.4 `19/04/2014`
+
+**Features**
+
+* Añadida sincronización en la nube de las preferencias de usuario
+* Re-escritura de los módulos acorde a plantilla
+* Nueva opción para subir imágenes a Imgur y postearlas en el foro
+* Poder ver el listado completo de Hilos favoritos categorizados por subforo
+* Nueva barra en la parte superior para acceder a las preferencias y cualquier nueva funcionalidad que vayamos añadiendo
+* Resaltar en un hilo los posts de los usuarios que quieras, con la posibilidad de importarlos desde tu la lista de contactos
+* Nueva opción para resaltar hilos por autor (usuario)
+
+------------------------------------
+
+### v0.20.3 `18/04/2014`
 
 **Features**
 
