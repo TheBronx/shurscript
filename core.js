@@ -330,7 +330,7 @@ var SHURSCRIPT = {
 			if (!core.helper.getLocalValue('SERVER_DOWN_ALERT')) {
 				setTimeout(function() {
 					core.helper.showMessageBar({
-						message: "<strong>Oops...</strong> Parece que se ha roto alguna pieza en el servidor de <strong>Shurscript</strong>. Int&eacute;ntalo de nuevo en unos minutos o deja constancia en el <a href='http://shurscript.org/hilo'>hilo oficial</a>.",
+						message: "<strong>Oops...</strong> No se ha podido contactar con el cloud de <strong>shurscript</strong>. Consulta que puede estar causando este problema en <a href='https://github.com/TheBronx/shurscript/wiki/FAQ#no-se-ha-podido-contactar-con-el-cloud-de-shurscript'>las F.A.Q.</a> y si el problema persiste, deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>. <strong>{err: config}</strong>",
 						type: "danger",
 						onClose: function () {
 							core.helper.setLocalValue('SERVER_DOWN_ALERT', true);
