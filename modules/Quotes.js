@@ -166,7 +166,13 @@
 			if (currentStatus == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();
 			}
-			showNotificationsBox();
+			
+			if (notificationsBox.is(':visible')) { // Si la caja está desplegada
+				notificationsBox.hide(); // la cerramos
+			} else {
+				showNotificationsBox(); // Si no está desplegada, la mostramos
+			}
+			
 		});
 
 		//comprobamos (si procede) nuevas notificaciones
@@ -393,6 +399,7 @@
 
 		$(document).mouseup(function (e) {
 			if (notificationsBox.css("display") == "block" && !notificationsBox.is(e.target) //No es nuestra caja
+				&& !$('.notifications').is(e.target)
 				&& notificationsBox.has(e.target).length === 0) { //Ni tampoco un hijo suyo
 				notificationsBox.hide(); //Cerramos la caja
 				e.stopImmediatePropagation();
@@ -476,8 +483,10 @@
 
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
+		var ulink = cita.userLink.indexOf('http') == 0 ? cita.userLink : '/foro/' + cita.userLink;
+		var tlink = cita.threadLink.indexOf('http') == 0 ? cita.threadLink : '/foro/' + cita.threadLink;
 		var link = cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink;
-		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link}));
+		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link, threadLink: tlink, userLink: ulink}));
 
 		//Necesitamos esperar a que se marque como leída antes de abrir el link
 		//No usamos click porque no ejecuta el evento con el botón central
