@@ -1,9 +1,9 @@
 <div class="notificationRow <%=cita.read ? "read" : ""%>">
     <div>
-        <b>El usuario <a href="<%=cita.userLink%>"><%=cita.userName%></a> te ha citado</b>
+        <b>El usuario <a href="<%=userLink%>"><%=cita.userName%></a> te ha citado</b>
     </div>
     <div>
-        <b><a href="<%=cita.threadLink%>"><%=cita.threadName%></a></b>
+        <b><a href="<%=threadLink%>"><%=cita.threadName%></a></b>
     </div>
     <div>
         <a class="postLink" onclick="return <%=cita.read ? "true" : "false"%>;" href="<%=postLink%>" style="color:#444;"><%=cita.postText%></a>

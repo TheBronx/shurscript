@@ -476,8 +476,10 @@
 
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
+		var ulink = cita.userLink.indexOf('http') == 0 ? cita.userLink : '/foro/' + cita.userLink;
+		var tlink = cita.threadLink.indexOf('http') == 0 ? cita.threadLink : '/foro/' + cita.threadLink;
 		var link = cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink;
-		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link}));
+		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link, threadLink: tlink, userLink: ulink}));
 
 		//Necesitamos esperar a que se marque como leída antes de abrir el link
 		//No usamos click porque no ejecuta el evento con el botón central
