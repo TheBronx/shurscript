@@ -293,7 +293,7 @@ var SHURSCRIPT = {
 		if (SHURSCRIPT.environment.page === "frontpage") {
 			username = $(".cajascat td.cat:nth-child(1)").text().substr(3);
 		} else {
-			username = $(".smallfont a[href='member.php?u=" + userid + "']").text();
+			username = $(".smallfont a[href='member.php?u=" + userid + "']").first().text();
 		}
 
 		SHURSCRIPT.environment.user = {
