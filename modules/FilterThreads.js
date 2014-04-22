@@ -140,7 +140,7 @@
 			else
 				html = html.replace("{author}","---");
 
-			html = html.replace(/\{link\}/g,'http://www.forocoches.com/foro/showthread.php?t='+fav.id);
+			html = html.replace(/\{link\}/g,'/foro/showthread.php?t='+fav.id);
 			return html;
 		};
 
@@ -212,6 +212,22 @@
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
 
+		unsafeWindow.importIgnoreListWarning = function () {
+			if (mod.preferences.contacts.length !== 0) {
+				bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+						"<a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a>.</p>" +
+						"<p>¿Desea continuar?</p>",
+					function (result) {
+						if (result) {
+							importIgnoreList();
+						}
+					}
+				);
+			} else {
+				importIgnoreList();
+			}
+		};
+
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
@@ -219,7 +235,7 @@
 			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
-			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>'}),
+			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>', subCaption: '<a href="#" onclick="importIgnoreListWarning(); return false;">Importar de la lista de ignorados…</a>'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
@@ -904,5 +920,31 @@
 		if (index > -1) {
 			array.splice(index, 1);
 		}
+	}
+
+	function importIgnoreList() {
+		var xmlhttp = new XMLHttpRequest();
+
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+				var html = xmlhttp.responseText;
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(html, "text/html");
+
+				var elems = doc.getElementById("ignorelist").getElementsByTagName("a");
+				var ignoredUsers = [];
+
+				for (var i = 0, n = elems.length; i < n; i++) {
+					ignoredUsers.push(elems[i].textContent);
+				}
+
+				// Update textbox contents and mark module as modified
+				document.querySelector("input[data-maps-to='highlightUsers']").value = ignoredUsers.join(', ');
+				document.querySelector("div[data-module-id='FilterThreads']").classList.add('changed');
+			}
+		};
+
+		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist", true);
+		xmlhttp.send();
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
