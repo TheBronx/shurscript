@@ -15,25 +15,23 @@
 	});
 
 	mod.normalStartCheck = function () {
-		return true;
+		return location.href.indexOf("/search.php?do=") !== -1;
 	};
 
 	var elementCountDown;// objeto de tipo HTML_LI_Element
 	var seconds, totalSeconds;
-	var cancelar = false;
+	var timeoutId;
 
 	mod.onNormalStart = function () {
-		if (location.href.indexOf("/search.php?do=") === -1) return;
-
 		// Obtener el elemento que contiene el tiempo que se ha de esperar
 		if (document.title === "ForoCoches") {
 			elementCountDown = document.getElementsByClassName('panel')[0].childNodes[1].childNodes[3];
 		} else {
-			elementCountDown = document.querySelectorAll("td.alt1 ol li")[0];
+			elementCountDown = document.querySelector("td.alt1 ol li");
 		}
 
 		// Obtener los segundos a partir del elemento
-		var str = elementCountDown.innerHTML;
+		var str = elementCountDown.textContent;
 
 		if (str) {
 			var n = str.length;
@@ -42,7 +40,7 @@
 			if (!isNaN(seconds)) {
 				totalSeconds = parseInt(str.substring(23, 26));
 
-				setTimeout(updateCountDown, 967);
+				timeoutId = setTimeout(updateCountDown, 967);
 			}
 		}
 	};
@@ -59,35 +57,40 @@
 	}
 
 	function cancel() {
-		elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ Recarga automática desactivada ]";
+		elementCountDown.textContent = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. [ Recarga automática desactivada ]";
 
-		seconds = 288;
-		cancelar = true;
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
 	}
 
 	function updateCountDown() {
-		if (cancelar) return;
-
 		seconds--;
 
 		if (seconds > 0) {
-			var enlace = $("<a href='#'>Cancelar</a>").click(function () {
+			var enlace = document.createElement("a");
+			enlace.href = "#";
+			enlace.textContent = "Cancelar";
+			enlace.onclick = function () {
 				cancel();
 				return false;
-			});
+			};
 
-			elementCountDown.innerHTML = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. &mdash; ";
-			$(elementCountDown).append(enlace);
+			elementCountDown.textContent = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. — ";
+			elementCountDown.appendChild(enlace);
 
-			setTimeout(updateCountDown, 967);
+			timeoutId = setTimeout(updateCountDown, 967);
 		} else {
-			var enlace = $("<a href='#'>Refrescar</a>").click(function () {
+			var enlace = document.createElement("a");
+			enlace.href = "#";
+			enlace.textContent = "Refrescar";
+			enlace.onclick = function () {
 				refresh();
 				return false;
-			});
+			};
 
-			elementCountDown.innerHTML = "Cargando… &mdash; ";
-			$(elementCountDown).append(enlace);
+			elementCountDown.textContent = "Cargando… — ";
+			elementCountDown.appendChild(enlace);
 
 			refresh();
 		}
