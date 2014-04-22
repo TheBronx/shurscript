@@ -212,8 +212,24 @@
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
 
+		unsafeWindow.importBuddyListWarning = function () {
+			if (mod.preferences.highlightUsers) {
+				bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+						"<a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a>.</p>" +
+						"<p>¿Desea continuar?</p>",
+					function (result) {
+						if (result) {
+							importBuddyList();
+						}
+					}
+				);
+			} else {
+				importBuddyList();
+			}
+		};
+
 		unsafeWindow.importIgnoreListWarning = function () {
-			if (mod.preferences.contacts.length !== 0) {
+			if (mod.preferences.hiddenUsers) {
 				bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
 						"<a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a>.</p>" +
 						"<p>¿Desea continuar?</p>",
@@ -231,11 +247,11 @@
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
-			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>'}),
+			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>', subCaption: '<a href="#" onclick="importIgnoreListWarning(); return false;">Importar de la lista de ignorados…</a>'}),
 			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
-			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>', subCaption: '<a href="#" onclick="importIgnoreListWarning(); return false;">Importar de la lista de ignorados…</a>'}),
+			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>', subCaption: '<a href="#" onclick="importBuddyListWarning(); return false;">Importar de la lista de contactos…</a>'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
@@ -922,6 +938,32 @@
 		}
 	}
 
+	function importBuddyList() {
+		var xmlhttp = new XMLHttpRequest();
+
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+				var html = xmlhttp.responseText;
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(html, "text/html");
+
+				var elems = doc.getElementById("buddylist").getElementsByTagName("a");
+				var contacts = [];
+
+				for (var i = 0, n = elems.length; i < n; i++) {
+					contacts.push(elems[i].textContent);
+				}
+
+				// Update textbox contents and mark module as modified
+				document.querySelector("input[data-maps-to='highlightUsers']").value = contacts.join(', ');
+				document.querySelector("div[data-module-id='FilterThreads']").classList.add('changed');
+			}
+		};
+
+		xmlhttp.open("GET", "/foro/profile.php?do=buddylist", true);
+		xmlhttp.send();
+	}
+
 	function importIgnoreList() {
 		var xmlhttp = new XMLHttpRequest();
 
@@ -939,7 +981,7 @@
 				}
 
 				// Update textbox contents and mark module as modified
-				document.querySelector("input[data-maps-to='highlightUsers']").value = ignoredUsers.join(', ');
+				document.querySelector("input[data-maps-to='hiddenUsers']").value = ignoredUsers.join(', ');
 				document.querySelector("div[data-module-id='FilterThreads']").classList.add('changed');
 			}
 		};
