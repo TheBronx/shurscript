@@ -4,59 +4,86 @@
 (function (SH, $, _, localStorage, undefined) {
     'use strict';
 
+    // Funcion vacia
+    var dummyFunc = function () {};
+
+    // Nuestro
+    var storage = {
+        // Key unica por usuario para guardar en localStorage
+        _key: 'shurstorage-' + SH.environment.user.name,
+
+        // Aqui se guarda todo antes de ser guardado en localStorage
+        memoryStorage: {},
+
+        /**
+         * Hace persistentes los datos guardados en memoryStorage
+         */
+        flush: function () {
+            localStorage.setItem(this._key, JSON.stringify(this.memoryStorage));
+        },
+
+        loadFromLocalStore: function () {
+            var data = localStorage.getItem(this._key);
+
+            if (data) {
+                this.memoryStorage = JSON.parse(data);
+            }
+        }
+
+    };
+
+    storage.loadFromLocalStore();
+
     SH.persist = {
+        // ID/owner de este Persist
+        owner: undefined,
         _system: SH.system.getInstance('Persist'),
         _server: SH.config.server,
+
+        // Aqui se guardaran los datos correspondientes a
+        _privateMemoryStorage: undefined,
+
 
         /**
          * Guarda en localStorage serializando automaticamente
          */
         _setLocalValue: function (key, value) {
-            // Asegurate de que hay algo que guardar
-            if (value === undefined) {
-                this._system.throw('Error setLocalValue', 'Valor para guardar no definido');
-            }
+            // Guarda en memoria
+            this._privateMemoryStorage[key] = value;
 
-            value = JSON.stringify(value);
-            localStorage.setItem(key, value);
+            // Propaga cambios a localStorage de forma asincrona
+            storage.flush();
         },
 
         /**
-         * Lee del localStorage desserializando automaticamente
+         * Lee del localStorage deserializando automaticamente
          */
         _getLocalValue: function (key) {
-            var val = localStorage.getItem(key);
-
-            // Si no habia nada guardado, devuelve null
-            if (val === null) {return val;}
-
-            // Si habia algo, deserializa y devuelve
-            return JSON.parse(val);
+            return this._privateMemoryStorage[key];
         },
 
         /**
          * Borra del local store
          */
         _removeLocalValue: function (key) {
-            localStorage.removeItem(key);
+            delete this._privateMemoryStorage[key];
+            storage.flush();
         },
 
         /**
          * Crea una instancia de persist para un modulo en concreto
          */
-        getInstance: function(id) {
+        getInstance: function(owner) {
             var pers = Object.create(this);
-            pers.id = id;
+            pers.owner = owner;
+
+            // Asegurate de que existe un substore para esta instancia de Persist
+            storage.memoryStorage[owner] = storage.memoryStorage[owner] || {};
+
+            // Guarda referencia
+            pers._privateMemoryStorage = storage.memoryStorage[owner];
 
             return pers;
-        },
-
-        /**
-         * Compone una llave id + key para evitar colisiones en localstore
-         * entre modulos
-         */
-        _composeKey: function (key) {
-            return this.id + '_'  + key;
         },
 
         /**
@@ -66,18 +93,8 @@
          * @param def Default value (opcional)
          */
         getValue: function (key, def) {
-            key = this._composeKey(key);
-            var val = this._getLocalValue(key);
-
-            if (val === null) {return def;}
-
-            return val;
+            return this._privateMemoryStorage[key] || def;
         },
-
-        /**
-         * Nombres de keys no permitidos
-         */
-        _forbiddenKeys: ['__timestamp__'],
 
         /**
          * Guarda un par key-value
@@ -91,12 +108,6 @@
                 toServer = true;
             }
 
-            // Evita que se utilicen keys reservadas para el sistema
-            if (_.contains(this._forbiddenKeys, key)) {
-                this._system.throw('Key reservada para el sistema: ' + key);
-            }
-
-            key = this._composeKey(key);
             this._setLocalValue(key, value);
 
             if (toServer) {
@@ -117,7 +128,7 @@
          */
         _getAllServerInfo: function (callback) {
 
-            var url = this._server + 'preferences/?apikey=' + this._apiKey;
+            var url = this._server + 'storage/?apikey=' + this._apiKey;
 
             $.ajax({
                 type: 'get',
@@ -136,10 +147,10 @@
             var self = this;
 
             // Callback para subir al server
-            var push = function () {
+            var storeInServer = function () {
                 $.ajax({
                     type: 'PUT',
-                    url: self._server + 'preferences/' + key + '/?apikey=' + self._apiKey,
+                    url: self._server + 'storage/' + key + '/?apikey=' + self._apiKey,
                     data: {'value': value},
                     dataType: 'json',
                     context: self
@@ -148,7 +159,7 @@
                 });
             };
 
-            self._executeWhenApiKeyReady(push);
+            self._executeWhenApiKeyReady(storeInServer);
 
         },
 
@@ -192,44 +203,49 @@
         },
 
         /**
-         * Le pide una apiKey al server y la guarda en las preferencias
+         * Le pide una apiKey al server y la guarda en las subscripciones de FC
          */
         _getApiKeyFromServer: function (callback) {
-            this._removeLocalValue("API_KEY");
-            this._apiKey = undefined;
 
-            this._system.log("Persist._generateApiKey()");
+            callback = callback || dummyFunc;
+
+            var self = this;
+            self._removeLocalValue("API_KEY");
+            self._apiKey = undefined;
 
             $.ajax({
                 type: 'POST',
-                url: this._server + 'preferences/',
+                url: self._server + 'storage/',
                 data: "",
                 dataType: 'json',
-                context: this
+                context: self
             }).done(function (data) {
-                this._system.log("Generated API Key:" + JSON.stringify(data));
+                self._system.log("Generated API Key:" + JSON.stringify(data));
                 // Guarda en persistent y en localStorage
-                this._apiKey = data.apikey;
-                this._setLocalValue('API_KEY', data.apikey);
+                self._apiKey = data.apikey;
+
+                storage.memoryStorage.apiKey = data.apikey;
+                storage.flush();
+
+                // Guardamos la API key generada en las suscripciones en diferido
+                _.defer(self._saveApiKeyInFC, data.apikey);
 
                 callback();
-                this._saveApiKeyInFC(data.apikey); //guardamos la API key generada en las suscripciones
             });
         },
 
         /**
          * Intenta leer la apiKey en FC, y si falla, se trae una del server
-         * @param specs.callback - optional function
-         * @param specs.getFromServer - optional bool. Si falla, traemos una del server?
+         * @param kwargs.callback - optional function
+         * @param kwargs.getFromServer - optional bool. Si falla, traemos una del server?
          */
-        _getApiKeyFromFC: function (specs) {
-            // Defaults
-            var defs = {
-                callback: function () {},
-                getFromServer: true
-            };
+        _getApiKeyFromFC: function (kwargs) {
 
-            specs = _.defaults(specs, defs);
+            // Mete defaults donde haga falta
+            kwargs = _.defaults(kwargs, {
+                onSuccess: dummyFunc,
+                onError: dummyFunc
+            });
 
             $.ajax({
                 url: 'http://www.forocoches.com/foro/subscription.php?do=editfolders',
@@ -243,17 +259,14 @@
                 if (folder.length > 0) {
                     this._apiKey = folder.val().replace("shurkey-", "");
                     this._setLocalValue('API_KEY', this._apiKey);
-                    specs.callback();
+                    kwargs.callback();
 
-                // La API key no esta en FC, pide una al server
-                } else if (specs.getFromServer){
-                    this._getApiKeyFromServer(specs.callback);
+                // La API key no esta en FC, pasa control al callback
+                } else {
+                    kwargs.onError();
 
                 }
             });
-
-            // Devuelve valor de forma sincronica. Util para llamar a esta funcion de forma cansina hasta que devuelva un valor
-            return this._apiKey;
         },
 
         /**
@@ -274,7 +287,7 @@
                 data: params,
                 type: 'post'
             }).done(function () {
-                if (self._getApiKeyFromFC({getFromServer: false}) === undefined) { // Comprobamos que se ha guardado. si no se ha guardado
+                if (self._getApiKeyFromFC() === undefined) { // Comprobamos que se ha guardado. si no se ha guardado
                     self._saveApiKeyInFC(apiKey); // Insistimos, hasta que se guarde o algo pete xD
                 }
             });
@@ -298,9 +311,14 @@
                 return;
             }
 
-            // Si no hay api key cargada, generala y al acabar sube el valor al server
-            this._getApiKeyFromFC.call(this, {callback: callback});
+            // Si no hay api key cargada, intenta leerla de FC, y si falla, pidela al server
+            var getFromServerAndStoreInFC = _.bind(this._getApiKeyFromServer,
+                                                   this, callback);
 
+            this._getApiKeyFromFC.call(this, {
+                onSuccess: callback,
+                onError: getFromServerAndStoreInFC
+            });
         }
     };
 
