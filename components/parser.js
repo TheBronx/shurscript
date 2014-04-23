@@ -28,22 +28,22 @@
 	};
 
 	parser.parse = function () {
-		if (mod.helper.environment.page == "/") {
+		if (parser.helper.environment.page == "/") {
 			//si estamos en la portada, parse de hilos
 			//TODO parsePortalThreads()
 
-		} else if (mod.helper.environment.page == "/showthread.php") {
+		} else if (parser.helper.environment.page == "/showthread.php") {
 			//si estamos en un hilo, parse de posts y usuarios
 			//TODO parsePostsAndUsers()
 
-		} else if (parser.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
+		} else if (parser.helper.environment.page == "/forumdisplay.php" || parser.helper.environment.page == "/search.php") {
 			//si estamos en una seccion o una búsqueda, parse de hilos
 			parseThreads();
 		}
 	};
 
 	parser.load = function () {
-		SHURSCRIPT.eventbus.one('allModulesLoaded', parser.parse);
+		SHURSCRIPT.eventbus.on('allModulesLoaded', parser.parse);
 	};
 
 	function parseThreads() {
