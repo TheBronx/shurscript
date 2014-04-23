@@ -157,12 +157,12 @@
 		//Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
 		//Parece ser un bug del vB en los navegadores que no soportan por defecto el WYSIWYG (Chrome, Opera...) [Tal vez por eso Ilitri no lo tiene activado]
 		//Workaround: buscar y sustituir esos divs antes de enviar la respuesta
-		$("input[name='sbutton'], input[name='preview']").on("click", function() {
+		$("input[name='sbutton'], input[name='preview']").on("click", function () {
 			var contents = getEditorContents();
-			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match){
-				var contenidoDivInutil = match.substring(5,match.length-6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
-				if (contenidoDivInutil=='<br>') return contenidoDivInutil;
-				else return "<br>"+contenidoDivInutil;
+			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match) {
+				var contenidoDivInutil = match.substring(5, match.length - 6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
+				if (contenidoDivInutil == '<br>') return contenidoDivInutil;
+				else return "<br>" + contenidoDivInutil;
 			});
 			setEditorContents(contents);
 			reflowTextArea();
@@ -389,7 +389,8 @@
 			if (currentPostBackup.threadId == threadId) {
 				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) {
 					setEditorContents(currentPostBackup.postContents)
-				};
+				}
+				;
 				reflowTextArea();
 			}
 		}
@@ -415,7 +416,7 @@
 
 			$sendButton.on("click", function (e) {
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
-					mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
+					mod.helper.deleteValue("POST_BACKUP", function () { //Eliminamos backup
 						sendForm.submit(); //Submit manual
 					});
 				}

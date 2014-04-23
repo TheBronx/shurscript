@@ -14,9 +14,9 @@
 	});
 
 	var $uploadWindow,
-	    $dropZone;
+		$dropZone;
 
-	var totalFiles = 0, 
+	var totalFiles = 0,
 		fileCount = 0,
 		alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
 
@@ -54,7 +54,7 @@
 				$dropZone.hide();
 			});
 
-			$dropZone.on('drop', function(evt) {
+			$dropZone.on('drop', function (evt) {
 				if (handleFileSelect(evt.originalEvent.dataTransfer.files, evt)) {
 					$uploadWindow && $uploadWindow.modal('hide');
 					$('html').animate({scrollTop: $("#qrform").offset().top + 'px'}, 800);
@@ -65,22 +65,22 @@
 		}
 
 		//Si se activa el WYSIWYG, nos deshará los cambios que hemos hecho sobre el editor. Nos preparamos:
-		SHURSCRIPT.eventbus.on('editorReady', function() {
+		SHURSCRIPT.eventbus.on('editorReady', function () {
 			$(".imagebutton[id$='_cmd_insertimage']").get(0).onclick = undefined;
 
 			//Si además hay iframe WYSIWYG, delegamos el evento de drag sobre este al body, para que no se coma el evento
-			$(getEditor().editdoc).on('dragover', function(e){
+			$(getEditor().editdoc).on('dragover', function (e) {
 				$('body').trigger(e);
 			});
 		});
 	};
 
-	function showImageUploader () {
+	function showImageUploader() {
 
 		if (!$uploadWindow) {
 			$uploadWindow = $(mod.helper.getResourceText('imageuploaderhtml'));
 			$('body').append($uploadWindow);
-			
+
 			var $urlInput = $('#imageurl', $uploadWindow);
 			var $imgurButton = $('#imgur_button', $uploadWindow);
 			var $imgurFileInput = $('#imgur_file', $uploadWindow);
@@ -96,7 +96,7 @@
 			$uploadWindow.on('shown.bs.modal', function () {
 				$urlInput.focus();
 			});
-			//E postear directamente al pulsar 'Enter', así mantenemos el mismo comportamiento que había antes 
+			//E postear directamente al pulsar 'Enter', así mantenemos el mismo comportamiento que había antes
 			$urlInput.keypress(function (e) {
 				if (e.which == 13 && $urlInput.val()) {
 					//Link directo
@@ -115,7 +115,6 @@
 				var numFiles = e.originalEvent.target.files.length;
 				$imgurButton.html(numFiles + " " + (numFiles > 1 ? "im&aacute;genes seleccionadas" : "imagen seleccionada"));
 			});
-
 
 			//Posteamos según lo que haya rellenado
 			$uploadWindow.on('click', '#insert-images', function () {
@@ -146,16 +145,16 @@
 	}
 
 	/**
-	* Separa por saltos de línea las distintas URLs y las sube una a una.
-	* @return Numero total de URLs que se subirán (las que no sean realmente URLs se descartan)
-	*/
+	 * Separa por saltos de línea las distintas URLs y las sube una a una.
+	 * @return Numero total de URLs que se subirán (las que no sean realmente URLs se descartan)
+	 */
 	function uploadFromURL(url) {
 
 		var urls = url.split('\n');
 
 		totalFiles += urls.length;
 
-		$.each (urls, function (i, url) {
+		$.each(urls, function (i, url) {
 			if (url.indexOf('http') == 0) {
 				upload(url, 'url');
 			} else {
@@ -171,9 +170,9 @@
 	}
 
 	/**
-	* Recorrer los ficheros seleccionados, comprueba que sean imágenes y llama a la función de subida para cada uno.
-	* @return Numero total de ficheros que se subiran (los que no sean imagenes se descartan)
-	*/
+	 * Recorrer los ficheros seleccionados, comprueba que sean imágenes y llama a la función de subida para cada uno.
+	 * @return Numero total de ficheros que se subiran (los que no sean imagenes se descartan)
+	 */
 	function handleFileSelect(files, evt) {
 		if (evt) {
 			evt.stopPropagation();
@@ -207,10 +206,10 @@
 	}
 
 	/**
-	* Sube el fichero codificado que le llega por parámetro a Imgur usando el Client ID configurado en el servidor
-	* @param data Fichero a subir, ya sea en Base64 o una URL, depende del segundo parametro
-	* @param type Tipo de subida: ['base64', 'url']
-	*/
+	 * Sube el fichero codificado que le llega por parámetro a Imgur usando el Client ID configurado en el servidor
+	 * @param data Fichero a subir, ya sea en Base64 o una URL, depende del segundo parametro
+	 * @param type Tipo de subida: ['base64', 'url']
+	 */
 	function upload(data, type) {
 		$.ajax({
 			url: 'https://api.imgur.com/3/image',
@@ -245,9 +244,10 @@
 		}
 		updateCounter();
 	}
+
 	/**
-	* Lleva la cuenta de las imagenes que se han subido y las que faltan por subir. Cuando finaliza, cierra la ventana.
-	*/
+	 * Lleva la cuenta de las imagenes que se han subido y las que faltan por subir. Cuando finaliza, cierra la ventana.
+	 */
 	function updateCounter() {
 
 		if (totalFiles > 1) {
@@ -262,7 +262,6 @@
 			bootbox.hideAll();
 		}
 	}
-
 
 	/* Métodos relacionados con el editor. TODO: Mover a un helper y reutilizarlo en todos los módulos */
 	function getEditor() {
@@ -286,24 +285,24 @@
 		focusEditor();
 		getEditor().insert_text(text);
 	}
-	
+
 	function focusEditor() {
 		isWYSIWYG() && getEditor().editdoc.body.focus();
 	}
 
 	function postImage(link) {
 		if (!isWYSIWYG()) { //Sin WYSIWYG, el método insert_text reemplaza el contenido :roto2nuse:
-			setEditorContents(getEditorContents() + '\n[IMG]' + link + '[/IMG]'); 
+			setEditorContents(getEditorContents() + '\n[IMG]' + link + '[/IMG]');
 		} else {
 			var text = '<br/>';
 			if (mod.preferences.embedding == 'preview') {
 				text += '<img src="' + link + '"/>';
 			} else {
-				text += '[IMG]' + link + '[/IMG]'; 
+				text += '[IMG]' + link + '[/IMG]';
 			}
 			appendTextToEditor(text);
 		}
-		
+
 	}
 
 	mod.getPreferenceOptions = function () {

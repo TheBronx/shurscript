@@ -117,9 +117,9 @@
 		},
 
 		/**
-		* Migra las preferencias antiguas en FORMATO_UPPERCASE y almacenadas en el navegador
-		* a las nuevas en formato camelCase y almacenadas en el servidor
-		*/
+		 * Migra las preferencias antiguas en FORMATO_UPPERCASE y almacenadas en el navegador
+		 * a las nuevas en formato camelCase y almacenadas en el servidor
+		 */
 		migratePreferences: function (callback) {
 			for (var newPrefName in this.preferences) {
 				var oldPrefName = ''; //Convertir el nueevo nombre al formato antiguo en mayusculas
@@ -134,14 +134,15 @@
 					this.preferences[newPrefName] = oldPref;
 					this.helper.log("Migrada: " + oldPrefName + " = " + oldPref);
 				}
-			};
+			}
+			;
 
 			this.storePreferences(callback);
 		},
 
 		/**
-		* Migra los valores propios del módulo, que no se guardan en las preferencias
-		*/
+		 * Migra los valores propios del módulo, que no se guardan en las preferencias
+		 */
 		migrateValues: function (callback) {
 			callback && callback();
 		},
@@ -232,17 +233,17 @@
 	};
 
 	/**
-	* Método temporal que migrará los módulos activos y las preferencias de cada módulo antes de que se sincronizasen en la nube
-	*/
+	 * Método temporal que migrará los módulos activos y las preferencias de cada módulo antes de que se sincronizasen en la nube
+	 */
 	moduleManager.migratePreferences = function (callback) {
 
 		var dialog = bootbox.dialog({message: '<center>Migrando preferencias...</center>'});
 		var migratedCount = 0;
 		var numModules = 0;
-		var completedCallback = function() {
+		var completedCallback = function () {
 			migratedCount++;
 			if (migratedCount == numModules) {
-				moduleManager.helper.setValue("MIGRATION_DONE", true, function(){
+				moduleManager.helper.setValue("MIGRATION_DONE", true, function () {
 					callback();
 					bootbox.hideAll();
 				});
@@ -253,7 +254,7 @@
 		var activeModules = GM_getValue("SHURSCRIPT_MODULES_" + SHURSCRIPT.environment.user.id);
 		if (activeModules) {
 			activeModules = JSON.parse(activeModules);
-			$.each(activeModules, function(moduleName, active) {
+			$.each(activeModules, function (moduleName, active) {
 				try {
 					moduleManager.modules[moduleName].preferences.enabled = active;
 					moduleManager.helper.log("Migrando active status de " + moduleName + ": " + active);
@@ -267,7 +268,7 @@
 		$.each(moduleManager.modules, function (moduleName, module) {
 			try {
 				numModules++;
-				module.migratePreferences(function() {
+				module.migratePreferences(function () {
 					module.migrateValues(completedCallback);
 				});
 			} catch (e) {
@@ -289,7 +290,7 @@
 
 		//Migramos las antiguas preferencias (Antes de que se sincronizaran en la nube)
 		if (!moduleManager.helper.getValue("MIGRATION_DONE")) {
-			moduleManager.migratePreferences(function(){
+			moduleManager.migratePreferences(function () {
 				moduleManager.startOnDocReadyModules();
 			});
 			return;

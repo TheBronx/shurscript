@@ -66,14 +66,14 @@
 		$(".modal-backdrop").css("z-index", 999);
 
 		//Ajustar al tamaño de la ventana
-		$(window).on('resize', function() {
+		$(window).on('resize', function () {
 			$modal.find('.modal-body').css('height', $(window).height() - 280);
 		});
 		$(window).trigger('resize');
 
 		//Recuperar el changelog para la pestaña 'Acerca de'
 		$modal.find('a[data-toggle="tab"][href="#tab-about"]').on('shown.bs.tab', function (e) {
-			SHURSCRIPT.autoupdater.getChangelog(function(changelog) {
+			SHURSCRIPT.autoupdater.getChangelog(function (changelog) {
 				$modal.find('#shur-changelog .panel-body').html(changelog);
 			});
 			$(this).off('shown.bs.tab')
@@ -81,26 +81,26 @@
 
 		// Click en boton "Generar nueva API Key"
 		$modal.on('click', '#change-api-key', function () {
-			bootbox.confirm("Recuerde que generar una nueva API Key elimina todos sus datos y configuraciones. Pulse en Aceptar para continuar con el proceso.", function(res) {
+			bootbox.confirm("Recuerde que generar una nueva API Key elimina todos sus datos y configuraciones. Pulse en Aceptar para continuar con el proceso.", function (res) {
 				if (res) {
 					bootbox.hideAll();
 					bootbox.dialog({message: '<center>Generando API Key...</center>'});
-					SHURSCRIPT.sync.generateNewApiKey(function(){
+					SHURSCRIPT.sync.generateNewApiKey(function () {
 						preferences.helper.location.href = "#newkey";
 						preferences.helper.location.reload();
 					});
 				}
 			});
 		});
-		
+
 		//Recuperar el log para la pestaña 'Debug'
 		$modal.find('a[data-toggle="tab"][href="#tab-debug"]').on('shown.bs.tab', function (e) {
 			$('#debug-log').html($('#shurscript_log').html());
 		});
-		
+
 		// Formulario "Enviar a los desarrolladores"
 		$modal.on('click', '#debug-send', function () {
-			bootbox.confirm("Por el bien de la comunidad, no abuse de esta utilidad y <strong>trate de ser todo lo conciso posible</strong> para ayudar a resolver el problema. Confirme que desea enviar el registro de shurscript y el suceso que ha escrito.", function(res) {
+			bootbox.confirm("Por el bien de la comunidad, no abuse de esta utilidad y <strong>trate de ser todo lo conciso posible</strong> para ayudar a resolver el problema. Confirme que desea enviar el registro de shurscript y el suceso que ha escrito.", function (res) {
 				if (res) {
 					$.post('http://shurscript.org/report.php', $('#debug-form').serialize());
 					$('#debug-send').attr({disabled: 'disabled', value: 'Reporte enviado correctamente'});
@@ -111,10 +111,10 @@
 		preferences.$modal = $modal;
 	};
 
-	preferences.checkUpdates = function() {
+	preferences.checkUpdates = function () {
 		var $btn = $('#check-shurscript-updates');
 		$btn.button('loading');
-		SHURSCRIPT.autoupdater.check(true, function(updated) {
+		SHURSCRIPT.autoupdater.check(true, function (updated) {
 			$btn.button('reset');
 			if (!updated) {
 				bootbox.alert('No hay actualizaciones disponibles del Shurscript');
@@ -225,7 +225,9 @@
 		if (preferences.helper.location.hash.indexOf("newkey") != -1) {
 			preferences.onShow();
 			preferences.$modal.find('a[data-toggle="tab"][href="#tab-about"]').tab('show');
-			setTimeout(function(){preferences.helper.location.href = "#"}, 1000);
+			setTimeout(function () {
+				preferences.helper.location.href = "#"
+			}, 1000);
 		}
 	};
 
