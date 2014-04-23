@@ -930,7 +930,7 @@
 					contacts.push(elems[i].textContent);
 				}
 				
-				var newContactsList = contacts.join(',');
+				var newContactsList = contacts.join(', ');
 				var oldContactsList = $("input[data-maps-to='highlightUsers']").tokenfield('getTokensList', ',');
 
 				if (contacts.length > 0) { // Si se han obtenido contactos de la importación
@@ -982,7 +982,7 @@
 						ignoredUsers.push(elems[i].textContent);
 					}
 					
-					var newIgnoredList = ignoredUsers.join(',');
+					var newIgnoredList = ignoredUsers.join(', ');
 					var oldIgnoredList = $("input[data-maps-to='hiddenUsers']").tokenfield('getTokensList', ',');
 
 					if (ignoredUsers.length > 0) { // Si se han obtenido ignorados de la importación

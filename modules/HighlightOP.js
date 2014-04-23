@@ -182,7 +182,7 @@
 					contacts.push(elems[i].textContent);
 				}
 				
-				var newContactsList = contacts.join(',');
+				var newContactsList = contacts.join(', ');
 				var oldContactsList = $("input[data-maps-to='contacts']").tokenfield('getTokensList', ',');
 
 				if (contacts.length > 0) { // Si se han obtenido contactos de la importación
