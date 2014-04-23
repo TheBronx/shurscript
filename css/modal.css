@@ -39,6 +39,12 @@
     color: gray;
 }
 
+.shur-sub-button {
+    display: block;
+    margin-top: 3px;
+    text-align: right;
+}
+
 .shur-radio-element {
     margin-left: 20px;
 }
