@@ -50,6 +50,21 @@
     cursor: pointer;
 }
 
+.shur-tags-group .tokenfield {
+	height: auto;
+	max-height: 70px;
+	overflow-y: auto;
+}
+
+.shur-tags-group .token-input {
+	margin-top: 2px;
+	margin-bottom: 0px !important;
+}
+
+.shur-tags-group .token {
+	margin: 2px 5px 3px 0px !important;
+}
+
 .label.branch-exp {
     background-color: #D9534F; /* label-danger */
 }

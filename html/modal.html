@@ -94,6 +94,18 @@
 								<span class="shur-sub-label"><%=option.subCaption%></span>
 								<% } %>
 							</div>
+							
+							<% } else if (option.type === 'tags') { %>
+							<div class="shur-tags-group shur-option">
+								<label><%=option.caption%></label>
+								<input type="text"
+								class="form-control"
+								data-maps-to="<%=option.mapsTo%>"
+								value="<%=module.preferences[option.mapsTo]%>">
+								<% if (option.subCaption) { %>
+								<span class="shur-sub-label"><%=option.subCaption%></span>
+								<% } %>
+							</div>
 
 							<% } else if (option.type === 'header') { %>
 							<h4 class="shur-header"><%=option.caption%></h4>

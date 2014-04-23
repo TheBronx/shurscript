@@ -93,6 +93,14 @@
 			});
 		});
 
+		// Formatear con tokenfield los option 'tags'
+		$modal.on('shown.bs.modal', function (e) {		
+			$('.shur-tags-group input[type=text]').tokenfield({
+				allowDuplicates: false,
+				delimiter: ',',
+			});
+		});
+
 		//Recuperar el log para la pestaña 'Debug'
 		$modal.find('a[data-toggle="tab"][href="#tab-debug"]').on('shown.bs.tab', function (e) {
 			$('#debug-log').html($('#shurscript_log').html());
@@ -158,6 +166,10 @@
 						value = $input.is(':checked');
 
 					} else if ($option.hasClass('shur-text-group')) {
+						$input = $option.find('input');
+						value = $input.val();
+
+					} else if ($option.hasClass('shur-tags-group')) {
 						$input = $option.find('input');
 						value = $input.val();
 					}
@@ -245,7 +257,7 @@
 	 *
 	 */
 	preferences.createOption = function (specs) {
-		var acceptableTypes = ['checkbox', 'radio', 'text', 'color', 'header'],
+		var acceptableTypes = ['checkbox', 'radio', 'text', 'color', 'header', 'tags'],
 			commonMandatoryKeys = ['type', 'caption'],
 			errorPrefix = 'Error creando opcion: ';
 
