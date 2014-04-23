@@ -117,6 +117,30 @@
 		});
 
 		preferences.$modal = $modal;
+		
+		unsafeWindow.viewPlainText = function (enlace) {		
+			bootbox.dialog({
+				message: '<textarea id="textselect" class="form-control" style="min-height:75px;max-height:500px;overflow-y:auto;" readonly></textarea>',
+				buttons: {
+					seleccionar: {
+						label: "Seleccionar el contenido",
+						className: "btn-default",
+						callback: function() {
+							$('#textselect').select();
+							return false;
+						}
+					},
+					cerrar: {
+						label: "Cerrar",
+						className: "btn-primary",
+					},
+				}
+			});
+			var pref = $(enlace).attr('mapsTo');
+			$('#textselect').text($("input[data-maps-to='" + pref + "']").tokenfield('getTokensList', ','));
+		}
+
+		
 	};
 
 	preferences.checkUpdates = function () {

@@ -26,34 +26,13 @@
 		unsafeWindow.importBuddyList = function () {
 			importBuddyList();
 		};
-		
-		unsafeWindow.highlightOP_selectBox = function (preference) {
-			bootbox.dialog({
-				message: '<textarea id="textselect" class="form-control" style="min-height:75px;max-height:500px;overflow-y:auto;" readonly></textarea>',
-				buttons: {
-					seleccionar: {
-						label: "Seleccionar el contenido",
-						className: "btn-default",
-						callback: function() {
-							$('#textselect').select();
-							return false;
-						}
-					},
-					cerrar: {
-						label: "Cerrar",
-						className: "btn-primary",
-					},
-				}
-			});
-			$('#textselect').text($("input[data-maps-to='" + preference + "']").tokenfield('getTokensList', ','));
-		}
 
 		return [
 			creOpt({type: 'checkbox', mapsTo: 'quotes', caption: 'Resaltar también las citas.'}),
 			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
 			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
-			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', subCaption: '<div class="shur-sub-button"><a href="#" onclick="importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a> <a href="#" onclick="highlightOP_selectBox(\'contacts\'); return false;" class="btn btn-xs btn-default">Ver en plano</a></div>'}),
+			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
 	};

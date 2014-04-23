@@ -105,6 +105,17 @@
 								<% if (option.subCaption) { %>
 								<span class="shur-sub-label"><%=option.subCaption%></span>
 								<% } %>
+								<% if (option.buttons) { %>
+								<span class="shur-sub-button">
+									<% if (option.button1) {%><%=option.button1%><% } %>
+									<% if (option.button2) {%><%=option.button2%><% } %>
+									<% if (option.button3) {%><%=option.button3%><% } %>
+									<% if (option.plain) {%>
+										<a href="#" onclick="viewPlainText(this); return false;" mapsTo="<%=option.mapsTo%>" class="btn btn-xs btn-default">Ver en plano</a>
+									<% } %>
+								</span>
+								<% } %>
+								
 							</div>
 
 							<% } else if (option.type === 'header') { %>
