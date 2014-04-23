@@ -482,25 +482,27 @@
 
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
-		var ulink = cita.userLink.indexOf('http') == 0 ? cita.userLink : '/foro/' + cita.userLink;
-		var tlink = cita.threadLink.indexOf('http') == 0 ? cita.threadLink : '/foro/' + cita.threadLink;
-		var link = cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink;
+
+		var fixUrl = function(url) {
+			return url.indexOf('http') === 0 ? url : '/foro/' + url;
+		};
+
+		var ulink = fixUrl(cita.userLink);
+		var tlink = fixUrl(cita.threadLink);
+		var link = fixUrl(cita.postLink);
 		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link, threadLink: tlink, userLink: ulink}));
 
 		//Necesitamos esperar a que se marque como leída antes de abrir el link
 		//No usamos click porque no ejecuta el evento con el botón central
+		//TO-DO: Cuando las preferencias se guarden en local y no necesitemos esperar al callback del servidor, quitar todo este lio y usar el evento de click nativo
 		row.on('mouseup', '.postLink', function (e) {
-			if (e.which != 3) { //Botón derecho
-				if (!cita.read) {
-					$(this).parent().parent().addClass("read");
-					markAsRead(cita, function () {
-						if (e.which == 1) { //Solo botón izquierdo. Si se ha hecho clic con el central, ya se habrá abierto automáticamente (Clic central -> Abrir en nueva pestaña)
-							openQuote(cita, '_self');
-						}
-					});
-				} else if (e.which == 1) {
-					openQuote(cita, '_self');
-				}
+			if (e.which !== 3 && !cita.read) { //No es botón derecho y la cita no está leída
+				$(this).parent().parent().addClass("read");
+				markAsRead(cita, function () {
+					if (e.which === 1 && !e.ctrlKey && !e.metaKey) { //Solo clic izquierdo. Si es el botón central o Ctrl o Command están pulsados se abrirá nativamente en nueva pestaña
+						openQuote(cita, '_self');
+					}
+				});
 			}
 		});
 
