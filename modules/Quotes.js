@@ -516,7 +516,7 @@
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 
-		setNotificationsCount(notificationsCount - 1);
+		populateNotificationsBox(arrayQuotes);
 	}
 
 	function openQuote(cita, target) {
