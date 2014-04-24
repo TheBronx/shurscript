@@ -224,6 +224,7 @@
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
 			createPref({type: 'tags', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>', buttons: true, plain: true, button1: '<a href="#" onclick="FilterThreads_importIgnoreList(); return false;" class="btn btn-xs btn-default">Importar de la lista de ignorados</a>'}),
+			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
 			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
 			createPref({type: 'tags', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>', buttons: true, plain: true, button1: '<a href="#" onclick="FilterThreads_importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
