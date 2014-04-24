@@ -37,7 +37,13 @@
 
 		// Click en botones "Opciones"
 		$modal.on('click', '.shur-btn-options', function () {
-			$(this).parent().siblings('.shur-options-body').slideToggle(300);
+			if ($(this).hasClass('active')) {
+				$(this).parent().siblings('.shur-options-body').slideUp(300);
+			} else {
+				$('.shur-options-body').slideUp(300);
+				$('.shur-btn-options.active').not(this).removeClass('active');
+				$(this).parent().siblings('.shur-options-body').slideDown(300);
+			}
 		});
 
 		// Evento guardar

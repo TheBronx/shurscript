@@ -42,7 +42,7 @@
 
 			// comprobar cada 10 segundos si hay nuevos posts
 			interval = setInterval(function () {
-				if (numPostsBefore < 30) {// TODO - detectar si hay disponible una nueva página
+				if (numPostsBefore < 30) { // TODO - detectar si hay disponible una nueva página
 					loadThread(getCurrentThread(), getCurrentPage());
 				} else {
 					clearInterval(interval);
