@@ -25,13 +25,16 @@
 		return true;
 	};
 
-	var numPostsBefore = document.getElementById("posts").children.length - 1;// cantidad de posts al cargar el hilo
+	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
 	var posts;
 	var pageTitle = document.title;
 	var interval;
 
 	mod.onNormalStart = function () {
+
+		numPostsBefore = document.getElementById("posts").children.length - 1;
+
 		// si la página está completa, no comprobar si hay nuevos posts
 		if (numPostsBefore < 30) {
 			// unos pocos estilos (CSS no minificado abajo)
