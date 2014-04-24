@@ -27,7 +27,7 @@
 					<div data-module-id="<%=module.id%>" class="panel shur-module-preferences <%=module.preferences.enabled ? '' : 'disabled-module'%>">
 
 						<div class="panel-heading row-fluid">
-							<input class="shur-module-enabled" type="checkbox" <%=module.preferences.enabled ? 'checked' : ''%>>
+							<label class="shur-module"><input class="shur-module-enabled" type="checkbox" <%=module.preferences.enabled ? 'checked' : ''%>><div><div></div></div></label>
 							<h3 class="panel-title"><%=module.name%></h3>
 							<% if (module.options.length > 0) { %>
 							<button data-toggle="button"
