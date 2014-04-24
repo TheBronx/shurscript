@@ -38,9 +38,7 @@
 		// si la página está completa, no comprobar si hay nuevos posts
 		if (numPostsBefore < 30) {
 			// unos pocos estilos (CSS no minificado abajo)
-			GM_addStyle("#shurscript-newposts{width:100%;text-align:center;font-size:14px;height:21px;padding:7px 0;margin:12px 0}");
-			GM_addStyle("#shurscript-newposts.active{cursor: pointer;border:1px solid #BDBDBD;border-radius:2px;height:19px;box-shadow:0 0 3px gray;background-color:#EBEBEB;animation:newposts-animation 3s;animation-iteration-count:infinite;-webkit-animation:newposts-animation 3s;-webkit-animation-iteration-count:infinite}");
-			GM_addStyle("@keyframes newposts-animation{0%{background-color:#EBEBEB}50%{background-color:#D0D0D0}100%{background-color:#EBEBEB}}@-webkit-keyframes newposts-animation{0%{background-color:#EBEBEB}50%{background-color:#D0D0D0}100%{background-color:#EBEBEB}}");
+			GM_addStyle("#shurscript-newposts{width:100%; margin:12px 0}");
 
 			// comprobar cada 10 segundos si hay nuevos posts
 			interval = setInterval(function () {
@@ -53,12 +51,16 @@
 			}, 10000);
 
 			// crear el elemento ya para poder reservar su hueco
+			var shurscriptWrapper = document.createElement("div");
+			shurscriptWrapper.className = "shurscript";
 			newPostsElem = document.createElement("div");
 			newPostsElem.id = "shurscript-newposts";
+			newPostsElem.className = "invisible btn btn-success";
 			newPostsElem.onclick = populateNewPosts;
+			shurscriptWrapper.appendChild(newPostsElem);
 
 			var postsElem = document.getElementById("posts");// añadirlo después de #posts
-			postsElem.parentNode.insertBefore(newPostsElem, postsElem.nextSibling);
+			postsElem.parentNode.insertBefore(shurscriptWrapper, postsElem.nextSibling);
 		} else {
 			console.log("Cancelado.");
 		}
@@ -94,7 +96,7 @@
 	function newPosts(num) {
 		// crear el elemento si no existe
 		if (! newPostsShown) {
-			newPostsElem.className = "active";
+			newPostsElem.classList.remove("invisible");
 			newPostsShown = true;
 		}
 
@@ -110,7 +112,7 @@
 
 	function populateNewPosts() {
 		// ocultar el botón
-		newPostsElem.className = "";
+		newPostsElem.classList.add("invisible");
 		newPostsElem.textContent = "";
 		newPostsShown = false;
 
@@ -161,40 +163,3 @@
 		return null;
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
-
-/*^******
-#shurscript-newposts {
-	width: 100%;
-	text-align: center;
-	font-size: 14px;
-	height: 21px;
-	padding: 7px 0;
-	margin: 12px 0;
-}
-
-#shurscript-newposts.active {
-	cursor: pointer;
-	border: 1px solid #BDBDBD;
-	border-radius: 2px;
-	height: 19px;
-	box-shadow: 0px 0px 3px gray;
-	background-color: #EBEBEB;
-
-	animation: newposts-animation 3s;
-	animation-iteration-count: infinite;
-	-webkit-animation: newposts-animation 3s;
-	-webkit-animation-iteration-count: infinite;
-}
-
-@keyframes newposts-animation {
-	0%   {background-color: #EBEBEB;}
-	50%  {background-color: #D0D0D0;}
-	100% {background-color: #EBEBEB;}
-}
-
-@-webkit-keyframes newposts-animation {
-	0%   {background-color: #EBEBEB;}
-	50%  {background-color: #D0D0D0;}
-	100% {background-color: #EBEBEB;}
-}
-********/
