@@ -8,6 +8,6 @@
 	<div>
 		<!-- Parar el evento si: Pulsamos el botón izquierdo, tenemos mantenido Ctrl/Cmd o la cita ya está leída -->
 		<!-- Esto es para poder marcarla como leída. -->
-		<a class="postLink" onclick="return ( (<%= !cita.read %> && (event.which === 1 || !event.ctrlKey || !event.metaKey) ? false : true;" href="<%=postLink%>" style="color:#444;"><%=cita.postText%></a>
+		<a class="postLink" onclick="return !(<%= !cita.read %> && (event.which === 1 || !event.ctrlKey || !event.metaKey));" href="<%=postLink%>" style="color:#444;"><%=cita.postText%></a>
 	</div>
 </div>
