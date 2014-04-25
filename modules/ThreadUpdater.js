@@ -47,7 +47,7 @@
 			createTimeout();
 
 			// crear el elemento ya para poder reservar su hueco
-			GM_addStyle("#shurscript-newposts {width:100%; margin:12px 0}");
+			GM_addStyle("#shurscript-newposts {width:100%; margin:12px 0; height: 32px}");
 
 			var shurscriptWrapper = document.createElement("div");
 			shurscriptWrapper.className = "shurscript";
@@ -60,30 +60,73 @@
 			var postsElem = document.getElementById("posts");// añadirlo después de #posts
 			postsElem.parentNode.insertBefore(shurscriptWrapper, postsElem.nextSibling);
 
-			// añadir evento para saber cuándo la pestaña adquiere el foco
-			document.addEventListener("visibilitychange", function() {
+			/* Añadir evento para saber cuándo la pestaña adquiere el foco */
+			document.addEventListener("visibilitychange", function () {
 				var timeNow = +new Date();
 
 				// al mostrar la página, si quedan más de 5 segundos para el timeout, cancelarlo y ejecutar la petición ya
 				if (! document.hidden && timeoutId && timeNow + 5000 < timeoutTime) {
-					clearTimeout(timeoutId);
+					stopTimeout();
 					loadThread();
 				}
 			});
+
+			/* Respuesta rápida */
+			// controlar cuándo se envía el formulario
+			document.getElementById("qrform").addEventListener("submit", function () {
+				// quitar timeout actual
+				stopTimeout();
+
+				// ocultar el botón
+				newPostsElem.classList.add("invisible");
+				newPostsElem.textContent = "";
+				newPostsShown = false;
+
+				// restablecer el título
+				document.title = pageTitle;
+			});
+
+			// reescribir la función que se encarga de recibir el post para añadir más funcionalidad
+			var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
+			unsafeWindow.qr_do_ajax_post = function (ajax) {
+				qr_do_ajax_post_original(ajax);// función original
+
+				// comprobar si en el XML de respuesta hay <postbits>
+				// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
+				if (ajax.responseXML.children[0].nodeName === "postbits") {
+					// mirar número de respuestas ahora
+					numPostsBefore = document.getElementById("posts").children.length - 1;
+
+					// activar el timeout de nuevo
+					createTimeout();
+				} else {
+					// si ha habido un error vuelve a mostrar el aviso
+					createTimeout(1500);
+				}
+			};
 		} else {
 			console.log("Cancelado.");
 		}
 	};
 
-	function createTimeout() {
-		var interval = document.hidden ? timeoutTabHidden : timeoutTabActive;
+	function createTimeout(interval) {
+		interval = interval ? interval : (document.hidden ? timeoutTabHidden : timeoutTabActive);
 
 		timeoutId = setTimeout(loadThread, interval);
 		timeoutTime = +new Date() + interval;
 	}
 
-	function loadThread() {
+	function stopTimeout() {
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+
 		timeoutId = null;
+		timeoutTime = null;
+	}
+
+	function loadThread() {
+		stopTimeout();
 
 		if (numPostsBefore < 30) {
 			var xmlhttp = new XMLHttpRequest();
@@ -141,6 +184,9 @@
 		newPostsElem.textContent = "";
 		newPostsShown = false;
 
+		// restablecer el título
+		document.title = pageTitle;
+
 		// añadir los posts
 		var postsElem = document.getElementById("posts");
 		var lastPostElem = document.getElementById("lastpost");
@@ -152,14 +198,14 @@
 
 			// registrar el popup al hacer clic en el nombre de usuario
 			var postId = posts[i].getElementsByTagName("table")[0].id.substr(4);
-			unsafeWindow.vbmenu_register("postmenu_" + postId, true);
+			unsafeWindow.vbmenu_register("postmenu_" + postId, true);// TODO - echarle un ojo a unsafeWindow.parseScript
 		}
+
+		// actualizar variable para respuesta rápida, determinará el número de posts a cargar la próxima vez
+		unsafeWindow.ajax_last_post = (+new Date()) / 1000;
 
 		// ahora el hilo tiene varios posts más
 		numPostsBefore = numPostsAfter;
-
-		// restablecer el título
-		document.title = pageTitle;
 	}
 
 
