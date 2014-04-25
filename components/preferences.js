@@ -104,6 +104,8 @@
 			$('.shur-tags-group input[type=text]').tokenfield({
 				allowDuplicates: false,
 				delimiter: ',',
+				minLength: 2,
+				limit: 4
 			});
 		});
 
