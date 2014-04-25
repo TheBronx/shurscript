@@ -25,32 +25,30 @@
 		return true;
 	};
 
+	const timeoutTabActive = 10000;
+	const timeoutTabHidden = 30000;
+
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
-	var posts;
+	var posts = [];
 	var pageTitle = document.title;
-	var interval;
+	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
+	var thread, page;
 
 	mod.onNormalStart = function () {
-
 		numPostsBefore = document.getElementById("posts").children.length - 1;
 
 		// si la página está completa, no comprobar si hay nuevos posts
 		if (numPostsBefore < 30) {
-			// unos pocos estilos (CSS no minificado abajo)
-			GM_addStyle("#shurscript-newposts{width:100%; margin:12px 0}");
+			thread = getCurrentThread();
+			page = getCurrentPage();
 
-			// comprobar cada 10 segundos si hay nuevos posts
-			interval = setInterval(function () {
-				if (numPostsBefore < 30) { // TODO - detectar si hay disponible una nueva página
-					loadThread(getCurrentThread(), getCurrentPage());
-				} else {
-					clearInterval(interval);
-					console.log("Cancelado.");
-				}
-			}, 10000);
+			// comprobar más tarde de nuevo si hay nuevos posts
+			createTimeout();
 
 			// crear el elemento ya para poder reservar su hueco
+			GM_addStyle("#shurscript-newposts {width:100%; margin:12px 0}");
+
 			var shurscriptWrapper = document.createElement("div");
 			shurscriptWrapper.className = "shurscript";
 			newPostsElem = document.createElement("div");
@@ -61,36 +59,63 @@
 
 			var postsElem = document.getElementById("posts");// añadirlo después de #posts
 			postsElem.parentNode.insertBefore(shurscriptWrapper, postsElem.nextSibling);
+
+			// añadir evento para saber cuándo la pestaña adquiere el foco
+			document.addEventListener("visibilitychange", function() {
+				var timeNow = +new Date();
+
+				// al mostrar la página, si quedan más de 5 segundos para el timeout, cancelarlo y ejecutar la petición ya
+				if (! document.hidden && timeoutId && timeNow + 5000 < timeoutTime) {
+					clearTimeout(timeoutId);
+					loadThread();
+				}
+			});
 		} else {
 			console.log("Cancelado.");
 		}
 	};
 
-	function loadThread(thread, page) {
-		var xmlhttp = new XMLHttpRequest();
+	function createTimeout() {
+		var interval = document.hidden ? timeoutTabHidden : timeoutTabActive;
 
-		xmlhttp.onreadystatechange = function () {
-			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-				var html = xmlhttp.responseText;
-				var parser = new DOMParser();
-				var doc = parser.parseFromString(html, "text/html");
+		timeoutId = setTimeout(loadThread, interval);
+		timeoutTime = +new Date() + interval;
+	}
 
-				var numPostsPrevious = posts ? posts.length : 0;
+	function loadThread() {
+		timeoutId = null;
 
-				//posts = doc.getElementById("posts").children;
-				//var numPostsAfter = posts.length - 1;// en #posts, hay un div#lastpost que no nos interesa contar
-				posts = doc.querySelectorAll("#posts > div[align]");
-				var numPostsAfter = posts.length;
+		if (numPostsBefore < 30) {
+			var xmlhttp = new XMLHttpRequest();
 
-				// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
-				if (numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious) {
-					newPosts(numPostsAfter - numPostsBefore);
+			xmlhttp.onreadystatechange = function () {
+				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+					var html = xmlhttp.responseText;
+					var parser = new DOMParser();
+					var doc = parser.parseFromString(html, "text/html");
+
+					var numPostsPrevious = posts.length;
+
+					//posts = doc.getElementById("posts").children;
+					//var numPostsAfter = posts.length - 1;// en #posts, hay un div#lastpost que no nos interesa contar
+					posts = doc.querySelectorAll("#posts > div[align]");
+					var numPostsAfter = posts.length;
+
+					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
+					if (numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious) {
+						newPosts(numPostsAfter - numPostsBefore);
+					}
+
+					// volver a comprobar
+					createTimeout();
 				}
-			}
-		};
+			};
 
-		xmlhttp.open("GET", "/foro/showthread.php?t=" + thread + "&page=" + page, true);
-		xmlhttp.send();
+			xmlhttp.open("GET", "/foro/showthread.php?t=" + thread + "&page=" + page, true);
+			xmlhttp.send();
+		} else {
+			console.log("cancelado");
+		}
 	}
 
 	function newPosts(num) {
