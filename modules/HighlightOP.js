@@ -6,7 +6,8 @@
 		name: 'Resaltar ciertos mensajes de un hilo',
 		author: 'Electrosa',
 		version: '1.1',
-		description: 'Resalta tus posts, los posts del creador del hilo y los posts de los usuarios seleccionados.',
+		description: 'Resalta tus mensajes, los mensajes del creador del hilo y los posts de los usuarios que elijas, ' +
+			'para distingirlos mejor mientras navegas por los hilos.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
 			enabled: true,

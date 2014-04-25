@@ -1,4 +1,4 @@
-.disabled-module .btn, .disabled-module .shur-options-body {
+.disabled-module .shur-btn-options, .disabled-module .shur-options-body {
     display: none !important;
 }
 
@@ -26,15 +26,30 @@
     z-index: 1010;
 }
 
-label.shur-module {
-    float: right;
-    margin-bottom: 0px;
-    margin-top: -2px;
+.shurscript .modal-footer {
+	margin-top: 0px;
 }
 
 .shur-btn-options {
-    float:right;
-    margin: -23px 24px !important;
+	cursor: pointer;
+	position: relative;
+	top: 13px;
+	right: 30px;
+	opacity: 0.4;
+}
+
+label.shur-module {
+
+}
+
+.shur-panel-body {
+	padding-right: 20px !important;
+}
+
+.shur-panel-options{
+	float: left;
+	padding: 10px 0px 5px 10px;
+	width: 80px;
 }
 
 .shur-sub-label {

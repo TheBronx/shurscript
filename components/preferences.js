@@ -37,13 +37,51 @@
 
 		// Click en botones "Opciones"
 		$modal.on('click', '.shur-btn-options', function () {
-			if ($(this).hasClass('active')) {
-				$(this).parent().siblings('.shur-options-body').slideUp(300);
-			} else {
-				$('.shur-options-body').slideUp(300);
-				$('.shur-btn-options.active').not(this).removeClass('active');
-				$(this).parent().siblings('.shur-options-body').slideDown(300);
-			}
+			var moduleId = $(this).parent().parent().parent().data('module-id');
+			var moduleTitle = $(this).parent().parent().find('h3').text();
+			var moduleCode = $(this).parent().parent().siblings('.shur-options-body').show();
+			
+			var $module = bootbox.dialog({
+				message: moduleCode,
+				title: 'Preferencias de: ',
+				className: 'shurscript modal-module',
+				buttons: {
+					close: {
+						label: 'Cerrar',
+						className: 'btn-default',
+						callback: function() {
+							var modalCode = $module.find('.shur-options-body').hide();
+							$modal.find('.shur-module-preferences[data-module-id="'+ moduleId +'"]').append(modalCode);
+						}
+					},
+					save: {
+						label: 'Guardar cambios',
+						className: 'btn-primary',
+						callback: function() {
+							var modalCode = $module.find('.shur-options-body').hide();
+							$modal.find('.shur-module-preferences[data-module-id="'+ moduleId +'"]').append(modalCode);
+							preferences.saveSettings(moduleId);
+						}
+					}
+				}
+			});
+			
+			$module.find('.modal-dialog').css('width', '700px');
+			$module.find('.modal-body').css({'overflow-y': 'auto', 'height': $(window).height() - 232});
+
+			var modalTitle = $module.find('.modal-title');
+			$(modalTitle).addClass('lead');
+			$(modalTitle).css({fontSize: '18px'});
+			$(modalTitle).append('<h4 style="display:inline;text-transform:lowercase;">'+ moduleTitle +'</h4>');
+			
+			$(window).on('resize', function () {
+				$module.find('.modal-body').css('height', $(window).height() - 232);
+			});
+			
+			$module.on('change', 'input', function () {
+				$modal.find('[data-module-id='+ moduleId +']').addClass('changed');
+			});
+
 		});
 
 		// Evento guardar
@@ -61,7 +99,7 @@
 			// Quita y pon la clase disabled para mostrar que el modulo esta activado o no
 			prefPanel.toggleClass('disabled-module');
 			// Muestra u oculta el body del panel si está activado o no
-			prefPanel.children('.panel-body').slideToggle();
+			//prefPanel.children('.panel-body').slideToggle();
 
 			//Marcarlo como modificado
 			prefPanel.addClass('changed');
@@ -165,8 +203,7 @@
 	/**
 	 * Lee las opciones y guardalas
 	 */
-	preferences.saveSettings = function () {
-
+	preferences.saveSettings = function (module) {
 		var contadorPreferenciasGuardadas = 0;
 		var modulosCambiados = preferences.$modal.find('.shur-module-preferences.changed');
 
@@ -223,7 +260,11 @@
 				});
 			});
 		} else {
-			preferences.$modal.modal('hide');
+			if (module) {
+				$(module).modal('hide');
+			} else {
+				preferences.$modal.modal('hide');
+			}
 		}
 
 	};
