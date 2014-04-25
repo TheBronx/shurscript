@@ -143,7 +143,7 @@
 				allowDuplicates: false,
 				delimiter: ',',
 				minLength: 2,
-				limit: 4
+				limit: 150
 			});
 		});
 
