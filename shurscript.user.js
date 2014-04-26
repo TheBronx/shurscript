@@ -30,6 +30,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootstrap-tokenfield.min.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/icheck.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js

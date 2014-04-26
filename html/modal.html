@@ -51,8 +51,10 @@
 							<% if (option.type === 'checkbox') { %>
 							<div class="shur-checkbox-group shur-option">
 
-								<input data-maps-to="<%=option.mapsTo%>" type="checkbox"
-								<%=module.preferences[option.mapsTo] ? 'checked' : ''%>>
+								<label class="shur-option">
+									<input data-maps-to="<%=option.mapsTo%>" type="checkbox" <%=module.preferences[option.mapsTo] ? 'checked' : ''%>>
+									<div><div></div></div>
+								</label>
 
 								<label><%=option.caption%></label>
 
