@@ -1,3 +1,7 @@
+.prefs-open {
+	overflow: hidden
+}
+
 .disabled-module .shur-btn-options, .disabled-module .shur-options-body {
     display: none !important;
 }

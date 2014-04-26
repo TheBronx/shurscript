@@ -36,7 +36,6 @@
 		$modal.on('show.bs.modal', function () {
 			// Bloquea el scroll de la página
 			$('body').addClass('prefs-open');
-			$('.prefs-open').css('overflow', 'hidden');
 		});
 		
 		$modal.on('hide.bs.modal', function () {
