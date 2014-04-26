@@ -22,6 +22,8 @@
 * Ahora se pueden abrir las citas en pestañas separadas con Ctrl+Click o botón central
 * Pequeños arreglos sintácticos en módulo de citas
 
+------------------------------------
+
 ### v0.20.4 `19/04/2014`
 
 **Features**
