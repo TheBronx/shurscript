@@ -396,15 +396,19 @@
 		}
 
 		//Temporizador de auto-guardado
-		$(getEditor().editdoc.body).one('input', function () {
-			setInterval(function () {
+		var backupScheduler;
+		var onInputHandler = function () {
+			clearTimeout(backupScheduler);
+			backupScheduler = setTimeout(function () { //
 				mod.helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));
-			}, 3000);
-		});
+			}, 1000);
+		};
 
-		/* Eliminar el backup guardado al enviar la Respuesta																		*/
-		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor	*/
-		/* Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página				*/
+		$(getEditor().editdoc.body).on('input', onInputHandler);
+
+		// Eliminar el backup guardado al enviar la Respuesta
+		// Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor
+		// Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
 				mod.helper.deleteValue("POST_BACKUP");
