@@ -218,7 +218,7 @@ input[type="checkbox"].shur-module-enabled:checked + div > div, .shur-option inp
     padding: 0;
     width: 22px;
     height: 22px;
-    background: url(https://raw.githubusercontent.com/fronteed/iCheck/master/skins/square/blue.png) no-repeat;
+    background: url(http://static.shurscript.org/img/blue.png) no-repeat;
     border: none;
     cursor: pointer;
 }
@@ -228,16 +228,36 @@ input[type="checkbox"].shur-module-enabled:checked + div > div, .shur-option inp
 	margin-right: 10px;
 	margin-top: -3px;
 }
-    .iradio_square-blue.hover {
-        background-position: -144px 0;
-    }
-    .iradio_square-blue.checked {
-        background-position: -168px 0;
-    }
-    .iradio_square-blue.disabled {
-        background-position: -192px 0;
-        cursor: default;
-    }
-    .iradio_square-blue.checked.disabled {
-        background-position: -216px 0;
-    }
+
+.iradio_square-blue.hover {
+    background-position: -144px 0;
+}
+
+.iradio_square-blue.checked {
+    background-position: -168px 0;
+}
+
+.iradio_square-blue.disabled {
+    background-position: -192px 0;
+    cursor: default;
+}
+
+.iradio_square-blue.checked.disabled {
+    background-position: -216px 0;
+}
+    
+/*
+ * FAQ
+*/
+
+.markdown-body h1 {
+	font-size: 21px;
+}
+
+.markdown-body h2 {
+	font-size: 16px;
+}
+
+.markdown-body ul {
+	margin-bottom: 25px;
+}

@@ -137,6 +137,14 @@
 			});
 			$(this).off('shown.bs.tab')
 		});
+		
+		//Recuperar el FAQ para la pestaña 'Ayuda'
+		$modal.find('a[data-toggle="tab"][href="#tab-help"]').on('shown.bs.tab', function (e) {
+			SHURSCRIPT.preferences.getFAQ(function (faq) {
+				$modal.find('#shur-faq .panel-body').html(faq);
+			});
+			$(this).off('shown.bs.tab')
+		});
 
 		// Click en boton "Generar nueva API Key"
 		$modal.on('click', '#change-api-key', function () {
@@ -214,6 +222,24 @@
 			}
 		});
 	};
+	
+	preferences.getFAQ = function (callback) {
+		SHURSCRIPT.GreaseMonkey.xmlhttpRequest({
+			method: 'GET',
+			url: SHURSCRIPT.config.visualFAQ,
+			onload: function (resp) {
+				var faq;
+				try {
+					faq = $(resp.responseText).find('.markdown-body');
+					faq = $(faq).find('hr').remove().end();
+					faq = $(faq).find('blockquote:first').remove().end();
+				} catch (e) {
+					faq = "Haz clic <a target='_blank' href='" + SHURSCRIPT.config.visualFAQ + "'>aquí</a> para ver los cambios de esta versión.";
+				}
+				callback(faq);
+			}
+		});	
+	}
 
 	/**
 	 * Lee las opciones y guardalas
@@ -288,6 +314,7 @@
 			scriptVersion: SHURSCRIPT.scriptVersion,
 			scriptBranch: SHURSCRIPT.scriptBranch,
 			apiKey: SHURSCRIPT.config.apiKey,
+			visualFAQ: SHURSCRIPT.config.visualFAQ,
 			visualChangelog: SHURSCRIPT.config.visualChangelog,
 			userDebug: SHURSCRIPT.environment.user.name,
 			userIdDebug: SHURSCRIPT.environment.user.id,
