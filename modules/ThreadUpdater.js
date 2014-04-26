@@ -5,7 +5,7 @@
 		id: 'ThreadUpdater',
 		name: 'Actualiza las nuevas respuestas de un hilo.',
 		author: 'Electrosa',
-		version: '0.1-alpha',
+		version: '0.1-alpha-3',
 		description: 'Dentro de un hilo, se añadirán nuevas respuestas automáticamente sin necesidad de recargar la página.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
@@ -29,6 +29,7 @@
 	const timeoutTabHidden = 30000;
 
 	var numPostsBefore;// cantidad de posts al cargar el hilo
+	var isLastPage;// ¿estamos en la última página del hilo?
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
 	var posts = [];
 	var pageTitle = document.title;
@@ -37,9 +38,12 @@
 
 	mod.onNormalStart = function () {
 		numPostsBefore = document.getElementById("posts").children.length - 1;
+		isLastPage = document.getElementsByClassName("pagenav").length
+			? document.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
+			: true;// solo hay una página
 
-		// si la página está completa, no comprobar si hay nuevos posts
-		if (numPostsBefore < 30) {
+		// comprobar si hay nuevos posts si la página no está completa o es la última
+		if (numPostsBefore < 30 || isLastPage) {
 			thread = getCurrentThread();
 			page = getCurrentPage();
 
@@ -48,6 +52,7 @@
 
 			// crear el elemento ya para poder reservar su hueco
 			GM_addStyle("#shurscript-newposts {width:100%; margin:12px 0; height: 32px}");
+			GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%}");// enlace nueva página
 
 			var shurscriptWrapper = document.createElement("div");
 			shurscriptWrapper.className = "shurscript";
@@ -104,13 +109,13 @@
 					createTimeout(1500);
 				}
 			};
-		} else {
-			console.log("Cancelado.");
 		}
 	};
 
 	function createTimeout(interval) {
-		interval = interval ? interval : (document.hidden ? timeoutTabHidden : timeoutTabActive);
+		if (! interval) {
+			interval = document.hidden ? timeoutTabHidden : timeoutTabActive;
+		}
 
 		timeoutId = setTimeout(loadThread, interval);
 		timeoutTime = +new Date() + interval;
@@ -128,7 +133,7 @@
 	function loadThread() {
 		stopTimeout();
 
-		if (numPostsBefore < 30) {
+		if (numPostsBefore < 30 || isLastPage) {
 			var xmlhttp = new XMLHttpRequest();
 
 			xmlhttp.onreadystatechange = function () {
@@ -138,15 +143,22 @@
 					var doc = parser.parseFromString(html, "text/html");
 
 					var numPostsPrevious = posts.length;
+					var isLastPagePrevious = isLastPage;
 
 					//posts = doc.getElementById("posts").children;
 					//var numPostsAfter = posts.length - 1;// en #posts, hay un div#lastpost que no nos interesa contar
 					posts = doc.querySelectorAll("#posts > div[align]");
 					var numPostsAfter = posts.length;
+					isLastPage = doc.getElementsByClassName("pagenav").length
+						? doc.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
+						: true;
+
+					const _newPosts = numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious;
+					const _newPage = isLastPage !== isLastPagePrevious;
 
 					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
-					if (numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious) {
-						newPosts(numPostsAfter - numPostsBefore);
+					if (_newPosts || _newPage) {
+						newPosts(numPostsAfter - numPostsBefore, _newPage);
 					}
 
 					// volver a comprobar
@@ -156,13 +168,16 @@
 
 			xmlhttp.open("GET", "/foro/showthread.php?t=" + thread + "&page=" + page, true);
 			xmlhttp.send();
-		} else {
-			console.log("cancelado");
 		}
 	}
 
-	function newPosts(num) {
-		// crear el elemento si no existe
+	/**
+	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
+	 * @param {int} numPosts Número de posts nuevos. Si es int(0), se crea un enlace a la siguiente página.
+	 * @param {bool} newPage Existe una nueva página.
+	 */
+	function newPosts(numPosts, newPage) {
+		// mostrar el elemento si está oculto
 		if (! newPostsShown) {
 			newPostsElem.classList.remove("invisible");
 			newPostsShown = true;
@@ -174,10 +189,20 @@
 		document.title = pageTitle;
 		setTimeout(function () { document.title = "*" + pageTitle; }, 1);
 
-		// actualizar con el número de posts nuevos
-		newPostsElem.textContent = num === 1 ? "Hay un post nuevo." : "Hay " + num + " posts nuevos.";
+		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
+		if (newPage && numPosts === 0) {
+			// enlace a la nueva página
+			newPostsElem.innerHTML = "<a href='showthread.php?t=" + thread + "&amp;page=" + (+page + 1) + "'>Hay una nueva página.</a>";
+			newPostsElem.onclick = undefined;
+		} else {
+			// actualizar con el número de posts nuevos
+			newPostsElem.textContent = numPosts === 1 ? "Hay un post nuevo." : "Hay " + numPosts + " posts nuevos.";
+		}
 	}
 
+	/**
+	 * Muestra los posts nuevos.
+	 */
 	function populateNewPosts() {
 		// ocultar el botón
 		newPostsElem.classList.add("invisible");
@@ -206,6 +231,11 @@
 
 		// ahora el hilo tiene varios posts más
 		numPostsBefore = numPostsAfter;
+
+		// si hay nueva página, mostrar inmediatamente el botón
+		if (! isLastPage) {
+			newPosts(0, true);
+		}
 	}
 
 
