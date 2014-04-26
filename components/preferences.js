@@ -28,6 +28,15 @@
 
 			//Eliminarla al cerrar
 			$modal.remove();
+			
+			// Habilita el scroll en la página
+			$('body').removeClass('prefs-open');
+		});
+		
+		$modal.on('show.bs.modal', function () {
+			// Bloquea el scroll de la página
+			$('body').addClass('prefs-open');
+			$('.prefs-open').css('overflow', 'hidden');
 		});
 
 		// Click en boton "Comprobar actualizaciones"
@@ -52,6 +61,7 @@
 						callback: function() {
 							var modalCode = $module.find('.shur-options-body').hide();
 							$modal.find('.shur-module-preferences[data-module-id="'+ moduleId +'"]').append(modalCode);
+							
 						}
 					},
 					save: {
@@ -66,8 +76,8 @@
 				}
 			});
 			
-			$module.find('.modal-dialog').css('width', '700px');
-			$module.find('.modal-body').css({'overflow-y': 'auto', 'height': $(window).height() - 232});
+			$module.find('.modal-dialog').css({width: '700px', marginTop: '15px'});
+			$module.find('.modal-body').css({'overflow-y': 'auto', 'height': $(window).height() - 255});
 
 			var modalTitle = $module.find('.modal-title');
 			$(modalTitle).addClass('lead');
@@ -75,8 +85,9 @@
 			$(modalTitle).append('<h4 style="display:inline;text-transform:lowercase;">'+ moduleTitle +'</h4>');
 			
 			$(window).on('resize', function () {
-				$module.find('.modal-body').css('height', $(window).height() - 232);
+				$module.find('.modal-body').css('height', $(window).height() - 255);
 			});
+			$(window).trigger('resize');
 			
 			$module.on('change', 'input', function () {
 				$modal.find('[data-module-id='+ moduleId +']').addClass('changed');
@@ -230,7 +241,7 @@
 						mapsTo;
 
 					if ($option.hasClass('shur-radio-group')) {
-						$input = $option.find('input[type=radio]:checked');
+						$input = $option.find('.icheck-item.checked input[type=radio]');
 						value = $input.val();
 
 					} else if ($option.hasClass('shur-checkbox-group')) {
