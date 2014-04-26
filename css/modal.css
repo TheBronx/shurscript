@@ -48,7 +48,7 @@ p#partners {margin-bottom: -5px;}
     opacity: 1;
 }
 
-label.shur-option {
+.shur-checkbox {
 	display: table-cell !important;
 	vertical-align: middle;
 	width: 40px;

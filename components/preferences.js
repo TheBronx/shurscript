@@ -38,6 +38,17 @@
 			$('body').addClass('prefs-open');
 			$('.prefs-open').css('overflow', 'hidden');
 		});
+		
+		$modal.on('hide.bs.modal', function () {
+			var modulosCambiados = preferences.$modal.find('.shur-module-preferences.changed');
+			if (modulosCambiados.length) {
+				bootbox.confirm('Hay cambios sin guardar en sus preferencias, ¿desea guardar los cambios?', function (result){
+					if (result) {
+						preferences.saveSettings();
+					}
+				});
+			}
+		});
 
 		// Click en boton "Comprobar actualizaciones"
 		$modal.on('click', '#check-shurscript-updates', function () {
@@ -64,15 +75,6 @@
 							
 						}
 					},
-					save: {
-						label: 'Guardar cambios',
-						className: 'btn-primary',
-						callback: function() {
-							var modalCode = $module.find('.shur-options-body').hide();
-							$modal.find('.shur-module-preferences[data-module-id="'+ moduleId +'"]').append(modalCode);
-							preferences.saveSettings(moduleId);
-						}
-					}
 				}
 			});
 			
@@ -217,7 +219,7 @@
 	/**
 	 * Lee las opciones y guardalas
 	 */
-	preferences.saveSettings = function (module) {
+	preferences.saveSettings = function () {
 		var contadorPreferenciasGuardadas = 0;
 		var modulosCambiados = preferences.$modal.find('.shur-module-preferences.changed');
 
@@ -245,7 +247,7 @@
 						value = $input.val();
 
 					} else if ($option.hasClass('shur-checkbox-group')) {
-						$input = $option.find('input');
+						$input = $option.find('.shur-checkbox input');
 						value = $input.is(':checked');
 
 					} else if ($option.hasClass('shur-text-group')) {
@@ -274,11 +276,7 @@
 				});
 			});
 		} else {
-			if (module) {
-				$(module).modal('hide');
-			} else {
-				preferences.$modal.modal('hide');
-			}
+			preferences.$modal.modal('hide');
 		}
 
 	};
