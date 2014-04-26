@@ -291,6 +291,7 @@
 			apiKey: SHURSCRIPT.config.apiKey,
 			visualChangelog: SHURSCRIPT.config.visualChangelog,
 			userDebug: SHURSCRIPT.environment.user.name,
+			userIdDebug: SHURSCRIPT.environment.user.id,
 			urlDebug: SHURSCRIPT.preferences.helper.location.href,
 			agentDebug: SHURSCRIPT.environment.browser.name,
 			modules: []
