@@ -22,6 +22,8 @@
     font-size: 15px !important;
 }
 
+p#partners {margin-bottom: -5px;}
+
 .modal-backdrop {
     z-index: 1010;
 }
@@ -36,6 +38,14 @@
 	top: 13px;
 	right: 30px;
 	opacity: 0.4;
+}
+
+.shur-panel-body p.module-description {
+	color: #797979;
+}
+
+.shur-btn-options:hover {
+    opacity: 1;
 }
 
 label.shur-module {

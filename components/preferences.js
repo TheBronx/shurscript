@@ -83,6 +83,8 @@
 			});
 
 		});
+		
+		$modal.find('.shur-btn-options').tooltip({delay: 100});
 
 		// Evento guardar
 		$modal.on('click', '#save-settings', function () {
