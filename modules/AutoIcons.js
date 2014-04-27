@@ -25,17 +25,7 @@
 		mod.helper.addStyle('autoiconscss');
 
 		//Construimos el popup
-		$iconsBox = $('<div id="shurscript-icons-box" style="display: none;" class="popover top in"><div class="arrow"></div></div>');
-		$iconsPanel = $('<div class="panel-body" tabindex="-1"></div>');
-		$iconsPanel.on('click', '.icon', function () {
-			//Al hacer click en un icono del popup, lo insertamos
-			insertIcon($(this).data('icon'));
-		});
-
-		$iconsBox.append($iconsPanel);
-		$('<div class="shurscript">').append($iconsBox).prependTo(getEditor().controlbar.parentNode);
-
-
+		buildPopup();
 		//Recuperamos todos los iconos del foro
 		getAllIcons(function (sorted, map) {
 
@@ -86,6 +76,27 @@
 		});
 	};
 
+	function buildPopup() {
+		$iconsBox = $('<div id="shurscript-icons-box" style="display: none;" class="popover top in"><div class="arrow"></div></div>');
+		$iconsPanel = $('<div class="panel-body" tabindex="-1"></div>');
+		$iconsPanel.on('click', '.icon', function () {
+			//Al hacer click en un icono del popup, lo insertamos
+			insertIcon($(this).data('icon'));
+		});
+
+		$iconsBox.append($iconsPanel);
+		$('<div class="shurscript">').append($iconsBox).prependTo(getEditor().controlbar.parentNode);
+
+		//Tooltip de ayuda
+		var help = '<table><tr><td>Enter</td><td>Insertar</td></tr>'
+			+ '<tr><td>Shift + Enter</td> <td>Insertar varios</td> </tr>'
+			+ '<tr><td>Flechas/Tab</td> <td>Seleccionar</td> </tr>'
+			+ '<tr><td>Esc</td> <td>Cerrar popup</td></tr></table>';
+		var tooltip = $('<span id="shurscript-autoicons-tooltip-trigger" data-toggle="tooltip" data-placement="top">?</span>');
+		tooltip.tooltip({title: help, html: true});
+		$iconsBox.append(tooltip);
+	}
+
 	/**
 	 * Llamara al callback cuando el editor sea WYSIWYG
 	 */
@@ -114,7 +125,7 @@
 	function show() {
 		active = true;
 		$iconsBox.show();
-		var position = getCurrentCarePosition();
+		var position = getCurrentCaretPosition();
 		if (position) {
 			var boxLeft = Math.min($(window).width() - $iconsBox.outerWidth(), position.absoluteLeft - $iconsBox.outerWidth() / 2 + 5); //Que no se salga por la derecha
 			boxLeft = Math.max(0, boxLeft); //Que no se salga por la izquierda
@@ -363,7 +374,7 @@
 	/**
 	 * Devuelve un objecto con la posición actual del cursor {left, top, absoluteLeft, absoluteTop}
 	 */
-	function getCurrentCarePosition() {
+	function getCurrentCaretPosition() {
 		var el = getEditor().editwin.getSelection().anchorNode;
 		var range = document.createRange();
 		range.selectNodeContents(el);
