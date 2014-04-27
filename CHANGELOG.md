@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.20.5 `29/04/2014`
+## v0.20.5 `27/04/2014`
 
 **Features**
 
@@ -11,6 +11,7 @@
 * Lavado de cara en preferencias de shurscript
 * Cambiados los mensajes de error para ser más descriptivos y con enlace al FAQ
 * Se ha implementado un estilo de etiquetas para los campos de ignorar/resaltar por usuarios
+* Añadida pestaña de ayuda con las FAQ en las preferencias
 
 **Bugfixes**
 
@@ -18,8 +19,9 @@
 * El usuario se duplicaba en respuesta avanzada y no notificaba las citas correctamente
 * En la portada, los enlaces de autor e hilo del panel de citas eran relativos y devolvían error 404
 * Si el panel de citas está abierto, al pulsar en el contador, ahora se cierra en vez de permanecer abierto
-* Pequeños arreglos en módulo de refrescar búsquedas
 * Ahora se pueden abrir las citas en pestañas separadas con Ctrl+Click o botón central
+* Arreglado bug que guardaba backup de los mensajes después de haber sido enviados
+* Pequeños arreglos en módulo de refrescar búsquedas
 * Pequeños arreglos sintácticos en módulo de citas
 
 ------------------------------------
