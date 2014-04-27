@@ -20,6 +20,7 @@
 		iconsMap; //Objeto {iconName: icon} para acceso rapido por nombre
 	var mostUsedIcons; //Objeto {icon: uses} que guarda los usos de cada icono
 
+
 	mod.onNormalStart = function () {
 
 		mod.helper.addStyle('autoiconscss');
@@ -34,6 +35,8 @@
 
 			//Comprobamos que el editor es WYSIWYG
 			onWYSIWYGEnabled(function () {
+
+				var delay;
 
 				//Punto y coma abre y cierra el popup
 				$(getEditor().editdoc.body).keypress(function (e) {
@@ -53,7 +56,8 @@
 							//Luego es más fácil recuperar la posición y el texto que ha escrito el usuario
 							appendTextToEditor('<icon>:</icon>');
 
-							applyFilter();
+							//Retrasamos mostrar la caja si simplemente pulsamos ':' para evitar que aparezca sin querer
+							delay = setTimeout(applyFilter, 1000);
 						}
 					}
 
@@ -62,6 +66,7 @@
 				//Controlar la acción de cada tecla
 				$(getEditor().editdoc.body).keydown(function (e) {
 					if (active) {
+						clearTimeout(delay);
 						manageKeyDown(e);
 					}
 				});
