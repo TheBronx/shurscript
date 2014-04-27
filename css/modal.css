@@ -3,7 +3,7 @@
 }
 
 .disabled-module .shur-btn-options, .disabled-module .shur-options-body {
-    display: none !important;
+    visibility: hidden !important;
 }
 
 #shurscript-settings-window, #shurscript-settings-window .panel {
