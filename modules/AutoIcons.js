@@ -116,7 +116,8 @@
 		$iconsBox.show();
 		var position = getCurrentCarePosition();
 		if (position) {
-			var boxLeft = Math.max(0, position.absoluteLeft - $iconsBox.outerWidth() / 2 + 5);
+			var boxLeft = Math.min($(window).width() - $iconsBox.outerWidth(), position.absoluteLeft - $iconsBox.outerWidth() / 2 + 5); //Que no se salga por la derecha
+			boxLeft = Math.max(0, boxLeft); //Que no se salga por la izquierda
 			$iconsBox.css('marginTop', '0');
 			$iconsBox.css('top', (position.absoluteTop - 90) + 'px');
 			$iconsBox.css('left', boxLeft + 'px');
