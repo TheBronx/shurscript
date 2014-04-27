@@ -279,7 +279,9 @@
 			iconsMap = {};
 
 		$.ajax({
-			url: "/foro/misc.php?do=getsmilies&editorid=" + getEditor().editorid
+			type: 'GET',
+			dataType:'text',
+			url: '/foro/misc.php?do=getsmilies&editorid=' + getEditor().editorid
 		}).done(function (data) {
 			var $rows = $(data).find("tr[valign]");
 
