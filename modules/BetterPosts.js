@@ -4,7 +4,7 @@
 	var mod = createModule({
 		id: 'BetterPosts',
 		name: 'Editor de posts mejorado',
-		author: 'xus0',
+		author: 'xuso0',
 		version: '0.2',
 		description: 'Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>',
 		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
@@ -151,6 +151,7 @@
 	function enableCommonFeatures() {
 		if (isQuickReply() && mod.preferences.iconsAndButtons) {
 			addAdvancedButtons();
+			addIcons();
 		}
 
 		//Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
@@ -176,7 +177,9 @@
 			try {
 				if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
 					currentEditor.editdoc.write('<!doctype HTML>\n' + currentEditor.editdoc.head.outerHTML + currentEditor.editdoc.body.outerHTML);
-			} catch (e) {}
+			} catch (e) {
+				;
+			}
 			$(currentEditor.editdoc.body).on('input', function () {
 				currentEditor.editbox.style.height = Math.max(currentEditor.editdoc.body.offsetHeight + 30, 200) + "px";
 			});
@@ -193,7 +196,9 @@
 		try {
 			if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la pána "Cargando..." indefinidamente :/
 				editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
-		} catch (e) {}
+		} catch (e) {
+			;
+		}
 
 		checkAutoGrow = $('<input type="checkbox" checked/>')[0];
 		checkAutoGrow.onclick = function () {
@@ -202,7 +207,7 @@
 			} else {
 				editor.editbox.style.height = minHeightTextArea + "px";
 			}
-		};
+		}
 		$(editor.controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
 		checkAutoGrow.title = 'Crecer automáticamente con el contenido';
 
@@ -288,9 +293,6 @@
 							break;
 						case 'OVERWRITE':
 							setEditorContents('');
-							appendTextToEditor(quote);
-							reflowTextArea();
-							break;
 						case 'APPEND':
 							appendTextToEditor(quote);
 							reflowTextArea();
@@ -388,7 +390,7 @@
 				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) {
 					setEditorContents(currentPostBackup.postContents)
 				}
-
+				;
 				reflowTextArea();
 			}
 		}
@@ -416,7 +418,7 @@
 			$sendButton.attr("type", "button"); //Le quitamos el type 'submit' para que no envie el formulario
 			var sendForm = $sendButton.parents('form')[0];
 
-			$sendButton.on("click", function () {
+			$sendButton.on("click", function (e) {
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
 					mod.helper.deleteValue("POST_BACKUP", function () { //Eliminamos backup
 						sendForm.submit(); //Submit manual
@@ -459,6 +461,41 @@
 		} else {
 			$("input[name='sbutton']").on("click", checkWaiting);
 		}
+	}
+
+	/* Añade accesos directos a algunos iconos en al respuesta rápida */
+	function addIcons() {
+
+		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0px 0px 0px"><legend>Iconos</legend></fieldset>');
+		$("#" + getEditor().editorid).parent().append(fieldset);
+
+		fieldset.append(createIcon(":roto2:", "http://cdn.forocoches.com/foro/images/smilies/goofy.gif", 164));
+		fieldset.append(createIcon(":sisi3:", "http://cdn.forocoches.com/foro/images/smilies/sisi3.gif", 324));
+		fieldset.append(createIcon(":mola:", "http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif", 48));
+		fieldset.append(createIcon(":cantarin:", "http://cdn.forocoches.com/foro/images/smilies/Sing.gif", 101));
+		fieldset.append(createIcon(":qmeparto:", "http://cdn.forocoches.com/foro/images/smilies/meparto.gif", 142));
+		fieldset.append(createIcon(":nusenuse:", "http://cdn.forocoches.com/foro/images/smilies/nusenuse.gif", 283));
+		fieldset.append(createIcon(":facepalm:", "http://cdn.forocoches.com/foro/images/smilies/facepalm.gif", 318));
+		fieldset.append(createIcon(":zpalomita", "http://cdn.forocoches.com/foro/images/smilies/icon_popcorn.gif", 215));
+		fieldset.append(createIcon(":zplatano2", "http://cdn.forocoches.com/foro/images/smilies/b2.gif", 236));
+		fieldset.append(createIcon(":number1:", "http://cdn.forocoches.com/foro/images/smilies/number_one.gif", 268));
+		fieldset.append(createIcon(":elrisas:", "http://cdn.forocoches.com/foro/images/smilies/qmeparto.gif", 76));
+		fieldset.append(createIcon(":gaydude:", "http://cdn.forocoches.com/foro/images/smilies/gaydude.gif", 264));
+		fieldset.append(createIcon(":sisi1:", "http://cdn.forocoches.com/foro/images/smilies/sisi1.gif", 299));
+		fieldset.append(createIcon(":babeando:", "http://cdn.forocoches.com/foro/images/smilies/babeando.gif", 274));
+		fieldset.append(createIcon(":elboinas:", "http://cdn.forocoches.com/foro/images/smilies/elboinas.gif", 314));
+		/* 		fieldset.append(createIcon(":sherlock:", "http://cdn.forocoches.com/foro/images/smilies/sherlock.gif", 281)); */
+		fieldset.append(createIcon(":qtedoy:", "http://cdn.forocoches.com/foro/images/smilies/smiley_1140.gif", 191));
+		fieldset.append(createIcon(":abrazo:", "http://cdn.forocoches.com/foro/images/smilies/abrazo.gif", 161));
+		var more = $("<a href='#qrform'>Más...</a>");
+		more.click(function () {
+			getEditor().open_smilie_window(785, 500);
+		});
+		fieldset.append(more);
+	}
+
+	function createIcon(name, src, id) {
+		return '<img border="0" class="inlineimg" src="' + src + '" style="cursor: pointer; padding: 5px;" onclick="vB_Editor.' + getEditor().editorid + '.insert_smilie(undefined, \'' + name + '\', \'' + src + '\', ' + id + ')">';
 	}
 
 	/* Añade nuevos botones que hasta ahora solo estaban disponibles en la versión Avanzada*/
@@ -525,7 +562,7 @@
 	}
 
 	function isWYSIWYG() {
-		return getEditor().editdoc.body;
+		return getEditor().wysiwyg_mode == 1;
 	}
 
 	function getEditorContents() {

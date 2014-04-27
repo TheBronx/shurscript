@@ -50,7 +50,6 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ThreadUpdater.js
-// @require			https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
@@ -58,7 +57,6 @@
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
 // @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
 // @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
-// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/experimental/css/autoicons.css
 // ==/UserScript==
 
 /**
