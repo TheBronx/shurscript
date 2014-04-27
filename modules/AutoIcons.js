@@ -329,7 +329,7 @@
 			});
 
 
-			mostUsedIcons = mod.helper.getValue('MOST_USED_ICONS', {});
+			mostUsedIcons = JSON.parse(mod.helper.getValue('MOST_USED_ICONS', '{}'));
 
 			//Ordenamos los iconos por más usados
 			sortedIcons = sortIconsByMostUsed(sortedIcons);
@@ -372,7 +372,7 @@
 	function addToMostUsed(icon) {
 		var uses = mostUsedIcons[icon.name] || 0;
 		mostUsedIcons[icon.name] = ++uses;
-		mod.helper.setValue('MOST_USED_ICONS', mostUsedIcons);
+		mod.helper.setValue('MOST_USED_ICONS', JSON.stringify(mostUsedIcons));
 		sortedIcons = sortIconsByMostUsed(sortedIcons);
 	}
 
