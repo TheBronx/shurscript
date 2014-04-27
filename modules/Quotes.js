@@ -72,10 +72,9 @@
 	GM_addStyle("#notificationsListButtons td:last-child {border: none;}");
 	GM_addStyle("#notificationsListButtons td:hover {background: #E64D1A;}");
 	GM_addStyle("#notificationsListButtons {width: 100%;}");
-	
+
 	/* Estilos para la portada */
 	GM_addStyle("#AutoNumber1.contenido .notifications {padding: 6px 0px;}");
-
 
 	/* Variables globales del módulo */
 	var currentStatus = "QUERY"; //QUERY - Obteniendo datos, OK - Datos obtenidos, ERROR - Error al obtener los datos
@@ -96,12 +95,12 @@
 	var originalTitle;
 
 	/**
-	* Método temporal de migración de valores
-	*/
+	 * Método temporal de migración de valores
+	 */
 	mod.migrateValues = function (callback) {
 		if (!mod.helper.getValue("LAST_QUOTES_UPDATE")) { //Al ser una segunda migración, no machacar los datos de los usuarios de la beta que ya habían migrado
-			mod.helper.setValue("LAST_QUOTES_UPDATE", mod.helper.getLocalValue("LAST_QUOTES_UPDATE"), function(){
-				mod.helper.setValue("LAST_READ_QUOTE", mod.helper.getLocalValue("LAST_READ_QUOTE"), function() {
+			mod.helper.setValue("LAST_QUOTES_UPDATE", mod.helper.getLocalValue("LAST_QUOTES_UPDATE"), function () {
+				mod.helper.setValue("LAST_READ_QUOTE", mod.helper.getLocalValue("LAST_READ_QUOTE"), function () {
 					mod.helper.setValue("LAST_QUOTES", mod.helper.getLocalValue("LAST_QUOTES"), callback);
 				});
 			});
@@ -166,13 +165,13 @@
 			if (currentStatus == "ERROR" || (!lastUpdate || Date.now() - parseFloat(lastUpdate) > (60 * 1000))) { //La actualizacion manual hay que esperar un minuto minimo
 				updateNotifications();
 			}
-			
+
 			if (notificationsBox.is(':visible')) { // Si la caja está desplegada
 				notificationsBox.hide(); // la cerramos
 			} else {
 				showNotificationsBox(); // Si no está desplegada, la mostramos
 			}
-			
+
 		});
 
 		//comprobamos (si procede) nuevas notificaciones
@@ -305,7 +304,7 @@
 										label: "Abrir post",
 										className: "btn-default",
 										callback: function () {
-											markAsRead(cita, function(){
+											markAsRead(cita, function () {
 												openQuote(cita, "_self");
 											});
 										}
@@ -314,7 +313,7 @@
 										label: "En nueva ventana",
 										className: "btn-primary",
 										callback: function () {
-											markAsRead(cita, function() {
+											markAsRead(cita, function () {
 												openQuote(cita, "_blank");
 											});
 										}
@@ -347,7 +346,7 @@
 										label: "Abrir todas en pestañas",
 										className: "btn-primary",
 										callback: function () {
-											markAllAsRead(function(){
+											markAllAsRead(function () {
 												newQuotes.forEach(function (cita) {
 													openQuote(cita, "_blank");
 												});
@@ -431,7 +430,7 @@
 
 			var markAsReadButton = $("<td title='Marcar todas las citas como leídas'/>");
 			markAsReadButton.html("Marcar como leídas");
-			markAsReadButton.click(function() {
+			markAsReadButton.click(function () {
 				markAllAsRead();
 			});
 			notificationsListButtons.append(markAsReadButton);
@@ -441,7 +440,7 @@
 				openInTabsButton.html("Abrir en pestañas");
 				openInTabsButton.click(function () {
 					var unread = getUnreadQuotes();
-					markAllAsRead(function() {
+					markAllAsRead(function () {
 						unread.forEach(function (cita) {
 							openQuote(cita, "_blank");
 						});
@@ -483,25 +482,27 @@
 
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
-		var ulink = cita.userLink.indexOf('http') == 0 ? cita.userLink : '/foro/' + cita.userLink;
-		var tlink = cita.threadLink.indexOf('http') == 0 ? cita.threadLink : '/foro/' + cita.threadLink;
-		var link = cita.postLink.indexOf('http') == 0 ? cita.postLink : '/foro/' + cita.postLink;
+
+		var fixUrl = function(url) {
+			return url.indexOf('http') === 0 ? url : '/foro/' + url;
+		};
+
+		var ulink = fixUrl(cita.userLink);
+		var tlink = fixUrl(cita.threadLink);
+		var link = fixUrl(cita.postLink);
 		var row = $(SHURSCRIPT.templater.fillOut('quote', {cita: cita, postLink: link, threadLink: tlink, userLink: ulink}));
 
 		//Necesitamos esperar a que se marque como leída antes de abrir el link
 		//No usamos click porque no ejecuta el evento con el botón central
+		//TO-DO: Cuando las preferencias se guarden en local y no necesitemos esperar al callback del servidor, quitar todo este lio y usar el evento de click nativo
 		row.on('mouseup', '.postLink', function (e) {
-			if (e.which != 3) { //Botón derecho
-				if (!cita.read) {
-					$(this).parent().parent().addClass("read");
-					markAsRead(cita, function(){
-						if (e.which == 1) { //Solo botón izquierdo. Si se ha hecho clic con el central, ya se habrá abierto automáticamente (Clic central -> Abrir en nueva pestaña)
-							openQuote(cita, '_self');
-						}
-					});
-				} else if (e.which == 1) {
-					openQuote(cita, '_self');
-				}
+			if (e.which !== 3 && !cita.read) { //No es botón derecho y la cita no está leída
+				$(this).parent().parent().addClass("read");
+				markAsRead(cita, function () {
+					if (e.which === 1 && !e.ctrlKey && !e.metaKey) { //Solo clic izquierdo. Si es el botón central o Ctrl o Command están pulsados se abrirá nativamente en nueva pestaña
+						openQuote(cita, '_self');
+					}
+				});
 			}
 		});
 
@@ -514,8 +515,8 @@
 
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
-		
-		setNotificationsCount(notificationsCount - 1);
+
+		populateNotificationsBox(arrayQuotes);
 	}
 
 	function openQuote(cita, target) {

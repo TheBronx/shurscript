@@ -157,12 +157,12 @@
 		//Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
 		//Parece ser un bug del vB en los navegadores que no soportan por defecto el WYSIWYG (Chrome, Opera...) [Tal vez por eso Ilitri no lo tiene activado]
 		//Workaround: buscar y sustituir esos divs antes de enviar la respuesta
-		$("input[name='sbutton'], input[name='preview']").on("click", function() {
+		$("input[name='sbutton'], input[name='preview']").on("click", function () {
 			var contents = getEditorContents();
-			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match){
-				var contenidoDivInutil = match.substring(5,match.length-6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
-				if (contenidoDivInutil=='<br>') return contenidoDivInutil;
-				else return "<br>"+contenidoDivInutil;
+			contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match) {
+				var contenidoDivInutil = match.substring(5, match.length - 6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
+				if (contenidoDivInutil == '<br>') return contenidoDivInutil;
+				else return "<br>" + contenidoDivInutil;
 			});
 			setEditorContents(contents);
 			reflowTextArea();
@@ -389,21 +389,26 @@
 			if (currentPostBackup.threadId == threadId) {
 				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) {
 					setEditorContents(currentPostBackup.postContents)
-				};
+				}
+				;
 				reflowTextArea();
 			}
 		}
 
 		//Temporizador de auto-guardado
-		$(getEditor().editdoc.body).one('input', function () {
-			setInterval(function () {
+		var backupScheduler;
+		var onInputHandler = function () {
+			clearTimeout(backupScheduler);
+			backupScheduler = setTimeout(function () { //
 				mod.helper.setValue("POST_BACKUP", JSON.stringify({threadId: threadId, postContents: getEditorContents()}));
-			}, 3000);
-		});
+			}, 1000);
+		};
 
-		/* Eliminar el backup guardado al enviar la Respuesta																		*/
-		/* Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor	*/
-		/* Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página				*/
+		$(getEditor().editdoc.body).on('input', onInputHandler);
+
+		// Eliminar el backup guardado al enviar la Respuesta
+		// Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor
+		// Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
 				mod.helper.deleteValue("POST_BACKUP");
@@ -415,7 +420,7 @@
 
 			$sendButton.on("click", function (e) {
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
-					mod.helper.deleteValue("POST_BACKUP", function(){ //Eliminamos backup
+					mod.helper.deleteValue("POST_BACKUP", function () { //Eliminamos backup
 						sendForm.submit(); //Submit manual
 					});
 				}

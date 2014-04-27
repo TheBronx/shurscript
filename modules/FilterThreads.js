@@ -24,11 +24,11 @@
 		}
 	});
 
-	var Favorites = function(favorites) {
+	var Favorites = function (favorites) {
 		var _this = this;
 		this.favs = [];
 
-		this.isFavorite = function(thread) {
+		this.isFavorite = function (thread) {
 			var threadId;
 			if (typeof thread === 'number') {
 				threadId = thread; //ya es un ID
@@ -38,7 +38,7 @@
 				return false;
 			}
 			//buscamos en el array de favs aquel que tenga ID = threadId
-			for (var i=0; i<_this.favs.length; i++) {
+			for (var i = 0; i < _this.favs.length; i++) {
 				if (_this.favs[i].id == threadId) {
 					return true;
 				}
@@ -46,7 +46,7 @@
 			return false;
 		};
 
-		this.add = function(thread) {
+		this.add = function (thread) {
 			var fav = {};
 			if (typeof thread === 'number') {
 				fav.id = thread;
@@ -56,7 +56,7 @@
 			_this.favs.push(fav);
 		};
 
-		this.remove = function(thread) {
+		this.remove = function (thread) {
 			var threadId;
 			if (typeof thread === 'number') {
 				threadId = thread; //ya es un ID
@@ -64,7 +64,7 @@
 				threadId = thread.id; //es un objeto, sacamos ID
 			}
 			//borramos del array de favs aquel que tenga ID = threadId
-			for (var i=0; i<_this.favs.length; i++) {
+			for (var i = 0; i < _this.favs.length; i++) {
 				if (_this.favs[i].id == threadId) {
 					_this.favs.splice(i, 1);
 					break;
@@ -72,20 +72,20 @@
 			}
 		};
 
-		this.update = function(fav) {
-			for (var i=0; i<_this.favs.length; i++) {
+		this.update = function (fav) {
+			for (var i = 0; i < _this.favs.length; i++) {
 				if (_this.favs[i].id == fav.id) {
 					_this.favs[i] = fav;
 				}
 			}
 		};
 
-		this.getSections = function() {
+		this.getSections = function () {
 			var sections = [];
-			for (var i=0; i<_this.favs.length; i++) {
+			for (var i = 0; i < _this.favs.length; i++) {
 				if (_this.favs[i].section != undefined) {
 					var found = false;
-					for (var j=0; j<sections.length; j++) {
+					for (var j = 0; j < sections.length; j++) {
 						if (_this.favs[i].section.id == sections[j].id) {
 							found = true;
 							break;
@@ -98,24 +98,24 @@
 			return sections;
 		};
 
-		this.populateAndSave = function(fav, callback) {
+		this.populateAndSave = function (fav, callback) {
 			$.ajax({
-				url: "/foro/showthread.php?t="+fav.id
-			}).done(function(result) {
+				url: "/foro/showthread.php?t=" + fav.id
+			}).done(function (result) {
 				var title = $(result).find('div.page td.thead span.cmega').html();
-				title = title.replace("<!-- google_ad_section_start -->","");
-				title = title.replace("<!-- google_ad_section_end -->","");
+				title = title.replace("<!-- google_ad_section_start -->", "");
+				title = title.replace("<!-- google_ad_section_end -->", "");
 
 				var author = $(result).find('.bigusername').first().html();
 
 				var section = $(result).find('.navbar').last().find('a').html();
-				var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=','');
+				var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=', '');
 
 				fav.title = title;
 				fav.author = author;
 				fav.section = {
-					'name':section,
-					'id':sectionId,
+					'name': section,
+					'id': sectionId,
 				};
 				//guardamos
 				_this.update(fav);
@@ -125,34 +125,34 @@
 			});
 		};
 
-		this.getFavHTML = function(fav) {
-			var html = '<tr id="shurscript-fav-'+fav.id+'">' +
-				'<td style="vertical-align:middle;"><a id="'+fav.id+'" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td>' +
+		this.getFavHTML = function (fav) {
+			var html = '<tr id="shurscript-fav-' + fav.id + '">' +
+				'<td style="vertical-align:middle;"><a id="' + fav.id + '" style="cursor:pointer;"><img src="' + SHURSCRIPT.config.imagesURL + 'trash-black.png" style="width:16px;height:16px;" /></a></td>' +
 				'<td><a href="{link}">{title}</a> <a href="{link}&goto=newpost" class="lastpost-tooltip" data-placement="bottom" data-toggle="tooltip" title="Ir al último mensaje leído">»</a></td>' +
 				'<td style="text-align:center;vertical-align:middle;"><span class="badge" style="font-size:10px;">{author}</span></td></tr>';
 			if (fav.hasOwnProperty('title'))
-				html = html.replace("{title}",fav.title);
+				html = html.replace("{title}", fav.title);
 			else
-				html = html.replace("{title}","Cargando datos del hilo...");
+				html = html.replace("{title}", "Cargando datos del hilo...");
 
 			if (fav.hasOwnProperty('author'))
-				html = html.replace("{author}",fav.author);
+				html = html.replace("{author}", fav.author);
 			else
-				html = html.replace("{author}","---");
+				html = html.replace("{author}", "---");
 
-			html = html.replace(/\{link\}/g,'http://www.forocoches.com/foro/showthread.php?t='+fav.id);
+			html = html.replace(/\{link\}/g, '/foro/showthread.php?t=' + fav.id);
 			return html;
 		};
 
-		this.getSectionHTML = function(section) {
+		this.getSectionHTML = function (section) {
 			var sectionTable = '<table class="table table-striped table-bordered" style="margin-bottom: 0;"><th></th><th style="text-align:center;font-size:12px;">Hilo</th><th style="text-align:center;font-size:12px;">Autor</th></table>';
 
-			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + section.id + '">'+
-			 '<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-'+section.id+'">'+section.name+'</a></h4></div>'+
-			 '<div id="collapse-'+section.id+'" class="panel-collapse collapse">'+
-			 '<div class="panel-body">'+sectionTable+'</div>'+
-			 '</div>'+
-			 '</div>');
+			var sectionHTML = $('<div class="panel panel-default" id="shurscript-favs-section-' + section.id + '">' +
+				'<div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-' + section.id + '">' + section.name + '</a></h4></div>' +
+				'<div id="collapse-' + section.id + '" class="panel-collapse collapse">' +
+				'<div class="panel-body">' + sectionTable + '</div>' +
+				'</div>' +
+				'</div>');
 
 			return sectionHTML;
 		};
@@ -161,7 +161,7 @@
 		if (favorites.favs !== undefined) {
 			_this.favs = favorites.favs; //objeto favs
 		} else {
-			for(var i=0; i<favorites.length; i++) {
+			for (var i = 0; i < favorites.length; i++) {
 				this.add(favorites[i]); //lista de ids de hilos (sistema antiguo)
 			}
 		}
@@ -177,10 +177,10 @@
 	var regexHiddenKeywords, regexHiddenUsers, regexHighlightKeywords, regexHighlightUsers;
 
 	/**
-	* Método temporal de migración de valores
-	*/
+	 * Método temporal de migración de valores
+	 */
 	mod.migrateValues = function (callback) {
-		mod.helper.setValue("FAVORITES", mod.helper.getLocalValue("FAVORITES"), function(){
+		mod.helper.setValue("FAVORITES", mod.helper.getLocalValue("FAVORITES"), function () {
 			mod.helper.setValue("HIDDEN_THREADS", mod.helper.getLocalValue("HIDDEN_THREADS"), callback);
 		});
 	};
@@ -212,16 +212,24 @@
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
 
+		unsafeWindow.FilterThreads_importBuddyList = function () {
+			importBuddyList();
+		};
+
+		unsafeWindow.FilterThreads_importIgnoreList = function () {
+			importIgnoreList();
+		};
+		
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
-			createPref({type: 'text', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>'}),
+			createPref({type: 'tags', mapsTo: 'hiddenUsers', caption: 'Ignorar hilos por usuario <b>(separados por comas)</b>', buttons: true, plain: true, button1: '<a href="#" onclick="FilterThreads_importIgnoreList(); return false;" class="btn btn-xs btn-default">Importar de la lista de ignorados</a>'}),
 			createPref({type: 'text', mapsTo: 'hiddenKeywords', caption: 'Ignorar hilos por palabras clave <b>(separadas por comas)</b>'}),
-			createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
+			//createPref({type: 'checkbox', mapsTo: 'hiddenKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'header', caption: 'Resaltar hilos', subCaption: 'Los hilos que contengan cualquiera de estas palabras serán resaltados con los colores selccionados de entre el resto de hilos:'}),
-			createPref({type: 'text', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>'}),
+			createPref({type: 'tags', mapsTo: 'highlightUsers', caption: 'Resaltar hilos por usuario <b>(separados por comas)</b>', buttons: true, plain: true, button1: '<a href="#" onclick="FilterThreads_importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			createPref({type: 'text', mapsTo: 'highlightKeywords', caption: 'Resaltar hilos por palabras clave <b>(separadas por comas)</b>'}),
-			createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
+			//createPref({type: 'checkbox', mapsTo: 'highlightKeywordsIsRegex', caption: '<b>Avanzado:</b> Usar expresión regular en las palabras clave'}),
 			createPref({type: 'color', mapsTo: 'highlightColor', caption: 'Color', subCaption: 'El color de fondo para los hilos resaltados. Por defecto <span class="badge">' + mod.initialPreferences.highlightColor + '</span>'}),
 			createPref({type: 'checkbox', mapsTo: 'highlightBorderOnly', caption: 'Aplicar color solo al borde izquierdo'}),
 			createPref({type: 'header', caption: 'Hilos favoritos', subCaption: 'Mostrará un icono al lado de cada hilo para marcarlo como favorito. Los hilos favoritos destacarán entre los demás cuando el usuario entre a algún subforo:'}),
@@ -230,7 +238,7 @@
 		];
 	};
 
-	mod.onShurbarClick = function() {
+	mod.onShurbarClick = function () {
 		if (favorites == undefined)
 			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
 
@@ -259,7 +267,8 @@
 				defaultSection = $("#shurscript-favs .collapse").first();
 			}
 			defaultSection.collapse('show');
-		} catch (e){}
+		} catch (e) {
+		}
 
 		//para cada hilo favorito:
 		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
@@ -277,9 +286,9 @@
 				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
 				$sectionTable.append(favorites.getFavHTML(fav));
 				//evento click al borrar hilo
-				$sectionTable.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+				$sectionTable.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
 					var threadID = $(this).attr('id');
-					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function(res) {
+					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
 						if (res) {
 							bootbox.hideAll();
 							mod.favRemove(threadID);
@@ -293,8 +302,8 @@
 		if (!favorites.favs.length) {
 			modal.find('.modal-body').css('text-align', 'center');
 			modal.find('.modal-body').html('<span style="color: gray; font-size: 14pt; display: inline-block; font-weight: 200; margin-bottom: 10px;">'
-			+ 'Todav&iacute;a no has a&ntilde;adido ning&uacute;n hilo como favorito :('
-			+ '</span><img src="' + SHURSCRIPT.config.imagesURL + 'howtofav.gif' + '">');
+				+ 'Todav&iacute;a no has a&ntilde;adido ning&uacute;n hilo como favorito :('
+				+ '</span><img src="' + SHURSCRIPT.config.imagesURL + 'howtofav.gif' + '">');
 		}
 
 		modal.on('hidden.bs.modal', function () {
@@ -308,10 +317,10 @@
 		$('.modal-backdrop').css('z-index', 999);
 	};
 
-	mod.favPopulated = function(fav) {
+	mod.favPopulated = function (fav) {
 		//mostramos sus datos en el desplegable si es que existe
 		var modal = $('#shurscript-favs');
-		if (modal.length>0) { //modal still exists
+		if (modal.length > 0) { //modal still exists
 			//puede que la seccion exista, o puede que no
 			var $sectionElement = $('#shurscript-favs-section-' + fav.section.id);
 			if ($sectionElement.length <= 0) {
@@ -323,9 +332,9 @@
 			//metemos el hilo en su seccion
 			$sectionElement.find('table').append(favorites.getFavHTML(fav));
 			//evento click al borrar hilo
-			$sectionElement.find('#shurscript-fav-'+fav.id+' a#'+fav.id).click(function() {
+			$sectionElement.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
 				var threadID = $(this).attr('id');
-				bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function(res) {
+				bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
 					if (res) {
 						bootbox.hideAll();
 						mod.favRemove(threadID);
@@ -335,14 +344,14 @@
 		}
 	};
 
-	mod.favRemove = function(id) {
+	mod.favRemove = function (id) {
 		id = parseInt(id); //importante, el favorites.remove no funciona igual con strings
 		favorites.remove(id);
 		saveFavorites();
-		$('#shurscript-fav-'+id).remove();
+		$('#shurscript-fav-' + id).remove();
 	};
 
-	mod.shurbarIcon = function() {
+	mod.shurbarIcon = function () {
 		return {
 			name: 'Hilos favoritos',
 			description: 'Ver la lista de todos tus hilos favoritos',
@@ -481,7 +490,7 @@
 					is_favorite = true;
 					//agregamos a favoritos
 					favorites.add(t_id);
-					favorites.populateAndSave({'id':t_id});
+					favorites.populateAndSave({'id': t_id});
 					//agregamos el class
 					$(".shur_estrella a").each(function () {
 						$(this).addClass('fav')
@@ -655,7 +664,7 @@
 
 	function markAsFavorite(hilo) {
 		favorites.add(hilo.id);
-		favorites.populateAndSave({'id':hilo.id});
+		favorites.populateAndSave({'id': hilo.id});
 		$(hilo.row).addClass("favorite");
 		hilo.isFavorite = true;
 	}
@@ -904,5 +913,107 @@
 		if (index > -1) {
 			array.splice(index, 1);
 		}
+	}
+
+	function importBuddyList() {
+		var xmlhttp = new XMLHttpRequest();
+
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+				var html = xmlhttp.responseText;
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(html, "text/html");
+
+				var elems = doc.getElementById("buddylist").getElementsByTagName("a");
+				var contacts = [];
+
+				for (var i = 0, n = elems.length; i < n; i++) {
+					contacts.push(elems[i].textContent);
+				}
+				
+				var newContactsList = contacts.join(', ');
+				var oldContactsList = $("input[data-maps-to='highlightUsers']").tokenfield('getTokensList', ',');
+
+				if (contacts.length > 0) { // Si se han obtenido contactos de la importación
+					if (oldContactsList) { // hay algo ya definido en el campo
+						if (newContactsList !== oldContactsList) { // y la lista es diferente
+							bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+									"<a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a>.</p>" +
+									"<p>¿Desea continuar?</p>",
+								function (result) {
+									if (result) {
+										$("input[data-maps-to='highlightUsers']").tokenfield('setTokens', newContactsList); // sobreescribe con la nueva lista
+									}
+								}
+							);
+						} else { // y la lista es igual a la anterior
+							bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> " +
+								"desde la última importación. Realiza cambios en tus contactos antes de volver a intentarlo.");
+						}
+					} else {					
+						$("input[data-maps-to='highlightUsers']").tokenfield('setTokens', newContactsList);
+					}
+				} else { // en caso contrario, avisa al usuario de que no existen contactos
+					bootbox.alert("Tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> está vacía. " +
+						"Para resaltar los mensajes de tus contactos... ¡primero añade algunos!");
+				}
+			}
+		};
+
+		xmlhttp.open("GET", "/foro/profile.php?do=buddylist", true);
+		xmlhttp.send();
+	}
+
+	function importIgnoreList() {
+		var xmlhttp = new XMLHttpRequest();
+		
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+				var html = xmlhttp.responseText;
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(html, "text/html");
+
+				var ignoreListElem = doc.getElementById("ignorelist"); // Si no hay nadie en ignorados este elemento no existe
+				
+				if (ignoreListElem) {
+					var elems = ignoreListElem.getElementsByTagName("a");
+					var ignoredUsers = [];
+
+					for (var i = 0, n = elems.length; i < n; i++) {
+						ignoredUsers.push(elems[i].textContent);
+					}
+					
+					var newIgnoredList = ignoredUsers.join(', ');
+					var oldIgnoredList = $("input[data-maps-to='hiddenUsers']").tokenfield('getTokensList', ',');
+
+					if (ignoredUsers.length > 0) { // Si se han obtenido ignorados de la importación
+						if (oldIgnoredList) { // hay algo ya definido en el campo
+							if (newIgnoredList !== oldIgnoredList) { // y la lista es diferente
+								bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+										"<a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a>.</p>" +
+										"<p>¿Desea continuar?</p>",
+									function (result) {
+										if (result) {
+											$("input[data-maps-to='hiddenUsers']").tokenfield('setTokens', newIgnoredList); // sobreescribe con la nueva lista
+										}
+									}
+								);
+							} else { // y la lista es igual a la anterior
+								bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a> " +
+									"desde la última importación. Realiza cambios en tus ignorados antes de volver a intentarlo.");
+							}
+						} else {
+							$("input[data-maps-to='hiddenUsers']").tokenfield('setTokens', newIgnoredList);
+						}
+					}
+				} else { // en caso contrario, avisa al usuario de que no existen ignorados
+					bootbox.alert("Tu <a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a> está vacía. " +
+						"Para ocultar los posts de tus usuarios ignorados... ¡primero ignora a alguien!");
+				}
+			}
+		};
+
+		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist", true);
+		xmlhttp.send();
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

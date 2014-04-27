@@ -48,33 +48,33 @@
 				data: "",
 				dataType: 'json'
 			})
-			.done(function (data) {
-				Cloud.preferences = data;
-				callback();
-			})
-			.fail(function(error){
-				switch (error.status) {
-					case 403: //API Key no encontrada
-						bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function(res){
-							if (res) {
-								Cloud.generateApiKey(function () {
-									Cloud.getAll(callback);
-								});
-							}
-						});
-					break;
-					case 410: //API Key invalidada
-						sync.helper.deleteLocalValue("API_KEY");
-						Cloud.apiKey = getApiKey();
-						Cloud.getAll(callback);
-					break;
-					case 500: //Error general
-					default:
-						sync.helper.showMessageBar({message: "<strong>Oops...</strong> No se ha podido contactar con el cloud de <strong>shurscript</strong>. Consulta que puede estar causando este problema en <a href='https://github.com/TheBronx/shurscript/wiki/FAQ#no-se-ha-podido-contactar-con-el-cloud-de-shurscript'>las F.A.Q.</a> y si el problema persiste, deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>. <strong>{err: general}</strong>", type: "danger"});
-					break;
-				}
-                sync.helper.throw("Error al recuperar las preferencias", error)
-			});
+				.done(function (data) {
+					Cloud.preferences = data;
+					callback();
+				})
+				.fail(function (error) {
+					switch (error.status) {
+						case 403: //API Key no encontrada
+							bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function (res) {
+								if (res) {
+									Cloud.generateApiKey(function () {
+										Cloud.getAll(callback);
+									});
+								}
+							});
+							break;
+						case 410: //API Key invalidada
+							sync.helper.deleteLocalValue("API_KEY");
+							Cloud.apiKey = getApiKey();
+							Cloud.getAll(callback);
+							break;
+						case 500: //Error general
+						default:
+							sync.helper.showMessageBar({message: "<strong>Oops...</strong> No se ha podido contactar con el cloud de <strong>shurscript</strong>. Consulta que puede estar causando este problema en <a href='https://github.com/TheBronx/shurscript/wiki/FAQ#no-se-ha-podido-contactar-con-el-cloud-de-shurscript'>las F.A.Q.</a> y si el problema persiste, deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>. <strong>{err: general}</strong>", type: "danger"});
+							break;
+					}
+					sync.helper.throw("Error al recuperar las preferencias", error)
+				});
 		},
 
 		deleteValue: function (key, callback) {
@@ -92,11 +92,11 @@
 				data: "",
 				dataType: 'json'
 			}).done(function (data) {
-					sync.helper.log("Generated API Key:" + JSON.stringify(data));
-					Cloud.apiKey = data.apikey;
-					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
-					callback();
-				});
+				sync.helper.log("Generated API Key:" + JSON.stringify(data));
+				Cloud.apiKey = data.apikey;
+				saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
+				callback();
+			});
 		}
 	};
 
@@ -135,9 +135,9 @@
 	};
 
 	/**
-	* Genera una nueva API key e invalida la antigua
-	*/
-	sync.generateNewApiKey = function(callback) {
+	 * Genera una nueva API key e invalida la antigua
+	 */
+	sync.generateNewApiKey = function (callback) {
 		Cloud.generateApiKey(callback, getApiKey()); //Le pasamos la antigua para que la invalide
 	};
 

@@ -14,6 +14,7 @@
 				<li class="active"><a href="#tab-pref" data-toggle="tab">Preferencias</a></li>
 				<li><a href="#tab-about" data-toggle="tab">Acerca de</a></li>
 				<li><a href="#tab-collaborate" data-toggle="tab">Colabora</a></li>
+				<li><a href="#tab-help" data-toggle="tab">Ayuda</a></li>
 				<li><a href="#tab-debug" data-toggle="tab">Reportar fallo</a></li>
 			</ul>
 
@@ -26,23 +27,23 @@
 					<!-- Grupo opciones modulo -->
 					<div data-module-id="<%=module.id%>" class="panel shur-module-preferences <%=module.preferences.enabled ? '' : 'disabled-module'%>">
 
-						<div class="panel-heading row-fluid">
-							<input class="shur-module-enabled" type="checkbox" <%=module.preferences.enabled ? 'checked' : ''%>>
-							<h3 class="panel-title"><%=module.name%></h3>
+					<div class="panel-body shur-panel-body">
+						<div class="shur-panel-options">
+							<label class="shur-module">
+								<input class="shur-module-enabled" type="checkbox" <%=module.preferences.enabled ? 'checked' : ''%>>
+								<div><div></div></div>
+							</label>
 							<% if (module.options.length > 0) { %>
-							<button data-toggle="button"
-							class="btn btn-default btn-sm pull-right shur-btn-options">
-							Opciones
-						</button>
-						<% } %>
-					</div>
-
-					<div class="panel-body" <%=module.preferences.enabled ? '' : 'style="display: none;"'%>>
-						<p><%=module.description%></p>
+								<a class="shur-btn-options" data-toggle="tooltip" data-placement="bottom" title="Opciones">
+									<img src="http://static.shurscript.org/img/cog.png">
+								</a>
+							<% } %>
+						</div>
+						<h3 class="panel-title"><%=module.name%></h3>
+						<p class="module-description"><%=module.description%></p>
 					</div>
 
 					<div class="shur-options-body" style="display: none;">
-						<hr style="margin:0">
 
 						<div class="panel-body">
 							<!-- Loop sobre las opciones del modulo (si hay) -->
@@ -51,8 +52,10 @@
 							<% if (option.type === 'checkbox') { %>
 							<div class="shur-checkbox-group shur-option">
 
-								<input data-maps-to="<%=option.mapsTo%>" type="checkbox"
-								<%=module.preferences[option.mapsTo] ? 'checked' : ''%>>
+								<label class="shur-checkbox">
+									<input data-maps-to="<%=option.mapsTo%>" type="checkbox" <%=module.preferences[option.mapsTo] ? 'checked' : ''%>>
+									<div><div></div></div>
+								</label>
 
 								<label><%=option.caption%></label>
 
@@ -93,6 +96,29 @@
 								<% if (option.subCaption) { %>
 								<span class="shur-sub-label"><%=option.subCaption%></span>
 								<% } %>
+							</div>
+							
+							<% } else if (option.type === 'tags') { %>
+							<div class="shur-tags-group shur-option">
+								<label><%=option.caption%></label>
+								<input type="text"
+								class="form-control"
+								data-maps-to="<%=option.mapsTo%>"
+								value="<%=module.preferences[option.mapsTo]%>">
+								<% if (option.subCaption) { %>
+								<span class="shur-sub-label"><%=option.subCaption%></span>
+								<% } %>
+								<% if (option.buttons) { %>
+								<span class="shur-sub-button">
+									<% if (option.button1) {%><%=option.button1%><% } %>
+									<% if (option.button2) {%><%=option.button2%><% } %>
+									<% if (option.button3) {%><%=option.button3%><% } %>
+									<% if (option.plain) {%>
+										<a href="#" onclick="viewPlainText(this); return false;" mapsTo="<%=option.mapsTo%>" class="btn btn-xs btn-default">Ver en plano</a>
+									<% } %>
+								</span>
+								<% } %>
+								
 							</div>
 
 							<% } else if (option.type === 'header') { %>
@@ -178,6 +204,31 @@
 				<center><h5>¡Muchas gracias!</h5></center>
 			</div>
 			
+			<!-- Pestaña de Ayuda -->
+			<div class="modal-body tab-pane" id="tab-help" style="overflow: auto;">
+				<div style="padding: 0 15px;">
+					<div class="panel panel-default" id="shur-faq">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								F.A.Q (Preguntas más frecuentes)
+							</h3>
+						</div>
+						<div id="faq" class="panel-collapse collapse in">
+							<div class="panel-body">
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Hilo oficial en ForoCoches
+								<a data-toggle="collapse" href="http://shurscript.org/hilo" style="margin-left:15px;" class="btn btn-default btn-sm">Ir</a>
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Pestaña de Reportar fallo -->
 			<div class="modal-body tab-pane" id="tab-debug" style="overflow: auto;">
 				<form role="form" method="post" id="debug-form">
@@ -193,6 +244,7 @@
 									<div class="form-group">
 										<label for="debug-user">Usuario</label>
 										<input type="text" name="debug-user" class="form-control" id="debug-user" value="<%=userDebug%>" readonly/>
+										<input type="hidden" name="debug-userid" class="form-control" id="debug-userid" value="<%=userIdDebug%>" readonly/>
 									</div>
 								</div>
 								<div class="col-xs-9">
@@ -264,7 +316,7 @@
 			<div class="col-xs-6 left">
 				<a href="http://bit.ly/1pbuV65" target="_blank"><img src="http://shurscript.org/img/partner_do.png"/></a>
 				<a href="http://bit.ly/1nDZOow" target="_blank"><img src="http://shurscript.org/img/partner_espattio.png"/></a>
-				<p>Espattio <a href="http://shurscript.org/colabora">colabora</a> corriendo con los gastos del hosting y VPS :)</p>
+				<p id="partners">Espattio <a href="http://shurscript.org/colabora">colabora</a> corriendo con los gastos del hosting y VPS :)</p>
 			</div>
 			<div class="col-xs-6 right">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

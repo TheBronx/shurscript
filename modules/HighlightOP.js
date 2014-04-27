@@ -6,7 +6,8 @@
 		name: 'Resaltar ciertos mensajes de un hilo',
 		author: 'Electrosa',
 		version: '1.1',
-		description: 'Resalta tus posts, los posts del creador del hilo y los posts de los usuarios seleccionados.',
+		description: 'Resalta tus mensajes, los mensajes del creador del hilo y los posts de los usuarios que elijas, ' +
+			'para distingirlos mejor mientras navegas por los hilos.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
 			enabled: true,
@@ -23,20 +24,8 @@
 	mod.getPreferenceOptions = function () {
 		var creOpt = mod.helper.createPreferenceOption;
 
-		unsafeWindow.importBuddyListWarning = function () {
-			if (mod.preferences.contacts.length !== 0) {
-				bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
-						"<a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a>.</p>" +
-						"<p>¿Desea continuar?</p>",
-					function (result) {
-						if (result) {
-							importBuddyList();
-						}
-					}
-				);
-			} else {
-				importBuddyList();
-			}
+		unsafeWindow.importBuddyList = function () {
+			importBuddyList();
 		};
 
 		return [
@@ -44,7 +33,7 @@
 			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
 			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
-			creOpt({type: 'text', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios, separados por comas [<a href="#" onclick="importBuddyListWarning(); return false;">Importar de la lista de contactos…</a>]:'}),
+			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
 	};
@@ -193,10 +182,33 @@
 				for (var i = 0, n = elems.length; i < n; i++) {
 					contacts.push(elems[i].textContent);
 				}
+				
+				var newContactsList = contacts.join(', ');
+				var oldContactsList = $("input[data-maps-to='contacts']").tokenfield('getTokensList', ',');
 
-				// Update textbox contents and mark module as modified
-				document.querySelector("input[data-maps-to='contacts']").value = contacts.join(', ');
-				document.querySelector("div[data-module-id='HighlightOP']").classList.add('changed');
+				if (contacts.length > 0) { // Si se han obtenido contactos de la importación
+					if (oldContactsList) { // hay algo ya definido en el campo
+						if (newContactsList !== oldContactsList) { // y la lista es diferente
+							bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+									"<a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a>.</p>" +
+									"<p>¿Desea continuar?</p>",
+								function (result) {
+									if (result) {
+										$("input[data-maps-to='contacts']").tokenfield('setTokens', newContactsList); // sobreescribe con la nueva lista
+									}
+								}
+							);
+						} else { // y la lista es igual a la anterior
+							bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> " +
+								"desde la última importación. Realiza cambios en tus contactos antes de volver a intentarlo.");
+						}
+					} else {					
+						$("input[data-maps-to='contacts']").tokenfield('setTokens', newContactsList);
+					}
+				} else { // en caso contrario, avisa al usuario de que no existen contactos
+					bootbox.alert("Tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> está vacía. " +
+						"Para resaltar los mensajes de tus contactos... ¡primero añade algunos!");
+				}
 			}
 		};
 

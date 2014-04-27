@@ -11,7 +11,7 @@
 		/*'<img id="shurbar-roto2" src="http://cdn.forocoches.com/foro/images/smilies/goofy.gif" style="display:inline; padding:7px; cursor:pointer;border-left: 1px dashed #dfdfdf;"/>' +*/
 		'</div></div>';
 	var icons = [];
-	var Icon = function(moduleId, name, description, image, handler) {
+	var Icon = function (moduleId, name, description, image, handler) {
 		this.moduleId = moduleId;
 		this.name = name;
 		this.description = description;
@@ -21,9 +21,9 @@
 	var isHidden = true;
 
 	/**
-	* Se llama cuando un módulo empieza a cargarse
-	*/
-	function loadingModule (event, module) {
+	 * Se llama cuando un módulo empieza a cargarse
+	 */
+	function loadingModule(event, module) {
 		if (!module.preferences.enabled) {
 			return;
 		}
@@ -32,25 +32,25 @@
 	}
 
 	/**
-	* Se llama cuando un componente empieza a cargarse
-	*/
-	function loadingComponent (event, component) {
+	 * Se llama cuando un componente empieza a cargarse
+	 */
+	function loadingComponent(event, component) {
 		checkAndAddIcons(component);
 	}
 
 	/**
-	* Comprueba si el módulo o el componente tiene algo que añadir a la shurbar y si es así, lo añade.
-	*/
+	 * Comprueba si el módulo o el componente tiene algo que añadir a la shurbar y si es así, lo añade.
+	 */
 	function checkAndAddIcons(moduleOrComponent) {
-		if('undefined' !== typeof moduleOrComponent.shurbarIcon) {	
+		if ('undefined' !== typeof moduleOrComponent.shurbarIcon) {
 			addIcons(moduleOrComponent.shurbarIcon(), moduleOrComponent);
 		}
 	}
 
 	/**
-	* Añadir iconos a la lista que más tarde se añadirá la barra
-	*/
-	function addIcons (iconData, module) {
+	 * Añadir iconos a la lista que más tarde se añadirá la barra
+	 */
+	function addIcons(iconData, module) {
 		if (!$.isArray(iconData)) { //Convertirlo en array para reutilizar el bucle
 			iconData = [iconData];
 		}
@@ -61,20 +61,20 @@
 	}
 
 	/**
-	* Añade todos los iconos a la barra definitivamente (cuando ya se han cargado todos los módulos)
-	*/
-	function updateBar () {
+	 * Añade todos los iconos a la barra definitivamente (cuando ya se han cargado todos los módulos)
+	 */
+	function updateBar() {
 		icons.forEach(function (icon) {
 			$('<li class="shurbar-item" id="' + icon.name + '" data-placement="top" data-toggle="tooltip" title="' + icon.description + '"><img src="' + icon.image + '"/><a href="#">' + icon.name + '</a></li>')
-			.prependTo($('#shurbar ul.shurbar-items'))
-			.click(icon.handler).tooltip({delay: 300});
+				.prependTo($('#shurbar ul.shurbar-items'))
+				.click(icon.handler).tooltip({delay: 300});
 		});
 	}
 
 	/**
-	* Punto de entrada del componente
-	*/
-	shurbar.load = function() {
+	 * Punto de entrada del componente
+	 */
+	shurbar.load = function () {
 
 		shurbar.helper.addStyle('shurbarcss');
 
