@@ -5,7 +5,7 @@
 		id: 'ThreadUpdater',
 		name: 'Actualiza las nuevas respuestas de un hilo.',
 		author: 'Electrosa',
-		version: '0.1-alpha-3',
+		version: '0.1',
 		description: 'Dentro de un hilo, se añadirán nuevas respuestas automáticamente sin necesidad de recargar la página.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
@@ -100,7 +100,7 @@
 				// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
 				if (ajax.responseXML.children[0].nodeName === "postbits") {
 					// mirar número de respuestas ahora
-					numPostsBefore = document.getElementById("posts").children.length - 1;
+					numPostsBefore += ajax.responseXML.children[0].children.length - 1;
 
 					// activar el timeout de nuevo
 					createTimeout();
