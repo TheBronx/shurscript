@@ -1,5 +1,9 @@
-.disabled-module .btn, .disabled-module .shur-options-body {
-    display: none !important;
+.prefs-open {
+	overflow: hidden
+}
+
+.disabled-module .shur-btn-options, .disabled-module .shur-options-body {
+    visibility: hidden !important;
 }
 
 #shurscript-settings-window, #shurscript-settings-window .panel {
@@ -22,32 +26,73 @@
     font-size: 15px !important;
 }
 
+p#partners {margin-bottom: -5px;}
+
 .modal-backdrop {
     z-index: 1010;
 }
 
-.shur-module-enabled {
-    float: right;
+.shurscript .modal-footer {
+	margin-top: 0px;
 }
 
 .shur-btn-options {
-    float:right;
-    margin: -23px 24px !important;
+	cursor: pointer;
+	position: relative;
+	top: 13px;
+	right: 30px;
+	opacity: 0.4;
+}
+
+.shur-panel-body p.module-description {
+	color: #797979;
+}
+
+.shur-btn-options:hover {
+    opacity: 1;
+}
+
+.shur-checkbox {
+	display: table-cell !important;
+	vertical-align: middle;
+	width: 40px;
+}
+
+.shur-panel-body {
+	padding-right: 20px !important;
+	display: table;
+}
+
+.shur-panel-options{
+	vertical-align: middle;
+	display: table-cell;
+	width: 80px;
+	padding-left: 10px;
 }
 
 .shur-sub-label {
     color: gray;
 }
 
-.shur-radio-element {
-    margin-left: 20px;
+.shur-sub-button {
+    display: block;
+    margin-top: 3px;
+    text-align: right;
 }
 
-.shur-radio-element label, .shur-checkbox-group label {
-    display: inline;
-    margin-bottom: 0;
-    font-weight: normal;
-    cursor: pointer;
+.shur-tags-group .tokenfield {
+	height: auto;
+	max-height: 70px;
+	overflow-y: auto;
+}
+
+.shur-tags-group .token-input {
+	margin-top: 2px;
+	margin-bottom: 0px !important;
+}
+
+.shur-tags-group .token {
+	margin: 2px 5px 3px 0px !important;
 }
 
 .label.branch-exp {
@@ -80,4 +125,141 @@
 
 #tab-collaborate h4 {
     margin-top: 20px;
+}
+
+/*
+ * checkbox
+*/
+
+.shur-checkbox-group {
+	display: table;
+	padding: 5px;
+}
+
+input[type="checkbox"].shur-module-enabled, .shur-option input[type="checkbox"] { 
+	position: absolute;
+	opacity: 0;
+}
+
+input[type="checkbox"].shur-module-enabled + div, .shur-option input[type="checkbox"] + div {
+	vertical-align: middle;
+	width: 40px;
+	height: 20px;
+	border: 1px solid rgba(0,0,0,.4);
+	border-radius: 999px;
+	background-color: rgba(0, 0, 0, 0.1);
+	-webkit-transition-duration: .4s;
+	-webkit-transition-property: background-color, box-shadow;
+	box-shadow: inset 0 0 0 0px rgba(0,0,0,0.4);
+}
+
+.shur-option input[type="checkbox"] + div {
+	width: 25px;
+	height: 15px;
+}
+
+input[type="checkbox"].shur-module-enabled:checked + div, .shur-option input[type="checkbox"]:checked + div {
+	background-color: #428BCA;
+	border: 1px solid #357EBD;
+	box-shadow: inset 0 0 0 10px #428BCA;
+}
+
+input[type="checkbox"].shur-module-enabled + div > div, .shur-option input[type="checkbox"] + div > div {
+	float: left;
+	width: 18px;
+	height: 18px;
+	border-radius: inherit;
+	background: #ffffff;
+	-webkit-transition-timing-function: cubic-bezier(.54,1.85,.5,1);
+	-webkit-transition-duration: 0.4s;
+	-webkit-transition-property: transform, background-color, box-shadow;
+	-moz-transition-timing-function: cubic-bezier(.54,1.85,.5,1);
+	-moz-transition-duration: 0.4s;
+	-moz-transition-property: transform, background-color;
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0px 0px 0 1px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+}
+
+.shur-option input[type="checkbox"] + div > div {
+	width: 13px;
+	height: 13px;
+}
+
+input[type="checkbox"].shur-module-enabled:checked + div > div, .shur-option input[type="checkbox"]:checked + div > div {
+	-webkit-transform: translate3d(20px, 0, 0);
+  -moz-transform: translate3d(20px, 0, 0);
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0px 0px 0 1px #195C96;
+}
+
+.shur-option input[type="checkbox"]:checked + div > div {
+	-webkit-transform: translate3d(10px, 0, 0);
+  -moz-transform: translate3d(10px, 0, 0);
+}
+
+/*
+ * radio
+*/
+.shur-radio-element {
+	margin-left: 10px;
+	line-height: 30px;
+}
+
+.shur-radio-element label, .shur-checkbox-group label {
+    display: inline;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.iradio_square-blue {
+    display: inline-block;
+    *display: inline;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    background: url(http://static.shurscript.org/img/blue.png) no-repeat;
+    border: none;
+    cursor: pointer;
+}
+
+.iradio_square-blue {
+    background-position: -120px 0;
+	margin-right: 10px;
+	margin-top: -3px;
+}
+
+.iradio_square-blue.hover {
+    background-position: -144px 0;
+}
+
+.iradio_square-blue.checked {
+    background-position: -168px 0;
+}
+
+.iradio_square-blue.disabled {
+    background-position: -192px 0;
+    cursor: default;
+}
+
+.iradio_square-blue.checked.disabled {
+    background-position: -216px 0;
+}
+    
+/*
+ * FAQ
+*/
+
+.markdown-body h1 {
+	font-size: 21px;
+}
+
+.markdown-body h2 {
+	font-size: 16px;
+}
+
+.markdown-body ul {
+	margin-bottom: 25px;
 }
