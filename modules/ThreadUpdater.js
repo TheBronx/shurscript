@@ -3,13 +3,15 @@
 
 	var mod = createModule({
 		id: 'ThreadUpdater',
-		name: 'Actualiza las nuevas respuestas de un hilo.',
+		name: 'Actualiza las nuevas respuestas de un hilo',
 		author: 'Electrosa',
 		version: '0.1',
 		description: 'Dentro de un hilo, se añadirán nuevas respuestas automáticamente sin necesidad de recargar la página.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
-			enabled: false// versión preliminar, la dejo desactivada por defecto
+			enabled: true,
+			activeTabPeriodicity: 10000,
+			hiddenTabPeriodicity: 30000
 		},
 		preferences: {}
 	});
@@ -18,15 +20,33 @@
 		var creOpt = mod.helper.createPreferenceOption;
 
 		return [
+			creOpt({
+				type: 'radio',
+				elements: [
+					{value: 5000, caption: 'Cada 5 segundos.'},
+					{value: 10000, caption: 'Cada 10 segundos.'},
+					{value: 30000, caption: 'Cada 30 segundos.'}
+				],
+				caption: 'Si la pestaña está en primer plano, buscar nuevas respuestas:',
+				mapsTo: 'activeTabPeriodicity'
+			}),
+			creOpt({
+				type: 'radio',
+				elements: [
+					{value: 10000, caption: 'Cada 10 segundos.'},
+					{value: 30000, caption: 'Cada 30 segundos.'},
+					{value: 60000, caption: 'Cada minuto.'},
+					{value: 'off', caption: 'No buscar nuevas respuestas.', subCaption: 'Al entrar en la pestaña se buscarán nuevas respuestas.'}
+				],
+				caption: 'Si la pestaña no está en primer plano, buscar nuevas respuestas:',
+				mapsTo: 'hiddenTabPeriodicity'
+			})
 		];
 	};
 
 	mod.normalStartCheck = function () {
 		return true;
 	};
-
-	const timeoutTabActive = 10000;
-	const timeoutTabHidden = 30000;
 
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var isLastPage;// ¿estamos en la última página del hilo?
@@ -68,11 +88,28 @@
 			/* Añadir evento para saber cuándo la pestaña adquiere el foco */
 			document.addEventListener("visibilitychange", function () {
 				var timeNow = +new Date();
+				var remaining = timeoutTime - (+new Date());// tiempo restante para el timeout
 
-				// al mostrar la página, si quedan más de 5 segundos para el timeout, cancelarlo y ejecutar la petición ya
-				if (! document.hidden && timeoutId && timeNow + 5000 < timeoutTime) {
-					stopTimeout();
-					loadThread();
+				var timeoutActive = stopTimeout();
+
+				if (document.hidden) {
+					// si no está desactivado, crear el timeout con el nuevo tiempo, teniendo en cuenta que ahora la pestaña está oculta
+					if (mod.preferences.hiddenTabPeriodicity !== 'off') {
+						// comprobar si hay un timeout activo, en caso contrario no crear otro
+						if (timeoutActive) {
+							createTimeout(mod.preferences.hiddenTabPeriodicity - mod.preferences.activeTabPeriodicity + remaining);
+						}
+					}
+				} else {
+					if (mod.preferences.hiddenTabPeriodicity !== 'off' && remaining > mod.preferences.activeTabPeriodicity) {
+						// comprobar si hay un timeout activo, en caso contrario no crear otro
+						if (timeoutActive) {
+							createTimeout(mod.preferences.activeTabPeriodicity - mod.preferences.hiddenTabPeriodicity + remaining);
+						}
+					} else {
+						// cargar el hilo ya
+						loadThread();
+					}
 				}
 			});
 
@@ -106,28 +143,52 @@
 					createTimeout();
 				} else {
 					// si ha habido un error vuelve a mostrar el aviso
-					createTimeout(1500);
+					loadThread();
 				}
 			};
 		}
 	};
 
+	/**
+	 * Crea un timeout para que ejecute la comprobación de nuevas respuestas tras el tiempo que se especifique.
+	 * @param {int} interval (opcional) Tiempo en milisegundos que se esperará hasta ejecutar la función.
+	 *                                  Si no se especifica, se calculará el tiempo en función de las preferencias del usuario.
+	 * @return {int} El id del timeout o <code>null</code> si no se ha creado.
+	 */
 	function createTimeout(interval) {
 		if (! interval) {
-			interval = document.hidden ? timeoutTabHidden : timeoutTabActive;
+			if (document.hidden) {
+				if (mod.preferences.hiddenTabPeriodicity === 'off') {
+					return null;
+				} else {
+					interval = parseInt(mod.preferences.hiddenTabPeriodicity);
+				}
+			} else {
+				interval = parseInt(mod.preferences.activeTabPeriodicity);
+			}
 		}
 
 		timeoutId = setTimeout(loadThread, interval);
 		timeoutTime = +new Date() + interval;
+
+		return timeoutId;
 	}
 
+	/**
+	 * @return {bool} Si había un timeout activo o no.
+	 */
 	function stopTimeout() {
+		var timeoutActive = false;
+
 		if (timeoutId) {
 			clearTimeout(timeoutId);
+			timeoutActive = true;
 		}
 
 		timeoutId = null;
 		timeoutTime = null;
+
+		return timeoutActive;
 	}
 
 	function loadThread() {
@@ -145,8 +206,6 @@
 					var numPostsPrevious = posts.length;
 					var isLastPagePrevious = isLastPage;
 
-					//posts = doc.getElementById("posts").children;
-					//var numPostsAfter = posts.length - 1;// en #posts, hay un div#lastpost que no nos interesa contar
 					posts = doc.querySelectorAll("#posts > div[align]");
 					var numPostsAfter = posts.length;
 					isLastPage = doc.getElementsByClassName("pagenav").length
