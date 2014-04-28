@@ -294,6 +294,7 @@
 										className: "btn-default",
 										callback: function () {
 											markAsRead(cita);
+											populateNotificationsBox(arrayQuotes);
 										}
 									},
 									{
@@ -315,6 +316,7 @@
 										callback: function () {
 											markAsRead(cita, function () {
 												openQuote(cita, "_blank");
+												populateNotificationsBox(arrayQuotes);
 											});
 										}
 									}
@@ -497,7 +499,6 @@
 		//TO-DO: Cuando las preferencias se guarden en local y no necesitemos esperar al callback del servidor, quitar todo este lio y usar el evento de click nativo
 		row.on('mouseup', '.postLink', function (e) {
 			if (e.which !== 3 && !cita.read) { //No es botón derecho y la cita no está leída
-				$(this).parent().parent().addClass("read");
 				markAsRead(cita, function () {
 					if (e.which === 1 && !e.ctrlKey && !e.metaKey) { //Solo clic izquierdo. Si es el botón central o Ctrl o Command están pulsados se abrirá nativamente en nueva pestaña
 						openQuote(cita, '_self');
@@ -505,6 +506,8 @@
 				});
 			}
 		});
+
+		cita.row = row;
 
 		notificationsList.append(row);
 	}
@@ -516,7 +519,8 @@
 		lastQuotesJSON = JSON.stringify(arrayQuotes);
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 
-		populateNotificationsBox(arrayQuotes);
+		setNotificationsCount(notificationsCount - 1);
+		cita.row.addClass("read");
 	}
 
 	function openQuote(cita, target) {
