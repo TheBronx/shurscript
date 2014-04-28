@@ -97,7 +97,7 @@
 		});
 		
 		$modal.find('.shur-btn-options').tooltip({delay: 100});
-		$modal.find('.shur-radio-element').iCheck({radioClass: 'iradio_square-blue'});
+		$modal.find('.shur-radio-element').icheck({radioClass: 'iradio_square-blue'});
 
 		// Evento guardar
 		$modal.on('click', '#save-settings', function () {
