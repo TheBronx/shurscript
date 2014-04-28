@@ -100,7 +100,8 @@
 
 		this.populateAndSave = function (fav, callback) {
 			$.ajax({
-				url: "/foro/showthread.php?t=" + fav.id
+				url: "/foro/showthread.php?t=" + fav.id,
+				dataType: 'text'
 			}).done(function (result) {
 				var title = $(result).find('div.page td.thead span.cmega').html();
 				title = title.replace("<!-- google_ad_section_start -->", "");
