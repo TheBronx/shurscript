@@ -116,7 +116,7 @@
 		SHURSCRIPT.eventbus.on('loadingModule', loadingModule);
 
 		//Cuando se carguen todos los módulos, pintamos la barra
-		SHURSCRIPT.eventbus.one('allModulesLoaded', function () {
+		SHURSCRIPT.eventbus.on('allModulesLoaded', function () {
 			updateBar();
 		});
 	};

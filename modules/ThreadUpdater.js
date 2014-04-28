@@ -285,6 +285,9 @@
 			unsafeWindow.vbmenu_register("postmenu_" + postId, true);// TODO - echarle un ojo a unsafeWindow.parseScript
 		}
 
+		// disparar evento para avisar de nuevos posts
+		SHURSCRIPT.eventbus.trigger('newposts', numPostsBefore);
+
 		// actualizar variable para respuesta rápida, determinará el número de posts a cargar la próxima vez
 		unsafeWindow.ajax_last_post = (+new Date()) / 1000;
 

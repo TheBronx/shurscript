@@ -43,24 +43,30 @@
 	};
 
 	var currentThread, currentPage;
+	var op;
 
 	mod.onNormalStart = function () {
 		currentThread = getCurrentThread();
 		currentPage = getCurrentPage();
 
 		if (currentPage == 1) {
-			var op = getOpFrom(document.querySelector("#posts div.page"));
+			op = getOpFrom(document.querySelector("#posts div.page"));
 			sessionStorage["op_" + currentThread] = op;
 
-			highlightOP(op);
+			highlightOP();
 		} else if (currentThread) {// If not in first page, we must load it to get OP's name.
 			// Check if we have the OP's name saved from another time.
 			if (sessionStorage["op_" + currentThread]) {
-				highlightOP(sessionStorage["op_" + currentThread]);
+				op = sessionStorage["op_" + currentThread];
+				highlightOP();
 			} else {
 				loadFirstPage(currentThread);
 			}
 		}
+
+		SHURSCRIPT.eventbus.on('newposts', function (event, firstNewPost) {
+			highlightOP(firstNewPost);
+		});
 	};
 
 	function loadFirstPage(thread) {
@@ -73,9 +79,10 @@
 				var parser = new DOMParser();
 				var doc = parser.parseFromString(html, "text/html");
 
-				var op = getOpFrom(doc.querySelector("#posts div.page"));
+				op = getOpFrom(doc.querySelector("#posts div.page"));
 				sessionStorage["op_" + currentThread] = op;
-				highlightOP(op);
+
+				highlightOP();
 			}
 		};
 
@@ -95,10 +102,14 @@
 		return null;
 	}
 
-	function highlightOP(op) {
-		if (!op) {
+	function highlightOP(firstPost) {
+		if (! op) {
 			console_log("ERROR");
 			return;
+		}
+
+		if (! firstPost) {
+			firstPost = 0;
 		}
 
 		var username = mod.helper.environment.user.name;
@@ -112,7 +123,7 @@
 		// Highlighted posts have "op_post" class
 		var users = document.getElementsByClassName("bigusername");
 
-		for (var i = 0, n = users.length; i < n; i++) {
+		for (var i = firstPost, n = users.length; i < n; i++) {
 			var currentUser = users[i].innerHTML;
 			var node = users[i].parentNode.parentNode.parentNode.parentNode.parentNode
 
@@ -182,7 +193,7 @@
 				for (var i = 0, n = elems.length; i < n; i++) {
 					contacts.push(elems[i].textContent);
 				}
-				
+
 				var newContactsList = contacts.join(', ');
 				var oldContactsList = $("input[data-maps-to='contacts']").tokenfield('getTokensList', ',');
 
@@ -202,7 +213,7 @@
 							bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> " +
 								"desde la última importación. Realiza cambios en tus contactos antes de volver a intentarlo.");
 						}
-					} else {					
+					} else {
 						$("input[data-maps-to='contacts']").tokenfield('setTokens', newContactsList);
 					}
 				} else { // en caso contrario, avisa al usuario de que no existen contactos
