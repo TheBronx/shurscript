@@ -482,6 +482,8 @@
 		notificationsBox.hide();
 	}
 
+	var rows = {};
+
 	function addToNotificationsBox(cita) {
 		$("#noNotificationsMessage").hide();
 
@@ -507,7 +509,7 @@
 			}
 		});
 
-		cita.row = row;
+		rows[cita] = row;
 
 		notificationsList.append(row);
 	}
@@ -520,7 +522,7 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 
 		setNotificationsCount(notificationsCount - 1);
-		cita.row.addClass("read");
+		rows[cita].addClass("read");
 	}
 
 	function openQuote(cita, target) {
