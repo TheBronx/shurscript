@@ -54,7 +54,6 @@
 		$('#threadslist tr').each(function (index) {
 			var thread = new Thread($(this));
 			if (thread.id!=undefined) {
-				console.log("triggering parseThread for thread id: "+thread.id);
 				SHURSCRIPT.eventbus.trigger('parseThread', thread);
 			}
 		});
