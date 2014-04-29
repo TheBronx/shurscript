@@ -1,6 +1,16 @@
 # CHANGELOG
 
-## v0.20.5 `27/04/2014`
+## v0.20.6 `29/04/2014`
+
+**Bugfixes**
+
+* Los hilos no se marcaban como favoritos tras refrescar la ventana
+* Ahora se pueden abrir las citas en pestañas separadas con Ctrl+Click o botón central
+* Arreglado bug que guardaba backup de los mensajes después de haber sido enviados
+
+------------------------------------
+
+### v0.20.5 `27/04/2014`
 
 **Features**
 
@@ -19,8 +29,6 @@
 * El usuario se duplicaba en respuesta avanzada y no notificaba las citas correctamente
 * En la portada, los enlaces de autor e hilo del panel de citas eran relativos y devolvían error 404
 * Si el panel de citas está abierto, al pulsar en el contador, ahora se cierra en vez de permanecer abierto
-* Ahora se pueden abrir las citas en pestañas separadas con Ctrl+Click o botón central
-* Arreglado bug que guardaba backup de los mensajes después de haber sido enviados
 * Pequeños arreglos en módulo de refrescar búsquedas
 * Pequeños arreglos sintácticos en módulo de citas
 
