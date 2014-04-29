@@ -8,9 +8,10 @@
 // @namespace       http://shurscript.es
 // @version         0.21-exp
 // @author          TheBronx
-// @author          xusoO
-// @author          Fritanga
-// @author          juno / ikaros45
+// @author          xusO
+// @author          Fritanga / Korrosivo
+// @author          Juno / ikaros45
+// @author          Electrosa
 // @include         http://www.forocoches.com*
 // @include         http://forocoches.com*
 // @grant           GM_log

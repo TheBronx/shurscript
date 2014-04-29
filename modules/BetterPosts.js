@@ -409,6 +409,7 @@
 		// Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
+				clearTimeout(backupScheduler);
 				mod.helper.deleteValue("POST_BACKUP");
 			});
 		} else {
@@ -417,6 +418,7 @@
 			var sendForm = $sendButton.parents('form')[0];
 
 			$sendButton.on("click", function () {
+				clearTimeout(backupScheduler);
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
 					mod.helper.deleteValue("POST_BACKUP", function () { //Eliminamos backup
 						sendForm.submit(); //Submit manual
