@@ -23,8 +23,8 @@
 			this.href = this.title_link.attr('href');
 			this.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(this.href)[1]);
 			this.title = this.title_link.html();
-			this.creator_span = this.title_td.find("div.smallfont > span:last-child");
-			this.author = this.creator_span.text();
+			this.author_span = this.title_td.find("div.smallfont > span:last-child");
+			this.author = this.author_span.text();
 			this.icon_td = this.element.find('#td_threadstatusicon_' + this.id);
 		}
 	};

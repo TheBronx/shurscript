@@ -636,7 +636,7 @@
 		}
 		if (mod.helper.environment.page != "/search.php") {
 			menu.append(getThreadMenuToggle(thread, 'Mostrar de nuevo', 'Ocultar', SHURSCRIPT.config.imagesURL + 'trash.png', thread.isHidden && !thread.isHiddenByKeywords, function (e) {
-				toggleHidden(hilo);
+				toggleHidden(thread);
 				thread.icon_td.removeClass('shurmenu_opened');
 				$(".popover").remove();
 			}, 'btn-danger'));
