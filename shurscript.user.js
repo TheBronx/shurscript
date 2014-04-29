@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.6.1
+// @version         0.20.6.1-dev
 // @author          TheBronx
 // @author          xusO
 // @author          Fritanga / Korrosivo
