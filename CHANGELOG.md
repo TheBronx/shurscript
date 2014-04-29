@@ -1,6 +1,14 @@
 # CHANGELOG
 
-## v0.20.6 `29/04/2014`
+## v0.20.6.1 `29/04/2014`
+
+**Bugfixes**
+
+* **CRÍTICO**: Las citas no se habrían ni marcaban como leídas en Chrome
+
+------------------------------------
+
+### v0.20.6 `29/04/2014`
 
 **Bugfixes**
 
