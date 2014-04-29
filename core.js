@@ -19,9 +19,34 @@ var SHURSCRIPT = {
 		server: "http://cloud.shurscript.org:8080/"
 	},
 	environment: {
-		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage"
+		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage",
+		thread: {
+			id: getCurrentThread(),
+			page: getCurrentPage(),
+			isClosed: document.getElementById("qrform") === null
+		}
 	}
 };
+
+function getCurrentPage() {
+	var r;
+
+	if (r = decodeURIComponent((new RegExp('[?|&]page=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1])) return r;// from URL parameter
+	if (r = document.getElementById("showthread_threadrate_form")) return r.page.value;
+	if (r = document.querySelector(".pagenav:first-child span strong")) return r.textContent;
+
+	return null;
+}
+
+function getCurrentThread() {
+	var r;
+
+	if (r = unsafeWindow.threadid) return r;
+	if (r = decodeURIComponent((new RegExp('[?|&]t=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1])) return r;// from URL parameter
+	if (r = document.getElementById("qr_threadid")) return r.t.value;
+
+	return null;
+}
 
 /**
  * @param {object} $ - jQuery object

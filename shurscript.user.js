@@ -6,11 +6,12 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.5-dev
+// @version         0.21.0.1-dev
 // @author          TheBronx
-// @author          xusoO
-// @author          Fritanga
-// @author          juno / ikaros45
+// @author          xusO
+// @author          Fritanga / Korrosivo
+// @author          Juno / ikaros45
+// @author          Electrosa
 // @include         http://www.forocoches.com*
 // @include         http://forocoches.com*
 // @grant           GM_log
@@ -49,6 +50,8 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ImageUploader.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ThreadUpdater.js
+// @require			https://github.com/TheBronx/shurscript/raw/dev/modules/AutoIcons.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/dev/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/dev/css/shurbar.css
@@ -56,6 +59,7 @@
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/dev/html/quote.html
 // @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/dev/css/imageuploader.css
 // @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/dev/html/imageuploader.html
+// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/dev/css/autoicons.css
 // ==/UserScript==
 
 /**
