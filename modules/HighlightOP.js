@@ -46,8 +46,8 @@
 	var op;
 
 	mod.onNormalStart = function () {
-		currentThread = getCurrentThread();
-		currentPage = getCurrentPage();
+		currentThread = SHURSCRIPT.environment.thread.id;
+		currentPage = SHURSCRIPT.environment.thread.page;
 
 		if (currentPage == 1) {
 			op = getOpFrom(document.querySelector("#posts div.page"));
@@ -225,30 +225,5 @@
 
 		xmlhttp.open("GET", "/foro/profile.php?do=buddylist", true);
 		xmlhttp.send();
-	}
-
-	function getURLParameter(name) {
-		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20'))
-			|| null;
-	}
-
-	function getCurrentPage() {
-		var r;
-
-		if (r = getURLParameter("page")) return r;
-		if (r = document.getElementById("showthread_threadrate_form")) return r.page.value;
-		if (r = $("div.pagenav:first-child span strong")[0]) return r.html();
-
-		return -1;
-	}
-
-	function getCurrentThread() {
-		var r;
-
-		if (r = unsafeWindow.threadid) return r;
-		if (r = getURLParameter("t")) return r;
-		if (r = document.getElementById("qr_threadid")) return r.t.value;
-
-		return null;
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

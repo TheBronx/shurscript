@@ -50,11 +50,16 @@
 
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var isLastPage;// ¿estamos en la última página del hilo?
+	var isOpen = true;// ¿está abierto el hilo? si está cerrado el módulo no se ejecuta
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
 	var posts = [];
 	var pageTitle = document.title;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
+
+	mod.normalStartCheck = function () {
+		return ! SHURSCRIPT.environment.thread.isClosed;
+	};
 
 	mod.onNormalStart = function () {
 		numPostsBefore = document.getElementById("posts").children.length - 1;
@@ -64,8 +69,8 @@
 
 		// comprobar si hay nuevos posts si la página no está completa o es la última
 		if (numPostsBefore < 30 || isLastPage) {
-			thread = getCurrentThread();
-			page = getCurrentPage();
+			thread = SHURSCRIPT.environment.thread.id;
+			page = SHURSCRIPT.environment.thread.page;
 
 			// comprobar más tarde de nuevo si hay nuevos posts
 			createTimeout();
@@ -194,7 +199,7 @@
 	function loadThread() {
 		stopTimeout();
 
-		if (numPostsBefore < 30 || isLastPage) {
+		if ((numPostsBefore < 30 || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
 
 			xmlhttp.onreadystatechange = function () {
@@ -211,6 +216,7 @@
 					isLastPage = doc.getElementsByClassName("pagenav").length
 						? doc.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 						: true;
+					isOpen = doc.getElementById("qrform") !== null;
 
 					const _newPosts = numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious;
 					const _newPage = isLastPage !== isLastPagePrevious;
@@ -298,31 +304,5 @@
 		if (! isLastPage) {
 			newPosts(0, true);
 		}
-	}
-
-
-	function getURLParameter(name) {
-		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20'))
-			|| null;
-	}
-
-	function getCurrentPage() {
-		var r;
-
-		if (r = getURLParameter("page")) return r;
-		if (r = document.getElementById("showthread_threadrate_form")) return r.page.value;
-		if (r = document.querySelector(".pagenav:first-child span strong")) return r.textContent;
-
-		return -1;
-	}
-
-	function getCurrentThread() {
-		var r;
-
-		if (r = unsafeWindow.threadid) return r;
-		if (r = getURLParameter("t")) return r;
-		if (r = document.getElementById("qr_threadid")) return r.t.value;
-
-		return null;
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
