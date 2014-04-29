@@ -207,7 +207,7 @@
 			} else {
 				editor.editbox.style.height = minHeightTextArea + "px";
 			}
-		}
+		};
 		$(editor.controlbar).find('> table > tbody > tr').first().append('<td></td>').append(checkAutoGrow);
 		checkAutoGrow.title = 'Crecer automáticamente con el contenido';
 
@@ -411,6 +411,7 @@
 		// Solo es necesario en el formulario avanzado, el de respuesta rapida se envia por AJAX y no cambia de página
 		if (isQuickReply()) {
 			$("input[name='sbutton']").on("click", function () {
+				clearTimeout(backupScheduler);
 				mod.helper.deleteValue("POST_BACKUP");
 			});
 		} else {
@@ -418,7 +419,8 @@
 			$sendButton.attr("type", "button"); //Le quitamos el type 'submit' para que no envie el formulario
 			var sendForm = $sendButton.parents('form')[0];
 
-			$sendButton.on("click", function (e) {
+			$sendButton.on("click", function () {
+				clearTimeout(backupScheduler);
 				if (sendForm.onsubmit()) { //Comprobaciones del formulario original: minimo 2 caracteres, etc.
 					mod.helper.deleteValue("POST_BACKUP", function () { //Eliminamos backup
 						sendForm.submit(); //Submit manual
@@ -466,7 +468,7 @@
 	/* Añade accesos directos a algunos iconos en al respuesta rápida */
 	function addIcons() {
 
-		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0px 0px 0px"><legend>Iconos</legend></fieldset>');
+		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"><legend>Iconos</legend></fieldset>');
 		$("#" + getEditor().editorid).parent().append(fieldset);
 
 		fieldset.append(createIcon(":roto2:", "http://cdn.forocoches.com/foro/images/smilies/goofy.gif", 164));
