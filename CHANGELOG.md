@@ -4,7 +4,7 @@
 
 **Bugfixes**
 
-* **CRÍTICO**: Las citas no se habrían ni marcaban como leídas en Chrome
+* **CRÍTICO**: Las citas no se abrían ni marcaban como leídas en Chrome
 
 ------------------------------------
 
