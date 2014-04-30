@@ -509,7 +509,7 @@
 			}
 		});
 
-		rows[cita] = row;
+		rows[cita.postID] = row;
 
 		notificationsList.append(row);
 	}
@@ -522,7 +522,7 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 
 		setNotificationsCount(notificationsCount - 1);
-		rows[cita].addClass("read");
+		rows[cita.postID].addClass("read");
 	}
 
 	function openQuote(cita, target) {
