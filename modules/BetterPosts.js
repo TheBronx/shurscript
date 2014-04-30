@@ -10,7 +10,6 @@
 		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
 		initialPreferences: {
 			enabled: true, // Esta es opcional - por defecto true
-			iconsAndButtons: true,
 			autoGrow: true,
 			multiQuickReply: true,
 			autoSendReply: true,
@@ -61,7 +60,6 @@
 		// la segunda con un checkbox y un input text
 		return [
 			// Hacemos un header
-			createPref({type: 'checkbox', mapsTo: 'iconsAndButtons', caption: 'Mostrar nuevos botones e iconos en el formulario de respuesta rápida'}),
 			createPref({type: 'checkbox', mapsTo: 'autoGrow', caption: 'La caja de texto crece a medida que se va escribiendo el post'}),
 			createPref({type: 'checkbox', mapsTo: 'multiQuickReply', caption: 'Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)'}),
 			createPref({type: 'checkbox', mapsTo: 'autoSendReply', caption: 'Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post'}),
@@ -149,7 +147,7 @@
 
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
 	function enableCommonFeatures() {
-		if (isQuickReply() && mod.preferences.iconsAndButtons) {
+		if (isQuickReply()) {
 			addAdvancedButtons();
 		}
 
