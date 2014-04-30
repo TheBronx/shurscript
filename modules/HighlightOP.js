@@ -168,14 +168,16 @@
 		}
 
 		// Add a link to find all OP's posts on this thread.
-		var tdNextNode = document.getElementById("threadtools");
-		var trNode = tdNextNode.parentNode;
+		if (firstPost === 0) {
+			var tdNextNode = document.getElementById("threadtools");
+			var trNode = tdNextNode.parentNode;
 
-		var newTd = document.createElement("TD");
-		newTd.className = 'vbmenu_control';
-		newTd.innerHTML = '<a href="/foro/search.php?do=process&searchthreadid=' + currentThread + '&searchuser=' + escape(op) + '&exactname=1">Buscar posts del OP</a>';
+			var newTd = document.createElement("TD");
+			newTd.className = 'vbmenu_control';
+			newTd.innerHTML = '<a href="/foro/search.php?do=process&searchthreadid=' + currentThread + '&searchuser=' + escape(op) + '&exactname=1">Buscar posts del OP</a>';
 
-		trNode.insertBefore(newTd, tdNextNode);
+			trNode.insertBefore(newTd, tdNextNode);
+		}
 	}
 
 	function importBuddyList() {
