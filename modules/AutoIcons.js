@@ -3,23 +3,33 @@
 
 	var mod = createModule({
 		id: 'AutoIcons',
-		name: 'Autocompletar iconos al escribir',
+		name: 'Iconos favoritos y autocompletado',
 		author: 'xus0',
 		version: '0.1',
 		description: 'Muestra una caja con sugerencias de iconos de Forocoches al escribir ":" en la caja de respuesta.<br>'
-			+ 'Puedes insertar varios a la vez si mantienes pulsada la tecla Shift',
+			+ 'Y define tus iconos favoritos para tenerlos a golpe de click en la respuesta rápida.',
 		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
 		initialPreferences: {
-			enabled: true
+			enabled: true,
+			addFavouriteIcons: true,
+			favouriteIcons: ":roto2:, :sisi3:, :mola:, :cantarin:, :qmeparto:, :nusenuse:, :facepalm:, "
+				+ ":zpalomita, :zplatano2, :number1:, :elrisas:, :gaydude:, :sisi1:, :babeando:, :elboinas:, "
+				+ ":qtedoy:, :abrazo:"
 		}
 	});
+
+	mod.getPreferenceOptions = function () {
+		return [
+			mod.helper.createPreferenceOption({type: 'checkbox', mapsTo: 'addFavouriteIcons', caption: 'Añadir un listado debajo de la caja de respuesta rápida con los siguientes iconos:'}),
+			mod.helper.createPreferenceOption({type: 'tags', mapsTo: 'favouriteIcons', subCaption: 'Deja el campo en blanco para usar los iconos por defecto.'})
+		];
+	};
 
 	var $iconsBox, $iconsPanel;
 	var active = false;
 	var sortedIcons, //Array de iconos ordenador por uso
 		iconsMap; //Objeto {iconName: icon} para acceso rapido por nombre
 	var mostUsedIcons; //Objeto {icon: uses} que guarda los usos de cada icono
-
 
 	mod.onNormalStart = function () {
 
@@ -35,51 +45,61 @@
 
 			//Comprobamos que el editor es WYSIWYG
 			onWYSIWYGEnabled(function () {
-
-				var delay;
-
-				//Punto y coma abre y cierra el popup
-				$(getEditor().editdoc.body).keypress(function (e) {
-					if (e.which === KeyEvent.DOM_VK_COLON) {
-						var currentFilter = getCurrentFilter();
-						if (active && currentFilter) {
-							var matchedIcon = iconsMap[currentFilter + ':'];
-							if (matchedIcon) { //Al cerrar pulsando ':', introducimos la coincidencia exacta
-								insertIcon(matchedIcon);
-								e.preventDefault(); //No añadir el último ':'
-							}
-							hide();
-						} else {
-							active = true;
-							e.preventDefault();
-							//Metemos el ':' entre etiquetas para acotar el nodo actual del editor (no usamos <span> porque Chrome se los pasa por el forro)
-							//Luego es más fácil recuperar la posición y el texto que ha escrito el usuario
-							appendTextToEditor('<icon>:</icon>');
-
-							//Retrasamos mostrar la caja si simplemente pulsamos ':' para evitar que aparezca sin querer
-							delay = setTimeout(applyFilter, 1000);
-						}
-					}
-
-				});
-
-				//Controlar la acción de cada tecla
-				$(getEditor().editdoc.body).keydown(function (e) {
-					if (active) {
-						clearTimeout(delay);
-						manageKeyDown(e);
-					}
-				});
-
-				//Cerramos el popup al pulsar fuera, al pulsar en la caja de texto y al redimensionar la ventana
-				$('body').click(hide);
-				$(getEditor().editdoc).click(hide);
-				$(window).on('resize', hide);
-
+				prepareEvents();
 			});
+
+			//Ademas del autocompletado, tambien añadimos una lista de los iconos favoritos del usuario
+			if (mod.preferences.addFavouriteIcons) {
+				addDefaultIcons();
+			}
 
 		});
 	};
+
+	/**
+	 * Añade todos los eventos necesarios para el correcto funcionamiento del módulo
+	 */
+	function prepareEvents() {
+		var delay;
+
+		//Punto y coma abre y cierra el popup
+		$(getEditor().editdoc.body).keypress(function (e) {
+			if (e.which === KeyEvent.DOM_VK_COLON) {
+				var currentFilter = getCurrentFilter();
+				if (active && currentFilter) {
+					var matchedIcon = iconsMap[currentFilter + ':'];
+					if (matchedIcon) { //Al cerrar pulsando ':', introducimos la coincidencia exacta
+						insertIcon(matchedIcon);
+						e.preventDefault(); //No añadir el último ':'
+					}
+					hide();
+				} else {
+					active = true;
+					e.preventDefault();
+					//Metemos el ':' entre etiquetas para acotar el nodo actual del editor (no usamos <span> porque Chrome se los pasa por el forro)
+					//Luego es más fácil recuperar la posición y el texto que ha escrito el usuario
+					appendTextToEditor('<icon>:</icon>');
+
+					//Retrasamos mostrar la caja si simplemente pulsamos ':' para evitar que aparezca sin querer
+					delay = setTimeout(applyFilter, 1000);
+				}
+			}
+
+		});
+
+		//Controlar la acción de cada tecla
+		$(getEditor().editdoc.body).keydown(function (e) {
+			if (active) {
+				clearTimeout(delay);
+				manageKeyDown(e);
+			}
+		});
+
+		//Cerramos el popup al pulsar fuera, al pulsar en la caja de texto y al redimensionar la ventana
+		$('body').click(hide);
+		$(getEditor().editdoc).click(hide);
+		$(window).on('resize', hide);
+	}
 
 	function buildPopup() {
 		$iconsBox = $('<div id="shurscript-icons-box" style="display: none;" class="popover top in"><div class="arrow"></div></div>');
@@ -404,6 +424,39 @@
 		var sel = getEditor().editwin.getSelection();
 		sel.removeAllRanges();
 		sel.addRange(range);
+	}
+
+
+	/* Añade accesos directos a los iconos favoritos del usuarios en la respuesta rápida */
+	function addDefaultIcons() {
+
+		//Añadimos el nuevo fieldset donde iran los iconos
+		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"><legend>Iconos favoritos</legend></fieldset>');
+		$("#" + getEditor().editorid).parent().append(fieldset);
+
+		//Comprobamos que el campo no está en blanco, si lo está, usamos los iconos por defecto
+		var favouriteIcons = mod.preferences.favouriteIcons;
+		if (!favouriteIcons || !favouriteIcons.trim()) {
+			favouriteIcons = mod.initialPreferences.favouriteIcons;
+			mod.preferences.favouriteIcons = favouriteIcons;
+			mod.storePreferences();
+		}
+
+		//Los añadimos al fieldset
+		favouriteIcons = favouriteIcons.split(/\ ?,\ ?/);
+		favouriteIcons.forEach(function (iconName) {
+			var icon = iconsMap[iconName];
+			if (icon) {
+				fieldset.append('<img border="0" class="inlineimg" src="' + icon.src + '" style="cursor: pointer; padding: 5px;" onclick="vB_Editor.' + getEditor().editorid + '.insert_smilie(undefined, \'' + icon.name + '\', \'' + icon.src + '\', ' + icon.id + ')">');
+			}
+		});
+
+		//Link para mostrarlos todos (ventana modal por defecto de FC)
+		var more = $("<a href='#qrform'>Más...</a>");
+		more.click(function () {
+			getEditor().open_smilie_window(785, 500);
+		});
+		fieldset.append(more);
 	}
 
 	function getEditor() {
