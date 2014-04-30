@@ -7,7 +7,7 @@
 		author: 'xus0',
 		version: '1.0',
 		description: 'Sube o arrastra im&aacute;genes desde tu equipo, y autom&aacute;ticamente se subir&aacute;n a Imgur y se postear&aacute;n en el hilo.',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php']
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
 		initialPreferences: {
 			embedding: 'preview'
 		}
