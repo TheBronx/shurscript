@@ -76,14 +76,15 @@
 			createTimeout();
 
 			// crear el elemento ya para poder reservar su hueco
-			GM_addStyle("#shurscript-newposts {width:100%; margin:12px 0; height: 32px}");
+			GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px}");
 			GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%}");// enlace nueva página
 
 			var shurscriptWrapper = document.createElement("div");
 			shurscriptWrapper.className = "shurscript";
 			newPostsElem = document.createElement("div");
 			newPostsElem.id = "shurscript-newposts";
-			newPostsElem.className = "invisible btn btn-success";
+			newPostsElem.className = "btn btn-success";
+			newPostsElem.style.display = "none";
 			newPostsElem.onclick = populateNewPosts;
 			shurscriptWrapper.appendChild(newPostsElem);
 
@@ -125,7 +126,7 @@
 				stopTimeout();
 
 				// ocultar el botón
-				newPostsElem.classList.add("invisible");
+				newPostsElem.style.display = "none";
 				newPostsElem.textContent = "";
 				newPostsShown = false;
 
@@ -244,7 +245,7 @@
 	function newPosts(numPosts, newPage) {
 		// mostrar el elemento si está oculto
 		if (! newPostsShown) {
-			newPostsElem.classList.remove("invisible");
+			$(newPostsElem).slideDown("slow");
 			newPostsShown = true;
 		}
 
@@ -270,7 +271,7 @@
 	 */
 	function populateNewPosts() {
 		// ocultar el botón
-		newPostsElem.classList.add("invisible");
+		newPostsElem.style.display = "none";
 		newPostsElem.textContent = "";
 		newPostsShown = false;
 
