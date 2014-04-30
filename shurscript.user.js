@@ -51,7 +51,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ThreadUpdater.js
-// @require			https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
