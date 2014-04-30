@@ -287,9 +287,8 @@
 			// añadir el post al DOM
 			postsElem.insertBefore(posts[i], lastPostElem);
 
-			// registrar el popup al hacer clic en el nombre de usuario
-			var postId = posts[i].getElementsByTagName("table")[0].id.substr(4);
-			unsafeWindow.vbmenu_register("postmenu_" + postId, true);// TODO - echarle un ojo a unsafeWindow.parseScript
+			// ejecutar los scripts recibidos (popup menú usuario, vídeos, etc.)
+			unsafeWindow.parseScript(posts[i].innerHTML);
 		}
 
 		// disparar evento para avisar de nuevos posts
