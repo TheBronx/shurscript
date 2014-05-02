@@ -243,9 +243,13 @@
 					var cita;
 
 					if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
+						if (typeof lastReadQuote !== 'number') { // Es el enlace completo
+							lastReadQuote = lastReadQuote.match(/#post([\d]*)/)[1];
+						}
+						
 						for (var i = 0; i < citas.length; i++) {
 							cita = new Cita(citas[i], false);
-							if (lastReadQuote == cita.postLink) {
+							if (lastReadQuote >= cita.postID) {
 								break;
 							} else {
 								if (mod.preferences.mentionsToo || isQuote(cita)) {
@@ -256,7 +260,7 @@
 					}
 
 					if (citas.length > 0) {
-						lastReadQuote = new Cita(citas[0]).postLink;
+						lastReadQuote = new Cita(citas[0]).postID;
 						mod.helper.setValue("LAST_READ_QUOTE", lastReadQuote);
 					}
 
