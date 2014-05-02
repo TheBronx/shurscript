@@ -243,7 +243,8 @@
 					var cita;
 
 					if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
-						if (typeof lastReadQuote !== 'number') { // Es el enlace completo
+						lastReadQuote = parseInt(lastReadQuote);
+						if (typeof lastReadQuote === 'NaN') { // Es el enlace completo
 							lastReadQuote = lastReadQuote.match(/#post([\d]*)/)[1];
 						}
 						
