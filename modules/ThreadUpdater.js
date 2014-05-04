@@ -284,10 +284,13 @@
 		var numPostsAfter = posts.length;
 
 		for (var i = numPostsBefore, n = numPostsAfter; i < n; i++) {
-			// añadir el post al DOM
-			postsElem.insertBefore(posts[i], lastPostElem);
+			var postId = posts[i].getElementsByTagName("table")[0].id.substr(4);
 
-			// ejecutar los scripts recibidos (popup menú usuario, vídeos, etc.)
+			// añadir el post al DOM
+			var newNode = postsElem.insertBefore(posts[i], lastPostElem);
+
+			// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita)
+			unsafeWindow.PostBit_Init(newNode, postId);
 			unsafeWindow.parseScript(posts[i].innerHTML);
 		}
 
