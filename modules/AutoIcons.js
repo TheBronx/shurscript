@@ -69,7 +69,7 @@
 				if (active && currentFilter) {
 					var matchedIcon = iconsMap[currentFilter + ':'];
 					if (matchedIcon) { //Al cerrar pulsando ':', introducimos la coincidencia exacta
-						insertIcon(matchedIcon);
+						autocompleteIcon(matchedIcon);
 						e.preventDefault(); //No añadir el último ':'
 					}
 					hide();
@@ -106,7 +106,7 @@
 		$iconsPanel = $('<div class="panel-body" tabindex="-1"></div>');
 		$iconsPanel.on('click', '.icon', function () {
 			//Al hacer click en un icono del popup, lo insertamos
-			insertIcon($(this).data('icon'));
+			autocompleteIcon($(this).data('icon'));
 		});
 
 		$iconsBox.append($iconsPanel);
@@ -226,7 +226,7 @@
 		} else if (key === KeyEvent.DOM_VK_RETURN) {
 			var selectedIcon = getSelectedIcon();
 			if (selectedIcon) {
-				insertIcon(selectedIcon);
+				autocompleteIcon(selectedIcon);
 				if (!e.shiftKey) { //Si mantenemos pulsado Shift no se cerrará el popup, pudiendo añadir varios seguidos
 					hide();
 				}
@@ -377,13 +377,20 @@
 	 * Inserta un icono en la posición actual del cursor, eliminando el nombre del icono que había escrito el usuario
 	 * @param selectedIcon Icono a insertar
 	 */
-	function insertIcon(selectedIcon) {
+	function autocompleteIcon(selectedIcon) {
 		//Seleccionamos el texto introducido
 		selectEntireNode();
 		//Lo reemplazamos por el icono
-		appendTextToEditor('<img src="' + selectedIcon.src + '" smiliedid="' + selectedIcon.id + '" class="inlineimg" border="0">&nbsp;');
+		insertIcon(selectedIcon);
+	}
 
-		addToMostUsed(selectedIcon);
+	/**
+	 * Inserta un icono en el editor y suma +1 a los usos de dicho icono
+	 */
+	function insertIcon(icon) {
+		getEditor().insert_smilie(undefined, icon.name, icon.src, icon.id);
+		appendTextToEditor('&nbsp;');
+		addToMostUsed(icon);
 	}
 
 	/**
@@ -455,7 +462,11 @@
 		favouriteIcons.forEach(function (iconName) {
 			var icon = iconsMap[iconName];
 			if (icon) {
-				fieldset.append('<img border="0" class="inlineimg" src="' + icon.src + '" style="cursor: pointer; padding: 5px;" onclick="vB_Editor.' + getEditor().editorid + '.insert_smilie(undefined, \'' + icon.name + '\', \'' + icon.src + '\', ' + icon.id + ')">');
+				var iconImg = $('<img border="0" title="' + icon.name + '" class="icon inlineimg" src="' + icon.src + '" style="cursor: pointer; padding: 5px;">');
+				iconImg.click(function () {
+					insertIcon(icon);
+				});
+				fieldset.append(iconImg);
 			}
 		});
 
