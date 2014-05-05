@@ -427,12 +427,20 @@
 	}
 
 
-	/* Añade accesos directos a los iconos favoritos del usuarios en la respuesta rápida */
+	/* Añade accesos directos a los iconos favoritos del usuarios */
 	function addDefaultIcons() {
 
-		//Añadimos el nuevo fieldset donde iran los iconos
-		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"><legend>Iconos favoritos</legend></fieldset>');
-		$("#" + getEditor().editorid).parent().append(fieldset);
+		var fieldset;
+		if (!isQuickReply()) {
+			//Cogemos el por defecto que hay en la respuesta avanzada
+			fieldset = $('#' + getEditor().editorid + '_smiliebox');
+			fieldset.css('width', fieldset.width());
+		} else {
+			//Añadimos el nuevo fieldset debajo de la respuesta rápida
+			fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"></fieldset>');
+			$("#" + getEditor().editorid).parent().append(fieldset);
+		}
+		fieldset.html('<legend>Iconos favoritos</legend>');
 
 		//Comprobamos que el campo no está en blanco, si lo está, usamos los iconos por defecto
 		var favouriteIcons = mod.preferences.favouriteIcons;
@@ -465,6 +473,10 @@
 
 	function isWYSIWYG() {
 		return getEditor().editdoc.body;
+	}
+
+	function isQuickReply() {
+		return getEditor().editorid === 'vB_Editor_QR';
 	}
 
 	function appendTextToEditor(text) {
