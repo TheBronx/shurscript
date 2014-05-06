@@ -11,7 +11,8 @@
 		initialPreferences: {
 			enabled: true,
 			activeTabPeriodicity: 10000,
-			hiddenTabPeriodicity: 30000
+			hiddenTabPeriodicity: 30000,
+			nextPageButton: false
 		},
 		preferences: {}
 	});
@@ -40,6 +41,9 @@
 				],
 				caption: 'Si la pestaña no está en primer plano, buscar nuevas respuestas:',
 				mapsTo: 'hiddenTabPeriodicity'
+			}),
+			creOpt({
+				type: 'checkbox', mapsTo: 'nextPageButton', caption: 'Mostrar siempre el botón para ir a la siguiente página, no solo cuando haya una nueva.'
 			})
 		];
 	};
@@ -67,29 +71,16 @@
 			? document.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 			: true;// solo hay una página
 
+		thread = SHURSCRIPT.environment.thread.id;
+		page = SHURSCRIPT.environment.thread.page;
+
 		// comprobar si hay nuevos posts si la página no está completa o es la última
 		if (numPostsBefore < 30 || isLastPage) {
-			thread = SHURSCRIPT.environment.thread.id;
-			page = SHURSCRIPT.environment.thread.page;
-
 			// comprobar más tarde de nuevo si hay nuevos posts
 			createTimeout();
 
 			// crear el elemento ya para poder reservar su hueco
-			GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px}");
-			GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%}");// enlace nueva página
-
-			var shurscriptWrapper = document.createElement("div");
-			shurscriptWrapper.className = "shurscript";
-			newPostsElem = document.createElement("div");
-			newPostsElem.id = "shurscript-newposts";
-			newPostsElem.className = "btn btn-success";
-			newPostsElem.style.display = "none";
-			newPostsElem.onclick = populateNewPosts;
-			shurscriptWrapper.appendChild(newPostsElem);
-
-			var postsElem = document.getElementById("posts");// añadirlo después de #posts
-			postsElem.parentNode.insertBefore(shurscriptWrapper, postsElem.nextSibling);
+			createButton();
 
 			/* Añadir evento para saber cuándo la pestaña adquiere el foco */
 			document.addEventListener("visibilitychange", function () {
@@ -158,8 +149,28 @@
 					loadThread();
 				}
 			};
+		} else if (mod.preferences.nextPageButton) {
+			createButton();
+			newPosts(0, 'Ir a la página siguiente');
 		}
 	};
+	
+	function createButton() {
+		GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px}");
+		GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%}");// enlace nueva página
+
+		var shurscriptWrapper = document.createElement("div");
+		shurscriptWrapper.className = "shurscript";
+		newPostsElem = document.createElement("div");
+		newPostsElem.id = "shurscript-newposts";
+		newPostsElem.className = "btn btn-success";
+		newPostsElem.style.display = "none";
+		newPostsElem.onclick = populateNewPosts;
+		shurscriptWrapper.appendChild(newPostsElem);
+
+		var postsElem = document.getElementById("posts");// añadirlo después de #posts
+		postsElem.parentNode.insertBefore(shurscriptWrapper, postsElem.nextSibling);
+	}
 
 	/**
 	 * Crea un timeout para que ejecute la comprobación de nuevas respuestas tras el tiempo que se especifique.
@@ -258,13 +269,19 @@
 		// cambiar el título
 		// En Firefox, al actualizar el título de la página, la pestaña (si está fijada) se marca como actualizada - https://i.imgur.com/qWb3sF9.png
 		// Si el usuario ha entrado a la pestaña el aviso se va, por eso cambio el título de nuevo (con timeout) para que vuelva a aparecer el aviso si hay más posts nuevos.
-		document.title = pageTitle;
-		setTimeout(function () { document.title = "*" + pageTitle; }, 1);
+		if (typeof newPage !== 'string') {
+			document.title = pageTitle;
+			setTimeout(function () { document.title = "*" + pageTitle; }, 1);
+		}
 
 		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
 		if (newPage && numPosts === 0) {
+			if (newPage === true) {
+				newPage = "Hay una nueva página";
+			}
+
 			// enlace a la nueva página
-			newPostsElem.innerHTML = "<a href='showthread.php?t=" + thread + "&amp;page=" + (+page + 1) + "'>Hay una nueva página.</a>";
+			newPostsElem.innerHTML = "<a href='showthread.php?t=" + thread + "&amp;page=" + (+page + 1) + "'>" + newPage + ".</a>";
 			newPostsElem.onclick = undefined;
 		} else {
 			// actualizar con el número de posts nuevos
