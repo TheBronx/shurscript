@@ -145,8 +145,14 @@
 					// mirar número de respuestas ahora
 					numPostsBefore += ajax.responseXML.children[0].children.length - 1;
 
-					// activar el timeout de nuevo
-					createTimeout();
+					// comprobar si se ha llenado la página
+					if (numPostsBefore <= 30) {	
+						// activar el timeout de nuevo
+						createTimeout();
+					} else {
+						// mostrar enlace para ir a la siguiente página
+						newPosts(0, true);
+					}
 				} else {
 					// si ha habido un error vuelve a mostrar el aviso
 					loadThread();
