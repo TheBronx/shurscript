@@ -137,7 +137,7 @@
 					numPostsBefore += ajax.responseXML.children[0].children.length - 1;
 
 					// comprobar si se ha llenado la página
-					if (numPostsBefore <= 30) {	
+					if (numPostsBefore <= 30) {
 						// activar el timeout de nuevo
 						createTimeout();
 					} else {
@@ -154,10 +154,10 @@
 			newPosts(0, 'Ir a la página siguiente');
 		}
 	};
-	
+
 	function createButton() {
-		GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px}");
-		GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%}");// enlace nueva página
+		GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px; padding: 0;}");
+		GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%; height: 100%; line-height: 200%;}");// enlace nueva página
 
 		var shurscriptWrapper = document.createElement("div");
 		shurscriptWrapper.className = "shurscript";
@@ -332,3 +332,4 @@
 		}
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
+g
