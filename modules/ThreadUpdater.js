@@ -157,14 +157,14 @@
 
 	function createButton() {
 		GM_addStyle("#shurscript-newposts {width:100%; margin:0; height: 32px; padding: 0; line-height: 200%;}");
-		GM_addStyle("#shurscript-newposts a {color: inherit; display: block; width: 100%; height: 100%;}");// enlace nueva página
 
 		var shurscriptWrapper = document.createElement("div");
 		shurscriptWrapper.className = "shurscript";
-		newPostsElem = document.createElement("div");
+		newPostsElem = document.createElement("a");
 		newPostsElem.id = "shurscript-newposts";
 		newPostsElem.className = "btn btn-success";
 		newPostsElem.style.display = "none";
+		newPostsElem.href = "#";
 		newPostsElem.onclick = populateNewPosts;
 		shurscriptWrapper.appendChild(newPostsElem);
 
@@ -281,7 +281,8 @@
 			}
 
 			// enlace a la nueva página
-			newPostsElem.innerHTML = "<a href='showthread.php?t=" + thread + "&amp;page=" + (+page + 1) + "'>" + newPage + ".</a>";
+			newPostsElem.textContent = newPage;
+			newPostsElem.href = "showthread.php?t=" + thread + "&page=" + (+page + 1);
 			newPostsElem.onclick = undefined;
 		} else {
 			// actualizar con el número de posts nuevos
@@ -291,6 +292,7 @@
 
 	/**
 	 * Muestra los posts nuevos.
+	 * @return false Para detener el evento.
 	 */
 	function populateNewPosts() {
 		// ocultar el botón
@@ -330,5 +332,7 @@
 		if (! isLastPage) {
 			newPosts(0, true);
 		}
+
+		return false;
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
