@@ -236,8 +236,8 @@
 						: true;
 					isOpen = doc.getElementById("qrform") !== null;
 
-					const _newPosts = numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious;
-					const _newPage = isLastPage !== isLastPagePrevious;
+					var _newPosts = numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious;
+					var _newPage = isLastPage !== isLastPagePrevious;
 
 					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
 					if (_newPosts || _newPage) {
