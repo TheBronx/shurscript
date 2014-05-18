@@ -56,7 +56,8 @@
 	var isLastPage;// ¿estamos en la última página del hilo?
 	var isOpen = true;// ¿está abierto el hilo? si está cerrado el módulo no se ejecuta
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
-	var posts = [];
+	var posts = [];// contiene todos los posts, incluyendo los nuevos y las ediciones
+	var shownPosts;// contiene los posts que se están mostrando
 	var pageTitle = document.title;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
@@ -66,7 +67,8 @@
 	};
 
 	mod.onNormalStart = function () {
-		numPostsBefore = document.getElementById("posts").children.length - 1;
+		shownPosts = document.querySelectorAll("#posts > div[align]");
+		numPostsBefore = shownPosts.length;
 		isLastPage = document.getElementsByClassName("pagenav").length
 			? document.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 			: true;// solo hay una página
@@ -136,6 +138,9 @@
 					// mirar número de respuestas ahora
 					numPostsBefore += ajax.responseXML.children[0].children.length - 1;
 
+					// actualizar el listado de posts que están visibles (todos los posts cargados se meten en un <div>)
+					shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
+
 					// comprobar si se ha llenado la página
 					if (numPostsBefore <= 30) {
 						// activar el timeout de nuevo
@@ -151,7 +156,7 @@
 			};
 		} else if (mod.preferences.nextPageButton) {
 			createButton();
-			newPosts(0, 'Ir a la página siguiente');
+			newPosts(0, 'Ir a la página siguiente', undefined, undefined);
 		}
 	};
 
@@ -236,12 +241,13 @@
 						: true;
 					isOpen = doc.getElementById("qrform") !== null;
 
-					var _newPosts = numPostsBefore !== numPostsAfter && numPostsAfter !== numPostsPrevious;
+					var postsDifferences = findPostsDifferences(shownPosts, posts);
+					var _newPosts = postsDifferences['new'].length !== 0;
 					var _newPage = isLastPage !== isLastPagePrevious;
 
 					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
-					if (_newPosts || _newPage) {
-						newPosts(numPostsAfter - numPostsBefore, _newPage);
+					if (_newPosts || _newPage || editedPosts || deletedPosts) {
+						newPosts(postsDifferences['new'].length, _newPage, postsDifferences['edited'], postsDifferences['deleted']);
 					}
 
 					// volver a comprobar
@@ -255,11 +261,67 @@
 	}
 
 	/**
-	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
-	 * @param {int} numPosts Número de posts nuevos. Si es int(0), se crea un enlace a la siguiente página.
-	 * @param {bool} newPage Existe una nueva página.
+	 * Busca las diferencias entre un array de posts y otro.
+	 * @param arrayOldPosts Array con los posts antiguos.
+	 * @param arrayNewPosts Array con los posts nuevos.
+	 * @return Un objeto que contiene clasificados en tres arrays los posts que han cambiado.
 	 */
-	function newPosts(numPosts, newPage) {
+	function findPostsDifferences(arrayOldPosts, arrayNewPosts) {
+		var oldPosts = {}, newPosts = {};
+
+		for (var i = 0, n = arrayOldPosts.length; i < n; i++) {
+			var post = arrayOldPosts[i].getElementsByClassName("alt1")[0];
+			var postId = post.id.substr(8);
+			oldPosts[postId] = post.children[0].children[0];
+		}
+
+		for (var i = 0, n = arrayNewPosts.length; i < n; i++) {
+			var post = arrayNewPosts[i].getElementsByClassName("alt1")[0];
+			var postId = post.id.substr(8);
+			newPosts[postId] = post.children[0].children[0];
+		}
+
+		var _newPosts = [];
+		var _editedPosts = [];
+		var _deletedPosts = [];
+
+		// recorrer los posts viejos
+		for (var oldPostId in oldPosts) {
+			var newPost = newPosts[oldPostId];
+
+			if (newPost) {// ¿Sigue existiendo el post viejo en el nuevo listado?
+				var oldPost = oldPosts[oldPostId];
+
+				if (oldPost.innerHTML !== newPost.innerHTML) {// ¿Ha sido editado?
+					_editedPosts.push(oldPostId);
+				}
+			} else {
+				_deletedPosts.push(oldPostId);
+			}
+		}
+
+		// recorrer los posts nuevos
+		for (var newPostId in newPosts) {
+			if (! (newPostId in oldPosts)) {
+				_newPosts.push(newPostId);
+			}
+		}
+
+		return {
+				'new': _newPosts,
+				'deleted': _deletedPosts,
+				'edited': _editedPosts
+			};
+	}
+
+	/**
+	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
+	 * @param {int} numNewPosts Número de posts nuevos. Si es int(0), se crea un enlace a la siguiente página.
+	 * @param {bool} newPage Existe una nueva página.
+	 * @param {array(int)} editedPosts Array con los IDs de los posts editados.
+	 * @param {array(int)} deletedPosts Array con los IDs de los posts eliminados.
+	 */
+	function newPosts(numNewPosts, newPage, editedPosts, deletedPosts) {
 		// mostrar el elemento si está oculto
 		if (! newPostsShown) {
 			$(newPostsElem).slideDown("slow");
@@ -275,7 +337,7 @@
 		}
 
 		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
-		if (newPage && numPosts === 0) {
+		if (newPage && numNewPosts === 0) {
 			if (newPage === true) {
 				newPage = "Hay una nueva página";
 			}
@@ -286,7 +348,7 @@
 			newPostsElem.onclick = undefined;
 		} else {
 			// actualizar con el número de posts nuevos
-			newPostsElem.textContent = numPosts === 1 ? "Hay un post nuevo." : "Hay " + numPosts + " posts nuevos.";
+			newPostsElem.textContent = numNewPosts === 1 ? "Hay un post nuevo." : "Hay " + numNewPosts + " posts nuevos.";
 		}
 	}
 
@@ -316,7 +378,7 @@
 
 			// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita)
 			unsafeWindow.PostBit_Init(newNode, postId);
-			unsafeWindow.parseScript(posts[i].innerHTML);
+			unsafeWindow.parseScript(newNode.innerHTML);
 		}
 
 		// disparar evento para avisar de nuevos posts
@@ -327,6 +389,9 @@
 
 		// ahora el hilo tiene varios posts más
 		numPostsBefore = numPostsAfter;
+
+		// actualizar el listado de posts que están visibles
+		shownPosts = posts;
 
 		// si hay nueva página, mostrar inmediatamente el botón
 		if (! isLastPage) {
