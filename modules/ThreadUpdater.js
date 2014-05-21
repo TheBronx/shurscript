@@ -58,6 +58,7 @@
 	var newPostsElem, newPostsShown = false;// botón que el usuario debe pulsar para cargar los nuevos posts
 	var posts = [];// contiene todos los posts, incluyendo los nuevos y las ediciones
 	var shownPosts;// contiene los posts que se están mostrando
+	var differences;// contiene los posts que han cambiado (nuevos, editados y borrados)
 	var pageTitle = document.title;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
@@ -147,7 +148,7 @@
 						createTimeout();
 					} else {
 						// mostrar enlace para ir a la siguiente página
-						newPosts(0, true);
+						newPosts(undefined, true);
 					}
 				} else {
 					// si ha habido un error vuelve a mostrar el aviso
@@ -156,7 +157,7 @@
 			};
 		} else if (mod.preferences.nextPageButton) {
 			createButton();
-			newPosts(0, 'Ir a la página siguiente', undefined, undefined);
+			newPosts(undefined, 'Ir a la página siguiente', undefined, undefined);
 		}
 	};
 
@@ -241,13 +242,15 @@
 						: true;
 					isOpen = doc.getElementById("qrform") !== null;
 
-					var postsDifferences = findPostsDifferences(shownPosts, posts);
-					var _newPosts = postsDifferences['new'].length !== 0;
+					differences = findDifferences(shownPosts, posts);
+					var _newPosts = differences['new'].length !== 0;
 					var _newPage = isLastPage !== isLastPagePrevious;
+					var _editedPosts = differences['edited'].length !== 0;
+					var _deletedPosts = differences['deleted'].length !== 0;
 
 					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
-					if (_newPosts || _newPage || editedPosts || deletedPosts) {
-						newPosts(postsDifferences['new'].length, _newPage, postsDifferences['edited'], postsDifferences['deleted']);
+					if (_newPosts || _newPage || _editedPosts || _deletedPosts || newPostsShown) {
+						newPosts(differences['new'], _newPage, differences['edited'], differences['deleted']);
 					}
 
 					// volver a comprobar
@@ -266,19 +269,19 @@
 	 * @param arrayNewPosts Array con los posts nuevos.
 	 * @return Un objeto que contiene clasificados en tres arrays los posts que han cambiado.
 	 */
-	function findPostsDifferences(arrayOldPosts, arrayNewPosts) {
+	function findDifferences(arrayOldPosts, arrayNewPosts) {
 		var oldPosts = {}, newPosts = {};
 
 		for (var i = 0, n = arrayOldPosts.length; i < n; i++) {
 			var post = arrayOldPosts[i].getElementsByClassName("alt1")[0];
 			var postId = post.id.substr(8);
-			oldPosts[postId] = post.children[0].children[0];
+			oldPosts[postId] = {'post': post.children[0].children[0], 'mainNode' : arrayOldPosts[i]};
 		}
 
 		for (var i = 0, n = arrayNewPosts.length; i < n; i++) {
 			var post = arrayNewPosts[i].getElementsByClassName("alt1")[0];
 			var postId = post.id.substr(8);
-			newPosts[postId] = post.children[0].children[0];
+			newPosts[postId] = {'post': post.children[0].children[0], 'mainNode' : arrayNewPosts[i]};
 		}
 
 		var _newPosts = [];
@@ -290,11 +293,11 @@
 			var newPost = newPosts[oldPostId];
 
 			if (newPost) {// ¿Sigue existiendo el post viejo en el nuevo listado?
-				var oldPost = oldPosts[oldPostId];
+				/*var oldPost = oldPosts[oldPostId];
 
-				if (oldPost.innerHTML !== newPost.innerHTML) {// ¿Ha sido editado?
-					_editedPosts.push(oldPostId);
-				}
+				if (oldPost.post.innerHTML !== newPost.post.innerHTML) {// ¿Ha sido editado? (TODO)
+					_editedPosts.push({'id': oldPostId, 'html': oldPost.post.innerHTML});
+				}*/
 			} else {
 				_deletedPosts.push(oldPostId);
 			}
@@ -303,52 +306,73 @@
 		// recorrer los posts nuevos
 		for (var newPostId in newPosts) {
 			if (! (newPostId in oldPosts)) {
-				_newPosts.push(newPostId);
+				_newPosts.push({'id': newPostId, 'node': newPosts[newPostId].mainNode});
 			}
 		}
 
 		return {
-				'new': _newPosts,
-				'deleted': _deletedPosts,
-				'edited': _editedPosts
+				'new': _newPosts,// {id, node}
+				'deleted': _deletedPosts,// id
+				'edited': _editedPosts// {id, html}
 			};
 	}
 
 	/**
 	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
-	 * @param {int} numNewPosts Número de posts nuevos. Si es int(0), se crea un enlace a la siguiente página.
-	 * @param {bool} newPage Existe una nueva página.
-	 * @param {array(int)} editedPosts Array con los IDs de los posts editados.
-	 * @param {array(int)} deletedPosts Array con los IDs de los posts eliminados.
+	 * @param {array} newPosts Array con los posts nuevos. Si está vacío, se crea un enlace a la siguiente página.
+	 * @param {bool}  newPage Existe una nueva página.
+	 * @param {array} editedPosts Array con los IDs de los posts editados.
+	 * @param {array} deletedPosts Array con los IDs de los posts eliminados.
 	 */
-	function newPosts(numNewPosts, newPage, editedPosts, deletedPosts) {
-		// mostrar el elemento si está oculto
-		if (! newPostsShown) {
-			$(newPostsElem).slideDown("slow");
-			newPostsShown = true;
+	function newPosts(newPosts, newPage, editedPosts, deletedPosts) {
+		var numNewPosts = newPosts ? newPosts.length : 0;
+		var numDeletedPosts = deletedPosts ? deletedPosts.length : 0;
+
+		var string = "";// el mensaje que se mostrará en el botón
+
+		if (numDeletedPosts !== 0) {
+			string += numDeletedPosts === 1 ? "Se ha eliminado un post. " : "Se han eliminado " + numDeletedPosts + " posts. ";
+		}
+
+		if (numNewPosts !== 0) {
+			string += numNewPosts === 1 ? "Hay un post nuevo. " : "Hay " + numNewPosts + " posts nuevos. "
+		}
+
+		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
+		if (string === "" && newPage) {
+			if (newPage === true) {
+				string = "Hay una nueva página";
+			} else {
+				string = newPage;
+			}
+
+			// enlace a la nueva página
+			newPostsElem.href = "showthread.php?t=" + thread + "&page=" + (+page + 1);
+			newPostsElem.onclick = undefined;
 		}
 
 		// cambiar el título
 		// En Firefox, al actualizar el título de la página, la pestaña (si está fijada) se marca como actualizada - https://i.imgur.com/qWb3sF9.png
 		// Si el usuario ha entrado a la pestaña el aviso se va, por eso cambio el título de nuevo (con timeout) para que vuelva a aparecer el aviso si hay más posts nuevos.
-		if (typeof newPage !== 'string') {
-			document.title = pageTitle;
-			setTimeout(function () { document.title = "*" + pageTitle; }, 1);
-		}
+		document.title = pageTitle;
 
-		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
-		if (newPage && numNewPosts === 0) {
-			if (newPage === true) {
-				newPage = "Hay una nueva página";
+		if (string) {
+			newPostsElem.textContent = string;
+
+			// mostrar el elemento si está oculto
+			if (! newPostsShown) {
+				$(newPostsElem).slideDown();
+				newPostsShown = true;
 			}
 
-			// enlace a la nueva página
-			newPostsElem.textContent = newPage;
-			newPostsElem.href = "showthread.php?t=" + thread + "&page=" + (+page + 1);
-			newPostsElem.onclick = undefined;
-		} else {
-			// actualizar con el número de posts nuevos
-			newPostsElem.textContent = numNewPosts === 1 ? "Hay un post nuevo." : "Hay " + numNewPosts + " posts nuevos.";
+			// cambiar el título
+			if (typeof newPage !== 'string') {
+				setTimeout(function () { document.title = "*" + pageTitle; }, 1);
+			}
+		} else if (newPostsShown) {
+			$(newPostsElem).slideUp();
+			newPostsElem.textContent = "";
+			newPostsShown = false;
 		}
 	}
 
@@ -368,17 +392,24 @@
 		// añadir los posts
 		var postsElem = document.getElementById("posts");
 		var lastPostElem = document.getElementById("lastpost");
-		var numPostsAfter = posts.length;
 
-		for (var i = numPostsBefore, n = numPostsAfter; i < n; i++) {
-			var postId = posts[i].getElementsByTagName("table")[0].id.substr(4);
+		for (var i = 0, n = differences['new'].length; i < n; i++) {
+			var post = differences['new'][i];
+			var postId = post.id;
 
 			// añadir el post al DOM
-			var newNode = postsElem.insertBefore(posts[i], lastPostElem);
+			var newNode = postsElem.insertBefore(post.node, lastPostElem);
 
 			// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita)
 			unsafeWindow.PostBit_Init(newNode, postId);
 			unsafeWindow.parseScript(newNode.innerHTML);
+		}
+
+		for (var i = 0, n = differences['deleted'].length; i < n; i++) {
+			var postId = differences['deleted'][i];
+			var node = document.getElementById("edit" + postId).parentNode.parentNode.parentNode;
+			node.style.opacity = "0.35";
+			node.removeAttribute("align");// al obtener el listado de posts solo se consideran los que tengan 'align=center' (debería buscar otro método mejor...)
 		}
 
 		// disparar evento para avisar de nuevos posts
@@ -387,15 +418,13 @@
 		// actualizar variable para respuesta rápida, determinará el número de posts a cargar la próxima vez
 		unsafeWindow.ajax_last_post = (+new Date()) / 1000;
 
-		// ahora el hilo tiene varios posts más
-		numPostsBefore = numPostsAfter;
-
 		// actualizar el listado de posts que están visibles
-		shownPosts = posts;
+		shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
+		numPostsBefore = shownPosts.length;
 
 		// si hay nueva página, mostrar inmediatamente el botón
 		if (! isLastPage) {
-			newPosts(0, true);
+			newPosts(undefined, true);
 		}
 
 		return false;
