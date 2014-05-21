@@ -120,9 +120,7 @@
 				stopTimeout();
 
 				// ocultar el botón
-				newPostsElem.style.display = "none";
-				newPostsElem.textContent = "";
-				newPostsShown = false;
+				showButton(false);
 
 				// restablecer el título
 				document.title = pageTitle;
@@ -148,7 +146,7 @@
 						createTimeout();
 					} else {
 						// mostrar enlace para ir a la siguiente página
-						newPosts(undefined, true);
+						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 					}
 				} else {
 					// si ha habido un error vuelve a mostrar el aviso
@@ -157,7 +155,7 @@
 			};
 		} else if (mod.preferences.nextPageButton) {
 			createButton();
-			newPosts(undefined, 'Ir a la página siguiente', undefined, undefined);
+			showButton("Ir a la página siguiente", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 		}
 	};
 
@@ -170,8 +168,6 @@
 		newPostsElem.id = "shurscript-newposts";
 		newPostsElem.className = "btn btn-success";
 		newPostsElem.style.display = "none";
-		newPostsElem.href = "#";
-		newPostsElem.onclick = populateNewPosts;
 		shurscriptWrapper.appendChild(newPostsElem);
 
 		var postsElem = document.getElementById("posts");// añadirlo después de #posts
@@ -248,13 +244,26 @@
 					var _editedPosts = differences['edited'].length !== 0;
 					var _deletedPosts = differences['deleted'].length !== 0;
 
-					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
-					if (_newPosts || _newPage || _editedPosts || _deletedPosts || newPostsShown) {
-						newPosts(differences['new'], _newPage, differences['edited'], differences['deleted']);
-					}
+					if (numPostsBefore === differences['deleted'].length) {// si se han borrado todos los posts, posible "Tema especificado inválido" a la vista. lo comprobamos.
+						var node = doc.querySelector(".panelsurround center");
 
-					// volver a comprobar
-					createTimeout();
+						if (node && node.textContent === "Tema especificado inválido.") {// mostrar aviso (bootstrap) y terminar
+							stopTimeout();
+
+							bootbox.alert("ATENCIÓN: Este tema ha sido eliminado (tema especificado inválido).");
+
+							showButton("Este tema ha sido eliminado. No recargues la página si quieres seguir viéndolo.", "#");
+						}
+					}
+					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
+					else if (_newPosts || _editedPosts || _deletedPosts || newPostsShown) {
+						newPosts(differences['new'], differences['edited'], differences['deleted']);
+						createTimeout();
+					} else if (_newPage) {
+						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
+					} else {
+						createTimeout();
+					}
 				}
 			};
 
@@ -318,13 +327,39 @@
 	}
 
 	/**
-	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
-	 * @param {array} newPosts Array con los posts nuevos. Si está vacío, se crea un enlace a la siguiente página.
-	 * @param {bool}  newPage Existe una nueva página.
-	 * @param {array} editedPosts Array con los IDs de los posts editados.
-	 * @param {array} deletedPosts Array con los IDs de los posts eliminados.
+	 * @param msg {string} Si no está definido, ocultar el botón.
+	 * @param href {string} Si es undefined, el onclick será 'populateNewPosts'.
 	 */
-	function newPosts(newPosts, newPage, editedPosts, deletedPosts) {
+	function showButton(msg, href) {
+		if (msg) {// mostrar
+			if (href) {
+				newPostsElem.href = href;
+				newPostsElem.onclick = undefined;
+			} else {
+				newPostsElem.href = "#";
+				newPostsElem.onclick = populateNewPosts;
+			}
+
+			newPostsElem.textContent = msg;
+
+			if (! newPostsShown) {
+				$(newPostsElem).slideDown();
+				newPostsShown = true;
+			}
+		} else if (newPostsShown) {// ocultar
+			$(newPostsElem).slideUp();
+			newPostsElem.textContent = "";
+			newPostsShown = false;
+		}
+	}
+
+	/**
+	 * Muestra un botón para mostrar los nuevos posts o cargar la siguiente página.
+	 * @param newPosts {array} Array con los posts nuevos. Si está vacío, se crea un enlace a la siguiente página.
+	 * @param editedPosts {array} Array con los IDs de los posts editados.
+	 * @param deletedPosts {array} Array con los IDs de los posts eliminados.
+	 */
+	function newPosts(newPosts, editedPosts, deletedPosts) {
 		var numNewPosts = newPosts ? newPosts.length : 0;
 		var numDeletedPosts = deletedPosts ? deletedPosts.length : 0;
 
@@ -338,41 +373,20 @@
 			string += numNewPosts === 1 ? "Hay un post nuevo. " : "Hay " + numNewPosts + " posts nuevos. "
 		}
 
-		// mostrar el enlace a nueva página si ya se han cargado todos los posts de la página que estemos
-		if (string === "" && newPage) {
-			if (newPage === true) {
-				string = "Hay una nueva página";
-			} else {
-				string = newPage;
-			}
-
-			// enlace a la nueva página
-			newPostsElem.href = "showthread.php?t=" + thread + "&page=" + (+page + 1);
-			newPostsElem.onclick = undefined;
-		}
-
 		// cambiar el título
 		// En Firefox, al actualizar el título de la página, la pestaña (si está fijada) se marca como actualizada - https://i.imgur.com/qWb3sF9.png
 		// Si el usuario ha entrado a la pestaña el aviso se va, por eso cambio el título de nuevo (con timeout) para que vuelva a aparecer el aviso si hay más posts nuevos.
 		document.title = pageTitle;
 
 		if (string) {
-			newPostsElem.textContent = string;
-
-			// mostrar el elemento si está oculto
-			if (! newPostsShown) {
-				$(newPostsElem).slideDown();
-				newPostsShown = true;
-			}
+			showButton(string, false);
 
 			// cambiar el título
 			if (typeof newPage !== 'string') {
 				setTimeout(function () { document.title = "*" + pageTitle; }, 1);
 			}
-		} else if (newPostsShown) {
-			$(newPostsElem).slideUp();
-			newPostsElem.textContent = "";
-			newPostsShown = false;
+		} else {
+			showButton(false);
 		}
 	}
 
@@ -424,7 +438,7 @@
 
 		// si hay nueva página, mostrar inmediatamente el botón
 		if (! isLastPage) {
-			newPosts(undefined, true);
+			showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 		}
 
 		return false;
