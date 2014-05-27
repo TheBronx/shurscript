@@ -48,10 +48,6 @@
 		];
 	};
 
-	mod.normalStartCheck = function () {
-		return true;
-	};
-
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var isLastPage;// ¿estamos en la última página del hilo?
 	var isOpen = true;// ¿está abierto el hilo? si está cerrado el módulo no se ejecuta
