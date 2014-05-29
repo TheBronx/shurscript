@@ -83,7 +83,6 @@
 
 			/* Añadir evento para saber cuándo la pestaña adquiere el foco */
 			document.addEventListener("visibilitychange", function () {
-				var timeNow = +new Date();
 				var remaining = timeoutTime - (+new Date());// tiempo restante para el timeout
 
 				var timeoutActive = stopTimeout();
@@ -224,11 +223,9 @@
 					var parser = new DOMParser();
 					var doc = parser.parseFromString(html, "text/html");
 
-					var numPostsPrevious = posts.length;
 					var isLastPagePrevious = isLastPage;
 
 					posts = doc.querySelectorAll("#posts > div[align]");
-					var numPostsAfter = posts.length;
 					isLastPage = doc.getElementsByClassName("pagenav").length
 						? doc.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 						: true;
