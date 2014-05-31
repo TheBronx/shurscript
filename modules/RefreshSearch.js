@@ -19,10 +19,12 @@
 	};
 
 	var elementCountDown;// objeto de tipo HTML_LI_Element
-	var seconds, totalSeconds;
+	var seconds, totalSeconds;// tiempo restante y tiempo a esperar total
 	var timeoutId;
 
 	mod.onNormalStart = function () {
+		var timePageLoaded = performance.timing.responseStart;// tiempo en el que el servidor comenzó a enviar la página
+
 		// Obtener el elemento que contiene el tiempo que se ha de esperar
 		if (document.title === "ForoCoches") {
 			elementCountDown = document.getElementsByClassName('panel')[0].childNodes[1].childNodes[3];
@@ -35,12 +37,14 @@
 
 		if (str) {
 			var n = str.length;
-			seconds = parseInt(str.substring(n - 12, n - 9));
+			totalSeconds = ~~(str.substring(23, 26));// ~~: to int
 
-			if (!isNaN(seconds)) {
-				totalSeconds = parseInt(str.substring(23, 26));
+			if (!isNaN(totalSeconds)) {
+				var timeNextRefresh = timePageLoaded + 1000 * totalSeconds;
+				var msRestantes = timeNextRefresh - new Date();
 
-				timeoutId = setTimeout(updateCountDown, 967);
+				timeoutId = setTimeout(updateCountDown, msRestantes % 1000);
+				seconds = ~~(msRestantes / 1000);
 			}
 		}
 	};
