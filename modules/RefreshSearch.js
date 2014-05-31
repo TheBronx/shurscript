@@ -35,7 +35,8 @@
 
 		if (str) {
 			var n = str.length;
-			totalSeconds = ~~(str.substring(23, 26));// ~~: to int
+			var index = str.indexOf("segundos");
+			totalSeconds = ~~(str.substring(index - 3, index));// ~~: to int
 
 			if (!isNaN(totalSeconds)) {
 				var timePageLoaded = performance.timing.responseStart;// tiempo en el que el servidor comenzó a enviar la página
