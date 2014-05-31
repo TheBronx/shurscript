@@ -12,6 +12,7 @@
 			enabled: true,
 			activeTabPeriodicity: 10000,
 			hiddenTabPeriodicity: 30000,
+			loadAutomatically: false,
 			nextPageButton: false
 		},
 		preferences: {}
@@ -41,6 +42,9 @@
 				],
 				caption: 'Si la pestaña no está en primer plano, buscar nuevas respuestas:',
 				mapsTo: 'hiddenTabPeriodicity'
+			}),
+			creOpt({
+				type: 'checkbox', mapsTo: 'loadAutomatically', caption: 'Cargar nuevos posts automáticamente.'
 			}),
 			creOpt({
 				type: 'checkbox', mapsTo: 'nextPageButton', caption: 'Mostrar siempre el botón para ir a la siguiente página, no solo cuando haya una nueva.'
@@ -144,7 +148,7 @@
 						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 					}
 				} else {
-					// si ha habido un error vuelve a mostrar el aviso
+					// si ha habido un error vuelve a mostrar el botón
 					loadThread();
 				}
 			};
@@ -353,33 +357,37 @@
 	 * @param deletedPosts {array} Array con los IDs de los posts eliminados.
 	 */
 	function newPosts(newPosts, editedPosts, deletedPosts) {
-		var numNewPosts = newPosts ? newPosts.length : 0;
-		var numDeletedPosts = deletedPosts ? deletedPosts.length : 0;
+		if (mod.preferences.loadAutomatically) {
+			populateNewPosts();
+		} else {
+			var numNewPosts = newPosts ? newPosts.length : 0;
+			var numDeletedPosts = deletedPosts ? deletedPosts.length : 0;
 
-		var string = "";// el mensaje que se mostrará en el botón
+			var string = "";// el mensaje que se mostrará en el botón
 
-		if (numDeletedPosts !== 0) {
-			string += numDeletedPosts === 1 ? "Se ha eliminado un post. " : "Se han eliminado " + numDeletedPosts + " posts. ";
-		}
+			if (numDeletedPosts !== 0) {
+				string += numDeletedPosts === 1 ? "Se ha eliminado un post. " : "Se han eliminado " + numDeletedPosts + " posts. ";
+			}
 
-		if (numNewPosts !== 0) {
-			string += numNewPosts === 1 ? "Hay un post nuevo. " : "Hay " + numNewPosts + " posts nuevos. "
-		}
-
-		// cambiar el título
-		// En Firefox, al actualizar el título de la página, la pestaña (si está fijada) se marca como actualizada - https://i.imgur.com/qWb3sF9.png
-		// Si el usuario ha entrado a la pestaña el aviso se va, por eso cambio el título de nuevo (con timeout) para que vuelva a aparecer el aviso si hay más posts nuevos.
-		document.title = pageTitle;
-
-		if (string) {
-			showButton(string, false);
+			if (numNewPosts !== 0) {
+				string += numNewPosts === 1 ? "Hay un post nuevo. " : "Hay " + numNewPosts + " posts nuevos. "
+			}
 
 			// cambiar el título
-			if (typeof newPage !== 'string') {
-				setTimeout(function () { document.title = "*" + pageTitle; }, 1);
+			// En Firefox, al actualizar el título de la página, la pestaña (si está fijada) se marca como actualizada - https://i.imgur.com/qWb3sF9.png
+			// Si el usuario ha entrado a la pestaña el aviso se va, por eso cambio el título de nuevo (con timeout) para que vuelva a aparecer el aviso si hay más posts nuevos.
+			document.title = pageTitle;
+
+			if (string) {
+				showButton(string, false);
+
+				// cambiar el título
+				if (typeof newPage !== 'string') {
+					setTimeout(function () { document.title = "*" + pageTitle; }, 1);
+				}
+			} else {
+				showButton(false);
 			}
-		} else {
-			showButton(false);
 		}
 	}
 
@@ -396,26 +404,36 @@
 		// restablecer el título
 		document.title = pageTitle;
 
-		// añadir los posts
-		var postsElem = document.getElementById("posts");
-		var lastPostElem = document.getElementById("lastpost");
+		// 1: añadir posts nuevos
+		var divElem = document.createElement("div");
+		divElem.className = "new-posts";
+		divElem.style.display = "none";
 
 		for (var i = 0, n = differences['new'].length; i < n; i++) {
 			var post = differences['new'][i];
 			var postId = post.id;
 
 			// añadir el post al DOM
-			var newNode = postsElem.insertBefore(post.node, lastPostElem);
-
-			// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita)
-			unsafeWindow.PostBit_Init(newNode, postId);
-			unsafeWindow.parseScript(newNode.innerHTML);
+			var newNode = divElem.appendChild(post.node);
 		}
 
+		var postsElem = document.getElementById("posts");
+		postsElem.insertBefore(divElem, document.getElementById("lastpost"));
+		$(divElem).slideDown();
+
+		// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita), una vez que se han añadido al DOM
+		for (var i = 0, n = differences['new'].length; i < n; i++) {
+			var node = differences['new'][i].node;
+
+			unsafeWindow.PostBit_Init(node, postId);
+			unsafeWindow.parseScript(node.innerHTML);
+		}
+
+		// 2: procesar posts eliminados
 		for (var i = 0, n = differences['deleted'].length; i < n; i++) {
 			var postId = differences['deleted'][i];
 			var node = document.getElementById("edit" + postId).parentNode.parentNode.parentNode;
-			node.style.opacity = "0.35";
+			$(node).fadeTo("slow", 0.35);
 			node.removeAttribute("align");// al obtener el listado de posts solo se consideran los que tengan 'align=center' (debería buscar otro método mejor...)
 		}
 
