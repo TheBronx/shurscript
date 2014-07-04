@@ -11,6 +11,13 @@
 	});
 
 	/**
+	 * Genera un string aleatorio
+	 */
+	function getRandom() {
+		return Math.random().toString(36).substring(2);
+	}
+
+	/**
 	 * Esconder lo relacionad con el nombre
 	 */
 	function hideUserName() {
@@ -18,16 +25,17 @@
 		var $nick = $('td.alt2 div a');
 		var myName = null;
 
-		//Me aseguro que es un link de member
-		$nick.each(function(){
+		_.each($nick, function(nick){
 			// Me guardo mi nick para siempre
 			// Esto se podría globalizar si lo queréis
 			if(!myName) {
-				myName = $(this).text();
+				myName = $(nick).text();
 			}
-			if($(this).text().indexOf(myName) > -1) {
+
+			// Me aseguro que aparece mi nick
+			if($(nick).text().indexOf(myName) > -1) {
 				// Borro enlace y texto manteniendo el diseño
-				$(this).attr('href', '#').text('*');
+				$(nick).attr('href', '#').text('*');
 			}
 		});
 
@@ -36,10 +44,44 @@
 	}
 
 	/**
+	 * Esconder cualquier imagen + click para mostrarla
+	 */
+	function hideImages() {
+		var $imgs = $('#posts img, #posts iframe, #posts embed');
+
+		//Me aseguro que es un link de member
+		_.each($imgs, function(img){
+
+			var $img = $(img);
+
+			// Si no es un icono chapuza inside
+			if($img.parent().attr('rel') != 'nofollow'){
+				var className = 'hide-img-' + getRandom();
+
+				// Creo un botón para hacer toggle
+				var $button = $('<a/>').text('Mostrar/Esconder').attr('href', '#');
+
+				// La escondo, le pongo una clase random y añado el botón
+				$img
+					.hide()
+					.addClass(className)
+					.after($button);
+
+				// Evento
+				$button.on('click', function(e) {
+					e.preventDefault();
+					$('.' + className).toggle();
+				});
+			}
+		});
+	}
+
+	/**
 	 * Sobreescribimos la funcion de ejecucion
 	 */
 	mod.onNormalStart = function () {
 		hideUserName();
+		hideImages();
 	};
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
