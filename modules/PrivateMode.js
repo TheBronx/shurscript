@@ -1,4 +1,4 @@
-function ($, createModule, undefined) {
+(function ($, createModule, undefined) {
 	'use strict';
 
 	var mod = createModule({
@@ -13,14 +13,19 @@ function ($, createModule, undefined) {
 	/**
 	 * Esconder lo relacionad con el nombre
 	 */
-
 	function hideUserName() {
 		// Busco donde suele estar mi nick
 		var $nick = $('td.alt2 div a');
+		var myName = null;
 
 		//Me aseguro que es un link de member
 		$nick.each(function(){
-			if($(this).attr('href').indexOf('member') > -1) {
+			// Me guardo mi nick para siempre
+			// Esto se podría globalizar si lo queréis
+			if(!myName) {
+				myName = $(this).text();
+			}
+			if($(this).text().indexOf(myName) > -1) {
 				// Borro enlace y texto manteniendo el diseño
 				$(this).attr('href', '#').text('*');
 			}
