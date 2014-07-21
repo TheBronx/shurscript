@@ -166,7 +166,7 @@
 				allowDuplicates: false,
 				delimiter: ',',
 				minLength: 2,
-				limit: 150
+				limit: 500
 			});
 		});
 
