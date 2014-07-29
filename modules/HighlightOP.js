@@ -29,7 +29,7 @@
 		if (typeof exportFunction === 'function') {// Firefox 31+
 			exportFunction(f, unsafeWindow, {defineAs: 'HighlightOP_importBuddyList'});
 		} else {
-			unsafeWindow.importBuddyList = f;
+			unsafeWindow.HighlightOP_importBuddyList = f;
 		}
 
 		return [

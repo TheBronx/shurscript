@@ -441,10 +441,12 @@
 
 					if ((timeToWait--) <= 0) {
 						clearInterval(interval);
-						mod.helper.deleteValue("POST_BACKUP");
-						$("form[name='vbform']").submit();
+						if (mod.preferences.savePosts) {
+							mod.helper.deleteValue("POST_BACKUP");
+						}
+						document.getElementsByName('vbform')[0].submit();
 					} else {
-						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
+						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + timeToWait + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
 					}
 
 				} else {
