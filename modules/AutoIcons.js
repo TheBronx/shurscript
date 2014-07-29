@@ -21,7 +21,7 @@
 	mod.getPreferenceOptions = function () {
 		return [
 			mod.helper.createPreferenceOption({type: 'checkbox', mapsTo: 'addFavouriteIcons', caption: 'Añadir un listado debajo de la caja de respuesta rápida con los siguientes iconos:'}),
-			mod.helper.createPreferenceOption({type: 'tags', mapsTo: 'favouriteIcons', subCaption: 'Deja el campo en blanco para usar los iconos por defecto.'})
+			mod.helper.createPreferenceOption({type: 'tags', mapsTo: 'favouriteIcons', caption: null, subCaption: 'Deja el campo en blanco para usar los iconos por defecto.'})
 		];
 	};
 

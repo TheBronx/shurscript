@@ -212,14 +212,20 @@
 	mod.getPreferenceOptions = function () {
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
-
-		unsafeWindow.FilterThreads_importBuddyList = function () {
+		var f1 = function () {
 			importBuddyList();
 		};
-
-		unsafeWindow.FilterThreads_importIgnoreList = function () {
+		var f2 = function () {
 			importIgnoreList();
 		};
+		
+		if (typeof exportFunction === 'function') {// Firefox 31+
+			exportFunction(f1, unsafeWindow, {defineAs: 'FilterThreads_importBuddyList'});
+			exportFunction(f2, unsafeWindow, {defineAs: 'FilterThreads_importIgnoreList'});
+		} else {
+			unsafeWindow.FilterThreads_importBuddyList = f1;
+			unsafeWindow.FilterThreads_importIgnoreList = f2;
+		}
 		
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),

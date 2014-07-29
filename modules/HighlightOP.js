@@ -23,17 +23,21 @@
 
 	mod.getPreferenceOptions = function () {
 		var creOpt = mod.helper.createPreferenceOption;
-
-		unsafeWindow.importBuddyList = function () {
+		var f = function () {
 			importBuddyList();
 		};
+		if (typeof exportFunction === 'function') {// Firefox 31+
+			exportFunction(f, unsafeWindow, {defineAs: 'HighlightOP_importBuddyList'});
+		} else {
+			unsafeWindow.importBuddyList = f;
+		}
 
 		return [
 			creOpt({type: 'checkbox', mapsTo: 'quotes', caption: 'Resaltar también las citas.'}),
 			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
 			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
-			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
+			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="HighlightOP_importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
 	};
