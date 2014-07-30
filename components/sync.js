@@ -21,41 +21,50 @@
 		preferences: {}, //las preferencias sacadas del server
 
 		setValue: function (key, value, callback) {
-			$.ajax({
-				type: 'PUT',
+			GM_xmlhttpRequest({
+				method: 'PUT',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
-				data: {'value': value},
-				dataType: 'json'
-			}).done(callback);
+				data: $.param({'value': value}),
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				onload: function (response) {
+					if (callback) {
+						callback(JSON.parse(response.response));
+					}
+				}
+			});
 		},
 
 		getValue: function (key, callback, defaultValue) {
-			$.ajax({
-				type: 'get',
+			GM_xmlhttpRequest({
+				method: 'GET',
 				url: this.server + 'preferences/' + key + '/?apikey=' + this.apiKey,
-				data: "",
-				dataType: 'json'
-			}).done(callback);
+				data: '',
+				onload: function (response) {
+					if (callback) {
+						callback(JSON.parse(response.response));
+					}
+				}
+			});
 		},
 
 		getAll: function (callback) {
 			SHURSCRIPT.config.apiKey = this.apiKey;
 
 			sync.helper.log("Cloud.getAll() using API key: " + this.apiKey);
-			$.ajax({
-				type: 'get',
+			GM_xmlhttpRequest({
+				method: 'GET',
 				url: this.server + 'preferences/?apikey=' + this.apiKey,
-				data: "",
-				dataType: 'json'
-			})
-				.done(function (data) {
-					Cloud.preferences = data;
+				data: '',
+				onload: function (response) {
+					Cloud.preferences = JSON.parse(response.response);
 					callback();
-				})
-				.fail(function (error) {
-					switch (error.status) {
+				},
+				onerror: function (response) {
+					switch (response.status) {
 						case 403: //API Key no encontrada
-							bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida ¿Quieres que te generemos una nueva?", function (res) {
+							bootbox.confirm("<h3>¡Un momento!</h3>La Shurkey que estás utilizando no es válida. ¿Quieres que te generemos una nueva?", function (res) {
 								if (res) {
 									Cloud.generateApiKey(function () {
 										Cloud.getAll(callback);
@@ -70,11 +79,12 @@
 							break;
 						case 500: //Error general
 						default:
-							sync.helper.showMessageBar({message: "<strong>Oops...</strong> No se ha podido contactar con el cloud de <strong>shurscript</strong>. Consulta que puede estar causando este problema en <a href='https://github.com/TheBronx/shurscript/wiki/FAQ#no-se-ha-podido-contactar-con-el-cloud-de-shurscript'>las F.A.Q.</a> y si el problema persiste, deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>. <strong>{err: general}</strong>", type: "danger"});
+							sync.helper.showMessageBar({message: "<strong>Oops...</strong> No se ha podido contactar con el cloud de <strong>shurscript</strong>. Consulta qué puede estar causando este problema en <a href='https://github.com/TheBronx/shurscript/wiki/FAQ#no-se-ha-podido-contactar-con-el-cloud-de-shurscript'>las F.A.Q.</a> y, si el problema persiste, deja constancia en el <a href='" + SHURSCRIPT.config.fcThread + "'>hilo oficial</a>. <strong>{err: general}</strong>", type: "danger"});
 							break;
 					}
-					sync.helper.throw("Error al recuperar las preferencias", error)
-				});
+					sync.helper.throw("Error al recuperar las preferencias", response)
+				}
+			});
 		},
 
 		deleteValue: function (key, callback) {
@@ -86,16 +96,16 @@
 		generateApiKey: function (callback, oldKey) {
 			sync.helper.deleteLocalValue("API_KEY");
 			sync.helper.log("Cloud.generateApiKey()");
-			$.ajax({
-				type: 'POST',
+			GM_xmlhttpRequest({
+				method: 'POST',
 				url: this.server + 'preferences/' + (oldKey !== undefined ? "?apikey=" + oldKey : ""),
-				data: "",
-				dataType: 'json'
-			}).done(function (data) {
-				sync.helper.log("Generated API Key:" + JSON.stringify(data));
-				Cloud.apiKey = data.apikey;
-				saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
-				callback();
+				data: '',
+				onload: function (data) {
+					sync.helper.log("Generated API Key:" + JSON.stringify(data));
+					Cloud.apiKey = data.apikey;
+					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
+					callback();
+				}
 			});
 		}
 	};
