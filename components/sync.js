@@ -30,7 +30,7 @@
 				},
 				onload: function (response) {
 					if (callback) {
-						callback(JSON.parse(response.response));
+						callback(JSON.parse(response.responseText));
 					}
 				}
 			});
@@ -43,7 +43,7 @@
 				data: '',
 				onload: function (response) {
 					if (callback) {
-						callback(JSON.parse(response.response));
+						callback(JSON.parse(response.responseText));
 					}
 				}
 			});
@@ -58,7 +58,7 @@
 				url: this.server + 'preferences/?apikey=' + this.apiKey,
 				data: '',
 				onload: function (response) {
-					Cloud.preferences = JSON.parse(response.response);
+					Cloud.preferences = JSON.parse(response.responseText);
 					callback();
 				},
 				onerror: function (response) {
@@ -100,7 +100,8 @@
 				method: 'POST',
 				url: this.server + 'preferences/' + (oldKey !== undefined ? "?apikey=" + oldKey : ""),
 				data: '',
-				onload: function (data) {
+				onload: function (response) {
+					var data = JSON.parse(response.responseText);
 					sync.helper.log("Generated API Key:" + JSON.stringify(data));
 					Cloud.apiKey = data.apikey;
 					saveApiKey(Cloud.apiKey); //guardamos la API key generada en las suscripciones
