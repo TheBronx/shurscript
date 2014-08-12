@@ -55,6 +55,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/PrivateMode.js
 // @require         https://github.com/rubdev/shurscript/raw/experimental/modules/post2pdf.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/modules/imagehack.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css

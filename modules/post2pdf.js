@@ -1,4 +1,4 @@
-function ($, createModule, undefined) {
+(function ($, createModule, undefined) {
 	'use strict';
 
 	var mod = createModule({
@@ -33,3 +33,4 @@ doc.fromHTML($('body').get(0), 15, 15, {
 });
 doc.output('dataurlnewwindow');     //Abrimos el PDF en una nueva ventana ya renderizado
 }
+)(jQuery, SHURSCRIPT.moduleManager.createModule);
