@@ -9,7 +9,7 @@ var mod = createModule({
 	author: 'RubDev',
 	version: '0.1',
 	description: 'Permite exportar el contenido de un tema en ForoCoches a PDF para descargarlo posteriormente',
-	domain: ['/showthread.php']
+	domain: ['/showthread.php'],
 	initialPreferences: {
 		enabled: true, // Esta es opcional - por defecto true
 
