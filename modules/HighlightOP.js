@@ -68,8 +68,8 @@
 			}
 		}
 
-		SHURSCRIPT.eventbus.on('newposts', function (event, firstNewPost) {
-			highlightOP(firstNewPost);
+		SHURSCRIPT.eventbus.on('newposts', function (event, numNewPosts) {
+			highlightOP(numNewPosts);
 		});
 	};
 
@@ -106,14 +106,10 @@
 		return null;
 	}
 
-	function highlightOP(firstPost) {
+	function highlightOP(numNewPosts) {
 		if (! op) {
 			console_log("ERROR");
 			return;
-		}
-
-		if (! firstPost) {
-			firstPost = 0;
 		}
 
 		var username = mod.helper.environment.user.name;
@@ -126,6 +122,7 @@
 
 		// Highlighted posts have "op_post" class
 		var users = document.getElementsByClassName("bigusername");
+		var firstPost = numNewPosts === undefined ? 0 : users.length - numNewPosts;
 
 		for (var i = firstPost, n = users.length; i < n; i++) {
 			var currentUser = users[i].innerHTML;

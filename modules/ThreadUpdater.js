@@ -148,7 +148,7 @@
 						numNewPosts = ajax.responseXML.children[0].children.length - 1;
 						
 						// lanzar evento
-						SHURSCRIPT.eventbus.trigger('newposts', numPostsBefore);
+						SHURSCRIPT.eventbus.trigger('newposts', numNewPosts);
 					}
 				} else {
 					return;
