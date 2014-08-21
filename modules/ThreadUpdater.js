@@ -189,8 +189,8 @@
 				document.getElementsByTagName('head')[0].appendChild(script);
 				
 				// como no se permite redefinir funciones, obtengo los datos mediante un evento
-				SHURSCRIPT.eventbus.on('newposts', function (event, firstNewPost) {
-					qr_do_ajax_post_new(firstNewPost);
+				SHURSCRIPT.eventbus.on('newposts', function (event, numNewPosts) {
+					qr_do_ajax_post_new(numNewPosts);
 				});
 			} else {
 				unsafeWindow.qr_do_ajax_post = qr_do_ajax_post_new;
@@ -228,10 +228,10 @@
 				if (mod.preferences.hiddenTabPeriodicity === 'off') {
 					return null;
 				} else {
-					interval = parseInt(mod.preferences.hiddenTabPeriodicity);
+					interval = +mod.preferences.hiddenTabPeriodicity;
 				}
 			} else {
-				interval = parseInt(mod.preferences.activeTabPeriodicity);
+				interval = +mod.preferences.activeTabPeriodicity;
 			}
 		}
 
@@ -279,12 +279,12 @@
 					isOpen = doc.getElementById("qrform") !== null;
 
 					differences = findDifferences(shownPosts, posts);
-					var _newPosts = differences['new'].length !== 0;
+					var _newPosts = differences.new.length !== 0;
 					var _newPage = isLastPage !== isLastPagePrevious;
-					var _editedPosts = differences['edited'].length !== 0;
-					var _deletedPosts = differences['deleted'].length !== 0;
+					var _editedPosts = differences.edited.length !== 0;
+					var _deletedPosts = differences.deleted.length !== 0;
 
-					if (numPostsBefore === differences['deleted'].length) {// si se han borrado todos los posts, posible "Tema especificado inválido" a la vista. lo comprobamos.
+					if (numPostsBefore === differences.deleted.length) {// si se han borrado todos los posts, posible "Tema especificado inválido" a la vista. lo comprobamos.
 						var node = doc.querySelector(".panelsurround center");
 
 						if (node && node.textContent === "Tema especificado inválido.") {// mostrar aviso (bootstrap) y terminar
@@ -297,7 +297,7 @@
 					}
 					// comprobar si hay nuevos posts y si no hay posts nuevos respecto a la última vez
 					else if (_newPosts || _editedPosts || _deletedPosts || newPostsShown) {
-						newPosts(differences['new'], differences['edited'], differences['deleted']);
+						newPosts(differences.new, differences.edited, differences.deleted);
 						createTimeout();
 					} else if (_newPage) {
 						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
@@ -452,8 +452,8 @@
 		divElem.className = "new-posts";
 		divElem.style.display = "none";
 
-		for (var i = 0, n = differences['new'].length; i < n; i++) {
-			var post = differences['new'][i];
+		for (var i = 0, n = differences.new.length; i < n; i++) {
+			var post = differences.new[i];
 			var postId = post.id;
 
 			// añadir el post al DOM
@@ -465,23 +465,23 @@
 		$(divElem).slideDown();
 
 		// ejecutar los scripts recibidos (popup menú usuario, vídeos, multicita), una vez que se han añadido al DOM
-		for (var i = 0, n = differences['new'].length; i < n; i++) {
-			var node = differences['new'][i].node;
+		for (var i = 0, n = differences.new.length; i < n; i++) {
+			var node = differences.new[i].node;
 
 			unsafeWindow.PostBit_Init(node, postId);
 			unsafeWindow.parseScript(node.innerHTML);
 		}
 
 		// 2: procesar posts eliminados
-		for (var i = 0, n = differences['deleted'].length; i < n; i++) {
-			var postId = differences['deleted'][i];
+		for (var i = 0, n = differences.deleted.length; i < n; i++) {
+			var postId = differences.deleted[i];
 			var node = document.getElementById("edit" + postId).parentNode.parentNode.parentNode;
 			$(node).fadeTo("slow", 0.35);
 			node.removeAttribute("align");// al obtener el listado de posts solo se consideran los que tengan 'align=center' (debería buscar otro método mejor...)
 		}
 
 		// disparar evento para avisar de nuevos posts
-		SHURSCRIPT.eventbus.trigger('newposts', numPostsBefore);
+		SHURSCRIPT.eventbus.trigger('newposts', differences.new.length);
 
 		// actualizar variable para respuesta rápida, determinará el número de posts a cargar la próxima vez
 		unsafeWindow.ajax_last_post = (+new Date()) / 1000;
