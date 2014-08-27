@@ -209,7 +209,7 @@
 			$('#textselect').text($("input[data-maps-to='" + pref + "']").tokenfield('getTokensList', ','));
 		}
 
-		
+		return false;
 	};
 
 	preferences.checkUpdates = function () {
