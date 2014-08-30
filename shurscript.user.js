@@ -32,6 +32,15 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootstrap-tokenfield.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/icheck.min.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.addimage.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.cell.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.from_html.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.ie_below_9_shim.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.javascript.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.sillysvgrenderer.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.split_text_to_size.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/plugins/jspdf/jspdf.plugin.standard_fonts_metrics.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js
@@ -53,6 +62,8 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ThreadUpdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/PrivateMode.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/modules/post2pdf.js
+// @require         https://github.com/rubdev/shurscript/raw/experimental/modules/imagehack.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
