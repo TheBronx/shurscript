@@ -61,9 +61,9 @@
 	 */
 	function prepareEvents() {
 		var delay;
-
 		//Punto y coma abre y cierra el popup
-		$(getEditor().editdoc.body).keypress(function (e) {
+		
+		$(getEditorBody()).keypress(function (e) {
 			if (e.which === KeyEvent.DOM_VK_COLON) {
 				var currentFilter = getCurrentFilter();
 				if (active && currentFilter) {
@@ -88,7 +88,7 @@
 		});
 
 		//Controlar la acción de cada tecla
-		$(getEditor().editdoc.body).keydown(function (e) {
+		$(getEditorBody()).keydown(function (e) {
 			if (active) {
 				clearTimeout(delay);
 				manageKeyDown(e);
@@ -482,8 +482,12 @@
 		return mod.helper.environment.page == "/showthread.php" ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
+	function getEditorBody() {
+		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).contents().find("body.wysiwyg")[0];
+	}
+
 	function isWYSIWYG() {
-		return getEditor().editdoc.body;
+		return getEditorBody();
 	}
 
 	function isQuickReply() {
@@ -496,7 +500,7 @@
 	}
 
 	function focusEditor() {
-		getEditor().editdoc.body.focus();
+		getEditorBody().focus();
 	}
 
 	//Nombres de los keyCode, para Chrome, que no lo implementa nativamente

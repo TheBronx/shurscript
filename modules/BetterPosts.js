@@ -42,7 +42,7 @@
 		if (!isWYSIWYG()) { //Chrome, Safari, etc.
 			enableWYSIWYG();
 			var checkWYSIWYG = setInterval(function () {
-				if (getEditor().editdoc.body) { //WYSIWYG activado
+				if (getEditorBody()) { //WYSIWYG activado
 					clearInterval(checkWYSIWYG);
 					enableWYSIWYGDependantFeatures();
 				}
@@ -206,9 +206,10 @@
 
 		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height') || 430;
 
-		$(editor.editdoc.body).on('input', function () {
-			if (checkAutoGrow.checked)
+		$(getEditorBody()).on('input', function () {
+			if (checkAutoGrow.checked) {
 				reflowTextArea();
+			}
 		});
 
 		$("#vB_Editor_QR_cmd_resize_1_99").click(function () {
@@ -400,7 +401,7 @@
 			}, 1000);
 		};
 
-		$(getEditor().editdoc.body).on('input', onInputHandler);
+		$(getEditorBody()).on('input', onInputHandler);
 
 		// Eliminar el backup guardado al enviar la Respuesta
 		// Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor
@@ -514,12 +515,16 @@
 	}
 
 	function getTextAreaHeight() {
-		var height = getEditor().editdoc.body.offsetHeight;
+		var height = getEditorBody().offsetHeight;
 		return Math.max(height, 100);
 	}
 
 	function getEditor() {
 		return mod.helper.environment.page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
+	}
+	
+	function getEditorBody() {
+		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).contents().find("body.wysiwyg")[0];
 	}
 
 	function isQuickReply() {
@@ -527,7 +532,7 @@
 	}
 
 	function isWYSIWYG() {
-		return getEditor().editdoc.body;
+		return getEditorBody();
 	}
 
 	function getEditorContents() {
@@ -545,7 +550,7 @@
 	}
 
 	function focusEditor() {
-		getEditor().editdoc.body.focus();
+		getEditorBody().focus();
 	}
 
 	function trim(text) {
