@@ -483,11 +483,15 @@
 	}
 
 	function getEditorBody() {
-		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).contents().find("body.wysiwyg")[0];
+		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
-		return getEditorBody();
+		try {
+			return getEditorBody();
+		} catch (e) {
+			return false;
+		}
 	}
 
 	function isQuickReply() {
