@@ -31,8 +31,8 @@ Para instalar el script necesitas solamente dos cosas:
 [GreaseMonkey](https://addons.mozilla.org/es/firefox/addon/greasemonkey/)
    + Para Chrome: [TamperMonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=es)
    + Para Opera: [TamperMonkey](https://addons.opera.com/es/extensions/details/tampermonkey-beta/?display=es)
+   + Para Safari: [JavaScript Blocker](http://javascript-blocker.toggleable.com/)
    + Para Maxthon: **No soportado**
-   + Para Safari: **No soportado**
    + Para Internet Explorer: **U mad?**
 
 Una vez instalada la extensión para tu navegador simplemente instala _shurscript_ desde el siguiente enlace 
