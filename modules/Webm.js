@@ -34,12 +34,7 @@
 
 			var video = document.createElement('video');
 			video.src = link;
-			video.autoplay = false;
-			video.loop = false;
-			video.muted = true;
-			video.controls = true;
-			video.style.maxWidth = "600px";
-			video.style.maxHeight = "600px";
+			setVideoAttributes(video);
 
 			$(this).after(video);
 			$(this).remove();
@@ -61,12 +56,8 @@
 					var video = document.createElement('video');
 					video.src = data.gfyItem.mp4Url;
 					video.src = data.gfyItem.webmUrl;
-					video.autoplay = false;
-					video.loop = false;
-					video.muted = true;
-					video.controls = true;
-					video.style.maxWidth = "600px";
-					video.style.maxHeight = "600px";
+					setVideoAttributes(video);
+
 					$this.append('<br>');
 					$this.after(video);
 				}
@@ -81,15 +72,20 @@
 			var video = document.createElement('video');
 			video.src = '//cdn.'+url+'.mp4';
 			video.src = '//cdn.'+url+'.webm';
-			video.autoplay = false;
-			video.loop = false;
-			video.muted = true;
-			video.controls = true;
-			video.style.maxWidth = "600px";
-			video.style.maxHeight = "600px";
+			setVideoAttributes(video);
+
 			$(this).append('<br>');
 			$(this).after(video);
 		});
+	}
+
+	function setVideoAttributes(video) {
+		video.autoplay = false;
+		video.loop = false;
+		video.muted = false;
+		video.controls = true;
+		video.style.maxWidth = "600px";
+		video.style.maxHeight = "600px";
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
