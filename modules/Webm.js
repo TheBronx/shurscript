@@ -4,7 +4,7 @@
 	var mod = createModule({
 		id: 'Webm',
 		name: 'Webm',
-		author: 'h3ku, xusoO, TheBronx',
+		author: 'gananciafc, xusoO, TheBronx',
 		version: '0.3',
 		description: 'Muestra videos de gfycat.com, mediacru.sh y cualquier .webm',
 		domain: ['/showthread.php'],
