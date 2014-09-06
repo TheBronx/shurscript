@@ -6,6 +6,7 @@
  *
  * Eventos lanzados:
  *      + parseThread( Thread )
+ *      + parsePost( Post )
  *
  */
 (function ($, SHURSCRIPT, undefined) {
@@ -29,6 +30,20 @@
 		}
 	};
 
+	var Post = function(element) {
+		this.element = element;
+		var table = this.element.find('table').first();
+
+		this.id = parseInt(table.attr('id').replace('post',''));
+		this.href = '/showthread.php?p=' + this.id;
+		this.content = this.element.find('#post_message_' + this.id);
+		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
+
+		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
+		this.author = user.html();
+		this.author_link = user.attr('href');
+	};
+
 	parser.parse = function () {
 		var page = location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage";
 		if (page == "frontpage") {
@@ -37,7 +52,7 @@
 
 		} else if (page == "/showthread.php") {
 			//si estamos en un hilo, parse de posts y usuarios
-			//TODO parsePostsAndUsers()
+			parsePostsAndUsers();
 
 		} else if (page == "/forumdisplay.php" || page == "/search.php") {
 			//si estamos en una seccion o una búsqueda, parse de hilos
@@ -51,12 +66,26 @@
 
 	function parseThreads() {
 		//Recorremos todos los hilos de la lista
-		$('#threadslist tr').each(function (index) {
+		$('#threadslist tr').each(function () {
 			var thread = new Thread($(this));
-			if (thread.id!=undefined) {
+			if (thread.id != undefined) {
 				SHURSCRIPT.eventbus.trigger('parseThread', thread);
 			}
 		});
+	}
+
+	function parsePostsAndUsers() {
+		//Recorremos los posts
+		$('#posts>div').each(function () {
+			var post = new Post($(this));
+			if (post.id != undefined) {
+				SHURSCRIPT.eventbus.trigger('parsePost', post);
+				console.log(post);
+			}
+		});
+
+		//TODO recorremos los usuarios
+
 	}
 
 })(jQuery, SHURSCRIPT);
