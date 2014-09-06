@@ -80,7 +80,6 @@
 			var post = new Post($(this));
 			if (post.id != undefined) {
 				SHURSCRIPT.eventbus.trigger('parsePost', post);
-				console.log(post);
 			}
 		});
 
