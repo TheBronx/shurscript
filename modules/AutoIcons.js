@@ -321,15 +321,15 @@
 			url: '/foro/misc.php?do=getsmilies&editorid=' + getEditor().editorid
 		}).done(function (data) {
 
-			data = data.replace(/src\=/g, 'title='); //Reemplazamos todos los 'src' de las imágenes para evitar que se descarguen al hacer el $(data)
-			
+			data = data.replace(/src\=/g, 'fake-src='); //Reemplazamos todos los 'src' de las imágenes para evitar que se descarguen al hacer el $(data)
+
 			var $rows = $(data).find("tr[valign]");
 
 			var iconParser = function (td1, td2) {
 				var iconName = td2.textContent;
 				var iconImg = td1.children[0];
 				var iconId = iconImg.getAttribute("id").match(/_(\d*)/)[1];
-				var iconSrc = iconImg.getAttribute("title"); //Recordemos que 'title' es el 'src' que hemos reemplazado arriba
+				var iconSrc = iconImg.getAttribute("fake-src"); //Recordemos que 'fake-src' es el 'src' que hemos reemplazado arriba
 				return {
 					name: iconName,
 					id: iconId,
