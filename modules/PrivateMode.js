@@ -7,7 +7,10 @@
 		author: 'CKGrafico',
 		version: '1.0',
 		description: 'Si estás en casa o en el trabajo y no quieres que vean algunas cosas de FC podrás ocultarlo sin problema',
-		domain: 'ALL'
+		domain: 'ALL',
+		initialPreferences: {
+			enabled: false
+		}
 	});
 
 	/**
