@@ -21,7 +21,7 @@
 		SHURSCRIPT.eventbus.on('parsePost', parsePost);
 	};
 
-	function parsePost(post) {
+	function parsePost(event, post) {
 		parseWebm(post.content);
 		parseGfycat(post.content);
 		parseMediacru(post.content);
