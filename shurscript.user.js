@@ -41,7 +41,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/parser/components/parser.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/parser.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
