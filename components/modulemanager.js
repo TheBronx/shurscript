@@ -228,7 +228,7 @@
 		try {
 			return Object.create(protoModule).__init__(specs);
 		} catch (e) {
-			mod.helper.throw("Error creando módulo:", e);
+			moduleManager.helper.throw("Error creando módulo:", e);
 		}
 	};
 
