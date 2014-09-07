@@ -7,7 +7,7 @@
 		author: 'xus0',
 		version: '1.0',
 		description: 'Sube o arrastra im&aacute;genes desde tu equipo, y autom&aacute;ticamente se subir&aacute;n a Imgur y se postear&aacute;n en el hilo.',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
 			embedding: 'preview'
 		}
@@ -19,6 +19,16 @@
 	var totalFiles = 0,
 		fileCount = 0,
 		alreadyUploading; //Para llevar la cuenta de los ficheros que se van subiendo
+
+	mod.normalStartCheck = function () {
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
+	};
 
 	mod.onNormalStart = function () {
 
@@ -265,11 +275,23 @@
 
 	/* Métodos relacionados con el editor. TODO: Mover a un helper y reutilizarlo en todos los módulos */
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
+	}
+
+	function getEditorBody() {
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
-		return getEditor().wysiwyg_mode == 1;
+		try {
+			return getEditorBody();
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function isQuickReply() {
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function getEditorContents() {

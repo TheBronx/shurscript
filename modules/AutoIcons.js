@@ -8,7 +8,7 @@
 		version: '0.1',
 		description: 'Muestra una caja con sugerencias de iconos de Forocoches al escribir ":" en la caja de respuesta.<br>'
 			+ 'Y define tus iconos favoritos para tenerlos a golpe de click en la respuesta rápida.',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
 			enabled: true,
 			addFavouriteIcons: true,
@@ -30,6 +30,16 @@
 	var sortedIcons, //Array de iconos ordenador por uso
 		iconsMap; //Objeto {iconName: icon} para acceso rapido por nombre
 	var mostUsedIcons; //Objeto {icon: uses} que guarda los usos de cada icono
+
+	mod.normalStartCheck = function () {
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
+	};
 
 	mod.onNormalStart = function () {
 
@@ -484,11 +494,11 @@
 	}
 
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
 	function getEditorBody() {
-		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
@@ -500,7 +510,7 @@
 	}
 
 	function isQuickReply() {
-		return getEditor().editorid === 'vB_Editor_QR';
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function appendTextToEditor(text) {

@@ -7,7 +7,7 @@
 		author: 'xus0',
 		version: '0.2',
 		description: 'Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
 			enabled: true, // Esta es opcional - por defecto true
 			autoGrow: true,
@@ -26,12 +26,14 @@
 	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
 	var minHeightTextArea;
 
-	/**
-	 * Activamos modo de carga normal (aunque viene activo por defecto)
-	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
-	 */
 	mod.normalStartCheck = function () {
-		return true;
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
 	};
 
 	/**
@@ -523,15 +525,11 @@
 	}
 
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
-	}
-	
-	function getEditorBody() {
-		return (mod.helper.environment.page == "/showthread.php" ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
-	function isQuickReply() {
-		return getEditor().editorid == 'vB_Editor_QR';
+	function getEditorBody() {
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
@@ -540,6 +538,10 @@
 		} catch (e) {
 			return false;
 		}
+	}
+
+	function isQuickReply() {
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function getEditorContents() {
