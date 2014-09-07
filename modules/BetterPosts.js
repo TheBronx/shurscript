@@ -18,6 +18,9 @@
 		}
 	});
 
+	/* Safari: Forzar estilos de la caja de texto. En Safari no se cogen los por defecto y sale de color gris y con fuente serif */
+	GM_addStyle('iframe[id^=vB_Editor] {background: rgb(245, 245, 255);} body {font: 10pt verdana,geneva,lucida,"lucida grande",arial,helvetica,sans-serif;}');
+
 	var vB_Editor;
 	var genericHandler; //Handler para los botones
 	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
