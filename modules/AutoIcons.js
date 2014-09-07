@@ -45,7 +45,7 @@
 
 			//Comprobamos que el editor es WYSIWYG
 			onWYSIWYGEnabled(function () {
-				prepareEvents();
+				setTimeout(prepareEvents, 500);
 			});
 
 			//Ademas del autocompletado, tambien añadimos una lista de los iconos favoritos del usuario
@@ -130,7 +130,9 @@
 			callback();
 		} else {
 			SHURSCRIPT.eventbus.on('editorReady', function () {
-				if (isWYSIWYG()) callback();
+				if (isWYSIWYG()) {
+					callback();
+				}
 			});
 		}
 	}

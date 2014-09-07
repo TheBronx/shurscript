@@ -103,7 +103,7 @@
 	function enableWYSIWYGDependantFeatures() {
 
 		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
-		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 500);
+		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 100);
 
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
