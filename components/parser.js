@@ -76,7 +76,7 @@
 
 	function parsePostsAndUsers() {
 		//Recorremos los posts
-		$('#posts>div').each(function () {
+		$("#posts>div[align='center']").each(function () {
 			var post = new Post($(this));
 			if (post.id != undefined) {
 				SHURSCRIPT.eventbus.trigger('parsePost', post);
