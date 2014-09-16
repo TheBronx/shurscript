@@ -951,7 +951,7 @@
 			}
 		};
 
-		xmlhttp.open("GET", "/foro/profile.php?do=buddylist", true);
+		xmlhttp.open("GET", "/foro/profile.php?do=buddylist&nojs=1", true);
 		xmlhttp.send();
 	}
 
@@ -1004,7 +1004,7 @@
 			}
 		};
 
-		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist", true);
+		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist&nojs=1", true);
 		xmlhttp.send();
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
