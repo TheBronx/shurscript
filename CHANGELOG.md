@@ -1,6 +1,19 @@
 # CHANGELOG
 
-## v0.20.6 `29/04/2014`
+## v0.21 `04/10/2014`
+
+**Features**
+* Autocompletado de iconos: Pulsa ':' (dos puntos) para que te aparezcan sugerencias de los iconos del foro. Ordenados por más usados.
+* Nueva funcionalidad para que mientras estés leyendo un hilo, este se vaya actualizando automáticamente y notificándote de los nuevos posts, nuevas páginas e incluso cuando alguien elimina un post.
+* WEBM: Ahora podrás ver los famosos vídeos .webm incrustados en Forocoches (Soporte para gfycat.com, mediacru.sh y cualquier archivo .webm) - Gracias al forero **gananciafc**
+
+**Bugfixes**
+
+* Arreglos varios que no recordamos después de tantos meses sin actualizar. Perdón por el retraso. :sisi3:
+
+------------------------------------
+
+### v0.20.6 `29/04/2014`
 
 **Bugfixes**
 
