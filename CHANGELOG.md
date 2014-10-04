@@ -5,13 +5,14 @@
 **IMPORTANTE:** En esta versión se ha dejado de dar soporte a la extensión **Scriptish** (**Firefox**). El motivo es porque desde las últimas actualizaciones de Firefox 30+, les han dejado de funcionar algunas cosas críticas que nos son imprescindibles para el correcto funcionamiento del script. Así que hasta futuras actualizaciones de dicha extensión que solucionen estos errores, os recomendamos que cambiéis a **Greasemonkey**.
 
 **Features**
+
 * Autocompletado de iconos: Pulsa ':' (dos puntos) para que te aparezcan sugerencias de los iconos del foro. Ordenados por más usados.
 * Nueva funcionalidad para que mientras estés leyendo un hilo, este se vaya actualizando automáticamente y notificándote de los nuevos posts, nuevas páginas e incluso cuando alguien elimina un post.
 * WEBM: Ahora podrás ver los famosos vídeos .webm incrustados en Forocoches (Soporte para gfycat.com, mediacru.sh y cualquier archivo .webm) - Gracias al forero **gananciafc**
 
 **Bugfixes**
 
-* Arreglos varios que no recordamos después de tantos meses sin actualizar. Perdón por el retraso. :sisi3:
+* Arreglos varios que no recordamos después de tantos meses sin actualizar. Perdón por el retraso.
 
 ------------------------------------
 
