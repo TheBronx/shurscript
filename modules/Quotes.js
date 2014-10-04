@@ -254,11 +254,10 @@
 					var cita;
 
 					if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
-						lastReadQuote = parseInt(lastReadQuote);
-						if (typeof lastReadQuote === 'NaN') { // Es el enlace completo
+						if (isNaN(lastReadQuote)) { // Es el enlace completo, no es un numero (NaN). Compatibilidad hacia atrás.
 							lastReadQuote = lastReadQuote.match(/#post([\d]*)/)[1];
 						}
-						
+						lastReadQuote = parseInt(lastReadQuote);
 						var ignorados = mod.preferences.ignoredUsers.split(/\s*,\s*/);
 						for (var i = 0; i < citas.length; i++) {
 							cita = new Cita(citas[i], false);
