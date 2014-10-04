@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.21.0.1.1-dev
+// @version         0.22-dev
 // @author          TheBronx
 // @author          xusO
 // @author          Fritanga / Korrosivo
@@ -41,6 +41,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/components/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/components/parser.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/BetterPosts.js
@@ -52,6 +53,8 @@
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ImageUploader.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/ThreadUpdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/dev/modules/AutoIcons.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/PrivateMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/dev/modules/Webm.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/dev/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/dev/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/dev/css/shurbar.css

@@ -23,17 +23,21 @@
 
 	mod.getPreferenceOptions = function () {
 		var creOpt = mod.helper.createPreferenceOption;
-
-		unsafeWindow.importBuddyList = function () {
+		var f = function () {
 			importBuddyList();
 		};
+		if (typeof exportFunction === 'function') {// Firefox 31+
+			exportFunction(f, unsafeWindow, {defineAs: 'HighlightOP_importBuddyList'});
+		} else {
+			unsafeWindow.HighlightOP_importBuddyList = f;
+		}
 
 		return [
 			creOpt({type: 'checkbox', mapsTo: 'quotes', caption: 'Resaltar también las citas.'}),
 			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
 			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
-			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
+			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="HighlightOP_importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
 	};
@@ -64,8 +68,8 @@
 			}
 		}
 
-		SHURSCRIPT.eventbus.on('newposts', function (event, firstNewPost) {
-			highlightOP(firstNewPost);
+		SHURSCRIPT.eventbus.on('newposts', function (event, numNewPosts) {
+			highlightOP(numNewPosts);
 		});
 	};
 
@@ -102,14 +106,10 @@
 		return null;
 	}
 
-	function highlightOP(firstPost) {
+	function highlightOP(numNewPosts) {
 		if (! op) {
 			console_log("ERROR");
 			return;
-		}
-
-		if (! firstPost) {
-			firstPost = 0;
 		}
 
 		var username = mod.helper.environment.user.name;
@@ -122,6 +122,7 @@
 
 		// Highlighted posts have "op_post" class
 		var users = document.getElementsByClassName("bigusername");
+		var firstPost = numNewPosts === undefined ? 0 : users.length - numNewPosts;
 
 		for (var i = firstPost, n = users.length; i < n; i++) {
 			var currentUser = users[i].innerHTML;
@@ -225,7 +226,7 @@
 			}
 		};
 
-		xmlhttp.open("GET", "/foro/profile.php?do=buddylist", true);
+		xmlhttp.open("GET", "/foro/profile.php?do=buddylist&nojs=1", true);
 		xmlhttp.send();
 	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

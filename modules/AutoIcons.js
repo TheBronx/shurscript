@@ -3,16 +3,27 @@
 
 	var mod = createModule({
 		id: 'AutoIcons',
-		name: 'Autocompletar iconos al escribir',
+		name: 'Iconos favoritos y autocompletado',
 		author: 'xus0',
 		version: '0.1',
 		description: 'Muestra una caja con sugerencias de iconos de Forocoches al escribir ":" en la caja de respuesta.<br>'
-			+ 'Puedes insertar varios a la vez si mantienes pulsada la tecla Shift',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+			+ 'Y define tus iconos favoritos para tenerlos a golpe de click en la respuesta rápida.',
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
-			enabled: true
+			enabled: true,
+			addFavouriteIcons: true,
+			favouriteIcons: ":roto2:, :sisi3:, :mola:, :cantarin:, :qmeparto:, :nusenuse:, :facepalm:, "
+				+ ":zpalomita, :zplatano2, :number1:, :elrisas:, :gaydude:, :sisi1:, :babeando:, :elboinas:, "
+				+ ":qtedoy:, :abrazo:"
 		}
 	});
+
+	mod.getPreferenceOptions = function () {
+		return [
+			mod.helper.createPreferenceOption({type: 'checkbox', mapsTo: 'addFavouriteIcons', caption: 'Añadir un listado debajo de la caja de respuesta rápida con los siguientes iconos:'}),
+			mod.helper.createPreferenceOption({type: 'tags', mapsTo: 'favouriteIcons', caption: null, subCaption: 'Deja el campo en blanco para usar los iconos por defecto.'})
+		];
+	};
 
 	var $iconsBox, $iconsPanel;
 	var active = false;
@@ -20,6 +31,15 @@
 		iconsMap; //Objeto {iconName: icon} para acceso rapido por nombre
 	var mostUsedIcons; //Objeto {icon: uses} que guarda los usos de cada icono
 
+	mod.normalStartCheck = function () {
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
+	};
 
 	mod.onNormalStart = function () {
 
@@ -35,58 +55,68 @@
 
 			//Comprobamos que el editor es WYSIWYG
 			onWYSIWYGEnabled(function () {
-
-				var delay;
-
-				//Punto y coma abre y cierra el popup
-				$(getEditor().editdoc.body).keypress(function (e) {
-					if (e.which === KeyEvent.DOM_VK_COLON) {
-						var currentFilter = getCurrentFilter();
-						if (active && currentFilter) {
-							var matchedIcon = iconsMap[currentFilter + ':'];
-							if (matchedIcon) { //Al cerrar pulsando ':', introducimos la coincidencia exacta
-								insertIcon(matchedIcon);
-								e.preventDefault(); //No añadir el último ':'
-							}
-							hide();
-						} else {
-							active = true;
-							e.preventDefault();
-							//Metemos el ':' entre etiquetas para acotar el nodo actual del editor (no usamos <span> porque Chrome se los pasa por el forro)
-							//Luego es más fácil recuperar la posición y el texto que ha escrito el usuario
-							appendTextToEditor('<icon>:</icon>');
-
-							//Retrasamos mostrar la caja si simplemente pulsamos ':' para evitar que aparezca sin querer
-							delay = setTimeout(applyFilter, 1000);
-						}
-					}
-
-				});
-
-				//Controlar la acción de cada tecla
-				$(getEditor().editdoc.body).keydown(function (e) {
-					if (active) {
-						clearTimeout(delay);
-						manageKeyDown(e);
-					}
-				});
-
-				//Cerramos el popup al pulsar fuera, al pulsar en la caja de texto y al redimensionar la ventana
-				$('body').click(hide);
-				$(getEditor().editdoc).click(hide);
-				$(window).on('resize', hide);
-
+				setTimeout(prepareEvents, 500);
 			});
+
+			//Ademas del autocompletado, tambien añadimos una lista de los iconos favoritos del usuario
+			if (mod.preferences.addFavouriteIcons) {
+				addDefaultIcons();
+			}
 
 		});
 	};
+
+	/**
+	 * Añade todos los eventos necesarios para el correcto funcionamiento del módulo
+	 */
+	function prepareEvents() {
+		var delay;
+		//Punto y coma abre y cierra el popup
+		
+		$(getEditorBody()).keypress(function (e) {
+			if (e.which === KeyEvent.DOM_VK_COLON) {
+				var currentFilter = getCurrentFilter();
+				if (active && currentFilter) {
+					var matchedIcon = iconsMap[currentFilter + ':'];
+					if (matchedIcon) { //Al cerrar pulsando ':', introducimos la coincidencia exacta
+						autocompleteIcon(matchedIcon);
+						e.preventDefault(); //No añadir el último ':'
+					}
+					hide();
+				} else {
+					active = true;
+					e.preventDefault();
+					//Metemos el ':' entre etiquetas para acotar el nodo actual del editor (no usamos <span> porque Chrome se los pasa por el forro)
+					//Luego es más fácil recuperar la posición y el texto que ha escrito el usuario
+					appendTextToEditor('<icon>:</icon>');
+
+					//Retrasamos mostrar la caja si simplemente pulsamos ':' para evitar que aparezca sin querer
+					delay = setTimeout(applyFilter, 1000);
+				}
+			}
+
+		});
+
+		//Controlar la acción de cada tecla
+		$(getEditorBody()).keydown(function (e) {
+			if (active) {
+				clearTimeout(delay);
+				manageKeyDown(e);
+			}
+		});
+
+		//Cerramos el popup al pulsar fuera, al pulsar en la caja de texto y al redimensionar la ventana
+		$('body').click(hide);
+		$(getEditor().editdoc).click(hide);
+		$(window).on('resize', hide);
+	}
 
 	function buildPopup() {
 		$iconsBox = $('<div id="shurscript-icons-box" style="display: none;" class="popover top in"><div class="arrow"></div></div>');
 		$iconsPanel = $('<div class="panel-body" tabindex="-1"></div>');
 		$iconsPanel.on('click', '.icon', function () {
 			//Al hacer click en un icono del popup, lo insertamos
-			insertIcon($(this).data('icon'));
+			autocompleteIcon($(this).data('icon'));
 		});
 
 		$iconsBox.append($iconsPanel);
@@ -110,7 +140,9 @@
 			callback();
 		} else {
 			SHURSCRIPT.eventbus.on('editorReady', function () {
-				if (isWYSIWYG()) callback();
+				if (isWYSIWYG()) {
+					callback();
+				}
 			});
 		}
 	}
@@ -206,7 +238,7 @@
 		} else if (key === KeyEvent.DOM_VK_RETURN) {
 			var selectedIcon = getSelectedIcon();
 			if (selectedIcon) {
-				insertIcon(selectedIcon);
+				autocompleteIcon(selectedIcon);
 				if (!e.shiftKey) { //Si mantenemos pulsado Shift no se cerrará el popup, pudiendo añadir varios seguidos
 					hide();
 				}
@@ -300,13 +332,16 @@
 			dataType:'text',
 			url: '/foro/misc.php?do=getsmilies&editorid=' + getEditor().editorid
 		}).done(function (data) {
+
+			data = data.replace(/src\=/g, 'fake-src='); //Reemplazamos todos los 'src' de las imágenes para evitar que se descarguen al hacer el $(data)
+
 			var $rows = $(data).find("tr[valign]");
 
 			var iconParser = function (td1, td2) {
 				var iconName = td2.textContent;
 				var iconImg = td1.children[0];
 				var iconId = iconImg.getAttribute("id").match(/_(\d*)/)[1];
-				var iconSrc = iconImg.getAttribute("src");
+				var iconSrc = iconImg.getAttribute("fake-src"); //Recordemos que 'fake-src' es el 'src' que hemos reemplazado arriba
 				return {
 					name: iconName,
 					id: iconId,
@@ -357,13 +392,20 @@
 	 * Inserta un icono en la posición actual del cursor, eliminando el nombre del icono que había escrito el usuario
 	 * @param selectedIcon Icono a insertar
 	 */
-	function insertIcon(selectedIcon) {
+	function autocompleteIcon(selectedIcon) {
 		//Seleccionamos el texto introducido
 		selectEntireNode();
 		//Lo reemplazamos por el icono
-		appendTextToEditor('<img src="' + selectedIcon.src + '" smiliedid="' + selectedIcon.id + '" class="inlineimg" border="0">&nbsp;');
+		insertIcon(selectedIcon);
+	}
 
-		addToMostUsed(selectedIcon);
+	/**
+	 * Inserta un icono en el editor y suma +1 a los usos de dicho icono
+	 */
+	function insertIcon(icon) {
+		getEditor().insert_smilie(undefined, icon.name, icon.src, icon.id);
+		appendTextToEditor('&nbsp;');
+		addToMostUsed(icon);
 	}
 
 	/**
@@ -406,12 +448,69 @@
 		sel.addRange(range);
 	}
 
+
+	/* Añade accesos directos a los iconos favoritos del usuarios */
+	function addDefaultIcons() {
+
+		var fieldset;
+		if (!isQuickReply()) {
+			//Cogemos el por defecto que hay en la respuesta avanzada
+			fieldset = $('#' + getEditor().editorid + '_smiliebox');
+			fieldset.css('width', fieldset.width());
+		} else {
+			//Añadimos el nuevo fieldset debajo de la respuesta rápida
+			fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"></fieldset>');
+			$("#" + getEditor().editorid).parent().append(fieldset);
+		}
+		fieldset.html('<legend>Iconos favoritos</legend>');
+
+		//Comprobamos que el campo no está en blanco, si lo está, usamos los iconos por defecto
+		var favouriteIcons = mod.preferences.favouriteIcons;
+		if (!favouriteIcons || !favouriteIcons.trim()) {
+			favouriteIcons = mod.initialPreferences.favouriteIcons;
+			mod.preferences.favouriteIcons = favouriteIcons;
+			mod.storePreferences();
+		}
+
+		//Los añadimos al fieldset
+		favouriteIcons = favouriteIcons.split(/\ ?,\ ?/);
+		favouriteIcons.forEach(function (iconName) {
+			var icon = iconsMap[iconName];
+			if (icon) {
+				var iconImg = $('<img border="0" title="' + icon.name + '" class="icon inlineimg" src="' + icon.src + '" style="cursor: pointer; padding: 5px;">');
+				iconImg.click(function () {
+					insertIcon(icon);
+				});
+				fieldset.append(iconImg);
+			}
+		});
+
+		//Link para mostrarlos todos (ventana modal por defecto de FC)
+		var more = $("<a href='#qrform'>Más...</a>");
+		more.click(function () {
+			getEditor().open_smilie_window(785, 500);
+		});
+		fieldset.append(more);
+	}
+
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
+	}
+
+	function getEditorBody() {
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
-		return getEditor().editdoc.body;
+		try {
+			return getEditorBody();
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function isQuickReply() {
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function appendTextToEditor(text) {
@@ -420,7 +519,7 @@
 	}
 
 	function focusEditor() {
-		getEditor().editdoc.body.focus();
+		getEditorBody().focus();
 	}
 
 	//Nombres de los keyCode, para Chrome, que no lo implementa nativamente

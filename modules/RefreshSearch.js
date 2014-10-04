@@ -19,8 +19,8 @@
 	};
 
 	var elementCountDown;// objeto de tipo HTML_LI_Element
-	var seconds, totalSeconds;
-	var timeoutId;
+	var seconds, totalSeconds;// tiempo restante y tiempo a esperar total
+	var timeoutId;// identificador del timeout que realiza la cuenta atrás
 
 	mod.onNormalStart = function () {
 		// Obtener el elemento que contiene el tiempo que se ha de esperar
@@ -32,16 +32,20 @@
 
 		// Obtener los segundos a partir del elemento
 		var str = elementCountDown.textContent;
+		var index = str.indexOf("segundos");
 
-		if (str) {
-			var n = str.length;
-			seconds = parseInt(str.substring(n - 12, n - 9));
+		if (index !== -1) {
+			totalSeconds = ~~(str.substring(index - 3, index));// ~~: to int
 
-			if (!isNaN(seconds)) {
-				totalSeconds = parseInt(str.substring(23, 26));
+			index = str.indexOf("segundos", index + 1);
+			seconds = ~~(str.substring(index - 3, index));
 
-				timeoutId = setTimeout(updateCountDown, 967);
-			}
+			var timePageLoaded = performance.timing.responseStart;// tiempo en el que el servidor comenzó a enviar la página
+			var timeNextRefresh = timePageLoaded + 1000 * seconds;
+			var msRestantes = timeNextRefresh - new Date();
+
+			timeoutId = setTimeout(updateCountDown, msRestantes % 1000);
+			seconds = ~~(msRestantes / 1000);
 		}
 	};
 
@@ -67,8 +71,10 @@
 	function updateCountDown() {
 		seconds--;
 
+		var enlace;
+
 		if (seconds > 0) {
-			var enlace = document.createElement("a");
+			enlace = document.createElement("a");
 			enlace.href = "#";
 			enlace.textContent = "Cancelar";
 			enlace.onclick = function () {
@@ -79,9 +85,9 @@
 			elementCountDown.textContent = "Debes esperar al menos " + totalSeconds + " segundos entre cada búsqueda. Faltan aún " + seconds + " segundos. — ";
 			elementCountDown.appendChild(enlace);
 
-			timeoutId = setTimeout(updateCountDown, 967);
+			timeoutId = setTimeout(updateCountDown, 1000);
 		} else {
-			var enlace = document.createElement("a");
+			enlace = document.createElement("a");
 			enlace.href = "#";
 			enlace.textContent = "Refrescar";
 			enlace.onclick = function () {

@@ -7,10 +7,9 @@
 		author: 'xus0',
 		version: '0.2',
 		description: 'Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
 			enabled: true, // Esta es opcional - por defecto true
-			iconsAndButtons: true,
 			autoGrow: true,
 			multiQuickReply: true,
 			autoSendReply: true,
@@ -19,17 +18,22 @@
 		}
 	});
 
+	/* Safari: Forzar estilos de la caja de texto. En Safari no se cogen los por defecto y sale de color gris y con fuente serif */
+	GM_addStyle('iframe[id^=vB_Editor] {background: rgb(245, 245, 255);} body {font: 10pt verdana,geneva,lucida,"lucida grande",arial,helvetica,sans-serif;}');
+
 	var vB_Editor;
 	var genericHandler; //Handler para los botones
 	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
 	var minHeightTextArea;
 
-	/**
-	 * Activamos modo de carga normal (aunque viene activo por defecto)
-	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
-	 */
 	mod.normalStartCheck = function () {
-		return true;
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
 	};
 
 	/**
@@ -43,7 +47,7 @@
 		if (!isWYSIWYG()) { //Chrome, Safari, etc.
 			enableWYSIWYG();
 			var checkWYSIWYG = setInterval(function () {
-				if (getEditor().editdoc.body) { //WYSIWYG activado
+				if (getEditorBody()) { //WYSIWYG activado
 					clearInterval(checkWYSIWYG);
 					enableWYSIWYGDependantFeatures();
 				}
@@ -61,7 +65,6 @@
 		// la segunda con un checkbox y un input text
 		return [
 			// Hacemos un header
-			createPref({type: 'checkbox', mapsTo: 'iconsAndButtons', caption: 'Mostrar nuevos botones e iconos en el formulario de respuesta rápida'}),
 			createPref({type: 'checkbox', mapsTo: 'autoGrow', caption: 'La caja de texto crece a medida que se va escribiendo el post'}),
 			createPref({type: 'checkbox', mapsTo: 'multiQuickReply', caption: 'Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)'}),
 			createPref({type: 'checkbox', mapsTo: 'autoSendReply', caption: 'Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post'}),
@@ -102,7 +105,7 @@
 	function enableWYSIWYGDependantFeatures() {
 
 		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
-		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 0);
+		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 100);
 
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
@@ -149,7 +152,7 @@
 
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
 	function enableCommonFeatures() {
-		if (isQuickReply() && mod.preferences.iconsAndButtons) {
+		if (isQuickReply()) {
 			addAdvancedButtons();
 		}
 
@@ -208,9 +211,10 @@
 
 		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height') || 430;
 
-		$(editor.editdoc.body).on('input', function () {
-			if (checkAutoGrow.checked)
+		$(getEditorBody()).on('input', function () {
+			if (checkAutoGrow.checked) {
 				reflowTextArea();
+			}
 		});
 
 		$("#vB_Editor_QR_cmd_resize_1_99").click(function () {
@@ -402,7 +406,7 @@
 			}, 1000);
 		};
 
-		$(getEditor().editdoc.body).on('input', onInputHandler);
+		$(getEditorBody()).on('input', onInputHandler);
 
 		// Eliminar el backup guardado al enviar la Respuesta
 		// Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor
@@ -443,10 +447,12 @@
 
 					if ((timeToWait--) <= 0) {
 						clearInterval(interval);
-						mod.helper.deleteValue("POST_BACKUP");
-						$("form[name='vbform']").submit();
+						if (mod.preferences.savePosts) {
+							mod.helper.deleteValue("POST_BACKUP");
+						}
+						document.getElementsByName('vbform')[0].submit();
 					} else {
-						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
+						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + timeToWait + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
 					}
 
 				} else {
@@ -514,20 +520,28 @@
 	}
 
 	function getTextAreaHeight() {
-		var height = getEditor().editdoc.body.offsetHeight;
+		var height = getEditorBody().offsetHeight;
 		return Math.max(height, 100);
 	}
 
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
-	function isQuickReply() {
-		return getEditor().editorid == 'vB_Editor_QR';
+	function getEditorBody() {
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
-		return getEditor().editdoc.body;
+		try {
+			return getEditorBody();
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function isQuickReply() {
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function getEditorContents() {
@@ -545,7 +559,7 @@
 	}
 
 	function focusEditor() {
-		getEditor().editdoc.body.focus();
+		getEditorBody().focus();
 	}
 
 	function trim(text) {
