@@ -1,15 +1,15 @@
 ![Shurscript Logo by Fritanga](http://dl.dropboxusercontent.com/u/1066873/shurheading.png)
 
-  
+
 .shurscript
 ==========
 
 Script de usuario para ForoCoches.com
-* **Hilo oficial**: [Hilo oficial en ForoCoches.com](http://shurscript.org/hilo)  
-* **Web**: [http://shurscript.org](http://shurscript.org)  
-* **Sugerencias**: [shurscript en UserVoice](https://shurscript.uservoice.com/)  
-* **Preguntas más frecuentes**: [F.A.Q en GitHub](https://github.com/TheBronx/shurscript/wiki/FAQ-(Indice))  
-* **Colabora**: [haz una pequeña donación](http://shurscript.org/colabora)  
+* **Hilo oficial**: [Hilo oficial en ForoCoches.com](http://shurscript.org/hilo)
+* **Web**: [http://shurscript.org](http://shurscript.org)
+* **Sugerencias**: [shurscript en UserVoice](https://shurscript.uservoice.com/)
+* **Preguntas más frecuentes**: [F.A.Q en GitHub](https://github.com/TheBronx/shurscript/wiki/FAQ-(Indice))
+* **Colabora**: [haz una pequeña donación](http://shurscript.org/colabora)
 
 <h2>Características:</h2>
 
@@ -27,15 +27,15 @@ Script de usuario para ForoCoches.com
 Para instalar el script necesitas solamente dos cosas:
  * Navegador compatible (preferiblemente Firefox o Chrome aunque funciona también en Opera y Safari)
  * Extensión correspondiente para ejecutar scripts de usuario:
-   + Para Firefox: [Scriptish](https://addons.mozilla.org/es/firefox/addon/scriptish/) ó 
+   + Para Firefox: [Scriptish](https://addons.mozilla.org/es/firefox/addon/scriptish/) ó
 [GreaseMonkey](https://addons.mozilla.org/es/firefox/addon/greasemonkey/)
    + Para Chrome: [TamperMonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=es)
    + Para Opera: [TamperMonkey](https://addons.opera.com/es/extensions/details/tampermonkey-beta/?display=es)
+   + Para Safari: [JavaScript Blocker](http://javascript-blocker.toggleable.com/)
    + Para Maxthon: **No soportado**
-   + Para Safari: **No soportado**
    + Para Internet Explorer: **U mad?**
 
-Una vez instalada la extensión para tu navegador simplemente instala _shurscript_ desde el siguiente enlace 
+Una vez instalada la extensión para tu navegador simplemente instala _shurscript_ desde el siguiente enlace
 (puede que tengas que esperar unos segundos): [Instalar _shurscript_](https://github.com/TheBronx/shurscript/raw/master/shurscript.user.js)<br>
 <br>
 Tras instalar el script, simplemente entra a ForoCoches y el script empezará a funcionar. Para configurar _shurscript_ pulsa en el botón "_shurscript_" y activa/desactiva y configura los módulos que quieras usar. ¡Que lo disfrutes, shur!
