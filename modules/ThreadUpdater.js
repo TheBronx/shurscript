@@ -20,7 +20,6 @@
 
 	mod.getPreferenceOptions = function () {
 		var creOpt = mod.helper.createPreferenceOption;
-
 		return [
 			creOpt({
 				type: 'radio',
@@ -73,7 +72,6 @@
 		isLastPage = document.getElementsByClassName("pagenav").length
 			? document.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 			: true;// solo hay una página
-
 		thread = SHURSCRIPT.environment.thread.id;
 		page = SHURSCRIPT.environment.thread.page;
 
@@ -128,7 +126,7 @@
 			// reescribir la función que se encarga de recibir el post para añadir más funcionalidad
 			var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
 			/**
-			 * @param ajax XMLHttpRequest or number (integer)
+			 * @param ajax XMLHttpRequest | integer
 			 */
 			var qr_do_ajax_post_new = function (ajax) {
 				var numNewPosts;
@@ -263,7 +261,6 @@
 
 		if ((numPostsBefore < 30 || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
-
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
 					var html = xmlhttp.responseText;
@@ -306,7 +303,6 @@
 					}
 				}
 			};
-
 			xmlhttp.open("GET", "/foro/showthread.php?t=" + thread + "&page=" + page, true);
 			xmlhttp.send();
 		}
@@ -400,6 +396,8 @@
 	 * @param deletedPosts {array} Array con los IDs de los posts eliminados.
 	 */
 	function newPosts(newPosts, editedPosts, deletedPosts) {
+		if (timeoutId === null) return;// salir si el timeout ha sido cancelado
+
 		if (mod.preferences.loadAutomatically) {
 			populateNewPosts();
 		} else {
