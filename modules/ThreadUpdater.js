@@ -59,6 +59,7 @@
 	var shownPosts;// contiene los posts que se están mostrando
 	var differences;// contiene los posts que han cambiado (nuevos, editados y borrados)
 	var pageTitle = document.title;
+	var cancelar = false;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
 
@@ -113,6 +114,7 @@
 			/* Respuesta rápida */
 			// controlar cuándo se envía el formulario
 			document.getElementById("qrform").addEventListener("submit", function () {
+				cancelar = true;
 				// quitar timeout actual
 				stopTimeout();
 
@@ -396,7 +398,10 @@
 	 * @param deletedPosts {array} Array con los IDs de los posts eliminados.
 	 */
 	function newPosts(newPosts, editedPosts, deletedPosts) {
-		if (timeoutId === null) return;// salir si el timeout ha sido cancelado
+		if (cancelar) {
+			cancelar = false;
+			return;// salir si el timeout ha sido cancelado
+		}
 
 		if (mod.preferences.loadAutomatically) {
 			populateNewPosts();
