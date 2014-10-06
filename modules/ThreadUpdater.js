@@ -5,7 +5,7 @@
 		id: 'ThreadUpdater',
 		name: 'Actualiza las nuevas respuestas de un hilo',
 		author: 'Electrosa',
-		version: '0.1',
+		version: '0.2',
 		description: 'Dentro de un hilo, se añadirán nuevas respuestas automáticamente sin necesidad de recargar la página.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
@@ -62,6 +62,18 @@
 	var cancelar = false;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
+
+	var Post = function (element) {
+		this.element = element;
+		var table = this.element.find('table').first();
+		this.id = parseInt(table.attr('id').replace('post',''));
+		this.href = '/showthread.php?p=' + this.id;
+		this.content = this.element.find('#post_message_' + this.id);
+		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
+		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
+		this.author = user.html();
+		this.author_link = user.attr('href');
+	};
 
 	mod.normalStartCheck = function () {
 		return ! SHURSCRIPT.environment.thread.isClosed;
@@ -461,6 +473,7 @@
 
 			// añadir el post al DOM
 			var newNode = divElem.appendChild(post.node);
+			SHURSCRIPT.eventbus.trigger('parsePost', new Post($(newNode)));
 		}
 
 		var postsElem = document.getElementById("posts");
