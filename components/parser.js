@@ -33,6 +33,7 @@
 	var Post = function(element) {
 		this.element = element;
 		var table = this.element.find('table').first();
+		this.elementTable = table;
 
 		this.id = parseInt(table.attr('id').replace('post',''));
 		this.href = '/showthread.php?p=' + this.id;
