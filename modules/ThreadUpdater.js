@@ -125,89 +125,36 @@
 			});
 
 			/* Respuesta rápida */
-			// controlar cuándo se envía el formulario
-			document.getElementById("qrform").addEventListener("submit", function () {
-				cancelar = true;
-				// quitar timeout actual
-				stopTimeout();
+			SHURSCRIPT.eventbus.on('quickReply', function (event, status, numNewPosts) {
+				if (status === 'submit') {
+					cancelar = true;
+					// quitar timeout actual
+					stopTimeout();
 
-				// ocultar el botón
-				showButton(false);
+					// ocultar el botón
+					showButton(false);
 
-				// restablecer el título
-				document.title = pageTitle;
-			});
+					// restablecer el título
+					document.title = pageTitle;
+				} else if (status === 'done') {
+					numPostsBefore += numNewPosts;
 
-			// reescribir la función que se encarga de recibir el post para añadir más funcionalidad
-			var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
-			/**
-			 * @param ajax XMLHttpRequest | integer
-			 */
-			var qr_do_ajax_post_new = function (ajax) {
-				var numNewPosts;
-				if (typeof ajax === 'number') {
-					numNewPosts = ajax;
-				} else if (typeof ajax === 'object') {
-					qr_do_ajax_post_original(ajax);// función original
-					
-					// comprobar si en el XML de respuesta hay <postbits>
-					// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
-					if (ajax.responseXML.children[0].nodeName !== 'postbits') {
-						// si ha habido un error vuelve a mostrar el botón
-						loadThread();
-						return;
+					// actualizar el listado de posts que están visibles (todos los posts cargados se meten en un <div>)
+					shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
+
+					// comprobar si se ha llenado la página
+					if (numPostsBefore <= 30) {
+						// activar el timeout de nuevo
+						createTimeout();
 					} else {
-						// mirar número de respuestas ahora
-						numNewPosts = ajax.responseXML.children[0].children.length - 1;
-						
-						// lanzar evento
-						SHURSCRIPT.eventbus.trigger('newposts', numNewPosts);
+						// mostrar enlace para ir a la siguiente página
+						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 					}
-				} else {
-					return;
+				} else if (status === 'error') {
+					// si ha habido un error vuelve a mostrar el botón
+					loadThread();
 				}
-				
-				numPostsBefore += numNewPosts;
-
-				// actualizar el listado de posts que están visibles (todos los posts cargados se meten en un <div>)
-				shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
-
-				// comprobar si se ha llenado la página
-				if (numPostsBefore <= 30) {
-					// activar el timeout de nuevo
-					createTimeout();
-				} else {
-					// mostrar enlace para ir a la siguiente página
-					showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
-				}
-			};
-			if (typeof exportFunction === 'function') {
-				// exportar la función para recibir eventos al objeto window
-				exportFunction(SHURSCRIPT.eventbus.trigger, unsafeWindow, {defineAs: 'SHURSCRIPT_triggerEvent'});
-				
-				// función especial para firefox
-				var qr_do_ajax_post_firefox = function (ajax) {
-					window.qr_do_ajax_post_original(ajax);
-					if (ajax.responseXML.children[0].nodeName === 'postbits') {
-						window.SHURSCRIPT_triggerEvent('newposts', ajax.responseXML.children[0].children.length - 1);
-					}
-				}
-				
-				// reescribir la función `qr_do_ajax_post` inyectando un script en la cabecera de la página
-				var script = document.createElement('script'); 
-				script.type = "text/javascript"; 
-				script.innerHTML = '\
-						window.qr_do_ajax_post_original = window.qr_do_ajax_post;\
-						window.qr_do_ajax_post = ' + qr_do_ajax_post_firefox.toString() + ';';
-				document.getElementsByTagName('head')[0].appendChild(script);
-				
-				// como no se permite redefinir funciones, obtengo los datos mediante un evento
-				SHURSCRIPT.eventbus.on('newposts', function (event, numNewPosts) {
-					qr_do_ajax_post_new(numNewPosts);
-				});
-			} else {
-				unsafeWindow.qr_do_ajax_post = qr_do_ajax_post_new;
-			}
+			});
 		} else if (mod.preferences.nextPageButton) {
 			createButton();
 			showButton("Ir a la página siguiente", "showthread.php?t=" + thread + "&page=" + (+page + 1));

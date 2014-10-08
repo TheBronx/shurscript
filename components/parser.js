@@ -18,7 +18,7 @@
 		this.element = element;
 		var title_td = element.find('td[id^="td_threadtitle_"]');
 		//comprobamos que el <tr> es un hilo y no una fila vacia (gracias ilitri :manco:)
-		if (title_td.length != 0) {
+		if (title_td.length !== 0) {
 			this.title_td = title_td;
 			this.title_link = this.title_td.find('div > a[id^="thread_title_"]').first();
 			this.href = this.title_link.attr('href');
@@ -46,16 +46,16 @@
 	};
 
 	parser.parse = function () {
-		var page = location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage";
-		if (page == "frontpage") {
+		var page = location.pathname.indexOf("/foro") !== -1 ? location.pathname.replace("/foro", "") : "frontpage";
+		if (page === "frontpage") {
 			//si estamos en la portada, parse de hilos
 			//TODO parsePortalThreads()
 
-		} else if (page == "/showthread.php") {
+		} else if (page === "/showthread.php") {
 			//si estamos en un hilo, parse de posts y usuarios
 			parsePostsAndUsers();
 
-		} else if (page == "/forumdisplay.php" || page == "/search.php") {
+		} else if (page === "/forumdisplay.php" || page === "/search.php") {
 			//si estamos en una seccion o una búsqueda, parse de hilos
 			parseThreads();
 		}
@@ -69,7 +69,7 @@
 		//Recorremos todos los hilos de la lista
 		$('#threadslist tr').each(function () {
 			var thread = new Thread($(this));
-			if (thread.id != undefined) {
+			if (thread.id !== undefined) {
 				SHURSCRIPT.eventbus.trigger('parseThread', thread);
 			}
 		});
@@ -77,15 +77,61 @@
 
 	function parsePostsAndUsers() {
 		//Recorremos los posts
-		$("#posts>div[align='center']").each(function () {
+		$("#posts > div[align='center']").each(function () {
 			var post = new Post($(this));
-			if (post.id != undefined) {
+			if (post.id !== undefined) {
 				SHURSCRIPT.eventbus.trigger('parsePost', post);
 			}
 		});
 
 		//TODO recorremos los usuarios
 
-	}
+		//Respuesta rápida
+		$('#qrform').on('submit', function () {
+			SHURSCRIPT.eventbus.trigger('quickReply', 'submit');// submit, done, error
+		});
+		var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
+		var qr_do_ajax_post_new = function (ajax) {
+			qr_do_ajax_post_original(ajax);
+			if (typeof ajax === 'object') {
+				// comprobar si en el XML de respuesta hay <postbits>
+				// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
+				if (ajax.responseXML.children[0].nodeName === 'postbits') {
+					// mirar número de respuestas ahora y lanzar evento
+					var numNewPosts = ajax.responseXML.children[0].children.length - 1;
+					SHURSCRIPT_triggerEvent('quickReply', ['done', numNewPosts]);
+					return;
+				}
+			}
+			// si ha habido un error
+			SHURSCRIPT_triggerEvent('quickReply', 'error');
+		};
+		if (typeof exportFunction === 'function') {
+			// exportar la función para recibir eventos al objeto window
+			exportFunction(SHURSCRIPT.eventbus.trigger, unsafeWindow, {defineAs: 'SHURSCRIPT_triggerEvent'});
 
+			// reescribir la función `qr_do_ajax_post` inyectando un script en la cabecera de la página
+			var script = document.createElement('script'); 
+			script.type = "text/javascript"; 
+			script.innerHTML = '\
+					window.qr_do_ajax_post_original = window.qr_do_ajax_post;\
+					window.qr_do_ajax_post = ' + qr_do_ajax_post_new.toString() + ';';
+			document.getElementsByTagName('head')[0].appendChild(script);
+		} else {
+			unsafeWindow.qr_do_ajax_post = qr_do_ajax_post_new;
+			unsafeWindow.SHURSCRIPT_triggerEvent = SHURSCRIPT.eventbus.trigger;
+		}
+
+		SHURSCRIPT.eventbus.on('quickReply', function (event, status, numNewPosts) {
+			if (status === 'done' && numNewPosts !== undefined) {
+				var posts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
+				for (var n = posts.length, i = n - numNewPosts; i < n; i++) {
+					var post = new Post($(posts[i]));
+					if (post.id !== undefined) {
+						SHURSCRIPT.eventbus.trigger('parsePost', post);
+					}
+				}
+			}
+		});
+	}
 })(jQuery, SHURSCRIPT);
