@@ -53,7 +53,7 @@
 	mod.onNormalStart = function () {
 		currentThread = SHURSCRIPT.environment.thread.id;
 		currentPage = SHURSCRIPT.environment.thread.page;
-		username = mod.helper.environment.user.name.toLowerCase();;
+		username = mod.helper.environment.user.name.toLowerCase();
 		contacts = mod.preferences.contacts.split(/\s*,\s*/);
 		for (var i = 0, n = contacts.length; i < n; i++) {
 			contacts[i] = contacts[i].toLowerCase();
@@ -100,7 +100,7 @@
 		if (op) {
 			parsePost(event, post);
 		} else {
-			nodes.push({'user': post.author, 'type': 'post', 'node': post.elementTable[0]});
+			nodes.push({'user': post.author.toLowerCase(), 'type': 'post', 'node': post.elementTable[0]});
 			if (mod.preferences.quotes) {
 				var quotes = post.content[0].getElementsByClassName('alt2');
 				for (var i = 0, n = quotes.length; i < n; i++) {
