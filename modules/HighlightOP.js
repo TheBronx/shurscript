@@ -53,7 +53,7 @@
 	mod.onNormalStart = function () {
 		currentThread = SHURSCRIPT.environment.thread.id;
 		currentPage = SHURSCRIPT.environment.thread.page;
-		username = mod.helper.environment.user.name;
+		username = mod.helper.environment.user.name.toLowerCase();;
 		contacts = mod.preferences.contacts.split(/\s*,\s*/);
 		for (var i = 0, n = contacts.length; i < n; i++) {
 			contacts[i] = contacts[i].toLowerCase();
