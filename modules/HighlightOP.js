@@ -34,9 +34,9 @@
 
 		return [
 			creOpt({type: 'checkbox', mapsTo: 'quotes', caption: 'Resaltar también las citas.'}),
-			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),// color
+			creOpt({type: 'color', mapsTo: 'opPostsColor', caption: 'Color de resaltado de los posts del creador del hilo'}),
 			creOpt({type: 'checkbox', mapsTo: 'myPosts', caption: 'Resaltar mis propios posts.'}),
-			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),// color
+			creOpt({type: 'color', mapsTo: 'myPostsColor', caption: 'Color de resaltado de mis posts'}),
 			creOpt({type: 'tags', mapsTo: 'contacts', caption: 'Resaltar los posts de los siguientes usuarios (separados por comas)', buttons: true, plain: true, button1: '<a href="#" onclick="HighlightOP_importBuddyList(); return false;" class="btn btn-xs btn-default">Importar de la lista de contactos</a>'}),
 			creOpt({type: 'color', mapsTo: 'contactsColor', caption: 'Color de resaltado de los posts de usuarios conocidos.'})
 		];
@@ -55,6 +55,9 @@
 		currentPage = SHURSCRIPT.environment.thread.page;
 		username = mod.helper.environment.user.name;
 		contacts = mod.preferences.contacts.split(/\s*,\s*/);
+		for (var i = 0, n = contacts.length; i < n; i++) {
+			contacts[i] = contacts[i].toLowerCase();
+		}
 
 		// Add CSS rules
 		GM_addStyle(".op_post, .op_quote { border: 1px solid " + mod.preferences.opPostsColor + " !important; border-left: 5px solid " + mod.preferences.opPostsColor + " !important; } .op_post td.alt2 { width: 171px; }");
@@ -81,13 +84,13 @@
 	};
 
 	function parsePost(event, post) {
-		highlight({'user': post.author, 'type': 'post', 'node': post.elementTable[0]});
+		highlight({'user': post.author.toLowerCase(), 'type': 'post', 'node': post.elementTable[0]});
 		if (mod.preferences.quotes) {
 			var quotes = post.content[0].getElementsByClassName('alt2');
 			for (var i = 0, n = quotes.length; i < n; i++) {
 				var elem = quotes[i].getElementsByTagName("B");
 				if (elem.length > 0) {
-					highlight({'user': elem[0].textContent, 'type': 'quote', 'node': quotes[i]});
+					highlight({'user': elem[0].textContent.toLowerCase(), 'type': 'quote', 'node': quotes[i]});
 				}
 			}
 		}
@@ -103,7 +106,7 @@
 				for (var i = 0, n = quotes.length; i < n; i++) {
 					var elem = quotes[i].getElementsByTagName("B");
 					if (elem.length > 0) {
-						nodes.push({'user': elem[0].textContent, 'type': 'quote', 'node': quotes[i]});
+						nodes.push({'user': elem[0].textContent.toLowerCase(), 'type': 'quote', 'node': quotes[i]});
 					}
 				}
 			}
@@ -183,10 +186,10 @@
 	function getOpFrom(node) {
 		var elem;
 
-		if (elem = node.getElementsByClassName("bigusername")[0]) return elem.innerHTML;
+		if (elem = node.getElementsByClassName("bigusername")[0]) return elem.textContent.toLowerCase();
 
 		// The user can be in the ignore list
-		if (elem = node.querySelector("td.alt2 > a")) return elem.innerHTML;
+		if (elem = node.querySelector("td.alt2 > a")) return elem.textContent.toLowerCase();
 
 		// Error
 		return null;
