@@ -25,6 +25,7 @@
 		parseWebm(post.content);
 		parseGfycat(post.content);
 		parseMediacru(post.content);
+		parseVocaroo(post.content);
 	}
 
 	function parseWebm(element) {
@@ -76,6 +77,18 @@
 
 			$(this).append('<br>');
 			$(this).after(video);
+		});
+	}
+
+	function parseVocaroo(element) {
+		element.find('a[href^="http://vocaroo.com/"]').each(function () {
+			var href = this.href.substring(this.href.lastIndexOf('/') + 1);
+			var html = '<object width="148" height="44">\
+						<param name="movie" value="http://vocaroo.com/player.swf?playMediaID=' + href +  '&autoplay=0"></param>\
+						<param name="wmode" value="transparent"></param>\
+						<embed src="http://vocaroo.com/player.swf?playMediaID=' + href + '&autoplay=0" width="148" height="44" wmode="transparent" type="application/x-shockwave-flash"></embed>\
+						</object><br>' + this.outerHTML;
+			this.outerHTML = html;
 		});
 	}
 
