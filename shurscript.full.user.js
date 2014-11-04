@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.20.6.1
+// @version         0.23
 // @author          TheBronx
 // @author          xusO
 // @author          Fritanga / Korrosivo
@@ -25,9 +25,9 @@
 // @grant           GM_getResourceURL
 // @grant           GM_getMetadata
 // @run-at          document-end
-// @require         http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
-// @require         http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js
-// @require         http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
+// @require         https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
+// @require         https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
+// @require         https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/plugins/bootbox.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/plugins/Markdown.Converter.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/plugins/bootstrap-tokenfield.min.js
@@ -41,6 +41,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/master/components/templater.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/components/autoupdater.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/components/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/components/parser.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/Quotes.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/FilterThreads.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/BetterPosts.js
@@ -50,6 +51,10 @@
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/RefreshSearch.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/HighlightOP.js
 // @require         https://github.com/TheBronx/shurscript/raw/master/modules/ImageUploader.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/ThreadUpdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/AutoIcons.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/PrivateMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/master/modules/Webm.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/master/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/master/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/master/css/shurbar.css
@@ -57,6 +62,7 @@
 // @resource        quotehtml https://github.com/TheBronx/shurscript/raw/master/html/quote.html
 // @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/master/css/imageuploader.css
 // @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/master/html/imageuploader.html
+// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/master/css/autoicons.css
 // ==/UserScript==
 
 /**

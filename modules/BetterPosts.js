@@ -4,13 +4,12 @@
 	var mod = createModule({
 		id: 'BetterPosts',
 		name: 'Editor de posts mejorado',
-		author: 'xuso0',
+		author: 'xus0',
 		version: '0.2',
 		description: 'Activa varias opciones nuevas en la creación de posts e hilos, tanto el de respuesta rápida como el avanzado. <b>BETA</b>',
-		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php'],
+		domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php', '/private.php'],
 		initialPreferences: {
 			enabled: true, // Esta es opcional - por defecto true
-			iconsAndButtons: true,
 			autoGrow: true,
 			multiQuickReply: true,
 			autoSendReply: true,
@@ -19,17 +18,22 @@
 		}
 	});
 
+	/* Safari: Forzar estilos de la caja de texto. En Safari no se cogen los por defecto y sale de color gris y con fuente serif */
+	GM_addStyle('iframe[id^=vB_Editor] {background: rgb(245, 245, 255);} body {font: 10pt verdana,geneva,lucida,"lucida grande",arial,helvetica,sans-serif;}');
+
 	var vB_Editor;
 	var genericHandler; //Handler para los botones
 	var checkAutoGrow; //Checkbox para activar o desactivar el autogrow
 	var minHeightTextArea;
 
-	/**
-	 * Activamos modo de carga normal (aunque viene activo por defecto)
-	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
-	 */
 	mod.normalStartCheck = function () {
-		return true;
+		if (SHURSCRIPT.environment.page === '/private.php') {
+			//Solo cargar cuando se está editando o creando un MP, no en la lista.
+			var param = location.href.match(/[?&]do=([\w]*)\b/);
+			return param && (param[1] === 'newpm' || param[1] === 'insertpm' || param[1] === 'showpm');
+		} else {
+			return true;
+		}
 	};
 
 	/**
@@ -43,7 +47,7 @@
 		if (!isWYSIWYG()) { //Chrome, Safari, etc.
 			enableWYSIWYG();
 			var checkWYSIWYG = setInterval(function () {
-				if (getEditor().editdoc.body) { //WYSIWYG activado
+				if (getEditorBody()) { //WYSIWYG activado
 					clearInterval(checkWYSIWYG);
 					enableWYSIWYGDependantFeatures();
 				}
@@ -61,7 +65,6 @@
 		// la segunda con un checkbox y un input text
 		return [
 			// Hacemos un header
-			createPref({type: 'checkbox', mapsTo: 'iconsAndButtons', caption: 'Mostrar nuevos botones e iconos en el formulario de respuesta rápida'}),
 			createPref({type: 'checkbox', mapsTo: 'autoGrow', caption: 'La caja de texto crece a medida que se va escribiendo el post'}),
 			createPref({type: 'checkbox', mapsTo: 'multiQuickReply', caption: 'Permitir multi-cita con el botón de Respuesta rápida (y mostrar la propia cita en la caja de texto)'}),
 			createPref({type: 'checkbox', mapsTo: 'autoSendReply', caption: 'Auto-enviar el mensaje pasados los 30 segundos de espera entre post y post'}),
@@ -102,7 +105,7 @@
 	function enableWYSIWYGDependantFeatures() {
 
 		//Lanzamos evento para que cualquier otro módulo sepa que se ha activado el WYSIWYG
-		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 0);
+		SHURSCRIPT.eventbus.triggerDelayed('editorReady', 100);
 
 		if (isQuickReply() && mod.preferences.multiQuickReply) {
 			enableQuickReplyWithQuote();
@@ -149,9 +152,8 @@
 
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
 	function enableCommonFeatures() {
-		if (isQuickReply() && mod.preferences.iconsAndButtons) {
+		if (isQuickReply()) {
 			addAdvancedButtons();
-			addIcons();
 		}
 
 		//Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
@@ -177,9 +179,7 @@
 			try {
 				if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la página "Cargando..." indefinidamente :/
 					currentEditor.editdoc.write('<!doctype HTML>\n' + currentEditor.editdoc.head.outerHTML + currentEditor.editdoc.body.outerHTML);
-			} catch (e) {
-				;
-			}
+			} catch (e) {}
 			$(currentEditor.editdoc.body).on('input', function () {
 				currentEditor.editbox.style.height = Math.max(currentEditor.editdoc.body.offsetHeight + 30, 200) + "px";
 			});
@@ -196,9 +196,7 @@
 		try {
 			if (navigator.userAgent.indexOf("AppleWebKit") != -1) //Solo si estamos en Chrome, o en otro navegador WebKit. Si esta linea se ejecuta en Firefox se queda la pána "Cargando..." indefinidamente :/
 				editor.editdoc.write('<!doctype HTML>\n' + editor.editdoc.head.outerHTML + editor.editdoc.body.outerHTML);
-		} catch (e) {
-			;
-		}
+		} catch (e) {}
 
 		checkAutoGrow = $('<input type="checkbox" checked/>')[0];
 		checkAutoGrow.onclick = function () {
@@ -213,9 +211,10 @@
 
 		minHeightTextArea = isQuickReply() ? getTextAreaHeight() : unsafeWindow.fetch_cookie('editor_height') || 430;
 
-		$(editor.editdoc.body).on('input', function () {
-			if (checkAutoGrow.checked)
+		$(getEditorBody()).on('input', function () {
+			if (checkAutoGrow.checked) {
 				reflowTextArea();
+			}
 		});
 
 		$("#vB_Editor_QR_cmd_resize_1_99").click(function () {
@@ -293,6 +292,9 @@
 							break;
 						case 'OVERWRITE':
 							setEditorContents('');
+							appendTextToEditor(quote);
+							reflowTextArea();
+							break;
 						case 'APPEND':
 							appendTextToEditor(quote);
 							reflowTextArea();
@@ -390,7 +392,7 @@
 				if (!trim(getEditorContents()) && trim(currentPostBackup.postContents)) {
 					setEditorContents(currentPostBackup.postContents)
 				}
-				;
+
 				reflowTextArea();
 			}
 		}
@@ -404,7 +406,7 @@
 			}, 1000);
 		};
 
-		$(getEditor().editdoc.body).on('input', onInputHandler);
+		$(getEditorBody()).on('input', onInputHandler);
 
 		// Eliminar el backup guardado al enviar la Respuesta
 		// Toda esta parafernalia es por la issue #16, el formulario se envia antes de siquiera hacer la llamada a nuestro servidor
@@ -445,10 +447,12 @@
 
 					if ((timeToWait--) <= 0) {
 						clearInterval(interval);
-						mod.helper.deleteValue("POST_BACKUP");
-						$("form[name='vbform']").submit();
+						if (mod.preferences.savePosts) {
+							mod.helper.deleteValue("POST_BACKUP");
+						}
+						document.getElementsByName('vbform')[0].submit();
 					} else {
-						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + (timeToWait) + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
+						errors.html("Debes esperar al menos 30 segundos entre cada envio de nuevos mensajes. El mensaje se enviará automáticamente en " + timeToWait + " segundos. <a style='color: #CC3300;cursor:pointer;' onclick='clearInterval(autoReplyInterval); this.remove();'>Cancelar</a>");
 					}
 
 				} else {
@@ -463,41 +467,6 @@
 		} else {
 			$("input[name='sbutton']").on("click", checkWaiting);
 		}
-	}
-
-	/* Añade accesos directos a algunos iconos en al respuesta rápida */
-	function addIcons() {
-
-		var fieldset = $('<fieldset class="fieldset" style="margin:3px 0 0 0"><legend>Iconos</legend></fieldset>');
-		$("#" + getEditor().editorid).parent().append(fieldset);
-
-		fieldset.append(createIcon(":roto2:", "http://cdn.forocoches.com/foro/images/smilies/goofy.gif", 164));
-		fieldset.append(createIcon(":sisi3:", "http://cdn.forocoches.com/foro/images/smilies/sisi3.gif", 324));
-		fieldset.append(createIcon(":mola:", "http://cdn.forocoches.com/foro/images/smilies/thumbsup.gif", 48));
-		fieldset.append(createIcon(":cantarin:", "http://cdn.forocoches.com/foro/images/smilies/Sing.gif", 101));
-		fieldset.append(createIcon(":qmeparto:", "http://cdn.forocoches.com/foro/images/smilies/meparto.gif", 142));
-		fieldset.append(createIcon(":nusenuse:", "http://cdn.forocoches.com/foro/images/smilies/nusenuse.gif", 283));
-		fieldset.append(createIcon(":facepalm:", "http://cdn.forocoches.com/foro/images/smilies/facepalm.gif", 318));
-		fieldset.append(createIcon(":zpalomita", "http://cdn.forocoches.com/foro/images/smilies/icon_popcorn.gif", 215));
-		fieldset.append(createIcon(":zplatano2", "http://cdn.forocoches.com/foro/images/smilies/b2.gif", 236));
-		fieldset.append(createIcon(":number1:", "http://cdn.forocoches.com/foro/images/smilies/number_one.gif", 268));
-		fieldset.append(createIcon(":elrisas:", "http://cdn.forocoches.com/foro/images/smilies/qmeparto.gif", 76));
-		fieldset.append(createIcon(":gaydude:", "http://cdn.forocoches.com/foro/images/smilies/gaydude.gif", 264));
-		fieldset.append(createIcon(":sisi1:", "http://cdn.forocoches.com/foro/images/smilies/sisi1.gif", 299));
-		fieldset.append(createIcon(":babeando:", "http://cdn.forocoches.com/foro/images/smilies/babeando.gif", 274));
-		fieldset.append(createIcon(":elboinas:", "http://cdn.forocoches.com/foro/images/smilies/elboinas.gif", 314));
-		/* 		fieldset.append(createIcon(":sherlock:", "http://cdn.forocoches.com/foro/images/smilies/sherlock.gif", 281)); */
-		fieldset.append(createIcon(":qtedoy:", "http://cdn.forocoches.com/foro/images/smilies/smiley_1140.gif", 191));
-		fieldset.append(createIcon(":abrazo:", "http://cdn.forocoches.com/foro/images/smilies/abrazo.gif", 161));
-		var more = $("<a href='#qrform'>Más...</a>");
-		more.click(function () {
-			getEditor().open_smilie_window(785, 500);
-		});
-		fieldset.append(more);
-	}
-
-	function createIcon(name, src, id) {
-		return '<img border="0" class="inlineimg" src="' + src + '" style="cursor: pointer; padding: 5px;" onclick="vB_Editor.' + getEditor().editorid + '.insert_smilie(undefined, \'' + name + '\', \'' + src + '\', ' + id + ')">';
 	}
 
 	/* Añade nuevos botones que hasta ahora solo estaban disponibles en la versión Avanzada*/
@@ -551,20 +520,28 @@
 	}
 
 	function getTextAreaHeight() {
-		var height = getEditor().editdoc.body.offsetHeight;
+		var height = getEditorBody().offsetHeight;
 		return Math.max(height, 100);
 	}
 
 	function getEditor() {
-		return mod.helper.environment.page == "/showthread.php" ? vB_Editor.vB_Editor_QR : vB_Editor.vB_Editor_001;
+		return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
 	}
 
-	function isQuickReply() {
-		return getEditor().editorid == 'vB_Editor_QR';
+	function getEditorBody() {
+		return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
 	}
 
 	function isWYSIWYG() {
-		return getEditor().wysiwyg_mode == 1;
+		try {
+			return getEditorBody();
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function isQuickReply() {
+		return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
 	}
 
 	function getEditorContents() {
@@ -582,7 +559,7 @@
 	}
 
 	function focusEditor() {
-		getEditor().editdoc.body.focus();
+		getEditorBody().focus();
 	}
 
 	function trim(text) {

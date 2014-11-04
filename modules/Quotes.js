@@ -13,7 +13,8 @@
 			showAlerts: true,
 			mentionsToo: true,
 			openInTabsButton: false,
-			refreshEvery: 2
+			refreshEvery: 2,
+			ignoredUsers: ''
 		}
 	});
 
@@ -28,6 +29,15 @@
 				deberás instalar <a target='_blank' href='https://chrome.google.com/webstore/detail/one-window/papnlnnbddhckngcblfljaelgceffobn/related'>esta extensión</a> que aunque no es una solución muy limpia, hace su función.</p>\
 				<p>Para evitar confusiones, decir que esto no tiene nada que ver con abrir una única notificación en una nueva pestaña, eso funciona perfectamente. El problema descrito solo aplica cuando se abre más de una a la vez.</p> <p>Disculpa las molestias</p>");
 		};
+
+		var f = function () {
+			importIgnoreList();
+		};
+		if (typeof exportFunction === 'function') {// Firefox 31+
+			exportFunction(f, unsafeWindow, {defineAs: 'Quotes_importIgnoreList'});
+		} else {
+			unsafeWindow.Quotes_importIgnoreList = f;
+		}
 
 		return [
 
@@ -46,8 +56,9 @@
 				],
 				caption: 'Buscar citas:',
 				mapsTo: 'refreshEvery'
-			})
+			}),
 
+			creOpt({type: 'tags', mapsTo: 'ignoredUsers', caption: 'No mostrar citas de los siguientes usuarios <b>(separados por comas)</b>', buttons: true, plain: true, button1: '<a href="#" onclick="Quotes_importIgnoreList(); return false;" class="btn btn-xs btn-default">Importar de la lista de ignorados</a>'}),
 		];
 	};
 
@@ -243,11 +254,16 @@
 					var cita;
 
 					if (lastReadQuote) { //Contamos las citas no leídas hasta la última que tenemos guardada
+						if (isNaN(lastReadQuote)) { // Es el enlace completo, no es un numero (NaN). Compatibilidad hacia atrás.
+							lastReadQuote = lastReadQuote.match(/#post([\d]*)/)[1];
+						}
+						lastReadQuote = parseInt(lastReadQuote);
+						var ignorados = mod.preferences.ignoredUsers.split(/\s*,\s*/);
 						for (var i = 0; i < citas.length; i++) {
 							cita = new Cita(citas[i], false);
-							if (lastReadQuote == cita.postLink) {
+							if (lastReadQuote >= cita.postID) {
 								break;
-							} else {
+							} else if (ignorados.indexOf(cita.userName) === -1) {
 								if (mod.preferences.mentionsToo || isQuote(cita)) {
 									newQuotes.push(cita);
 								}
@@ -256,7 +272,7 @@
 					}
 
 					if (citas.length > 0) {
-						lastReadQuote = new Cita(citas[0]).postLink;
+						lastReadQuote = new Cita(citas[0]).postID;
 						mod.helper.setValue("LAST_READ_QUOTE", lastReadQuote);
 					}
 
@@ -481,7 +497,7 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 		notificationsBox.hide();
 	}
-
+	
 	var rows = {};
 
 	function addToNotificationsBox(cita) {
@@ -509,7 +525,7 @@
 			}
 		});
 
-		rows[cita] = row;
+		rows[cita.postID] = row;
 
 		notificationsList.append(row);
 	}
@@ -522,7 +538,7 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 
 		setNotificationsCount(notificationsCount - 1);
-		rows[cita].addClass("read");
+		rows[cita.postID].addClass("read");
 	}
 
 	function openQuote(cita, target) {
@@ -568,4 +584,56 @@
 		return result;
 	}
 
+	function importIgnoreList() {
+		var xmlhttp = new XMLHttpRequest();
+		
+		xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+				var html = xmlhttp.responseText;
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(html, "text/html");
+
+				var ignoreListElem = doc.getElementById("ignorelist"); // Si no hay nadie en ignorados este elemento no existe
+				
+				if (ignoreListElem) {
+					var elems = ignoreListElem.getElementsByTagName("a");
+					var ignoredUsers = [];
+
+					for (var i = 0, n = elems.length; i < n; i++) {
+						ignoredUsers.push(elems[i].textContent);
+					}
+					
+					var newIgnoredList = ignoredUsers.join(', ');
+					var oldIgnoredList = $("input[data-maps-to='ignoredUsers']").tokenfield('getTokensList', ',');
+
+					if (ignoredUsers.length > 0) { // Si se han obtenido ignorados de la importación
+						if (oldIgnoredList) { // hay algo ya definido en el campo
+							if (newIgnoredList !== oldIgnoredList) { // y la lista es diferente
+								bootbox.confirm("<p>La lista actual se sobreescribirá con el nuevo listado que se obtenga de tu " +
+										"<a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a>.</p>" +
+										"<p>¿Desea continuar?</p>",
+									function (result) {
+										if (result) {
+											$("input[data-maps-to='ignoredUsers']").tokenfield('setTokens', newIgnoredList); // sobreescribe con la nueva lista
+										}
+									}
+								);
+							} else { // y la lista es igual a la anterior
+								bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a> " +
+									"desde la última importación. Realiza cambios en tus ignorados antes de volver a intentarlo.");
+							}
+						} else {
+							$("input[data-maps-to='ignoredUsers']").tokenfield('setTokens', newIgnoredList);
+						}
+					}
+				} else { // en caso contrario, avisa al usuario de que no existen ignorados
+					bootbox.alert("Tu <a href='/foro/profile.php?do=ignorelist' target='_blank'>lista de ignorados</a> está vacía. " +
+						"Para ocultar los posts de tus usuarios ignorados... ¡primero ignora a alguien!");
+				}
+			}
+		};
+
+		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist", true);
+		xmlhttp.send();
+	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

@@ -1,0 +1,76 @@
+#shurscript-icons-box {
+	position: absolute;
+	height: 80px;
+	left: auto;
+	max-width: none;
+}
+
+#shurscript-icons-box .panel-body {
+	padding: 5px;
+	white-space: nowrap;
+}
+
+#shurscript-icons-box .panel-body:focus {
+	outline: 0;
+}
+
+#shurscript-icons-box .panel-body img {
+	max-height: 40px;
+}
+
+#shurscript-icons-box .icon {
+	display: inline-block;
+	margin: 0 5px -62px;
+	text-align: center;
+	vertical-align: bottom;
+}
+
+#shurscript-icons-box .badge {
+	background: transparent;
+	display: block;
+	font-weight: normal;
+	color: gray;
+}
+
+#shurscript-icons-box .icon:hover {
+	cursor: pointer;
+}
+
+#shurscript-icons-box .icon.selected .badge, #shurscript-icons-box .icon:hover .badge {
+	background: #C30;
+	color: white;
+}
+
+#shurscript-icons-box .icon.selected .badge .name, #shurscript-icons-box .icon:hover .badge .name {
+	color: white;
+}
+
+#shurscript-icons-box .tooltip {
+	white-space: nowrap;
+}
+
+#shurscript-icons-box .tooltip td {
+	font-size: 8pt;
+	text-align: left;
+}
+
+#shurscript-icons-box .tooltip td:first-child {
+	font-weight: bold;
+	padding-right: 5px;
+	text-align: right;
+}
+
+#shurscript-autoicons-tooltip-trigger {
+	background: none repeat scroll 0 0 #BEBEBE;
+	border-radius: 30px;
+	color: #FFFFFF;
+	cursor: default;
+	font-size: 9pt;
+	height: 15px;
+	line-height: 7px;
+	padding: 4px;
+	position: absolute;
+	right: 5px;
+	top: 4px;
+	width: 15px;
+}
