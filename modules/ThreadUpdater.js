@@ -5,7 +5,7 @@
 		id: 'ThreadUpdater',
 		name: 'Actualiza las nuevas respuestas de un hilo',
 		author: 'Electrosa',
-		version: '0.1',
+		version: '0.2',
 		description: 'Dentro de un hilo, se añadirán nuevas respuestas automáticamente sin necesidad de recargar la página.',
 		domain: ['/showthread.php'],
 		initialPreferences: {
@@ -20,7 +20,6 @@
 
 	mod.getPreferenceOptions = function () {
 		var creOpt = mod.helper.createPreferenceOption;
-
 		return [
 			creOpt({
 				type: 'radio',
@@ -60,8 +59,22 @@
 	var shownPosts;// contiene los posts que se están mostrando
 	var differences;// contiene los posts que han cambiado (nuevos, editados y borrados)
 	var pageTitle = document.title;
+	var cancelar = false;
 	var timeoutId, timeoutTime;// id (para clearTimeout), y fecha/hora en la que se debería ejecutar
 	var thread, page;
+
+	var Post = function (element) {
+		this.element = element;
+		var table = this.element.find('table').first();
+		this.elementTable = table;
+		this.id = parseInt(table.attr('id').replace('post',''));
+		this.href = '/showthread.php?p=' + this.id;
+		this.content = this.element.find('#post_message_' + this.id);
+		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
+		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
+		this.author = user.html();
+		this.author_link = user.attr('href');
+	};
 
 	mod.normalStartCheck = function () {
 		return ! SHURSCRIPT.environment.thread.isClosed;
@@ -73,7 +86,6 @@
 		isLastPage = document.getElementsByClassName("pagenav").length
 			? document.getElementsByClassName("pagenav")[0].querySelector("a[rel='next']") === null
 			: true;// solo hay una página
-
 		thread = SHURSCRIPT.environment.thread.id;
 		page = SHURSCRIPT.environment.thread.page;
 
@@ -113,88 +125,36 @@
 			});
 
 			/* Respuesta rápida */
-			// controlar cuándo se envía el formulario
-			document.getElementById("qrform").addEventListener("submit", function () {
-				// quitar timeout actual
-				stopTimeout();
+			SHURSCRIPT.eventbus.on('quickReply', function (event, status, numNewPosts) {
+				if (status === 'submit') {
+					cancelar = true;
+					// quitar timeout actual
+					stopTimeout();
 
-				// ocultar el botón
-				showButton(false);
+					// ocultar el botón
+					showButton(false);
 
-				// restablecer el título
-				document.title = pageTitle;
-			});
+					// restablecer el título
+					document.title = pageTitle;
+				} else if (status === 'done') {
+					numPostsBefore += numNewPosts;
 
-			// reescribir la función que se encarga de recibir el post para añadir más funcionalidad
-			var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
-			/**
-			 * @param ajax XMLHttpRequest or number (integer)
-			 */
-			var qr_do_ajax_post_new = function (ajax) {
-				var numNewPosts;
-				if (typeof ajax === 'number') {
-					numNewPosts = ajax;
-				} else if (typeof ajax === 'object') {
-					qr_do_ajax_post_original(ajax);// función original
-					
-					// comprobar si en el XML de respuesta hay <postbits>
-					// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
-					if (ajax.responseXML.children[0].nodeName !== 'postbits') {
-						// si ha habido un error vuelve a mostrar el botón
-						loadThread();
-						return;
+					// actualizar el listado de posts que están visibles (todos los posts cargados se meten en un <div>)
+					shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
+
+					// comprobar si se ha llenado la página
+					if (numPostsBefore <= 30) {
+						// activar el timeout de nuevo
+						createTimeout();
 					} else {
-						// mirar número de respuestas ahora
-						numNewPosts = ajax.responseXML.children[0].children.length - 1;
-						
-						// lanzar evento
-						SHURSCRIPT.eventbus.trigger('newposts', numNewPosts);
+						// mostrar enlace para ir a la siguiente página
+						showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
 					}
-				} else {
-					return;
+				} else if (status === 'error') {
+					// si ha habido un error vuelve a mostrar el botón
+					loadThread();
 				}
-				
-				numPostsBefore += numNewPosts;
-
-				// actualizar el listado de posts que están visibles (todos los posts cargados se meten en un <div>)
-				shownPosts = document.querySelectorAll("#posts > div[align], #posts > div > div[align]");
-
-				// comprobar si se ha llenado la página
-				if (numPostsBefore <= 30) {
-					// activar el timeout de nuevo
-					createTimeout();
-				} else {
-					// mostrar enlace para ir a la siguiente página
-					showButton("Hay una nueva página", "showthread.php?t=" + thread + "&page=" + (+page + 1));
-				}
-			};
-			if (typeof exportFunction === 'function') {
-				// exportar la función para recibir eventos al objeto window
-				exportFunction(SHURSCRIPT.eventbus.trigger, unsafeWindow, {defineAs: 'SHURSCRIPT_triggerEvent'});
-				
-				// función especial para firefox
-				var qr_do_ajax_post_firefox = function (ajax) {
-					window.qr_do_ajax_post_original(ajax);
-					if (ajax.responseXML.children[0].nodeName === 'postbits') {
-						window.SHURSCRIPT_triggerEvent('newposts', ajax.responseXML.children[0].children.length - 1);
-					}
-				}
-				
-				// reescribir la función `qr_do_ajax_post` inyectando un script en la cabecera de la página
-				var script = document.createElement('script'); 
-				script.type = "text/javascript"; 
-				script.innerHTML = '\
-						window.qr_do_ajax_post_original = window.qr_do_ajax_post;\
-						window.qr_do_ajax_post = ' + qr_do_ajax_post_firefox.toString() + ';';
-				document.getElementsByTagName('head')[0].appendChild(script);
-				
-				// como no se permite redefinir funciones, obtengo los datos mediante un evento
-				SHURSCRIPT.eventbus.on('newposts', function (event, numNewPosts) {
-					qr_do_ajax_post_new(numNewPosts);
-				});
-			} else {
-				unsafeWindow.qr_do_ajax_post = qr_do_ajax_post_new;
-			}
+			});
 		} else if (mod.preferences.nextPageButton) {
 			createButton();
 			showButton("Ir a la página siguiente", "showthread.php?t=" + thread + "&page=" + (+page + 1));
@@ -263,7 +223,6 @@
 
 		if ((numPostsBefore < 30 || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
-
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
 					var html = xmlhttp.responseText;
@@ -306,7 +265,6 @@
 					}
 				}
 			};
-
 			xmlhttp.open("GET", "/foro/showthread.php?t=" + thread + "&page=" + page, true);
 			xmlhttp.send();
 		}
@@ -400,6 +358,11 @@
 	 * @param deletedPosts {array} Array con los IDs de los posts eliminados.
 	 */
 	function newPosts(newPosts, editedPosts, deletedPosts) {
+		if (cancelar) {
+			cancelar = false;
+			return;// salir si el timeout ha sido cancelado
+		}
+
 		if (mod.preferences.loadAutomatically) {
 			populateNewPosts();
 		} else {
@@ -458,6 +421,7 @@
 
 			// añadir el post al DOM
 			var newNode = divElem.appendChild(post.node);
+			SHURSCRIPT.eventbus.trigger('parsePost', new Post($(newNode)));
 		}
 
 		var postsElem = document.getElementById("posts");
