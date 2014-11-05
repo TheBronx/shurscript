@@ -92,19 +92,14 @@
 		});
 		var qr_do_ajax_post_original = unsafeWindow.qr_do_ajax_post;
 		var qr_do_ajax_post_new = function (ajax) {
-			qr_do_ajax_post_original(ajax);
-			if (typeof ajax === 'object') {
-				// comprobar si en el XML de respuesta hay <postbits>
-				// en caso contrario es que ha salido el mensaje "debes esperar 30 segundos"
-				if (ajax.responseXML.children[0].nodeName === 'postbits') {
-					// mirar número de respuestas ahora y lanzar evento
-					var numNewPosts = ajax.responseXML.children[0].children.length - 1;
-					SHURSCRIPT_triggerEvent('quickReply', ['done', numNewPosts]);
-					return;
-				}
-			}
-			// si ha habido un error
-			SHURSCRIPT_triggerEvent('quickReply', 'error');
+			eval("qr_do_ajax_post_original(ajax);\
+				if (typeof ajax === 'object') {\
+					if (ajax.responseXML.children[0].nodeName === 'postbits') {\
+						var numNewPosts = ajax.responseXML.children[0].children.length - 1;\
+						SHURSCRIPT_triggerEvent('quickReply', ['done', numNewPosts]);\
+					} else SHURSCRIPT_triggerEvent('quickReply', 'error');\
+				} else SHURSCRIPT_triggerEvent('quickReply', 'error');\
+			");
 		};
 		if (typeof exportFunction === 'function') {
 			// exportar la función para recibir eventos al objeto window

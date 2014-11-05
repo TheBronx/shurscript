@@ -1,4 +1,4 @@
-// Shur Scripts SA
+﻿// Shur Scripts SA
 // GPLv2 Licensed
 // http://www.gnu.org/licenses/gpl-2.0.html
 //
@@ -6,7 +6,7 @@
 // @name            ShurScript
 // @description     Script para ForoCoches
 // @namespace       http://shurscript.es
-// @version         0.23-dev
+// @version         0.23.1-dev
 // @author          TheBronx
 // @author          xusO
 // @author          Fritanga / Korrosivo
