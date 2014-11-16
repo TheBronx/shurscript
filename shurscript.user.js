@@ -55,6 +55,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/PrivateMode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Integrations.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Reader.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
@@ -63,6 +64,8 @@
 // @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
 // @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
 // @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/experimental/css/autoicons.css
+// @resource        readercss https://github.com/TheBronx/shurscript/raw/experimental/css/reader.css
+// @resource        readerhtml https://github.com/TheBronx/shurscript/raw/experimental/html/reader.html
 // ==/UserScript==
 
 /**

@@ -1,0 +1,22 @@
+<div style="z-index:1020" class="shurscript modal fade" id="shurscript-reader-window" tabindex="-1" role="dialog" data-backdrop="true">
+	<div class="modal-dialog" style="width:800px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="lead modal-title">
+					<%= threadTitle %>
+				</h3>
+				<br>
+				<p style="float: left;">
+					<b>Autor:</b> <%= author %> <div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
+				</p>
+			</div>
+			<div class="modal-body">
+				<div>
+					<%= postContent %>
+				</div>
+			</div>
+		</div>
+		<a class="back-to-thread">Volver al hilo</a>
+	</div>
+</div>

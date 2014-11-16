@@ -1,0 +1,138 @@
+#shurscript-reader-window {
+	z-index: 1000;
+}
+
+#shurscript-reader-window .modal-header .close {
+    margin-right: -30px;
+    margin-top: -6px;
+}
+
+#shurscript-reader-backdrop {
+	z-index: 999;
+	opacity: 1.0;
+	background: #E6E6E6;
+}
+
+#shurscript-reader-window .modal-content {
+	box-shadow: 0 0px 5px rgba(0, 0, 0, 0.10) !important;
+	border-radius: 0px;
+}
+
+#shurscript-reader-window .modal-body, #shurscript-reader-window .modal-header {
+	padding: 20px 50px;
+}
+
+#shurscript-reader-window .modal-title {
+	font-family: inherit !important;
+	font-size: 26px !important;
+}
+
+#shurscript-reader-window, #shurscript-reader-window p {
+	color: #4b4b4b;
+	font-size: 18px;
+	font-family: "Sentinel SSm A", "Sentinel SSm B", Palatino Linotype, Book Antiqua, Palatino, serif !important;
+}
+
+#shurscript-reader-window .modal-body > .font-size-14 {
+	font-size: 14px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-16 {
+	font-size: 16px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-18 {
+	font-size: 18px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-20 {
+	font-size: 20px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-22 {
+	font-size: 22px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-24 {
+	font-size: 24px;
+}
+
+#shurscript-reader-window .modal-body > .font-size-26 {
+	font-size: 26px;
+}
+
+#shurscript-reader-window font[size='1'] {
+	font-size: 80% !important;
+}
+
+#shurscript-reader-window font[size='2'] {
+	font-size: 100% !important;
+}
+
+#shurscript-reader-window font[size='3'] {
+	font-size: 120% !important;
+}
+
+#shurscript-reader-window font[size='4'] {
+	font-size: 140% !important;
+}
+
+#shurscript-reader-window font[size='5'] {
+	font-size: 160% !important;
+}
+
+#shurscript-reader-window font[size='6'] {
+	font-size: 180% !important;
+}
+
+#shurscript-reader-window font[size='7'] {
+	font-size: 200% !important;
+}
+
+#shurscript-reader-window img:not(.inlineimg) {
+	display: block;
+    margin: 10px auto;
+    max-width: 100%;
+}
+
+#shurscript-reader-window .quote {
+    background: none repeat scroll 0 0 #f1f1f1;
+    border: 1px solid gray;
+    padding: 10px;
+}
+
+#shurscript-reader-window .font-size-changer {
+	float: right;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+#shurscript-reader-window .smaller-font {
+	cursor: pointer;
+	font-size: 14px;
+}
+
+#shurscript-reader-window .smaller-font[data-font-size='14'] {
+	color: lightgray;
+	cursor: default;
+}
+
+#shurscript-reader-window .larger-font {
+	cursor: pointer;
+	font-size: 18px;
+}
+
+#shurscript-reader-window .larger-font[data-font-size='26'] {
+	color: lightgray;
+	cursor: default;
+}
+
+#shurscript-reader-window .back-to-thread {
+	display: block;
+	text-align: center;
+    margin-top: 20px;
+	color: gray;
+	cursor: pointer;
+}
