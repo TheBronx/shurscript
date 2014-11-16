@@ -15,6 +15,8 @@
 	});
 
 	mod.onNormalStart = function () {
+
+		mod.helper.addStyle('readercss');
 		
 		var tempName = 'reader',
 			templateText = mod.helper.getResourceText('readerhtml');
@@ -26,7 +28,7 @@
 		var handler = function (e) {
 			var post = e.target ? $(e.target).data('post') : e;
 			var postContent = post.content.html().trim();
-			var $modal = $(SHURSCRIPT.templater.fillOut('quote', {postContent: postContent, threadTitle: $('.cmega').text(), author: post.author}));
+			var $modal = $(SHURSCRIPT.templater.fillOut('reader', {postContent: postContent, threadTitle: $('.cmega').text(), author: post.author}));
 			$modal.find("div[style*='margin:20px; margin-top:5px;']").each(function (i, quote) {
 				$(quote).addClass('quote').html($(quote).find('.alt2').html()); //Quitamos las tablas de las citas y nos quedamos con el contenido
 			});
