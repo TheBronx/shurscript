@@ -148,6 +148,17 @@
 				}, 500);
 			});
 		}
+		
+		//Enviar el mensaje mediante Alt + S
+        $(getEditorBody()).keypress(function(e) {
+			var isMac = navigator.userAgent.indexOf('Macintosh') != -1;
+			if ((isMac && (e.which === 8747 || e.keyCode === 83))
+				|| (!isMac && e.key === 's' && e.altKey))  {
+				$("input[name='sbutton']").click();
+				e.preventDefault();
+				e.stopPropagation();
+			}
+        });
 	}
 
 	/* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
