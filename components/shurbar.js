@@ -51,13 +51,18 @@
 	 * Añadir iconos a la lista que más tarde se añadirá la barra
 	 */
 	function addIcons(iconData, module) {
-		if (!$.isArray(iconData)) { //Convertirlo en array para reutilizar el bucle
-			iconData = [iconData];
-		}
+		
+		if (!$.isEmptyObject(iconData)) {
+			
+			if (!$.isArray(iconData)) { //Convertirlo en array para reutilizar el bucle
+				iconData = [iconData];
+			}
 
-		iconData.forEach(function (data) {
-			icons.push(new Icon(module && module.id, data.name, data.description, data.image, data.handler));
-		});
+			iconData.forEach(function (data) {
+				icons.push(new Icon(module && module.id, data.name, data.description, data.image, data.handler));
+			});
+			
+		}
 	}
 
 	/**
