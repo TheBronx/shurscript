@@ -134,8 +134,9 @@
 				encodedUsername += username.charAt(i);
 			}
 		}
-
-		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1";
+		
+		var rnd = Math.random().toFixed(2) * 100; //Metemos un aleatorio para engañar a la caché del foro
+		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "-" + rnd + "&titleonly=0&showposts=1";
 		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE");
 		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE");
 		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES");
