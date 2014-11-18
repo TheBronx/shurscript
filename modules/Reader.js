@@ -69,8 +69,7 @@
 		if (firstPost && firstPost.attr('name') === '1') {
 			var postId = firstPost.attr('id').match(/postcount(\d*)/)[1];
 			var content = $('#post_message_' + postId);
-			var author = $('postmenu_' + postId + ' .bigusername').text();
-			console.log(postId)
+			var author = $('#postmenu_' + postId + ' .bigusername').text();
 			if (content.text().trim().length > 1000) {
 				return {
 					name: 'Modo lectura',
@@ -88,10 +87,11 @@
 		
 	};
 	
-
+	var $modal;
+	
 	mod.openReader = function (postId, postContent, postAuthor) {
 		
-		var $modal = $(SHURSCRIPT.templater.fillOut('reader', {postContent: postContent, threadTitle: $('.cmega').text(), author: postAuthor}));
+		$modal = $(SHURSCRIPT.templater.fillOut('reader', {postContent: postContent, threadTitle: $('.cmega').text(), author: postAuthor, postNumber: $('#postcount' + postId + ' strong').text()}));
 		$modal.find("div[style*='margin:20px; margin-top:5px;']").each(function (i, quote) {
 			$(quote).addClass('quote').html($(quote).find('.alt2').html()); //Quitamos las tablas de las citas y nos quedamos con el contenido
 		});
@@ -104,6 +104,31 @@
 		}
 
 		/* Botones para aumentar y disminuir el tamaño de la fuente */
+		createFontSizeControls();
+		
+		/* Al hacer scroll, la barra superior permanecera fijada arriba */
+		fixTopbarOnScroll();
+
+		/* Link al final del tocho para volver al hilo */
+		$modal.find('.back-to-thread').click(function () {
+			$modal.modal('hide');
+		});
+
+		/* Al cerrar el modal, lo eliminamos del DOM y cambiamos de nuevo el hash */
+		$modal.on('hidden.bs.modal', function () {
+			$modal.remove();
+			location.hash = '#post' + postId;
+		});
+
+		/* Abrimos la ventana */
+		$modal.modal();
+		$(".modal-backdrop").attr('id', 'shurscript-reader-backdrop');
+		
+		setTimeout(function(){location.hash = '#read' + postId;}, 500);
+
+	};
+	
+	function createFontSizeControls() {
 		var fontSizeChanger = function (newFontSize) {
 			$modal.find('.modal-body > div').attr('class', 'font-size-' + newFontSize);
 			$modal.find('.smaller-font').attr('data-font-size', newFontSize);
@@ -125,25 +150,27 @@
 				fontSizeChanger(mod.preferences.fontSize + 2);
 			}
 		});
-
-
-		/* Link al final del tocho para volver al hilo */
-		$modal.find('.back-to-thread').click(function () {
-			$modal.modal('hide');
+	}
+	
+	function fixTopbarOnScroll() {
+		var $header = $modal.find('.modal-header');
+		var $body = $modal.find('.modal-body');
+		var scrollTop;
+		$modal.scroll(function () {
+			
+			if (!scrollTop) {
+				scrollTop = $('.font-size-changer').get(0).offsetTop + 15;
+			}
+			
+			if (this.scrollTop > scrollTop) {
+				$header.addClass('fixed').parents('.modal-dialog').before($header);
+			} else {
+				$header.removeClass('fixed');
+				$body.before($header);
+				$header.css('position', 'absolute');
+				$body.css('margin-top', $header.innerHeight() + 'px');
+			}
 		});
-
-		/* Al cerrar el modal, lo eliminamos del DOM y cambiamos de nuevo el hash */
-		$modal.on('hidden.bs.modal', function () {
-			$modal.remove();
-			location.hash = '#post' + postId;
-		});
-
-		/* Abrimos la ventana */
-		$modal.modal();
-		$(".modal-backdrop").attr('id', 'shurscript-reader-backdrop');
-		
-		setTimeout(function(){location.hash = '#read' + postId;}, 500);
-
-	};
+	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);

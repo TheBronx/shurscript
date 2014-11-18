@@ -5,6 +5,29 @@
     vertical-align: middle;
 }
 
+.reader-bookmark {
+	background: #b00;
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #b00), color-stop(100%, #900));
+	background-image: -webkit-linear-gradient(top, #b00 0%, #900 100%);
+	background-image: -moz-linear-gradient(top, #b00 0%, #900 100%);
+	background-image: -o-linear-gradient(top, #b00 0%, #900 100%);
+	background-image: linear-gradient(top, #b00 0%, #900 100%);
+	height: 50px;
+	position: absolute;
+	top: 0;
+	right: 50px;
+	width: 30px;
+}
+
+.reader-bookmark:after {
+	content: '';
+	display: block;
+	border: 15px solid transparent;
+	border-bottom-color: #fff;
+	position: absolute;
+	bottom: 0;
+}
+
 #shurscript-reader-window {
 	z-index: 1000;
 }
@@ -14,19 +37,31 @@
     margin-top: -6px;
 }
 
+#shurscript-reader-window .thread-info {
+	float: left;
+}
+
 #shurscript-reader-backdrop {
 	z-index: 999;
 	opacity: 1.0;
 	background: #E6E6E6;
 }
 
+#shurscript-reader-window .modal-header {
+	background: #FAFAFA;
+	width: 100%;
+}
 #shurscript-reader-window .modal-content {
 	box-shadow: 0 0px 5px rgba(0, 0, 0, 0.10) !important;
 	border-radius: 0px;
 }
 
-#shurscript-reader-window .modal-body, #shurscript-reader-window .modal-header {
+#shurscript-reader-window .modal-body {
 	padding: 20px 50px;
+}
+
+#shurscript-reader-window .modal-header {
+	padding: 20px 50px 10px 50px;
 }
 
 #shurscript-reader-window .modal-title {
@@ -121,6 +156,11 @@
 	font-size: 14px;
 }
 
+#shurscript-reader-window .smaller-font:not([data-font-size='14']):hover, 
+#shurscript-reader-window .larger-font:not([data-font-size='26']):hover {
+	text-decoration: underline;
+}
+
 #shurscript-reader-window .smaller-font[data-font-size='14'] {
 	color: lightgray;
 	cursor: default;
@@ -142,4 +182,53 @@
     margin-top: 20px;
 	color: gray;
 	cursor: pointer;
+}
+
+#shurscript-reader-window .modal-subtitle {
+    height: 25px;
+}
+
+#shurscript-reader-window .modal-header.fixed {
+	position: fixed !important; 
+	z-index: 10001;
+	width: 778px;
+	margin-left: calc(50% - 389px);
+	text-align: center;
+	height: 50px;
+	transition: height 2s;
+}
+
+#shurscript-reader-window .fixed .thread-info, #shurscript-reader-window .fixed .modal-title {
+	display: none;
+}
+
+#shurscript-reader-window .fixed .font-size-changer {
+	margin-top: -32px;
+}
+
+#shurscript-reader-window .add-bookmark {
+	display: none;
+	cursor: pointer;
+	float: left;
+    font-size: 16px;
+    margin-top: -32px;
+}
+
+#shurscript-reader-window .add-bookmark:before {
+    content: url("https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/star-20.png");
+    display: inline-block;
+    margin: 0 2px 3px 0;
+    vertical-align: middle;
+}
+
+#shurscript-reader-window .add-bookmark:hover:before {
+    content: url("https://cdn4.iconfinder.com/data/icons/geomicons/32/672359-star-straight-20.png");
+}
+
+#shurscript-reader-window .add-bookmark:hover {
+	text-decoration: underline;
+}
+
+#shurscript-reader-window .fixed .add-bookmark {
+	display: inline-block;
 }

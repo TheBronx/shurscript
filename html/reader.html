@@ -7,15 +7,25 @@
 					<%= threadTitle %>
 				</h3>
 				<br>
-				<p style="float: left;">
-					<b>Autor:</b> <%= author %> <div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
-				</p>
+				<div class="modal-subtitle">
+					<span class="thread-info">
+						<b>Autor:</b> <%= author %>
+						<% if (postNumber > 1) { %>
+							&nbsp;(#<%=postNumber%>)
+						<% } %>
+					</span>
+
+					<span class="add-bookmark">A&ntilde;adir marcador</span>
+
+					<div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
+				</div>
 			</div>
 			<div class="modal-body">
 				<div>
 					<%= postContent %>
 				</div>
 			</div>
+			<!--div class="reader-bookmark"></div-->
 		</div>
 		<a class="back-to-thread">Volver al hilo</a>
 	</div>
