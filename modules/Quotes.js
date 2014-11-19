@@ -135,8 +135,7 @@
 			}
 		}
 
-		var rnd = Math.floor(Math.random() * 100); //Metemos un aleatorio para engañar a la caché del foro
-		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "-" + rnd + "&titleonly=0&showposts=1";
+		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "-{random}&titleonly=0&showposts=1";
 		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE");
 		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE");
 		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES");
@@ -383,9 +382,14 @@
 			}
 		};
 
-		ajax.open("GET", notificationsUrl, true);
+		ajax.open("GET", getRandomizedNotificationsUrl(), true);
 		ajax.send();
 
+	}
+
+	function getRandomizedNotificationsUrl() {
+		var rnd = Math.floor(Math.random() * 100); //Metemos un aleatorio para engañar a la caché del foro
+		return notificationsUrl.replace("{random}", rnd);
 	}
 
 	function setNotificationsCount(count) {
