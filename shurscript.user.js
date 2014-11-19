@@ -55,14 +55,14 @@
 // @require         https://github.com/TheBronx/shurscript/raw/release/modules/AutoIcons.js
 // @require         https://github.com/TheBronx/shurscript/raw/release/modules/PrivateMode.js
 // @require         https://github.com/TheBronx/shurscript/raw/release/modules/Webm.js
-// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/release/css/bootstrap.css
-// @resource        modalcss https://github.com/TheBronx/shurscript/raw/release/css/modal.css
-// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/release/css/shurbar.css
-// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/release/html/modal.html
-// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/release/html/quote.html
-// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/release/css/imageuploader.css
-// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/release/html/imageuploader.html
-// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/release/css/autoicons.css
+// @resource        bootstrapcss http://static.shurscript.org/js/stable/0.24/css/bootstrap.css
+// @resource        modalcss http://static.shurscript.org/js/stable/0.24/css/modal.css
+// @resource        shurbarcss http://static.shurscript.org/js/stable/0.24/css/shurbar.css
+// @resource        modalhtml http://static.shurscript.org/js/stable/0.24/html/modal.html
+// @resource        quotehtml http://static.shurscript.org/js/stable/0.24/html/quote.html
+// @resource        imageuploadercss http://static.shurscript.org/js/stable/0.24/css/imageuploader.css
+// @resource        imageuploaderhtml http://static.shurscript.org/js/stable/0.24/html/imageuploader.html
+// @resource        autoiconscss http://static.shurscript.org/js/stable/0.24/css/autoicons.css
 // ==/UserScript==
 
 /**
