@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.24.1 `19/11/2014`
+
+**Bugfixes**
+
+* Apaño provisional para saltarnos la caché del buscador de forocoches que estaba ocasionando retrasos (no sanos) en las notificaciones de citas y menciones. 
+
+------------------------------------
+
 ## v0.24.0 `15/11/2014`
 
 **IMPORTANTE:** En esta versión se ha dejado de dar soporte a la extensión **Scriptish** (**Firefox**). El motivo es porque desde las últimas actualizaciones de Firefox 30+, les han dejado de funcionar algunas cosas críticas que nos son imprescindibles para el correcto funcionamiento del script. Así que hasta futuras actualizaciones de dicha extensión que solucionen estos errores, os recomendamos que cambiéis a **Greasemonkey**.
