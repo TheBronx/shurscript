@@ -28,122 +28,119 @@
 	bottom: 0;
 }
 
-#shurscript-reader-window {
+#reader {
 	z-index: 1000;
 }
 
-#shurscript-reader-window .modal-header .close {
+#reader .modal-header .close {
     margin-right: -30px;
-    margin-top: -6px;
+    margin-top: 0px;
 }
 
-#shurscript-reader-window .thread-info {
-	float: left;
-}
-
-#shurscript-reader-backdrop {
+#reader-backdrop {
 	z-index: 999;
 	opacity: 1.0;
 	background: #E6E6E6;
 }
 
-#shurscript-reader-window .modal-header {
+#reader .modal-header {
 	background: #FAFAFA;
 	width: 100%;
 }
-#shurscript-reader-window .modal-content {
+#reader .modal-content {
 	box-shadow: 0 0px 5px rgba(0, 0, 0, 0.10) !important;
 	border-radius: 0px;
 }
 
-#shurscript-reader-window .modal-body {
+#reader .modal-body {
 	padding: 20px 50px;
 }
 
-#shurscript-reader-window .modal-header {
+#reader .modal-header {
 	padding: 20px 50px 10px 50px;
 }
 
-#shurscript-reader-window .modal-title {
+#reader .modal-title {
 	font-family: inherit !important;
 	font-size: 26px !important;
+	text-align: left;
 }
 
-#shurscript-reader-window, #shurscript-reader-window p {
+#reader, #reader p {
 	color: #4b4b4b;
 	font-size: 18px;
 	font-family: "Sentinel SSm A", "Sentinel SSm B", Palatino Linotype, Book Antiqua, Palatino, serif !important;
 }
 
-#shurscript-reader-window .modal-body > .font-size-14 {
+#reader .modal-body > .font-size-14 {
 	font-size: 14px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-16 {
+#reader .modal-body > .font-size-16 {
 	font-size: 16px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-18 {
+#reader .modal-body > .font-size-18 {
 	font-size: 18px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-20 {
+#reader .modal-body > .font-size-20 {
 	font-size: 20px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-22 {
+#reader .modal-body > .font-size-22 {
 	font-size: 22px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-24 {
+#reader .modal-body > .font-size-24 {
 	font-size: 24px;
 }
 
-#shurscript-reader-window .modal-body > .font-size-26 {
+#reader .modal-body > .font-size-26 {
 	font-size: 26px;
 }
 
-#shurscript-reader-window font[size='1'] {
+#reader font[size='1'] {
 	font-size: 80% !important;
 }
 
-#shurscript-reader-window font[size='2'] {
+#reader font[size='2'] {
 	font-size: 100% !important;
 }
 
-#shurscript-reader-window font[size='3'] {
+#reader font[size='3'] {
 	font-size: 120% !important;
 }
 
-#shurscript-reader-window font[size='4'] {
+#reader font[size='4'] {
 	font-size: 140% !important;
 }
 
-#shurscript-reader-window font[size='5'] {
+#reader font[size='5'] {
 	font-size: 160% !important;
 }
 
-#shurscript-reader-window font[size='6'] {
+#reader font[size='6'] {
 	font-size: 180% !important;
 }
 
-#shurscript-reader-window font[size='7'] {
+#reader font[size='7'] {
 	font-size: 200% !important;
 }
 
-#shurscript-reader-window img:not(.inlineimg) {
+#reader img:not(.inlineimg) {
 	display: block;
     margin: 10px auto;
     max-width: 100%;
 }
 
-#shurscript-reader-window .quote {
+#reader .quote {
     background: none repeat scroll 0 0 #f1f1f1;
     border: 1px solid gray;
     padding: 10px;
 }
 
-#shurscript-reader-window .font-size-changer {
+#reader .font-size-changer {
 	float: right;
 	-webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -151,32 +148,32 @@
     user-select: none;
 }
 
-#shurscript-reader-window .smaller-font {
+#reader .smaller-font {
 	cursor: pointer;
 	font-size: 14px;
 }
 
-#shurscript-reader-window .smaller-font:not([data-font-size='14']):hover, 
-#shurscript-reader-window .larger-font:not([data-font-size='26']):hover {
+#reader .smaller-font:not([data-font-size='14']):hover, 
+#reader .larger-font:not([data-font-size='26']):hover {
 	text-decoration: underline;
 }
 
-#shurscript-reader-window .smaller-font[data-font-size='14'] {
+#reader .smaller-font[data-font-size='14'] {
 	color: lightgray;
 	cursor: default;
 }
 
-#shurscript-reader-window .larger-font {
+#reader .larger-font {
 	cursor: pointer;
 	font-size: 18px;
 }
 
-#shurscript-reader-window .larger-font[data-font-size='26'] {
+#reader .larger-font[data-font-size='26'] {
 	color: lightgray;
 	cursor: default;
 }
 
-#shurscript-reader-window .back-to-thread {
+#reader .back-to-thread {
 	display: block;
 	text-align: center;
     margin-top: 20px;
@@ -184,51 +181,134 @@
 	cursor: pointer;
 }
 
-#shurscript-reader-window .modal-subtitle {
+#reader .modal-subtitle {
     height: 25px;
 }
 
-#shurscript-reader-window .modal-header.fixed {
+#reader .fixed .modal-subtitle {
+	margin-top: -38px;
+}
+
+#reader .thread-info {
+	float: left;
+}
+
+#reader .modal-header-wrapper {
+	text-align: center; 
+	width: 100%;
+}
+
+#reader .arrow-top {
+	opacity: 0;
+	transition: opacity 1s !important;
+	display: inline-block;
+	cursor: pointer;
+}
+
+#reader .arrow-top:hover {
+	text-decoration: underline;
+}
+
+#reader .fixed .arrow-top {
+	opacity: 1;
+}
+
+#reader .modal-header.fixed {
 	position: fixed !important; 
 	z-index: 10001;
 	width: 778px;
-	margin-left: calc(50% - 389px);
 	text-align: center;
 	height: 50px;
 	transition: height 2s;
+	overflow: hidden;
+	display: inline-block;
+	padding: 13px 50px;
 }
 
-#shurscript-reader-window .fixed .thread-info, #shurscript-reader-window .fixed .modal-title {
+#reader .fixed .modal-title {
 	display: none;
 }
 
-#shurscript-reader-window .fixed .font-size-changer {
-	margin-top: -32px;
-}
-
-#shurscript-reader-window .add-bookmark {
+#reader .add-bookmark {
 	display: none;
 	cursor: pointer;
 	float: left;
     font-size: 16px;
-    margin-top: -32px;
 }
 
-#shurscript-reader-window .add-bookmark:before {
+#reader .add-bookmark:before {
     content: url("https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/star-20.png");
     display: inline-block;
     margin: 0 2px 3px 0;
     vertical-align: middle;
 }
 
-#shurscript-reader-window .add-bookmark:hover:before {
+#reader .add-bookmark:hover:before {
     content: url("https://cdn4.iconfinder.com/data/icons/geomicons/32/672359-star-straight-20.png");
 }
 
-#shurscript-reader-window .add-bookmark:hover {
+#reader .add-bookmark:hover {
 	text-decoration: underline;
 }
 
-#shurscript-reader-window .fixed .add-bookmark {
+#reader .fixed .add-bookmark {
 	display: inline-block;
+	left: 50px;
+    position: absolute;
+}
+
+/* Temas */
+
+#reader .theme {
+	width: 14px;
+	height: 14px;
+	display: inline-block;
+	margin-right: 2px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+#reader .theme[data-theme="light"] {
+	background: white;
+	border: 1px solid gray;
+}
+
+#reader .theme[data-theme="sepia"] {
+	background: #ffecac;
+	border: 1px solid #e5a33a;
+}
+
+#reader .theme[data-theme="dark"] {
+	background: #333;
+	border: 1px solid lightgray;
+}
+
+#reader .modal-header, #reader .modal-body, #reader, #reader p, #reader .modal-header {
+	transition: background-color 0.2s, color 0.2s, border-color 0.2s !important;
+}
+
+/* Dark theme */
+
+#reader.dark .close {
+	color: white;
+}
+
+#reader-backdrop.dark {
+	background-color: #434343;
+}
+
+#reader.dark .modal-header {
+	background-color: #222;
+}
+
+#reader.dark .modal-body {
+	background-color: #333;
+}
+
+#reader.dark, #reader.dark p {
+	color: lightgray;
+}
+
+#reader.dark .modal-header {
+	border-bottom-color: #111;
 }

@@ -1,23 +1,33 @@
-<div style="z-index:1020" class="shurscript modal fade" id="shurscript-reader-window" tabindex="-1" role="dialog" data-backdrop="true">
+<div style="z-index:1020" class="shurscript modal fade" id="reader" tabindex="-1" role="dialog" data-backdrop="true">
 	<div class="modal-dialog" style="width:800px;">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="lead modal-title">
-					<%= threadTitle %>
-				</h3>
-				<br>
-				<div class="modal-subtitle">
-					<span class="thread-info">
-						<b>Autor:</b> <%= author %>
-						<% if (postNumber > 1) { %>
-							&nbsp;(#<%=postNumber%>)
-						<% } %>
-					</span>
+			<div class="modal-header-wrapper">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="lead modal-title">
+						<%= threadTitle %>
+					</h3>
+					<br>
+					<div class="modal-subtitle">
+						<span class="thread-info">
+							<b>Autor:</b> <%= author %>
+							<% if (postNumber > 1) { %>
+								&nbsp;(#<%=postNumber%>)
+							<% } %>
+						</span>
 
-					<span class="add-bookmark">A&ntilde;adir marcador</span>
+						<span class="add-bookmark">A&ntilde;adir marcador</span>
+								
+						<span class="arrow-top">&uarr;</span>
 
-					<div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
+						<div class="pull-right controls">
+							<span class="theme-changer" style="margin-right: 15px;">
+								<span class="theme" data-theme="light"></span>
+								<span class="theme" data-theme="dark"></span>
+							</span>
+							<div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="modal-body">

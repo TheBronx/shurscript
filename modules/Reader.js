@@ -11,7 +11,8 @@
 		domain: 'ALL',
 		initialPreferences: {
 			enabled: true,
-			fontSize: 18
+			fontSize: 18,
+			theme: 'light'
 		}
 	});
 	
@@ -87,7 +88,7 @@
 		
 	};
 	
-	var $modal;
+	var $modal, $backdrop;
 	
 	mod.openReader = function (postId, postContent, postAuthor) {
 		
@@ -108,6 +109,28 @@
 		
 		/* Al hacer scroll, la barra superior permanecera fijada arriba */
 		fixTopbarOnScroll();
+		
+		/* Control de temas */
+		$modal.find('.theme').click(function () {
+			var newTheme = $(this).attr('data-theme');
+			var oldTheme = $modal.data('theme');
+			oldTheme && $modal.removeClass(oldTheme);
+			$modal.addClass(newTheme);
+			$modal.data('theme', newTheme);
+			oldTheme && $backdrop.removeClass(oldTheme);
+			$backdrop.addClass(newTheme);
+			
+			mod.preferences.theme = newTheme;
+			mod.storePreferences();
+		});
+		
+		$modal.addClass(mod.preferences.theme);
+		$modal.data('theme', mod.preferences.theme);
+		
+		/* Scroll arriba */
+		$('.arrow-top').click(function () {
+			$modal.animate({scrollTop: 0});
+		});
 
 		/* Link al final del tocho para volver al hilo */
 		$modal.find('.back-to-thread').click(function () {
@@ -122,9 +145,13 @@
 
 		/* Abrimos la ventana */
 		$modal.modal();
-		$(".modal-backdrop").attr('id', 'shurscript-reader-backdrop');
+		$backdrop = $(".modal-backdrop").attr('id', 'reader-backdrop');
+		$backdrop.addClass(mod.preferences.theme);
 		
-		setTimeout(function(){location.hash = '#read' + postId;}, 500);
+		setTimeout(function(){
+			location.hash = '#read' + postId;
+			$backdrop.css('transition', 'background-color 0.2s');
+		}, 500);	
 
 	};
 	
@@ -153,22 +180,39 @@
 	}
 	
 	function fixTopbarOnScroll() {
-		var $header = $modal.find('.modal-header');
-		var $body = $modal.find('.modal-body');
-		var scrollTop;
+		var $headerWrapper = $modal.find('.modal-header-wrapper'),
+			$header = $headerWrapper.find('.modal-header'),
+			$body = $modal.find('.modal-body');
+		
+		var fixedScrollTop, fixed;
+		
 		$modal.scroll(function () {
 			
-			if (!scrollTop) {
-				scrollTop = $('.font-size-changer').get(0).offsetTop + 15;
+			if (!fixedScrollTop) {
+				fixedScrollTop = $('.font-size-changer').get(0).offsetTop + 15;
 			}
 			
-			if (this.scrollTop > scrollTop) {
-				$header.addClass('fixed').parents('.modal-dialog').before($header);
+			//Punto a partir del cual, fijamos la barra arriba
+			if (this.scrollTop > fixedScrollTop) {
+				if (!fixed) {
+					$header.addClass('fixed').parents('.modal-dialog').before($headerWrapper);
+					$headerWrapper.css('margin-left', -$body.innerWidth() / 2 + 'px');
+				}
+				//Animacion del cambio entre el autor y el botón de añadir marcador
+				$('.thread-info').css('margin-top', (fixedScrollTop - this.scrollTop) + 'px');
+				$('.add-bookmark').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop), 13) + 'px');
+				$('.arrow-top').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop), 10) + 'px');
+				fixed = true;
 			} else {
-				$header.removeClass('fixed');
-				$body.before($header);
+				if (fixed) {
+					$header.removeClass('fixed');
+					$body.before($headerWrapper);
+					$headerWrapper.css('margin-left', 0);
+				}
+				$('.thread-info').css('margin-top', 0)
 				$header.css('position', 'absolute');
 				$body.css('margin-top', $header.innerHeight() + 'px');
+				fixed = false;
 			}
 		});
 	}
