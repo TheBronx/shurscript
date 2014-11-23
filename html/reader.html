@@ -1,4 +1,4 @@
-<div style="z-index:1020" class="shurscript modal fade" id="reader" tabindex="-1" role="dialog" data-backdrop="true">
+<div style="z-index:1020" class="shurscript modal" id="reader" tabindex="-1" role="dialog" data-backdrop="true">
 	<div class="modal-dialog" style="width:800px;">
 		<div class="modal-content">
 			<div class="modal-header-wrapper">
@@ -28,10 +28,12 @@
 							<div class="font-size-changer"><span class="smaller-font">A</span>|<span class="larger-font">A</span></div>
 						</div>
 					</div>
+					<div class="add-bookmark-help">Haz clic al comiezo del párrafo donde quieras añadir el marcador. <span>Cancelar.</span></div>
 				</div>
 			</div>
 			<div class="modal-body">
 				<div>
+					<div class="bookmark-position-selector"><div class="reader-bookmark"></div></div>
 					<%= postContent %>
 				</div>
 			</div>

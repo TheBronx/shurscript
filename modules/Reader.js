@@ -8,7 +8,7 @@
 		author: 'xus0',
 		version: '0.1',
 		description: 'Perfecto para leer historias y relatos <i>tochos</i> de forma más cómoda.',
-		domain: 'ALL',
+		domain: ['/showthread.php'],
 		initialPreferences: {
 			enabled: true,
 			fontSize: 18,
@@ -79,7 +79,8 @@
 					handler: function () {
 						$('.tooltip').hide();
 						mod.openReader(postId, content.html().trim(), author);
-					}
+					},
+					href: '#read' + postId
 				};
 			}
 		}
@@ -88,7 +89,7 @@
 		
 	};
 	
-	var $modal, $backdrop;
+	var $modal, $backdrop, $body, $header;
 	
 	mod.openReader = function (postId, postContent, postAuthor) {
 		
@@ -109,6 +110,9 @@
 		
 		/* Al hacer scroll, la barra superior permanecera fijada arriba */
 		fixTopbarOnScroll();
+		
+		/* Manejadores para el tema de los marcadores */
+		prepareBookmarking();
 		
 		/* Control de temas */
 		$modal.find('.theme').click(function () {
@@ -131,16 +135,19 @@
 		$('.arrow-top').click(function () {
 			$modal.animate({scrollTop: 0});
 		});
+		
+		/* Boton de añadir marcador */
+		$('.add-bookmark').click(startBookmarkAdding);
 
 		/* Link al final del tocho para volver al hilo */
 		$modal.find('.back-to-thread').click(function () {
 			$modal.modal('hide');
 		});
 
-		/* Al cerrar el modal, lo eliminamos del DOM y cambiamos de nuevo el hash */
+		/* Al cerrar el modal, lo eliminamos del DOM y cambiamos de nuevo el hash (a uno no existente para que no haga scroll a ningún ancla del foro) */
 		$modal.on('hidden.bs.modal', function () {
 			$modal.remove();
-			location.hash = '#post' + postId;
+			location.hash = '#thread';
 		});
 
 		/* Abrimos la ventana */
@@ -148,10 +155,8 @@
 		$backdrop = $(".modal-backdrop").attr('id', 'reader-backdrop');
 		$backdrop.addClass(mod.preferences.theme);
 		
-		setTimeout(function(){
-			location.hash = '#read' + postId;
-			$backdrop.css('transition', 'background-color 0.2s');
-		}, 500);	
+		/* Si el usuario tiene algun marcador en este hilo, se le llevará a él directamente */
+		gotoCurrentBookmark();
 
 	};
 	
@@ -180,9 +185,10 @@
 	}
 	
 	function fixTopbarOnScroll() {
-		var $headerWrapper = $modal.find('.modal-header-wrapper'),
-			$header = $headerWrapper.find('.modal-header'),
-			$body = $modal.find('.modal-body');
+		var $headerWrapper = $modal.find('.modal-header-wrapper');
+		
+		$header = $headerWrapper.find('.modal-header');
+		$body = $modal.find('.modal-body');
 		
 		var fixedScrollTop, fixed;
 		
@@ -199,9 +205,9 @@
 					$headerWrapper.css('margin-left', -$body.innerWidth() / 2 + 'px');
 				}
 				//Animacion del cambio entre el autor y el botón de añadir marcador
-				$('.thread-info').css('margin-top', (fixedScrollTop - this.scrollTop) + 'px');
-				$('.add-bookmark').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop), 13) + 'px');
-				$('.arrow-top').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop), 10) + 'px');
+				$('.thread-info').css('margin-top', (fixedScrollTop - this.scrollTop) / 3 + 'px');
+				$('.add-bookmark').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop) / 3, 13) + 'px');
+				$('.arrow-top').css('margin-top', Math.max(50 - (this.scrollTop - fixedScrollTop) / 3, 10) + 'px');
 				fixed = true;
 			} else {
 				if (fixed) {
@@ -215,6 +221,97 @@
 				fixed = false;
 			}
 		});
+		
+	}
+	
+	var $bookmarkSelector;
+	
+	function prepareBookmarking() {
+		var lastFiltered = $();
+		$body.find('div').contents().each(function() {
+			if ((lastFiltered.is('br') || lastFiltered.text().trim() === '\n' || lastFiltered.text().trim() === '') 
+				&& !$(this).is('br') && $(this).text().trim() !== '\n' && $(this).text().trim() !== '') {
+				lastFiltered.wrap('<span class="suitable-bookmark-position">');		
+			}
+			lastFiltered = $(this);
+		});
+		
+		$bookmarkSelector = $('.bookmark-position-selector');
+		
+		$body.on('mouseenter', '.suitable-bookmark-position.active', function(e) {
+			$bookmarkSelector.show().insertBefore($(e.currentTarget));
+		});
+		
+		$bookmarkSelector.click(function() {
+			if($(this).is('.adding')) {
+				//Añadimos nuevo marcador
+				stopBookmarkAdding();
+				var suitablePosition = $bookmarkSelector.next('.suitable-bookmark-position');
+				var position = $('.suitable-bookmark-position').index(suitablePosition);
+				saveBookmark(position);
+			} else {
+				//Eliminamos marcador
+				$(this).hide();
+				deleteBookmark();
+			}
+		});
+		
+		$('.add-bookmark-help span').click(function () {
+			stopBookmarkAdding();
+			$bookmarkSelector.hide();
+		});
+		
+	}
+	
+	function startBookmarkAdding() {
+		$bookmarkSelector.addClass('adding');
+		$body.find('.suitable-bookmark-position').addClass('active');
+		$('.add-bookmark-help').show();
+	}
+	
+	function stopBookmarkAdding() {
+		$bookmarkSelector.removeClass('adding');
+		$body.find('.suitable-bookmark-position').removeClass('active');
+		$('.add-bookmark-help').hide();
+	}
+			
+	function saveBookmark(position) {
+		var bookmarks = getBookmarks();
+		bookmarks[SHURSCRIPT.environment.thread.id] = position;
+		mod.helper.setValue('BOOKMARKS', JSON.stringify(bookmarks));
+	}
+		
+	function deleteBookmark() {
+		var bookmarks = getBookmarks();
+		delete bookmarks[SHURSCRIPT.environment.thread.id];
+		storeBookmarks(bookmarks);
+	}
+	
+	function storeBookmarks(bookmarks) {
+		mod.helper.setValue('BOOKMARKS', JSON.stringify(bookmarks));
+	}
+	
+	function getBookmarks() {
+		var bookmarks = mod.helper.getValue('BOOKMARKS') || "{}";
+		return JSON.parse(bookmarks);
+	}
+		
+	function gotoCurrentBookmark() {
+		var currentBookmarkPosition = getCurrentBookmarkPosition();
+		if (currentBookmarkPosition) {
+			$bookmarkSelector.show().insertBefore($('.suitable-bookmark-position').get(currentBookmarkPosition));
+			setTimeout(function () {
+				$modal.animate({scrollTop: $bookmarkSelector.offset().top + $modal.scrollTop() - 300}, 500);	
+			}, 1500);
+		}
+	}
+	
+	function getCurrentBookmarkPosition() {
+		var bookmarks = mod.helper.getValue('BOOKMARKS');
+		if (bookmarks) {
+			bookmarks = JSON.parse(bookmarks);
+			return bookmarks[SHURSCRIPT.environment.thread.id];
+		}
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
