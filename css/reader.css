@@ -23,15 +23,23 @@
     margin-top: 0px;
 }
 
-#reader-backdrop {
+#reader + .modal-backdrop {
 	z-index: 999;
-	opacity: 0;
-	background: #F1F1F1;
-	transition: opacity 2s, background-color 0.2s !important;
+	background-color: #F1F1F1;
 }
 
-#reader-backdrop.in {
+#reader + .modal-backdrop.in {
+	animation: fadein 2s;
 	opacity: 0.95;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.95;
+  }
 }
 
 #reader .modal-header {
@@ -198,18 +206,17 @@
 }
 
 #reader .arrow-top {
-	opacity: 0;
-	transition: opacity 1s !important;
-	display: inline-block;
+	display: none;
 	cursor: pointer;
+	position: absolute;
+}
+
+#reader .fixed .arrow-top {
+	display: inline-block;
 }
 
 #reader .arrow-top:hover {
 	text-decoration: underline;
-}
-
-#reader .fixed .arrow-top {
-	opacity: 1;
 }
 
 #reader .modal-header.fixed {
@@ -242,6 +249,7 @@
     line-height: 0;
     margin-right: 6px;
 	display: inline-block;
+	line-height: 25px;
 }
 
 #reader .add-bookmark:hover:before {
@@ -260,11 +268,10 @@
 
 #reader .modal-body .suitable-bookmark-position {
 	display: block;
-	height: 28.5px;
+	min-height: 28.5px;
 }
 #reader .modal-body .suitable-bookmark-position.active {
 	cursor: pointer;
-	display: block;
 }
 
 #reader .bookmark-position-selector {
@@ -364,7 +371,7 @@
 	color: white;
 }
 
-#reader-backdrop.dark {
+#reader.dark + .modal-backdrop {
 	background-color: #434343;
 }
 

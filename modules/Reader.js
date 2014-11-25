@@ -89,7 +89,7 @@
 		
 	};
 	
-	var $modal, $backdrop, $body, $header;
+	var $modal, $body, $header;
 	
 	mod.openReader = function (postId, postContent, postAuthor) {
 		
@@ -121,8 +121,6 @@
 			oldTheme && $modal.removeClass(oldTheme);
 			$modal.addClass(newTheme);
 			$modal.data('theme', newTheme);
-			oldTheme && $backdrop.removeClass(oldTheme);
-			$backdrop.addClass(newTheme);
 			
 			mod.preferences.theme = newTheme;
 			mod.storePreferences();
@@ -152,8 +150,6 @@
 
 		/* Abrimos la ventana */
 		$modal.modal();
-		$backdrop = $(".modal-backdrop").attr('id', 'reader-backdrop');
-		$backdrop.addClass(mod.preferences.theme);
 		
 		/* Si el usuario tiene algun marcador en este hilo, se le llevará a él directamente */
 		gotoCurrentBookmark();
