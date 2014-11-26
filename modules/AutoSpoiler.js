@@ -30,9 +30,9 @@
     /*Buscamos los post con etiquetas quote y modificamos */
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
     /* Añadimos el botón */
-    //SHURSCRIPT.eventbus.on('editorReady', function () {
+    SHURSCRIPT.eventbus.on('editorReady', function () {
       addSpoilerButton();
-    //});
+    });
   };
 
   /* Pasamos el contenido del post a hideSpoiler */
@@ -92,7 +92,7 @@
       vB_Editor[getEditor().editorid].button_context(this, A.type)
     };
 
-    $('div[id$="_cmd_underline"]').parent().after(createButton('spoiler', 'Añadir etiquetas [SPOILER][/SPOILER]', 'http://i.imgur.com/bivqCOG.gif', function() {
+    $('div[id$="_cmd_underline"]').parent().after(createButton('spoiler', 'Añadir etiquetas [SPOILER][/SPOILER]', 'http://i.imgur.com/99S4HMF.gif', function() {
       var selection = getEditor().editwin.getSelection();
       var range = selection.getRangeAt(0);
       var selectedText = selection.toString();
