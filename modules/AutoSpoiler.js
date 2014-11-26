@@ -8,7 +8,7 @@
     version: '0.1',
     description: 'Oculta automáticamente aquellos mensajes escritos entre las etiquetas '
     + '[spoiler][/spoiler]',
-    domain: ['/showthread.php']
+    domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php']
   });
 
   /**
@@ -28,7 +28,9 @@
     /*Buscamos los post con etiquetas quote y modificamos */
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
     /* Añadimos el botón */
-
+    SHURSCRIPT.eventbus.on('editorReady', function () {
+      addSpoilerButton();
+    });
   };
 
   /* Pasamos el contenido del post a hideSpoiler */
@@ -75,6 +77,48 @@
       $(element).text('Ocultar Spoiler');
     }
     return false;
+  }
+
+  /* */
+  function addSpoilerButton() {
+
+    genericHandler = function (A) {
+      A = unsafeWindow.do_an_e(A);
+      if (A.type == "click") {
+        vB_Editor[getEditor().editorid].format(A, this.cmd, false, true)
+      }
+      vB_Editor[getEditor().editorid].button_context(this, A.type)
+    };
+
+    $('div[id$="_cmd_underline"]').parent().after(createButton('spoiler', 'Añadir etiquetas [SPOILER][/SPOILER]', 'http://i.imgur.com/bivqCOG.gif', function() {
+      var selection = getEditor().editwin.getSelection();
+      var range = selection.getRangeAt(0);
+      var selectedText = selection.toString();
+
+      range.deleteContents();
+      var newNode = document.createTextNode('[SPOILER]<font color="white">' + selectedText + '</font>[/SPOILER]');
+      range.insertNode(newNode);
+
+      range.selectNode(newNode);
+      range.setStart(newNode, 3);
+      range.setEnd(newNode, 3 + selectedText.length);
+    }));
+  }
+
+  function createButton(actionId, text, icon, customAction) {
+    var img = icon ? icon : 'http://cdn.forocoches.com/foro/images/editor/' + actionId + '.gif';
+    var button = $('<div id="vB_Editor_001_cmd_' + actionId + '" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img width="21" height="20" alt="' + text + '" src="' + img + '" title="' + text + '"></div>')[0];
+    button.editorid = getEditor().editorid;
+    button.cmd = actionId;
+    button.onclick = button.onmousedown = button.onmouseover = button.onmouseout = genericHandler;
+    if (customAction) {
+      button.onclick = customAction;
+    }
+    return $('<td></td>').append(button);
+  }
+
+  function getEditor() {
+    return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
   }
 
 
