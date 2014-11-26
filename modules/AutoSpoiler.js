@@ -27,22 +27,6 @@
     addButtonStyle();
     /*Buscamos los post con etiquetas quote y modificamos */
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
-    /* Añadimos el boton al editor */
-    vB_Editor = unsafeWindow.vB_Editor;
-
-    enableCommonFeatures();
-
-    /*if (!isWYSIWYG()) { //Chrome, Safari, etc.
-      enableWYSIWYG();
-      var checkWYSIWYG = setInterval(function () {
-        if (getEditorBody()) { //WYSIWYG activado
-          clearInterval(checkWYSIWYG);
-          enableWYSIWYGDependantFeatures();
-        }
-      }, 500);
-    } else { //Firefox
-      enableWYSIWYGDependantFeatures();
-    }*/
   };
 
   /* Pasamos el contenido del post a hideSpoiler */
@@ -91,26 +75,6 @@
     return false;
   }
 
-  /* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
-  function enableCommonFeatures() {
-    if (isQuickReply()) {
-      addSpoilerButton();
-    }
-
-    //Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
-    //Parece ser un bug del vB en los navegadores que no soportan por defecto el WYSIWYG (Chrome, Opera...) [Tal vez por eso Ilitri no lo tiene activado]
-    //Workaround: buscar y sustituir esos divs antes de enviar la respuesta
-    $("input[name='sbutton'], input[name='preview']").on("click", function () {
-      var contents = getEditorContents();
-      contents = contents.replace(/<div>((?!<\/div>)(?!<div>).)*<\/div>/gi, function replacer(match) {
-        var contenidoDivInutil = match.substring(5, match.length - 6); //quitamos los 5 primeros chars y los 6 ultimos de cada match, es decir <div> y </div>
-        if (contenidoDivInutil == '<br>') return contenidoDivInutil;
-        else return "<br>" + contenidoDivInutil;
-      });
-      setEditorContents(contents);
-    });
-  }
-
   function addSpoilerButton() {
 
     genericHandler = function (A) {
@@ -135,31 +99,6 @@
       range.setStart(newNode, 3);
       range.setEnd(newNode, 3 + selectedText.length);
     }));
-  }
-
-  function createButton(actionId, text, icon, customAction) {
-    var img = icon ? icon : 'http://cdn.forocoches.com/foro/images/editor/' + actionId + '.gif';
-    var button = $('<div id="vB_Editor_001_cmd_' + actionId + '" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img width="21" height="20" alt="' + text + '" src="' + img + '" title="' + text + '"></div>')[0];
-    button.editorid = getEditor().editorid;
-    button.cmd = actionId;
-    button.onclick = button.onmousedown = button.onmouseover = button.onmouseout = genericHandler;
-    if (customAction) {
-      button.onclick = customAction;
-    }
-    return $('<td></td>').append(button);
-  }
-
-  function setEditorContents(text) {
-    focusEditor();
-    getEditor().set_editor_contents(text);
-  }
-
-  function getEditor() {
-    return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
-  }
-  
-  function isQuickReply() {
-    return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
   }
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
