@@ -152,7 +152,7 @@
 
   function setEditorContents(text) {
     focusEditor();
-    getEditor().set_editor_contents(text)
+    getEditor().set_editor_contents(text);
   }
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
