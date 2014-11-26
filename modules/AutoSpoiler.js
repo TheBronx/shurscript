@@ -94,7 +94,7 @@
   /* Funcionalidades que funcionan en cualquier tipo de editor, WYSIWYG o no */
   function enableCommonFeatures() {
     if (isQuickReply()) {
-      addAdvancedButtons();
+      addSpoilerButton();
     }
 
     //Algunos navegadores insertan saltos de línea dobles sin motivo y es porque se meten <div>'s entre el código que devuelve el vB_Editor.
