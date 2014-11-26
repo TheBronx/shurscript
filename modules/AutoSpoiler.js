@@ -31,6 +31,7 @@
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
     /* Añadimos el botón */
     SHURSCRIPT.eventbus.on('editorReady', function () {
+      alert('');
       addSpoilerButton();
     });
   };
@@ -126,22 +127,5 @@
   function isQuickReply() {
     return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
   }
-
-  function enableWYSIWYG() {
-
-    var editor = getEditor();
-
-    if (!isQuickReply()) {
-      $('#' + editor.editorid + '_textarea').css('width', 600);
-    }
-
-    unsafeWindow.switch_editor_mode(editor.editorid);
-    unsafeWindow.is_saf = false;
-    unsafeWindow.is_moz = true;
-    editor.wysiwyg_mode = 1;
-
-    if ($('#' + editor.editorid + '_cmd_switchmode').length == 0) //Añadimos el boton de cambiar de Editor
-      $('<td><div id="' + editor.editorid + '_cmd_switchmode" class="imagebutton" style="background: none repeat scroll 0% 0% rgb(225, 225, 226); color: rgb(0, 0, 0); padding: 1px; border: medium none;"><img height="20" width="21" alt="Cambiar Modo de Editor" src="http://cdn.forocoches.com/foro/images/editor/switchmode.gif" title="Cambiar Modo de Editor"></div></td>').insertAfter($('#vB_Editor_QR_cmd_resize_0_99').parent());
-    }
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
