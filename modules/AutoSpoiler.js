@@ -60,7 +60,7 @@
   /* Añadimos estilos necesarios */
   function addButtonStyle() {
     GM_addStyle(".shurscript-spoiler {width:100%; margin-bottom: 2px; height: 32px; padding: 0; line-height: 200%;}");
-    GM_addStyle(".panel {display: none;}");
+    //GM_addStyle(".panel {display: none;}");
     GM_addStyle(".panel-content {padding: 5px !important; border-radius: 0 !important;}");
   }
 
