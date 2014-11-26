@@ -43,7 +43,7 @@
     //nos aseguramos de que no haga nada en caso de no haber etiquetas
     if ( re.exec(pretext) !== null ) {
       while (pretext.search(re) !== -1) {
-        pretext = pretext.replace(re, '<div class="shurscript"><button class="btn btn-danger shurscript-spoiler">Mostrar Spoiler</button><div class="panel panel-danger panel-content">$1</div></div>');
+        pretext = pretext.replace(re, '<div class="shurscript"><button class="btn btn-danger shurscript-spoiler">Mostrar Spoiler</button><div class="shurpanel panel panel-danger panel-content">$1</div></div>');
       }
       $(element).html(pretext);
       $(element).find('.shurscript .panel-content').each(function(){
@@ -60,7 +60,7 @@
   /* Añadimos estilos necesarios */
   function addButtonStyle() {
     GM_addStyle(".shurscript-spoiler {width:100%; margin-bottom: 2px; height: 32px; padding: 0; line-height: 200%;}");
-    //GM_addStyle(".panel {display: none;}");
+    GM_addStyle(".shurpanel {display: none;}");
     GM_addStyle(".panel-content {padding: 5px !important; border-radius: 0 !important;}");
   }
 
