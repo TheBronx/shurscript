@@ -121,5 +121,9 @@
     return isQuickReply() ? unsafeWindow.vB_Editor.vB_Editor_QR : unsafeWindow.vB_Editor.vB_Editor_001;
   }
 
+  function isQuickReply() {
+    return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
+  }
+
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
