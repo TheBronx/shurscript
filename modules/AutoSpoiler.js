@@ -48,7 +48,7 @@
       $(element).html(pretext);
       $(element).find('.shurscript .panel-content').each(function(){
         if ( $(this).find('font') ) {
-          $(this).find('font').attr('color', 'black');
+          //$(this).find('font').attr('color', 'black');
         }
         var e = $(this).parent().find('.shurscript-spoiler');
         //añadimos evento
