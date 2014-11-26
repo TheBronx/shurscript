@@ -42,8 +42,8 @@
       }, 500);
     } else { //Firefox
       enableWYSIWYGDependantFeatures();
-    }
-  };*/
+    }*/
+  };
 
   /* Pasamos el contenido del post a hideSpoiler */
   function parsePost(event, post) {
@@ -108,7 +108,6 @@
         else return "<br>" + contenidoDivInutil;
       });
       setEditorContents(contents);
-      reflowTextArea();
     });
   }
 
