@@ -31,17 +31,7 @@
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
     /* Añadimos el botón */
     SHURSCRIPT.eventbus.on('editorReady', function () {
-      if (!isWYSIWYG()) { //Chrome, Safari, etc.
-        enableWYSIWYG();
-        var checkWYSIWYG = setInterval(function () {
-          if (getEditorBody()) { //WYSIWYG activado
-            clearInterval(checkWYSIWYG);
-            addSpoilerButton();
-          }
-        }, 500);
-      } else { //Firefox
-        addSpoilerButton();
-      }
+      addSpoilerButton();
     });
   };
 
@@ -152,18 +142,6 @@
 
   function isQuickReply() {
     return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
-  }
-
-  function getEditorBody() {
-    return (isQuickReply() ? $("#vB_Editor_QR_iframe") : $("#vB_Editor_001_iframe")).get(0).contentDocument.body;
-  }
-
-  function isWYSIWYG() {
-    try {
-      return getEditorBody();
-    } catch (e) {
-      return false;
-    }
   }
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
