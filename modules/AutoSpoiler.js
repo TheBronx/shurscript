@@ -43,7 +43,7 @@
     //nos aseguramos de que no haga nada en caso de no haber etiquetas
     if ( re.exec(pretext) !== null ) {
       while (pretext.search(re) !== -1) {
-        pretext = pretext.replace(re, '<div class="shurscript"><button class="btn btn-danger shurscript-spoiler">Mostrar Spoiler</button><div class="shurpanel panel panel-danger panel-content">$1</div></div>');
+        pretext = pretext.replace(re, '<div class="shurscript"><button class="btn btn-danger shurscript-spoiler">Mostrar Spoiler</button><div class="panel panel-danger panel-content shurpanel">$1</div></div>');
       }
       $(element).html(pretext);
       $(element).find('.shurscript .panel-content').each(function(){
@@ -66,7 +66,7 @@
 
   /* Trata el evento cuando se pulsa sobre un boton de spoiler */
   function showPanel(element) {
-    var sit = $(element).parent().find('.panel');
+    var sit = $(element).parent().find('.shurpanel');
     if ( $(sit).is(':visible') ) {
       $(sit).slideUp('slow');
       $(element).text('Mostrar Spoiler');
