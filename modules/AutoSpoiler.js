@@ -30,10 +30,9 @@
     /*Buscamos los post con etiquetas quote y modificamos */
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
     /* Añadimos el botón */
-    SHURSCRIPT.eventbus.on('editorReady', function () {
-      alert('');
+    //SHURSCRIPT.eventbus.on('editorReady', function () {
       addSpoilerButton();
-    });
+    //});
   };
 
   /* Pasamos el contenido del post a hideSpoiler */
