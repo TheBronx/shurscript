@@ -154,4 +154,8 @@
     getEditor().set_editor_contents(text);
   }
 
+  function isQuickReply() {
+    return unsafeWindow.vB_Editor.vB_Editor_QR !== undefined;
+  }
+
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
