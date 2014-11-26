@@ -6,8 +6,8 @@
     name: 'Ocultar mensajes con spoiler',
     author: 'franexp',
     version: '0.1',
-    description: 'Oculta automáticamente aquellos mensajes escritos entre las etiquetas '
-    + '[spoiler][/spoiler]',
+    description: 'Activa la etiqueta [spoiler][/spoiler] y oculta automáticamente aquellos '
+    + 'mensajes escritos entre la etiqueta spoiler.',
     domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php']
   });
 
@@ -92,7 +92,7 @@
       vB_Editor[getEditor().editorid].button_context(this, A.type)
     };
 
-    $('div[id$="_cmd_underline"]').parent().after(createButton('spoiler', 'Añadir etiquetas [SPOILER][/SPOILER]', 'http://i.imgur.com/99S4HMF.gif', function() {
+    $('div[id$="_wrap0_youtube"]').parent().after(createButton('spoiler', 'Añadir etiquetas [SPOILER][/SPOILER]', 'http://i.imgur.com/99S4HMF.gif', function() {
       var selection = getEditor().editwin.getSelection();
       var range = selection.getRangeAt(0);
       var selectedText = selection.toString();
