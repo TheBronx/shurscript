@@ -27,6 +27,8 @@
     addButtonStyle();
     /*Buscamos los post con etiquetas quote y modificamos */
     SHURSCRIPT.eventbus.on('parsePost', parsePost);
+    /* Añadimos el botón */
+
   };
 
   /* Pasamos el contenido del post a hideSpoiler */
@@ -75,30 +77,5 @@
     return false;
   }
 
-  function addSpoilerButton() {
-
-    genericHandler = function (A) {
-      A = unsafeWindow.do_an_e(A);
-      if (A.type == "click") {
-        vB_Editor[getEditor().editorid].format(A, this.cmd, false, true)
-      }
-      vB_Editor[getEditor().editorid].button_context(this, A.type)
-    };
-
-    //Boton para quote [SPOILER][/SPOILER]
-    $('div[id$="vB_Editor_QR_cmd_wrap0_youtube"]').parent().after(createButton('spoiler', 'Spoiler', 'http://i.imgur.com/bivqCOG.gif', function() {
-      var selection = getEditor().editwin.getSelection();
-      var range = selection.getRangeAt(0);
-      var selectedText = selection.toString();
-
-      range.deleteContents();
-      var newNode = document.createTextNode('[SPOILER]<font color="white"' + selectedText + '</font>[/SPOILER]');
-      range.insertNode(newNode);
-
-      range.selectNode(newNode);
-      range.setStart(newNode, 3);
-      range.setEnd(newNode, 3 + selectedText.length);
-    }));
-  }
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
