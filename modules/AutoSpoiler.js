@@ -8,7 +8,7 @@
     version: '0.1',
     description: 'Oculta automáticamente aquellos mensajes escritos entre las etiquetas '
     + '[spoiler][/spoiler]',
-    domain: ['/showthread.php', '/newthread.php', '/newreply.php', '/editpost.php']
+    domain: ['/showthread.php']
   });
 
   /**
@@ -48,7 +48,7 @@
       $(element).html(pretext);
       $(element).find('.shurscript .panel-content').each(function(){
         if ( $(this).find('font') ) {
-          //$(this).find('font').attr('color', 'black');
+          $(this).find('font').attr('color', 'black');
         }
         var e = $(this).parent().find('.shurscript-spoiler');
         //añadimos evento
