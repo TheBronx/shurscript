@@ -56,6 +56,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/PrivateMode.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Integrations.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Reader.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoSpoiler.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
@@ -80,4 +81,3 @@ if (window.top === window) { // [xusoO] Evitar que se ejecute dentro de los ifra
 	// Programa la carga normal
 	jQuery(document).ready(SHURSCRIPT.core.initialize);
 }
-
