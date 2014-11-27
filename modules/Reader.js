@@ -217,11 +217,10 @@
 				fixed = false;
 			}
 		});
-		
 	}
-	
+
 	var $bookmarkSelector;
-	
+
 	function prepareBookmarking() {
 		var lastFiltered = $();
 		$body.find('div').contents().each(function() {
@@ -231,67 +230,67 @@
 			}
 			lastFiltered = $(this);
 		});
-		
+
 		$bookmarkSelector = $('.bookmark-position-selector');
-		
+
 		$body.on('mouseenter', '.suitable-bookmark-position.active', function(e) {
 			$bookmarkSelector.show().insertBefore($(e.currentTarget));
 		});
-		
+
 		$bookmarkSelector.click(function() {
 			if($(this).is('.adding')) {
-				//Añadimos nuevo marcador
-				stopBookmarkAdding();
-				var suitablePosition = $bookmarkSelector.next('.suitable-bookmark-position');
-				var position = $('.suitable-bookmark-position').index(suitablePosition);
-				saveBookmark(position);
-			} else {
-				//Eliminamos marcador
-				$(this).hide();
-				deleteBookmark();
-			}
-		});
-		
+					//Añadimos nuevo marcador
+					stopBookmarkAdding();
+					var suitablePosition = $bookmarkSelector.next('.suitable-bookmark-position');
+					var position = $('.suitable-bookmark-position').index(suitablePosition);
+					saveBookmark(position);
+				} else {
+					//Eliminamos marcador
+					$(this).hide();
+					deleteBookmark();
+				}
+			});
+
 		$('.add-bookmark-help span').click(function () {
 			stopBookmarkAdding();
 			$bookmarkSelector.hide();
 		});
-		
+
 	}
-	
+
 	function startBookmarkAdding() {
 		$bookmarkSelector.addClass('adding');
 		$body.find('.suitable-bookmark-position').addClass('active');
 		$('.add-bookmark-help').show();
 	}
-	
+
 	function stopBookmarkAdding() {
 		$bookmarkSelector.removeClass('adding');
 		$body.find('.suitable-bookmark-position').removeClass('active');
 		$('.add-bookmark-help').hide();
 	}
-			
+
 	function saveBookmark(position) {
 		var bookmarks = getBookmarks();
 		bookmarks[SHURSCRIPT.environment.thread.id] = position;
 		mod.helper.setValue('BOOKMARKS', JSON.stringify(bookmarks));
 	}
-		
+
 	function deleteBookmark() {
 		var bookmarks = getBookmarks();
 		delete bookmarks[SHURSCRIPT.environment.thread.id];
 		storeBookmarks(bookmarks);
 	}
-	
+
 	function storeBookmarks(bookmarks) {
 		mod.helper.setValue('BOOKMARKS', JSON.stringify(bookmarks));
 	}
-	
+
 	function getBookmarks() {
 		var bookmarks = mod.helper.getValue('BOOKMARKS') || "{}";
 		return JSON.parse(bookmarks);
 	}
-		
+
 	function gotoCurrentBookmark() {
 		var currentBookmarkPosition = getCurrentBookmarkPosition();
 		if (currentBookmarkPosition) {
@@ -301,7 +300,7 @@
 			}, 1500);
 		}
 	}
-	
+
 	function getCurrentBookmarkPosition() {
 		var bookmarks = mod.helper.getValue('BOOKMARKS');
 		if (bookmarks) {

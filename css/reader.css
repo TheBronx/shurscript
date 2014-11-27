@@ -1,8 +1,8 @@
 .reader-link:before {
-    content: url("http://i.imgur.com/oo0vt52.png");
-    display: inline-block;
-    margin-right: 4px;
-    vertical-align: middle;
+	content: url("http://i.imgur.com/oo0vt52.png");
+	display: inline-block;
+	margin-right: 4px;
+	vertical-align: middle;
 }
 
 #reader {
@@ -19,8 +19,8 @@
 }
 
 #reader .modal-header .close {
-    margin-right: -30px;
-    margin-top: 0px;
+	margin-right: -30px;
+	margin-top: 0px;
 }
 
 #reader + .modal-backdrop {
@@ -34,12 +34,12 @@
 }
 
 @keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.95;
-  }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0.95;
+	}
 }
 
 #reader .modal-header {
@@ -129,22 +129,22 @@
 
 #reader img:not(.inlineimg) {
 	display: block;
-    margin: 10px auto;
-    max-width: 100%;
+	margin: 10px auto;
+	max-width: 100%;
 }
 
 #reader .quote {
-    background: none repeat scroll 0 0 #f1f1f1;
-    border: 1px solid gray;
-    padding: 10px;
+	background: none repeat scroll 0 0 #f1f1f1;
+	border: 1px solid gray;
+	padding: 10px;
 }
 
 #reader .font-size-changer {
 	float: right;
 	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
 
 #reader .smaller-font {
@@ -183,13 +183,13 @@
 #reader .back-to-thread {
 	display: block;
 	text-align: center;
-    margin-top: 20px;
+	margin-top: 20px;
 	color: gray;
 	cursor: pointer;
 }
 
 #reader .modal-subtitle {
-    height: 25px;
+	height: 25px;
 }
 
 #reader .fixed .modal-subtitle {
@@ -239,17 +239,7 @@
 	display: none;
 	cursor: pointer;
 	float: left;
-    font-size: 16px;
-}
-
-#reader .add-bookmark:before {
-    vertical-align: middle;
-	content: "\2261";
-    font-size: 26px;
-    line-height: 0;
-    margin-right: 6px;
-	display: inline-block;
-	line-height: 25px;
+	font-size: 16px;
 }
 
 #reader .add-bookmark:hover:before {
@@ -263,7 +253,7 @@
 #reader .fixed .add-bookmark {
 	display: inline-block;
 	left: 50px;
-    position: absolute;
+	position: absolute;
 }
 
 #reader .modal-body .suitable-bookmark-position {
@@ -286,10 +276,10 @@
 }
 
 .bookmark-position-selector:after {
-    border-bottom: 1px dashed gray;
-    content: "";
-    display: block;
-    width: 100%;
+	border-bottom: 1px dashed gray;
+	content: "";
+	display: block;
+	width: 100%;
 }
 
 .bookmark-position-selector .reader-bookmark {
@@ -300,8 +290,8 @@
 	right: 18px;
 	width: 20px;
 	display: block;
-    font-size: 22px;
-    text-align: center;
+	font-size: 22px;
+	text-align: center;
 	color: white;
 }
 
@@ -319,19 +309,19 @@
 }
 
 .add-bookmark-help {
-    background: none repeat scroll 0 0 #fafafa;
-    font-size: 15px;
-    height: 50px;
-    line-height: 50px;
-    margin-left: -50px;
-    position: absolute;
-    top: 0;
-    width: 100%;
+	background: none repeat scroll 0 0 #fafafa;
+	font-size: 15px;
+	height: 50px;
+	line-height: 50px;
+	margin-left: -50px;
+	position: absolute;
+	top: 0;
+	width: 100%;
 	display: none;
 }
 
 .add-bookmark-help span {
-    text-decoration: underline;
+	text-decoration: underline;
 	cursor: pointer;
 }
 
