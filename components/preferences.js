@@ -358,7 +358,7 @@
 	/**
 	 * Crea objetos que definen opciones para el modulo
 	 *
-	 * @param {string} specs.type - puede ser 'checkbox', 'radio', 'text' o 'header'
+	 * @param {string} specs.type - puede ser 'checkbox', 'radio', 'text', 'color', 'number', 'header', 'tags'
 	 * @param {string} specs.caption - descripcion de la opcion
 	 * @param {string} [specs.subCaption] - descripcion opcional adicional
 	 * @param {array} [specs.elements] - obligatorio para 'radio'. Array de objetos
@@ -369,7 +369,7 @@
 	 *
 	 */
 	preferences.createOption = function (specs) {
-		var acceptableTypes = ['checkbox', 'radio', 'text', 'color', 'header', 'tags'],
+		var acceptableTypes = ['checkbox', 'radio', 'text', 'color', 'number', 'header', 'tags'],
 			commonMandatoryKeys = ['type', 'caption'],
 			errorPrefix = 'Error creando opcion: ';
 
@@ -423,4 +423,3 @@
 	}, 0);
 
 })(jQuery, SHURSCRIPT);
-
