@@ -271,14 +271,15 @@
 	 */
 	function findDifferences(arrayOldPosts, arrayNewPosts) {
 		var oldPosts = {}, newPosts = {};
-		for (var i = 0, n = arrayOldPosts.length; i < n; i++) {
-			var post = arrayOldPosts[i].getElementsByClassName('alt1')[0];
-			var postId = post.id.substr(8);
+		var i, n, post, postId;
+		for (i = 0, n = arrayOldPosts.length; i < n; i++) {
+			post = arrayOldPosts[i].getElementsByClassName('alt1')[0];
+			postId = post.id.substr(8);
 			oldPosts[postId] = {'post': post.children[0].children[0], 'mainNode' : arrayOldPosts[i]};
 		}
-		for (var i = 0, n = arrayNewPosts.length; i < n; i++) {
-			var post = arrayNewPosts[i].getElementsByClassName('alt1')[0];
-			var postId = post.id.substr(8);
+		for (i = 0, n = arrayNewPosts.length; i < n; i++) {
+			post = arrayNewPosts[i].getElementsByClassName('alt1')[0];
+			postId = post.id.substr(8);
 			newPosts[postId] = {'post': post.children[0].children[0], 'mainNode' : arrayNewPosts[i]};
 		}
 
