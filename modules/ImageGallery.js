@@ -26,7 +26,7 @@
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
     loadNextPage();
-    alert(images);
+    //alert(images);
   };
 
   function loadNextPage() {
@@ -35,6 +35,7 @@
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
+        alert(html.search(re));
         while (html.search(re) !== -1) {
           images.push(re.exec(html));
           html = html.replace(re, ' ');
