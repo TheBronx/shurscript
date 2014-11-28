@@ -10,6 +10,7 @@
     domain: ['/showthread.php']
   });
 
+  var thread;
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
   * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
@@ -22,6 +23,7 @@
   * Sobreescribimos la funcion de ejecucion
   */
   mod.onNormalStart = function () {
+    thread = SHURSCRIPT.environment.thread.id;
     loadNextPage();
   };
 
