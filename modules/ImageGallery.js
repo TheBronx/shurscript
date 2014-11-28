@@ -11,6 +11,7 @@
   });
 
   var thread;
+  var images = []
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
   * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
@@ -25,17 +26,22 @@
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
     loadNextPage();
+    alert(images);
   };
 
   function loadNextPage() {
+    var re = /\<img(.*?)\>/i;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
-        alert(html);
+        while (html.search(re) !== -1) {
+          images.push(re.exec(html));
+          html = html.replace(re, replace(re, ' ');
+        }
       }
     };
-    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=2', true);
+    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=3', true);
     xmlhttp.send();
   }
 
