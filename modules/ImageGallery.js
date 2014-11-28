@@ -37,7 +37,7 @@
         var html = xmlhttp.responseText;
         while (html.search(re) !== -1) {
           images.push(re.exec(html));
-          html = html.replace(re, ' ');
+          html = html.replace(re, '1');
         }
 
         alert(images);
