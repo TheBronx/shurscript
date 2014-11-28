@@ -37,7 +37,7 @@
         var html = xmlhttp.responseText;
         while (html.search(re) !== -1) {
           images.push(re.exec(html));
-          html = html.replace(re, replace(re, ' ');
+          html = html.replace(re, ' ');
         }
       }
     };
