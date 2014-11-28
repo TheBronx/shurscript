@@ -35,11 +35,12 @@
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
-        alert(re.exec(html));
         while (html.search(re) !== -1) {
           images.push(re.exec(html));
           html = html.replace(re, ' ');
         }
+
+        alert(images);
       }
     };
     xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=3', true);
