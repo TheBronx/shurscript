@@ -53,7 +53,9 @@
     console.log('entro');
     if (images.length > 1) {
       $.each(images, function(index, value) {
-        if (images[index].search(re) !== -1) {
+        var im = images[index];
+        console.log(im);
+        if (im.search(re) !== -1) {
           images.splice(index, 1);
         }
       });
