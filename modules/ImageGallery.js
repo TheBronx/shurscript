@@ -39,7 +39,7 @@
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
         while (html.search(re) !== -1) {
-          images.push(re.exec(html));
+          images.push(re.exec(html)[0]);
           html = html.replace(re, '1');
         }
       }
@@ -50,16 +50,14 @@
 
   function cleanImages(images) {
     var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
-    alert(images[0]);
-    /*if (images.length > 1) {
+    if (images.length > 0) {
       $.each(images, function(index, value) {
         var im = images[index];
-        console.log(im);
         if (im.search(re) !== -1) {
           images.splice(index, 1);
         }
       });
-    }*/
+    }
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
