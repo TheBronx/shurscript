@@ -58,8 +58,8 @@
         if (im.search(re) !== -1) {
           images.splice(index, 1);
         }
-      });*/
-    }
+      });
+    }*/
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
