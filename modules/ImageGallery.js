@@ -29,7 +29,7 @@
     page = SHURSCRIPT.environment.thread.page;
     loadNextPage();
     cleanImages(images);
-    alert(images);
+    alert(images.length);
   };
 
   function loadNextPage() {
@@ -50,11 +50,14 @@
 
   function cleanImages(images) {
     var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
-    $.each(images, function(index, value) {
-      if (images[index].search(re) !== -1) {
-        images.splice(index, 1);
-      }
-    });
+    console.log('entro');
+    if (images.length > 1) {
+      $.each(images, function(index, value) {
+        if (images[index].search(re) !== -1) {
+          images.splice(index, 1);
+        }
+      });
+    }
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
