@@ -11,6 +11,7 @@
   });
 
   var thread;
+  var page;
   var images = []
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
@@ -25,6 +26,7 @@
   */
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
+    page = SHURSCRIPT.envirronment.trehad.page;
     loadNextPage();
     //alert(images);
   };
@@ -35,15 +37,17 @@
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
-        while (html.search(re) !== -1) {
+        html = html.replace(re, '1');
+        console.log(html);
+        /*while (html.search(re) !== -1) {
           images.push(re.exec(html));
           html = html.replace(re, '1');
         }
 
-        alert(images);
+        alert(images);*/
       }
     };
-    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=3', true);
+    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, true);
     xmlhttp.send();
   }
 
