@@ -49,13 +49,13 @@
   }
 
   function cleanImages(images) {
-    var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
+    var re = /\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i;
     if (images.length > 0) {
-      $.each(images, function(index, value) {
-        if (re.exec(images[index]) !== null) {
-          images.splice(index, 1);
+      for (i = images.length - 1; i >= 0; i--) {
+        if (re.test(images[i])) {
+          images.splice(i, 1);
         }
-      });
+      }
     }
   }
 
