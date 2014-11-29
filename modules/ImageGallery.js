@@ -28,7 +28,7 @@
     thread = SHURSCRIPT.environment.thread.id;
     page = SHURSCRIPT.environment.thread.page;
     loadNextPage();
-    //alert(images);
+    alert(images);
   };
 
   function loadNextPage() {
@@ -37,16 +37,13 @@
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
-        html = html.replace(re, '1');
-        var contador = 0;
         while (html.search(re) !== -1) {
           images.push(re.exec(html));
-          console.log(contador++);
           html = html.replace(re, '1');
         }
       }
     };
-    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, true);
+    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, false);
     xmlhttp.send();
   }
 
