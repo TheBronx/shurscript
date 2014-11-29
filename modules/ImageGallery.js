@@ -29,7 +29,7 @@
     page = SHURSCRIPT.environment.thread.page;
     loadNextPage();
     cleanImages(images);
-    alert(images.length);
+    alert(images);
   };
 
   function loadNextPage() {
