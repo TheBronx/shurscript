@@ -26,7 +26,7 @@
   */
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
-    page = SHURSCRIPT.envirronment.trehad.page;
+    page = SHURSCRIPT.envirronment.thread.page;
     loadNextPage();
     //alert(images);
   };
