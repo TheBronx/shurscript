@@ -38,13 +38,12 @@
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
         html = html.replace(re, '1');
-        console.log(html);
-        /*while (html.search(re) !== -1) {
+        var contador = 0;
+        while (html.search(re) !== -1) {
           images.push(re.exec(html));
+          console.log(contador++);
           html = html.replace(re, '1');
         }
-
-        alert(images);*/
       }
     };
     xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, true);
