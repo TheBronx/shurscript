@@ -52,8 +52,7 @@
     var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
     if (images.length > 0) {
       $.each(images, function(index, value) {
-        var im = images[index];
-        if (im.search(re) !== -1) {
+        if (re.exec(images[index]) !== null) {
           images.splice(index, 1);
         }
       });
