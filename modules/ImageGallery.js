@@ -28,6 +28,7 @@
     thread = SHURSCRIPT.environment.thread.id;
     page = SHURSCRIPT.environment.thread.page;
     loadNextPage();
+    cleanImages(images);
     alert(images);
   };
 
@@ -45,14 +46,13 @@
     };
     xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, false);
     xmlhttp.send();
-    cleanImages(images);
   }
 
   function cleanImages(images) {
     var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
     $.each(images, function(index, value) {
       if (images[index].search(re) !== -1) {
-        images.splice(i, 1);
+        images.splice(index, 1);
       }
     });
   }
