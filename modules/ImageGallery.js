@@ -50,15 +50,15 @@
 
   function cleanImages(images) {
     var re = '/\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i';
-    console.log('entro');
-    if (images.length > 1) {
+    alert(images[0]);
+    /*if (images.length > 1) {
       $.each(images, function(index, value) {
         var im = images[index];
         console.log(im);
         if (im.search(re) !== -1) {
           images.splice(index, 1);
         }
-      });
+      });*/
     }
   }
 
