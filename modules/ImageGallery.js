@@ -25,19 +25,39 @@
   * Sobreescribimos la funcion de ejecucion
   */
   mod.onNormalStart = function () {
+    mod.helper.addStyle('gallerycss');
+    /*
+    * Compilamos la plantilla HTML del Reader
+    */
+    var tempName = 'gallery',
+    templateText = mod.helper.getResourceText('galleryhtml');
+    SHURSCRIPT.templater.storeTemplate(tempName, templateText);
+    SHURSCRIPT.templater.compile(tempName);
+
     addGaleryButton();
   };
 
-  function startGallery(){
+  mod.openGallery = function () {
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
       loadNextImage(i);
     }
     cleanImages(images);
-    alert(images);
-    return false;
-  }
+    $modal = $(SHURSCRIPT.templater.fillOut('gallery'));
+
+    try {
+      $('body').append($modal);
+    } catch (e) {
+      // Elementos como los videos de Youtube tienen un script dentro que hace petar el .append()
+      console.log(e);
+    }
+
+    /* Abrimos la ventana */
+    $modal.modal();
+
+  };
+
 
   function loadNextImage(page) {
     var reIm = /\<img src="(.*?)"/i;
@@ -86,7 +106,9 @@
     var newTd = document.createElement("TD");
     newTd.className = 'vbmenu_control';
     newTd.innerHTML = '<a href="">Galería</a>';
-    $(newTd).on('click', function(){startGallery()});
+    $(newTd).on('click', function(){
+      mod.openReader();
+    });
     trNode.insertBefore(newTd, tdNextNode);
   }
 
