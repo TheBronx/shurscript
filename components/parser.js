@@ -30,7 +30,7 @@
 		}
 	};
 
-	var Post = function(element) {
+	var Post = function (element) {
 		this.element = element;
 		var table = this.element.find('table').first();
 		this.elementTable = table;
@@ -41,6 +41,11 @@
 		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
 
 		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
+		this.ignored = false;
+		if (user.length === 0) {
+			user = this.element.find('.alt2:first-child > a');
+			this.ignored = true;
+		}
 		this.author = user.html();
 		this.author_link = user.attr('href');
 	};
