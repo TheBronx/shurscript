@@ -33,14 +33,19 @@
   };
 
   function loadNextPage() {
-    var re = /\<img(.*?)\>/i;
+    var reIm = /\<img(.*?)\>/i;
+    var reMe = /<!-- message -->([\s\S]*?)<!-- \/ message -->/i;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
-        while (html.search(re) !== -1) {
-          images.push(re.exec(html)[0]);
-          html = html.replace(re, '1');
+        while (html.search(reMe) !== -1 ) {
+          var aux = reMe.exec(html)[0];
+          while (aux.search(reIm) !== -1 ) {
+            images.push(reIm.exec(aux)[0]);
+            aux = aux.replace(reIm, '1');
+          }
+          html = html.replace(reMe, '1');
         }
       }
     };
@@ -49,7 +54,7 @@
   }
 
   function cleanImages(images) {
-    var re = /\<img src="http:\/\/cdn.forocoches.com\/(.*)\>/i;
+    var re = /http:\/\/cdn.forocoches.com\/(.*)\>/i;
     if (images.length > 0) {
       for (i = images.length - 1; i >= 0; i--) {
         if (re.test(images[i])) {
