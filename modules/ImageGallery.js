@@ -44,7 +44,7 @@
       loadNextImage(i);
     }
     cleanImages(images);
-    $modal = $(SHURSCRIPT.templater.fillOut('gallery'), images);
+    $modal = $(SHURSCRIPT.templater.fillOut('gallery', images));
 
     $('body').append($modal);
 
