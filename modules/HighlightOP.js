@@ -85,7 +85,7 @@
 
 	function parsePost(event, post) {
 		highlight({'user': post.author.toLowerCase(), 'type': 'post', 'node': post.elementTable[0]});
-		if (mod.preferences.quotes) {
+		if (!post.ignored && mod.preferences.quotes) {
 			var quotes = post.content[0].getElementsByClassName('alt2');
 			for (var i = 0, n = quotes.length; i < n; i++) {
 				var elem = quotes[i].getElementsByTagName("B");
@@ -101,7 +101,7 @@
 			parsePost(event, post);
 		} else {
 			nodes.push({'user': post.author.toLowerCase(), 'type': 'post', 'node': post.elementTable[0]});
-			if (mod.preferences.quotes) {
+			if (!post.ignored && mod.preferences.quotes) {
 				var quotes = post.content[0].getElementsByClassName('alt2');
 				for (var i = 0, n = quotes.length; i < n; i++) {
 					var elem = quotes[i].getElementsByTagName("B");
