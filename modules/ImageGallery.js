@@ -27,9 +27,10 @@
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
     page = SHURSCRIPT.environment.thread.page;
-    loadNextPage();
-    cleanImages(images);
-    alert(images);
+    numberPages();
+    //loadNextPage();
+    //cleanImages(images);
+    //alert(images);
   };
 
   function loadNextPage() {
@@ -62,6 +63,15 @@
         }
       }
     }
+  }
+
+  function numberPages() {
+    var pages = $('.pagenav table tbody tr td:nth-last-child(2)').children().html();
+    var numStrong = /<strong>([0-9])<\/strong>/i;
+    if ( numStrong.test(pages) ){
+      pages = numStrong.exec(pages)[1];
+    }
+    alert(pages);
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
