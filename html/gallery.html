@@ -6,8 +6,9 @@
         <h3>Galería</h3>
       </div>
       <div class="modal-body">
-        <%=images%>
-        <a target="_blank" href="" ><img class="gallery-img" src="http://shurscript.org/img/shurheading.png"></a>
+        <% images.forEach(function (image, index, arr) { %>
+          <a target="_blank" href="<%=image%>" ><img class="gallery-img" src="<%=image%>"></a>
+        <% } %>
       </div>
     </div>
   </div>
