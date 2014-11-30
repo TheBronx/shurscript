@@ -66,12 +66,9 @@
   }
 
   function numberPages() {
-    var pages = $('.pagenav table tbody tr td:nth-last-child(2)').children().html();
-    var numStrong = /<strong>([0-9])<\/strong>/i;
-    if ( numStrong.test(pages) ){
-      pages = numStrong.exec(pages)[1];
-    }
-    alert(pages);
+    var page = $('.pagenav:first table tbody tr td:first-child').text();
+    page = parseInt(page.substring(page.length-2, page.length));
+    alert(page);
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
