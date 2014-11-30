@@ -49,7 +49,10 @@
         while (html.search(reMe) !== -1 ) {
           var aux = reMe.exec(html)[0];
           while (aux.search(reIm) !== -1 ) {
-            images.push(reIm.exec(aux)[0]);
+            var elem = reIm.exec(aux)[1];
+            if (images.indexOf(elem) == -1 ) {
+              images.push(elem);
+            }
             aux = aux.replace(reIm, '1');
           }
           html = html.replace(reMe, '1');
@@ -61,7 +64,7 @@
   }
 
   function cleanImages(images) {
-    var re = /http:\/\/cdn.forocoches.com\/(.*)\>/i;
+    var re = /http:\/\/cdn.forocoches.com\/(.*)/i;
     if (images.length > 0) {
       for (i = images.length - 1; i >= 0; i--) {
         if (re.test(images[i])) {
