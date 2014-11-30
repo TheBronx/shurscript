@@ -38,9 +38,14 @@
 		this.id = parseInt(table.attr('id').replace('post',''));
 		this.href = '/showthread.php?p=' + this.id;
 		this.content = this.element.find('#post_message_' + this.id);
-		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
+		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html()) || -1;
 
 		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
+		this.ignored = false;
+		if (user.length === 0) {
+			user = this.element.find('.alt2:first-child > a');
+			this.ignored = true;
+		}
 		this.author = user.html();
 		this.author_link = user.attr('href');
 	};
