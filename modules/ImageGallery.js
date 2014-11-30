@@ -25,6 +25,10 @@
   * Sobreescribimos la funcion de ejecucion
   */
   mod.onNormalStart = function () {
+    addGaleryButton();
+  };
+
+  function startGallery(){
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
@@ -32,7 +36,7 @@
     }
     cleanImages(images);
     alert(images);
-  };
+  }
 
   function loadNextImage(page) {
     var reIm = /\<img(.*?)\>/i;
@@ -70,6 +74,16 @@
     var page = $('.pagenav:first table tbody tr td:first-child').text();
     page = parseInt(page.substring(page.length-2, page.length));
     return page;
+  }
+
+  function addGaleryButton() {
+    var tdNextNode = document.getElementById("threadtools");
+    var trNode = tdNextNode.parentNode;
+    var newTd = document.createElement("TD");
+    newTd.className = 'vbmenu_control';
+    newTd.innerHTML = '<a href="">Galería</a>';
+    $(newTd).on('click', function(){startGallery()});
+    trNode.insertBefore(newTd, tdNextNode);
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
