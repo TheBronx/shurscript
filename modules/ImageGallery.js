@@ -44,14 +44,9 @@
       loadNextImage(i);
     }
     cleanImages(images);
-    $modal = $(SHURSCRIPT.templater.fillOut('gallery'));
+    $modal = $(SHURSCRIPT.templater.fillOut('gallery'), images);
 
-    try {
-      $('body').append($modal);
-    } catch (e) {
-      // Elementos como los videos de Youtube tienen un script dentro que hace petar el .append()
-      console.log(e);
-    }
+    $('body').append($modal);
 
     /* Abrimos la ventana */
     $modal.modal();
@@ -105,9 +100,10 @@
     var trNode = tdNextNode.parentNode;
     var newTd = document.createElement("TD");
     newTd.className = 'vbmenu_control';
-    newTd.innerHTML = '<a href="">Galería</a>';
+    newTd.innerHTML = '<a href="#gallery">Galería</a>';
     $(newTd).on('click', function(){
-      mod.openReader();
+      mod.openGallery();
+      return false;
     });
     trNode.insertBefore(newTd, tdNextNode);
   }
