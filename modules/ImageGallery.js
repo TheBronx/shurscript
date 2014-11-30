@@ -11,7 +11,7 @@
   });
 
   var thread;
-  var page;
+  var pages;
   var images = []
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
@@ -26,14 +26,15 @@
   */
   mod.onNormalStart = function () {
     thread = SHURSCRIPT.environment.thread.id;
-    page = SHURSCRIPT.environment.thread.page;
-    numberPages();
-    //loadNextPage();
-    //cleanImages(images);
-    //alert(images);
+    pages = numberPages();
+    for (i = 1; i <= pages; i++) {
+      loadNextImage(i);
+    }
+    cleanImages(images);
+    alert(images);
   };
 
-  function loadNextPage() {
+  function loadNextImage(page) {
     var reIm = /\<img(.*?)\>/i;
     var reMe = /<!-- message -->([\s\S]*?)<!-- \/ message -->/i;
     var xmlhttp = new XMLHttpRequest();
@@ -68,7 +69,7 @@
   function numberPages() {
     var page = $('.pagenav:first table tbody tr td:first-child').text();
     page = parseInt(page.substring(page.length-2, page.length));
-    alert(page);
+    return page;
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
