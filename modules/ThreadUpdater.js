@@ -133,6 +133,7 @@
 					stopTimeout();// quitar timeout actual
 					showButton(false);// ocultar el botón
 					document.title = pageTitle;// restablecer el título
+					changeFavicon(0);
 				} else if (status === 'done') {
 					numPostsBefore += numNewPosts;
 
@@ -383,9 +384,8 @@
 				showButton(string, false);
 
 				// cambiar el título
-				if (typeof newPage !== 'string') {
-					setTimeout(function () { document.title = '*' + pageTitle; }, 1);
-				}
+				setTimeout(function () { document.title = '*' + pageTitle; }, 1);
+				changeFavicon(1);
 			} else {
 				showButton(false);
 			}
@@ -404,6 +404,7 @@
 
 		// restablecer el título
 		document.title = pageTitle;
+		changeFavicon(0);
 
 		// 1: añadir posts nuevos
 		var divElem = document.createElement('div');
@@ -455,4 +456,17 @@
 
 		return false;
 	}
+
+	function changeFavicon(type) {
+		var favicons = ['http://www.forocoches.com/favicon.ico', 'http://shurscript.org/favicon.ico'];
+		var link = document.createElement('link');
+		var oldLink = document.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		link.href = favicons[type];
+		if (oldLink) {
+			document.head.removeChild(oldLink);
+		}
+		document.head.appendChild(link);
+	} 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
