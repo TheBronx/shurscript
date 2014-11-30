@@ -36,6 +36,7 @@
     }
     cleanImages(images);
     alert(images);
+    return false;
   }
 
   function loadNextImage(page) {
