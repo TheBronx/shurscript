@@ -40,7 +40,7 @@
   }
 
   function loadNextImage(page) {
-    var reIm = /\<img(.*?)\>/i;
+    var reIm = /\<img src="(.*?)"/i;
     var reMe = /<!-- message -->([\s\S]*?)<!-- \/ message -->/i;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
