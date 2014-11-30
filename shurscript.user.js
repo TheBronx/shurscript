@@ -57,6 +57,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Integrations.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Reader.js
 // @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoSpoiler.js
+// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/History.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
@@ -67,6 +68,8 @@
 // @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/experimental/css/autoicons.css
 // @resource        readercss https://github.com/TheBronx/shurscript/raw/experimental/css/reader.css
 // @resource        readerhtml https://github.com/TheBronx/shurscript/raw/experimental/html/reader.html
+// @resource        historycss https://github.com/TheBronx/shurscript/raw/experimental/css/history.css
+// @resource        historyhtml https://github.com/TheBronx/shurscript/raw/experimental/html/history.html
 // ==/UserScript==
 
 /**

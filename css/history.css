@@ -1,0 +1,61 @@
+.history-popover {
+	width: 375px;
+	padding: 5px;
+	font: 10pt verdana,geneva,lucida,"lucida grande",arial,helvetica,sans-serif; /* Por defecto del foro */
+}
+
+.history-popover .btn-group {
+	width: 100%;
+}
+
+.history-popover button.btn {
+	font-weight: normal;
+	width: 33.3%;
+}
+
+.history-popover .thread-list {
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+
+.history-popover .thread-title {
+	color: #cc3300;
+}
+
+.history-popover .thread-title:hover {
+	color: #330099;
+}
+
+.history-popover .goto-newpost img {
+	width: 12px !important;
+	height: 12px !important;
+	display: inline;
+}
+
+.history-popover .thread.list-group-item:hover {
+	background: #f5f5f5;
+}
+
+.history-popover .post-content {
+    color: gray;
+    max-height: 35px;
+    overflow: hidden;
+	display: block;
+}
+
+.history-popover .info-wrapper {
+	display: table;
+    text-align: center;
+    width: 100%;
+}
+
+.history-popover .info {
+	color: gray;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    height: 60px;
+    text-align: center;
+    vertical-align: middle;
+	display: table-cell;
+}

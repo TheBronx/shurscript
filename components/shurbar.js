@@ -71,7 +71,7 @@
 	 */
 	function updateBar() {
 		icons.forEach(function (icon) {
-			$('<li class="shurbar-item" id="' + icon.name + '" data-placement="top" data-toggle="tooltip" title="' + icon.description + '"><img src="' + icon.image + '"/><a href="' + (icon.href || '#') + '">' + icon.name + '</a></li>')
+			$('<li class="shurbar-item" id="' + icon.name + '" data-placement="top" ' + (icon.description ? 'data-toggle="tooltip" title="' + icon.description + '"' : '') + '><img src="' + icon.image + '"/><a ' + (icon.href ? 'href="' + (icon.href) + '" ' : '') + '>' + icon.name + '</a></li>')
 				.prependTo($('#shurbar ul.shurbar-items'))
 				.click(icon.handler).tooltip({delay: 300});
 		});

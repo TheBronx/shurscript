@@ -406,7 +406,7 @@
 				$(".shurmenu_opened").not(e.target.id != "" ? "#" + e.target.id : "").removeClass("shurmenu_opened");
 
 				if (e.target.id.indexOf("statusicon") == -1) { //No estamos clicando en un icono del hilo (este ya tiene el manejador de abrir y cerrar el popup)
-					$(".popover").remove();
+					$(".filter-threads.popover").remove();
 				}
 			}
 		});
@@ -423,10 +423,9 @@
 		thread.icon_td.popover({content: getThreadMenu(thread), container: 'body', placement: 'right', html: true, trigger: 'manual'});
 
 		thread.icon_td.click(function (e) {
-			$(".popover").remove();
+			$(".filter-threads.popover").remove();
 			$(this).popover('show');
-			$(".popover .popover-content").html(getThreadMenu(thread));
-			$(".popover .popover-content").css({height: '30px'});
+			$(this).data('bs.popover').$tip.addClass('filter-threads').find(".popover-content").html(getThreadMenu(thread)).css({height: '30px'});
 			$(this).addClass("shurmenu_opened");
 		});
 
