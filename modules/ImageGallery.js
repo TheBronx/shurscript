@@ -54,17 +54,17 @@
     /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
     if( images.length <= 0) {
       for (i = 1; i <= pages; i++) {
-        //loadNextImage(i);
+        loadNextImage(i);
       }
-      //cleanImages(images);
+      cleanImages(images);
     }
 
     if ( images.length <= 0) {
-      $('#gallery').find('.modal-body').text('<p>¡No hay imágenes en este hilo!</p>');
+      $('#gallery').find('.modal-body').html('<p>¡No hay imágenes en este hilo!</p>');
     }
     else {
       $('#gallery').find('.modal-body').text();
-      $('#gallery').find('.modal-header').apend('<h3>'+images.length+' imágenes</h3>');
+      $('#gallery').find('.modal-header').append('<h3>'+images.length+' imágenes</h3>');
       for (i = 0; i < images.length; i++) {
         var im = '<div class="im-container"><a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a></div>';
         $('#gallery').find('.modal-body').append(im);
