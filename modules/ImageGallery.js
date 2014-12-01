@@ -31,7 +31,7 @@
   };
 
   mod.openGallery = function (button) {
-    $(button).text('Cargando...');
+    $(button).find('a').text('Cargando...');
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
@@ -58,7 +58,7 @@
 
     /* Abrimos la ventana */
     $('#gallery').modal('show');
-    $(button).text('Galeria');
+    $(button).find('a').text('Galeria');
   };
 
   /* Cargamos las páginas del hilo y buscamos las imagenes */
