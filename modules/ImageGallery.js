@@ -32,13 +32,15 @@
 
   mod.openGallery = function (button) {
     $(button).find('a').text('Cargando...');
-    alert($(button).find('a').text());
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
-    for (i = 1; i <= pages; i++) {
-      loadNextImage(i);
+    /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
+    if( images.length <= 0) {
+      for (i = 1; i <= pages; i++) {
+        loadNextImage(i);
+      }
+      cleanImages(images);
     }
-    cleanImages(images);
 
     var modal = '<div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
     + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
@@ -58,6 +60,11 @@
       }
     }
 
+    $('#gallery').on('hidden.bs.modal', function () {
+      //Eliminar al cerrar
+      alert('jdfkdjf');
+      $(this).remove();
+    });
     /* Abrimos la ventana */
     $('#gallery').modal('show');
     $(button).find('a').text('Galeria');
