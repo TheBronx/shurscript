@@ -167,6 +167,8 @@ button.close {
   margin-right: 5px;
   margin-bottom: 5px;
   border: 2px solid #111;
+  border-radius: 10px;
+  float: left;
 }
 
 .modal-body .im-container img {
