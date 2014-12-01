@@ -46,7 +46,7 @@
     var modal = '<div id="gl"><div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
     + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
     + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
-    + '<h3>Galería <strong>'+images.length+' imágenes<strong></h3></div><div class="modal-body"></div><div class="modal-footer"><h4>'+title+'</h4>'
+    + '<h3>'+images.length+' imágenes</h3></div><div class="modal-body"></div><div class="modal-footer"><h4>'+title+'</h4>'
     + '</div></div></div></div></div>';
 
     $('body').append(modal);
