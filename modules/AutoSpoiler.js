@@ -115,7 +115,7 @@
       var selectedText = selection.toString();
 
       range.deleteContents();
-      var newNode = document.createTextNode('[SPOILER][color=#ffffff]' + selectedText + '[/color][/SPOILER]');
+      var newNode = document.createTextNode('[SPOILER][color=#f1f1f1]' + selectedText + '[/color][/SPOILER]');
       range.insertNode(newNode);
 
       range.selectNode(newNode);
