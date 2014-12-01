@@ -55,7 +55,7 @@
     $('body').append(modal);
 
     /* Abrimos la ventana */
-    $modal.modal();
+    modal.modal();
 
   };
 
@@ -105,7 +105,7 @@
     return page;
   }
 
-  /*Añadimos el botón al inicio del modulo */ 
+  /*Añadimos el botón al inicio del modulo */
   function addGaleryButton() {
     var tdNextNode = document.getElementById("threadtools");
     var trNode = tdNextNode.parentNode;
