@@ -157,7 +157,7 @@ button.close {
 }
 
 .modal-body {
-  /*max-height: 450px;*/
+  max-height: 450px;
   overflow-x: auto;
 }
 
