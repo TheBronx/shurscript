@@ -12,6 +12,7 @@
 
   var thread;
   var pages;
+  var title;
   var images = []
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
@@ -33,6 +34,7 @@
   mod.openGallery = function (button) {
     $(button).find('a').text('Cargando...');
     thread = SHURSCRIPT.environment.thread.id;
+    title = SHSURSCRIPT.environment.thread.title;
     pages = numberPages();
     /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
     if( images.length <= 0) {
@@ -45,7 +47,7 @@
     var modal = '<div id="gl"><div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
     + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
     + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
-    + '<h3>Galería</h3></div><div class="modal-body"></div><div class="modal-footer"><p>Fin de la galeria shur</p>'
+    + '<h3>Galería</h3></div><div class="modal-body"></div><div class="modal-footer"><h4>'+title+'</h4>'
     + '</div></div></div></div></div>';
 
     $('body').append(modal);
