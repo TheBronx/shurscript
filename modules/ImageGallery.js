@@ -54,9 +54,9 @@
     /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
     if( images.length <= 0) {
       for (i = 1; i <= pages; i++) {
-        loadNextImage(i);
+        //loadNextImage(i);
       }
-      cleanImages(images);
+      //cleanImages(images);
     }
 
     if ( images.length <= 0) {
