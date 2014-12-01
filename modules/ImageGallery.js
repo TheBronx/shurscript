@@ -51,7 +51,7 @@
     }
     else {
       for (i = 0; i < images.length; i++) {
-        var im = '<a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a>';
+        var im = '<div class="im-container"><a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a></div>';
         $('#gallery').find('.modal-body').append(im);
       }
     }

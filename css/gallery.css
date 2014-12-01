@@ -161,11 +161,17 @@ button.close {
   overflow-x: auto;
 }
 
-.modal-body img {
-  max-width: 140px;
-  max-height: 150px;
+.modal-body .im-container {
+  width: 150px;
+  height: 150px;
   margin-right: 5px;
   margin-bottom: 5px;
+  border: 2px solid #111;
+}
+
+.modal-body .im-container img {
+  width: 100%;
+  max-height: 100%;
 }
 
 .modal-header h3 {
