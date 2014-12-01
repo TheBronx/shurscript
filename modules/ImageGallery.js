@@ -34,7 +34,7 @@
   mod.openGallery = function (button) {
     $(button).find('a').text('Cargando...');
     thread = SHURSCRIPT.environment.thread.id;
-    title = SHSURSCRIPT.environment.thread.title;
+    title = SHURSCRIPT.environment.thread.title;
     pages = numberPages();
     /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
     if( images.length <= 0) {
