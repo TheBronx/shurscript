@@ -120,7 +120,7 @@
     var page = $('.pagenav:first table tbody tr td:first-child').text();
     page = parseInt(page.substring(page.length-2, page.length));
     console.log('page = ' + page);
-    if (page == null) {
+    if (isNaN(page)) {
       console.log('entro');
       page = 1;
     }
