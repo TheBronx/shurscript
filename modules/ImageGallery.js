@@ -30,7 +30,8 @@
     addGaleryButton();
   };
 
-  mod.openGallery = function () {
+  mod.openGallery = function (button) {
+    $(button).text('Cargando...');
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
@@ -57,7 +58,7 @@
 
     /* Abrimos la ventana */
     $('#gallery').modal('show');
-
+    $(button).text('Galeria');
   };
 
   /* Cargamos las páginas del hilo y buscamos las imagenes */
@@ -114,7 +115,7 @@
     newTd.className = 'vbmenu_control';
     newTd.innerHTML = '<a href="#gallery">Galería</a>';
     $(newTd).on('click', function(){
-      mod.openGallery();
+      mod.openGallery(this);
       return false;
     });
     trNode.insertBefore(newTd, tdNextNode);
