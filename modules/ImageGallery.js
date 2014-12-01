@@ -35,6 +35,22 @@
     thread = SHURSCRIPT.environment.thread.id;
     title = $('.cmega').text();
     pages = numberPages();
+
+    var modal = '<div id="gl"><div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
+    + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
+    + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
+    + '</div><div class="modal-body"><p>Cargando imágenes...</p></div><div class="modal-footer"><h4>'+title+'</h4>'
+    + '</div></div></div></div></div>';
+
+    $('body').append(modal);
+
+    $('#gallery').on('hidden.bs.modal', function () {
+      //Eliminar al cerrar
+      $(this).remove();
+    });
+    /* Abrimos la ventana */
+    $('#gallery').modal('show');
+
     /* En caso de haber abierto previamente la galería no cargamos las imagenes nuevamente */
     if( images.length <= 0) {
       for (i = 1; i <= pages; i++) {
@@ -43,31 +59,18 @@
       cleanImages(images);
     }
 
-    var modal = '<div id="gl"><div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
-    + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
-    + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
-    + '<h3>'+images.length+' imágenes</h3></div><div class="modal-body"></div><div class="modal-footer"><h4>'+title+'</h4>'
-    + '</div></div></div></div></div>';
-
-    $('body').append(modal);
-
     if ( images.length <= 0) {
-      ('#gallery').find('.modal-body').append('<p>¡No hay imágenes en este hilo!</p>');
+      $('#gallery').find('.modal-body').text('<p>¡No hay imágenes en este hilo!</p>');
     }
     else {
+      $('#gallery').find('.modal-body').text('');
+      $('#gallery').find('.modal-header').apend('<h3>'+images.length+' imágenes</h3>');
       for (i = 0; i < images.length; i++) {
         var im = '<div class="im-container"><a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a></div>';
         $('#gallery').find('.modal-body').append(im);
       }
     }
 
-    $('#gallery').on('hidden.bs.modal', function () {
-      //Eliminar al cerrar
-      $(this).remove();
-    });
-    /* Abrimos la ventana */
-    $('#gallery').modal('show');
-    $(button).find('a').text('Galeria');
   };
 
   /* Cargamos las páginas del hilo y buscamos las imagenes */
@@ -124,7 +127,6 @@
     newTd.className = 'vbmenu_control';
     newTd.innerHTML = '<a href="#gallery">Galería</a>';
     $(newTd).on('click', function(){
-      $(this).find('a').text('Cargando...');
       mod.openGallery(this);
       return false;
     });
