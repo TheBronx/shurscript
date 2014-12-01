@@ -1,4 +1,4 @@
-#gallery .close {
+.close {
   float: right;
   font-size: 21px;
   font-weight: bold;
@@ -8,25 +8,25 @@
   filter: alpha(opacity=20);
   opacity: .2;
 }
-#gallery .close:hover,
-#gallery .close:focus {
+.close:hover,
+.close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
   filter: alpha(opacity=50);
   opacity: .5;
 }
-#gallery button.close {
+button.close {
   -webkit-appearance: none;
   padding: 0;
   cursor: pointer;
   background: transparent;
   border: 0;
 }
-#gallery .modal-open {
+.modal-open {
   overflow: hidden;
 }
-#gallery .modal {
+.modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -38,7 +38,7 @@
   -webkit-overflow-scrolling: touch;
   outline: 0;
 }
-#gallery .modal.fade .modal-dialog {
+.modal.fade .modal-dialog {
   -webkit-transition: -webkit-transform .3s ease-out;
        -o-transition:      -o-transform .3s ease-out;
           transition:         transform .3s ease-out;
@@ -47,22 +47,22 @@
        -o-transform: translate(0, -25%);
           transform: translate(0, -25%);
 }
-#gallery .modal.in .modal-dialog {
+.modal.in .modal-dialog {
   -webkit-transform: translate(0, 0);
       -ms-transform: translate(0, 0);
        -o-transform: translate(0, 0);
           transform: translate(0, 0);
 }
-#gallery .modal-open .modal {
+.modal-open .modal {
   overflow-x: hidden;
   overflow-y: auto;
 }
-#gallery .modal-dialog {
+.modal-dialog {
   position: relative;
   width: auto;
   margin: 10px;
 }
-#gallery .modal-content {
+.modal-content {
   position: relative;
   background-color: #fff;
   -webkit-background-clip: padding-box;
@@ -74,53 +74,53 @@
   -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
           box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
 }
-#gallery .modal-backdrop {
+.modal-backdrop {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   background-color: #000;
 }
-#gallery .modal-backdrop.fade {
+.modal-backdrop.fade {
   filter: alpha(opacity=0);
   opacity: 0;
 }
-#gallery .modal-backdrop.in {
+.modal-backdrop.in {
   filter: alpha(opacity=50);
   opacity: .5;
 }
-#gallery .modal-header {
+.modal-header {
   min-height: 16.42857143px;
   padding: 15px;
   border-bottom: 1px solid #e5e5e5;
 }
-#gallery .modal-header .close {
+.modal-header .close {
   margin-top: -2px;
 }
-#gallery .modal-title {
+.modal-title {
   margin: 0;
   line-height: 1.42857143;
 }
-#gallery .modal-body {
+.modal-body {
   position: relative;
   padding: 15px;
 }
-#gallery .modal-footer {
+.modal-footer {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5;
 }
-#gallery .modal-footer .btn + .btn {
+.modal-footer .btn + .btn {
   margin-bottom: 0;
   margin-left: 5px;
 }
-#gallery .modal-footer .btn-group .btn + .btn {
+.modal-footer .btn-group .btn + .btn {
   margin-left: -1px;
 }
-#gallery .modal-footer .btn-block + .btn-block {
+.modal-footer .btn-block + .btn-block {
   margin-left: 0;
 }
-#gallery .modal-scrollbar-measure {
+.modal-scrollbar-measure {
   position: absolute;
   top: -9999px;
   width: 50px;
@@ -128,44 +128,44 @@
   overflow: scroll;
 }
 @media (min-width: 768px) {
-  #gallery .modal-dialog {
+  .modal-dialog {
     width: 600px;
     margin: 30px auto;
   }
-  #gallery .modal-content {
+  .modal-content {
     -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
             box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
   }
-  #gallery .modal-sm {
+  .modal-sm {
     width: 300px;
   }
 }
 @media (min-width: 992px) {
-  #gallery .modal-lg {
+  .modal-lg {
     width: 900px;
   }
 }
 
-#gallery .modal-footer:before,
-#gallery .modal-footer:after {
+.modal-footer:before,
+.modal-footer:after {
   display: table;
   content: " ";
 }
 
-#gallery .modal-footer:after {
+.modal-footer:after {
   clear: both;
 }
 
-#gallery .modal-body {
+.modal-body {
   max-height: 450px;
   overflow-x: auto;
 }
 
-#gallery .modal-body img {
+.modal-body img {
   max-width: 140px;
   max-height: 150px;
 }
 
-#gallery .modal-header h3 {
+.modal-header h3 {
   font-size: 25px;
 }
