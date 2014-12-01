@@ -3,10 +3,10 @@
 
   var mod = createModule({
     id: 'ImageGallery',
-    name: 'Galeria de imagenes de un hilo',
+    name: 'Galeria de imagenes',
     author: 'franexp',
     version: '0.1',
-    description: 'Muestra una galeria con las imagenes que hay en un hilo.',
+    description: 'Muestra una galeria con las imagenes que hay en el hilo.',
     domain: ['/showthread.php']
   });
 
@@ -94,7 +94,12 @@
         }
       }
     };
-    xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, false);
+    if (page > 1) {
+      xmlhttp.open('GET', '/foro/showthread.php?t=' + thread + '&page=' + page, false);
+    }else {
+      xmlhttp.open('GET', '/foro/showthread.php?t=' + thread, false);
+    }
+
     xmlhttp.send();
   }
 
@@ -114,6 +119,9 @@
   function numberPages() {
     var page = $('.pagenav:first table tbody tr td:first-child').text();
     page = parseInt(page.substring(page.length-2, page.length));
+    if (page == null) {
+      page = 1;
+    }
     return page;
   }
 
