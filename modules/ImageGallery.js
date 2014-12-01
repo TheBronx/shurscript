@@ -48,7 +48,7 @@
     $('body').append(modal);
 
     /* Abrimos la ventana */
-    modal.modal();
+    $('#gallery').modal('show');
 
   };
 
