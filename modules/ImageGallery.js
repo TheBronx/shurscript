@@ -47,11 +47,13 @@
 
     $('body').append(modal);
 
-    if ( images.legth <= 0) {
+    if ( images.length <= 0) {
+      alert(images.length);
       ('#gallery').find('.modal-body').append('<p>¡No hay imágenes en este hilo!</p>');
     }
     else {
       for (i = 0; i < images.length; i++) {
+        alert(images.length);
         var im = '<a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a>';
         $('#gallery').find('.modal-body').append(im);
       }
