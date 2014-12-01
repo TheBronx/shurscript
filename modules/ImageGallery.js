@@ -34,7 +34,6 @@
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
-      alert(i);
       loadNextImage(i);
     }
     cleanImages(images);
