@@ -40,11 +40,14 @@
   mod.openGallery = function () {
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
-    for (i = 1; i <= pages; i++) {
-      loadNextImage(i);
+    if (images == null) {
+      for (i = 1; i <= pages; i++) {
+        loadNextImage(i);
+      }
+      cleanImages(images);
     }
-    cleanImages(images);
-    $modal = $(SHURSCRIPT.templater.fillOut('gallery', images));
+    
+    $modal = $(SHURSCRIPT.templater.fillOut('gallery'));
 
     $('body').append($modal);
 
