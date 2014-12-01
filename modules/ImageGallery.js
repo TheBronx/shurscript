@@ -26,13 +26,6 @@
   */
   mod.onNormalStart = function () {
     mod.helper.addStyle('gallerycss');
-    /*
-    * Compilamos la plantilla HTML del Reader
-    */
-    var tempName = 'gallery',
-    templateText = mod.helper.getResourceText('galleryhtml');
-    SHURSCRIPT.templater.storeTemplate(tempName, templateText);
-    SHURSCRIPT.templater.compile(tempName);
 
     addGaleryButton();
   };
