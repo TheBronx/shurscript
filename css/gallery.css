@@ -170,6 +170,17 @@ button.close {
   float: left;
 }
 
+.modal-body .im-container:hover,
+.modal-body .im-container:focus {
+  border: 1px solid #00b994;
+}
+
+.modal-body .im-container a {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+}
+
 .modal-body .im-container img {
   width: 100%;
   max-height: 100%;
