@@ -31,7 +31,7 @@
   };
 
   mod.openGallery = function (button) {
-    $(button).find('a').text('Cargando...');
+    alert($(button).find('a').text());
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
     for (i = 1; i <= pages; i++) {
