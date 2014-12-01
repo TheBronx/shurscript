@@ -32,7 +32,6 @@
   };
 
   mod.openGallery = function (button) {
-    $(button).find('a').text('Cargando...');
     thread = SHURSCRIPT.environment.thread.id;
     title = $('.cmega').text();
     pages = numberPages();
@@ -125,6 +124,7 @@
     newTd.className = 'vbmenu_control';
     newTd.innerHTML = '<a href="#gallery">Galería</a>';
     $(newTd).on('click', function(){
+      $(this).find('a').text('Cargando...');
       mod.openGallery(this);
       return false;
     });

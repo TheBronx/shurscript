@@ -189,3 +189,7 @@
 #gl .modal .modal-header h3 {
   font-size: 20px;
 }
+
+#gl .modal .modal-footer h4 {
+  text-align: left;
+}
