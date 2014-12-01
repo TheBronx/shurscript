@@ -46,17 +46,20 @@
       }
       cleanImages(images);
     }
-    
-    $modal = $(SHURSCRIPT.templater.fillOut('gallery'));
 
-    $('body').append($modal);
+    var modal = '<div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
+    + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
+    + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
+    + '<h3>Galería</h3></div><div class="modal-body"></div></div></div></div>'
+
+    $('body').append(modal);
 
     /* Abrimos la ventana */
     $modal.modal();
 
   };
 
-
+  /* Cargamos las páginas del hilo y buscamos las imagenes */
   function loadNextImage(page) {
     var reIm = /\<img src="(.*?)"/i;
     var reMe = /<!-- message -->([\s\S]*?)<!-- \/ message -->/i;
@@ -64,8 +67,10 @@
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         var html = xmlhttp.responseText;
+        /* Buscamos los post */
         while (html.search(reMe) !== -1 ) {
           var aux = reMe.exec(html)[0];
+          /* Buscamos las imagenes dentro de los post */
           while (aux.search(reIm) !== -1 ) {
             var elem = reIm.exec(aux)[1];
             if (images.indexOf(elem) == -1 ) {
@@ -81,6 +86,7 @@
     xmlhttp.send();
   }
 
+  /* Limpiamos el array de imagenes repetidas o imagenes del foro */
   function cleanImages(images) {
     var re = /http:\/\/cdn.forocoches.com\/(.*)/i;
     if (images.length > 0) {
@@ -92,12 +98,14 @@
     }
   }
 
+  /* Buscamos el número de páginas */
   function numberPages() {
     var page = $('.pagenav:first table tbody tr td:first-child').text();
     page = parseInt(page.substring(page.length-2, page.length));
     return page;
   }
 
+  /*Añadimos el botón al inicio del modulo */ 
   function addGaleryButton() {
     var tdNextNode = document.getElementById("threadtools");
     var trNode = tdNextNode.parentNode;
