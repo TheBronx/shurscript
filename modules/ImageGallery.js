@@ -33,12 +33,10 @@
   mod.openGallery = function () {
     thread = SHURSCRIPT.environment.thread.id;
     pages = numberPages();
-    if (images == null) {
-      for (i = 1; i <= pages; i++) {
-        loadNextImage(i);
-      }
-      cleanImages(images);
+    for (i = 1; i <= pages; i++) {
+      loadNextImage(i);
     }
+    cleanImages(images);
 
     var modal = '<div id="gallery" class="modal fade modal-tag" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">'
     + '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header">'
