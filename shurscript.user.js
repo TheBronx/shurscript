@@ -71,6 +71,7 @@
 // @resource        readerhtml https://github.com/TheBronx/shurscript/raw/experimental/html/reader.html
 // @resource        historycss https://github.com/TheBronx/shurscript/raw/experimental/css/history.css
 // @resource        historyhtml https://github.com/TheBronx/shurscript/raw/experimental/html/history.html
+// @resource        gallerycss https://github.com/TheBronx/shurscript/raw/experimental/css/gallery.css
 // ==/UserScript==
 
 /**
