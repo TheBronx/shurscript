@@ -1,5 +1,5 @@
 (function ($, createModule, undefined) {
-  'use strics';
+  'use strict';
 
   var mod = createModule({
     id: 'ImageGallery',
@@ -13,7 +13,7 @@
   var thread;
   var pages;
   var title;
-  var images = []
+  var images = [];
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
   * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
@@ -56,7 +56,7 @@
       $('#gallery').find('.modal-body').append('<p>¡No hay imágenes en este hilo!</p>');
     }
     else {
-      for (i = 0; i < images.length; i++) {
+      for (var i = 0; i < images.length; i++) {
         var im = '<div class="im-container"><a target="_blank" href="'+images[i]+'" ><img class="gallery-img" src="'+images[i]+'"></a></div>';
         $('#gallery').find('.modal-body').append(im);
       }
@@ -107,7 +107,7 @@
   function cleanImages(images) {
     var re = /http:\/\/cdn.forocoches.com\/(.*)/i;
     if (images.length > 0) {
-      for (i = images.length - 1; i >= 0; i--) {
+      for (var i = images.length - 1; i >= 0; i--) {
         if (re.test(images[i])) {
           images.splice(i, 1);
         }
