@@ -134,9 +134,9 @@
 				encodedUsername += username.charAt(i);
 			}
 		}
-		
-		var rnd = new Date().getMinutes(); //Metemos un número para engañar a la caché del foro
-		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "-" + rnd + "&titleonly=0&showposts=1";
+
+		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "-{random}&titleonly=0&showposts=1";
+
 		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE");
 		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE");
 		lastQuotesJSON = mod.helper.getValue("LAST_QUOTES");
@@ -383,9 +383,14 @@
 			}
 		};
 
-		ajax.open("GET", notificationsUrl, true);
+		ajax.open("GET", getRandomizedNotificationsUrl(), true);
 		ajax.send();
 
+	}
+
+	function getRandomizedNotificationsUrl() {
+		var rnd = new Date().getMinutes(); //Metemos un número para engañar a la caché del foro
+		return notificationsUrl.replace("{random}", rnd);
 	}
 
 	function setNotificationsCount(count) {
@@ -498,7 +503,7 @@
 		mod.helper.setValue("LAST_QUOTES", lastQuotesJSON, callback);
 		notificationsBox.hide();
 	}
-	
+
 	var rows = {};
 
 	function addToNotificationsBox(cita) {
@@ -587,7 +592,7 @@
 
 	function importIgnoreList() {
 		var xmlhttp = new XMLHttpRequest();
-		
+
 		xmlhttp.onreadystatechange = function () {
 			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
 				var html = xmlhttp.responseText;
@@ -595,7 +600,7 @@
 				var doc = parser.parseFromString(html, "text/html");
 
 				var ignoreListElem = doc.getElementById("ignorelist"); // Si no hay nadie en ignorados este elemento no existe
-				
+
 				if (ignoreListElem) {
 					var elems = ignoreListElem.getElementsByTagName("a");
 					var ignoredUsers = [];
@@ -603,7 +608,7 @@
 					for (var i = 0, n = elems.length; i < n; i++) {
 						ignoredUsers.push(elems[i].textContent);
 					}
-					
+
 					var newIgnoredList = ignoredUsers.join(', ');
 					var oldIgnoredList = $("input[data-maps-to='ignoredUsers']").tokenfield('getTokensList', ',');
 
