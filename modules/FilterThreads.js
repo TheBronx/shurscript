@@ -1011,6 +1011,21 @@
 		}
 	}
 
+	function addFavToCorrespondingModalSection(favorites, fav) {
+		var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
+		$sectionTable.append(favorites.getFavHTML(fav));
+		//evento click al borrar hilo
+		$sectionTable.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
+			var threadID = $(this).attr('id');
+			bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
+				if (res) {
+					bootbox.hideAll();
+					mod.favRemove(threadID);
+				}
+			});
+		});
+	}
+
 	function populateFavoritesModal() {
 		//para cada hilo favorito:
 		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
@@ -1019,24 +1034,13 @@
 		var fav;
 		for (var i = 0; i < favorites.favs.length; i++) {
 			fav = favorites.favs[i];
+
 			var isIncomplete = !('title' in fav) || !('section' in fav) || !('author' in fav);
 			if (isIncomplete) {
 				favorites.populateAndSave(fav, mod.favPopulated);
 				//y cuando esté completo ya lo meteremos donde toque
 			} else {
-				//metemos el hilo en su correspondiente seccion
-				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
-				$sectionTable.append(favorites.getFavHTML(fav));
-				//evento click al borrar hilo
-				$sectionTable.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
-					var threadID = $(this).attr('id');
-					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
-						if (res) {
-							bootbox.hideAll();
-							mod.favRemove(threadID);
-						}
-					});
-				});
+				addFavToCorrespondingModalSection(favorites, fav);
 			}
 		}
 	}
