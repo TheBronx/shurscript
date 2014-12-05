@@ -15,7 +15,7 @@
 	});
 
 	mod.normalStartCheck = function () {
-		return location.href.indexOf("/search.php?do=") !== -1;
+		return true;
 	};
 
 	var elementCountDown;// objeto de tipo HTML_LI_Element
@@ -23,29 +23,36 @@
 	var timeoutId;// identificador del timeout que realiza la cuenta atrás
 
 	mod.onNormalStart = function () {
-		// Obtener el elemento que contiene el tiempo que se ha de esperar
-		if (document.title === "ForoCoches") {
-			elementCountDown = document.getElementsByClassName('panel')[0].childNodes[1].childNodes[3];
+		if (location.href.indexOf("/search.php?do=") !== -1) {
+			// Obtener el elemento que contiene el tiempo que se ha de esperar
+			if (document.title === "ForoCoches") {
+				elementCountDown = document.getElementsByClassName('panel')[0].childNodes[1].childNodes[3];
+			} else {
+				elementCountDown = document.querySelector("td.alt1 ol li");
+			}
+
+			// Obtener los segundos a partir del elemento
+			var str = elementCountDown.textContent;
+			var index = str.indexOf("segundos");
+
+			if (index !== -1) {
+				totalSeconds = ~~(str.substring(index - 3, index));// ~~: to int
+
+				index = str.indexOf("segundos", index + 1);
+				seconds = ~~(str.substring(index - 3, index));
+
+				var timePageLoaded = performance.timing.responseStart;// tiempo en el que el servidor comenzó a enviar la página
+				var timeNextRefresh = timePageLoaded + 1000 * seconds;
+				var msRestantes = timeNextRefresh - new Date();
+
+				timeoutId = setTimeout(updateCountDown, msRestantes % 1000);
+				seconds = ~~(msRestantes / 1000);
+			}
 		} else {
-			elementCountDown = document.querySelector("td.alt1 ol li");
-		}
-
-		// Obtener los segundos a partir del elemento
-		var str = elementCountDown.textContent;
-		var index = str.indexOf("segundos");
-
-		if (index !== -1) {
-			totalSeconds = ~~(str.substring(index - 3, index));// ~~: to int
-
-			index = str.indexOf("segundos", index + 1);
-			seconds = ~~(str.substring(index - 3, index));
-
-			var timePageLoaded = performance.timing.responseStart;// tiempo en el que el servidor comenzó a enviar la página
-			var timeNextRefresh = timePageLoaded + 1000 * seconds;
-			var msRestantes = timeNextRefresh - new Date();
-
-			timeoutId = setTimeout(updateCountDown, msRestantes % 1000);
-			seconds = ~~(msRestantes / 1000);
+			var inputs = document.getElementsByName('query');
+			if (inputs.length === 4) {
+				inputs[2].focus();
+			}
 		}
 	};
 
@@ -56,7 +63,7 @@
 		} else {
 			//window.location.reload(true);
 			// A veces el navegador recoge la página de caché, con esto se consigue que la URL sea distinta
-			location.href += "&ts=" + new Date().getTime();
+			location.replace(location.href + "&ts=" + new Date().getTime());
 		}
 	}
 
