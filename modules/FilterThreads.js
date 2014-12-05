@@ -103,22 +103,7 @@
 				url: "/foro/showthread.php?t=" + fav.id,
 				dataType: 'text'
 			}).done(function (result) {
-				var title = $(result).find('div.page td.thead span.cmega').html();
-				title = title.replace("<!-- google_ad_section_start -->", "");
-				title = title.replace("<!-- google_ad_section_end -->", "");
-
-				var author = $(result).find('.bigusername').first().html();
-
-				var section = $(result).find('.navbar').last().find('a').html();
-				var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=', '');
-
-				fav.title = title;
-				fav.author = author;
-				fav.section = {
-					'name': section,
-					'id': sectionId,
-				};
-				//guardamos
+				fav = fillFavoriteFromResponse(result, fav);
 				_this.update(fav);
 				saveFavorites();
 				if (callback != undefined)
@@ -158,6 +143,31 @@
 			return sectionHTML;
 		};
 
+		//================================================================
+		function fillFavoriteFromResponse(result, fav) {
+			var title = $(result).find('div.page td.thead span.cmega').html();
+			title = removeGoogleComments(title);
+			var author = $(result).find('.bigusername').first().html();
+			var section = $(result).find('.navbar').last().find('a').html();
+			var sectionId = $(result).find('.navbar').last().find('a').attr('href').replace('forumdisplay.php?f=', '');
+
+			fav.title = title;
+			fav.author = author;
+			fav.section = {
+				'name': section,
+				'id': sectionId,
+			};
+
+			return fav;
+		}
+
+		function removeGoogleComments(title) {
+			title = title.replace("<!-- google_ad_section_start -->", "");
+			title = title.replace("<!-- google_ad_section_end -->", "");
+			return title;
+		}
+		//================================================================
+
 		//init favs array
 		if (favorites.favs !== undefined) {
 			_this.favs = favorites.favs; //objeto favs
@@ -169,6 +179,7 @@
 	};
 
 	var threads = [];
+
 	var favorites;
 	var readThreads = [];
 	var hiddenThreads = [];
@@ -220,7 +231,7 @@
 		var f2 = function () {
 			importIgnoreList();
 		};
-		
+
 		if (typeof exportFunction === 'function') {// Firefox 31+
 			exportFunction(f1, unsafeWindow, {defineAs: 'FilterThreads_importBuddyList'});
 			exportFunction(f2, unsafeWindow, {defineAs: 'FilterThreads_importIgnoreList'});
@@ -228,7 +239,7 @@
 			unsafeWindow.FilterThreads_importBuddyList = f1;
 			unsafeWindow.FilterThreads_importIgnoreList = f2;
 		}
-		
+
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
 			createPref({type: 'checkbox', mapsTo: 'hideReadThreads', caption: 'Mostrar solo hilos no leídos.', subCaption: '<span style="color:gray;">De cualquier modo aparecerá un botón para ocultarlos o mostrarlos. Esta opción solo cambia el comportamiento por defecto.</span>'}),
@@ -492,6 +503,7 @@
 	}
 
 	/* Aplicar funcionalidad al hilo en cuestion: marcarlo como favorito, ocultarlo, etc.*/
+
 	function processThread(thread) {
 		if (mod.helper.environment.page == "/search.php") { //En el buscador solo se activan los favoritos
 			if (favorites.isFavorite(thread.id)) {
@@ -506,8 +518,8 @@
 				thread.isHidden = true;
 			} else if (favorites.isFavorite(thread.id)) { //Después, si es favorito
 				thread.isFavorite = true;
-
 				//Lo movemos al principio de la lista
+
 				if ($(".favorite").not('.hiddenThread').length > 0) {
 					$(".favorite").not('.hiddenThread').last().after(thread.element);
 				} else if ($(".highlighted").not('.hiddenThread').length > 0) { //Tiene que estar por encima de los resaltados
@@ -515,8 +527,8 @@
 				} else {
 					$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(thread.element); //El primero de la lista
 				}
-
 				thread.element.addClass("favorite");
+
 			} else if (regexHiddenUsers && (matchResult = matchKeywords(thread.author, regexHiddenUsers, "hiddenKeyword"))) { //Si esta abierto por algun usuario que tengamos en la lista negra
 				addToHiddenThreads(thread);
 				thread.isHidden = true;
@@ -529,8 +541,8 @@
 				thread.title = matchResult;
 				thread.title_link.html(matchResult);
 			}
-
 			var matchUserResult;
+
 			if (regexHighlightKeywords && (matchResult = matchKeywords(thread.title, regexHighlightKeywords, "highlightKeyword"))
 				|| regexHighlightUsers && (matchUserResult = matchKeywords(thread.author, regexHighlightUsers, "highlightKeyword"))) { //Si hay que resaltarlo por conincidir con las palabras clave definidas por el usuario
 				thread.isHighlighted = true;
@@ -549,8 +561,8 @@
 						$("#threadslist > tbody[id^='threadbits_forum'] > tr").first().before(thread.element); //El primero de la lista
 					}
 				}
-
 				thread.element.addClass("highlighted");
+
 
 				if (thread.isHiddenByKeywords) { //Avisar al usuario de que se ha ocultado un hilo que coincide con sus preferencias de resaltado
 					hiddenThreadsBlock.find(".tcat").css("background", "#FBBD97");
@@ -565,48 +577,48 @@
 			}
 		}
 	}
-
 	/* Lo añade al menu de hilos ocultos desde donde podra ser mostrado de nuevo */
-	function addToHiddenThreads(hilo) {
 
+	function addToHiddenThreads(hilo) {
 		var hiddenThreadsList = $("#hiddenthreadslist");
+
 
 		if (hiddenThreadsList.length == 0) {
 			var threadsList = $("#threadslist");
-
 			hiddenThreadsList = $('<table id="hiddenthreadslist" class="tborder" cellspacing="1" cellpadding="5" border="0" width="100%" align="center">');
 
 			hiddenThreadsList.append(threadsList.find('tbody').first().clone()); //Añadimos el nombre de las columnas
 
 			var threadsListHeader = threadsList.prev();
+
 			var hiddenThreadsHeader = $('<table id="hiddenthreadsheader" class="tborder" cellspacing="1" cellpadding="5" border="0" width="100%" align="center" style="cursor: pointer;"><tr><td class="tcat" width="100%"><span style="background: url(\'' + SHURSCRIPT.config.imagesURL + 'trash-black.png\') no-repeat scroll 0% 0% transparent; height: 16px; display: inline-block; vertical-align: middle; width: 20px; margin-top: -2px;"></span><span id="numhiddenthreads">0</span> Hilo(s) oculto(s)</td></tr></table>');
 			hiddenThreadsHeader.click(function () {
 				hiddenThreadsList.parent().slideToggle();
 			});
-
 			threadsListHeader.before(hiddenThreadsList);
-			hiddenThreadsList.before(hiddenThreadsHeader);
 
+			hiddenThreadsList.before(hiddenThreadsHeader);
 			hiddenThreadsList.wrap('<div id="hiddenthreadslistwrapper" style="overflow: hidden;"></div>'); //No podemos hacer la animacion de slide con una tabla, la hacemos sobre un div sin overflow
+
 			hiddenThreadsList.parent().hide(); //La ocultamos por defecto
 			$("#hiddenthreadsheader, #hiddenthreadslistwrapper").wrapAll('<div id="hiddenthreads" style="margin-bottom: 15px;"></div>');
 			hiddenThreadsBlock = $("#hiddenthreads");
 
 		}
-
 		hilo.element.addClass('hiddenThread');
 
 		hiddenThreadsList.append(hilo.element);
+
 		hiddenThreadsCount++;
 
 		if (hiddenThreadsCount == 1) {
 			hiddenThreadsBlock.show();
 		}
-
 		hiddenThreadsBlock.find("#numhiddenthreads").html(hiddenThreadsCount);
-	}
 
+	}
 	/* Construye el menu que aparece al pulsar sobre el icono del hilo */
+
 	function getThreadMenu(thread) {
 		var menu = $("<div class='shurscript'/>");
 		if (!thread.isHidden || thread.isHiddenByKeywords) { //No tiene sentido marcar un hilo oculto como favorito
@@ -625,8 +637,8 @@
 		}
 		return menu;
 	}
-
 	/* Marcar o desmarcar un hilo favorito */
+
 	function toggleFavorite(hilo) {
 		if (!hilo.isFavorite) {
 			//lo agregamos a favoritos
@@ -636,8 +648,8 @@
 			unmarkAsFavorite(hilo);
 		}
 	}
-
 	/* Oculta o muestra un hilo */
+
 	function toggleHidden(hilo) {
 		if (!hilo.isHidden) {
 			hilo.element.fadeOut({complete: function () {
@@ -651,7 +663,6 @@
 			}});
 		}
 	}
-
 	function markAsFavorite(hilo) {
 		favorites.add(hilo.id);
 		favorites.populateAndSave({'id': hilo.id});
@@ -667,6 +678,7 @@
 	}
 
 	/* Oculta un hilo */
+
 	function markAsHiddenThread(hilo) {
 		hilo.isHidden = true;
 		hiddenThreads.push(hilo.id);
@@ -676,8 +688,8 @@
 		addToHiddenThreads(hilo);
 		saveHiddenThreads();
 	}
-
 	/* Vuelve a mostrar un hilo que estaba oculto */
+
 	function unmarkAsHiddenThread(hilo) {
 		removeElementFromArray(hilo.id, hiddenThreads);
 		hilo.icon_td.removeClass('shurmenu_opened');
@@ -685,8 +697,8 @@
 		removeFromHiddenThreads(hilo);
 		saveHiddenThreads();
 	}
-
 	/* Lo quitamos del menu de hilos ocultos y lo metemos de nuevo en el general */
+
 	function removeFromHiddenThreads(hilo) {
 		$("#threadslist > tbody[id^='threadbits_forum']").append(hilo.element);
 		hiddenThreadsCount--;
@@ -696,7 +708,6 @@
 			hiddenThreadsBlock.find("#hiddenthreadslistwrapper").hide();
 		}
 	}
-
 	function getThreadMenuToggle(hilo, title_on, title_off, icon, active, onclick, className) {
 		var $button = $('<button type="button" data-toggle="button" style="margin: 0 5px; display: inline-block;" class="btn btn-sm ' + (className ? className : 'btn-default') + '"><span style="background: url(\'' + icon + '\') no-repeat scroll 0% 0% transparent; height: 16px; display: inline-block; vertical-align: middle; width: 20px; margin-top: -2px;"></span><span>' + (active ? title_on : title_off) + '</span></button>');
 		$button.click(function () {
@@ -717,6 +728,7 @@
 	}
 
 	/* Funcionalidad de ocultar hilos ya leídos */
+
 	function createHideReadThreadsButton() {
 		var forumToolsButton = $("#stickies_collapse").length ? $("#stickies_collapse") : $("#forumtools");
 		var hideReadThreadsLink = $('<a rel="nofollow">' + (mod.preferences.hideReadThreads ? "Mostrar todos los hilos" : "Mostrar solo los hilos no leídos") + '</a>');
@@ -741,7 +753,6 @@
 		});
 		forumToolsButton.before(hideReadThreadsButton);
 	}
-
 	function createQuickFilter() {
 		var quickFilter = $("<input name='quickFilter' placeholder='Filtro rápido...'/>");
 		var quickFilterWrapper = $("<td class='tcat' style='padding:0px 4px;'/>");
@@ -800,6 +811,7 @@
 	}
 
 	/* Comprueba si un texto coincide con unas palabras clave concretas. Devuelve el texto con las palabras resaltadas en negrita */
+
 	function matchKeywords(text, regexKeywords, className) {
 		var match = false;
 		var matches = regexKeywords && regexKeywords.exec(text);
@@ -920,7 +932,7 @@
 				for (var i = 0, n = elems.length; i < n; i++) {
 					contacts.push(elems[i].textContent);
 				}
-				
+
 				var newContactsList = contacts.join(', ');
 				var oldContactsList = $("input[data-maps-to='highlightUsers']").tokenfield('getTokensList', ',');
 
@@ -940,7 +952,7 @@
 							bootbox.alert("No hemos detectado cambios en tu <a href='/foro/profile.php?do=buddylist' target='_blank'>lista de contactos</a> " +
 								"desde la última importación. Realiza cambios en tus contactos antes de volver a intentarlo.");
 						}
-					} else {					
+					} else {
 						$("input[data-maps-to='highlightUsers']").tokenfield('setTokens', newContactsList);
 					}
 				} else { // en caso contrario, avisa al usuario de que no existen contactos
@@ -956,7 +968,7 @@
 
 	function importIgnoreList() {
 		var xmlhttp = new XMLHttpRequest();
-		
+
 		xmlhttp.onreadystatechange = function () {
 			if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
 				var html = xmlhttp.responseText;
@@ -964,7 +976,7 @@
 				var doc = parser.parseFromString(html, "text/html");
 
 				var ignoreListElem = doc.getElementById("ignorelist"); // Si no hay nadie en ignorados este elemento no existe
-				
+
 				if (ignoreListElem) {
 					var elems = ignoreListElem.getElementsByTagName("a");
 					var ignoredUsers = [];
@@ -972,7 +984,7 @@
 					for (var i = 0, n = elems.length; i < n; i++) {
 						ignoredUsers.push(elems[i].textContent);
 					}
-					
+
 					var newIgnoredList = ignoredUsers.join(', ');
 					var oldIgnoredList = $("input[data-maps-to='hiddenUsers']").tokenfield('getTokensList', ',');
 
@@ -1006,4 +1018,5 @@
 		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist&nojs=1", true);
 		xmlhttp.send();
 	}
+
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
