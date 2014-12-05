@@ -225,20 +225,8 @@
 	mod.getPreferenceOptions = function () {
 		// Para no repetir la ristra 15 veces, hacemos una referencia
 		var createPref = mod.helper.createPreferenceOption;
-		var f1 = function () {
-			importBuddyList();
-		};
-		var f2 = function () {
-			importIgnoreList();
-		};
 
-		if (typeof exportFunction === 'function') {// Firefox 31+
-			exportFunction(f1, unsafeWindow, {defineAs: 'FilterThreads_importBuddyList'});
-			exportFunction(f2, unsafeWindow, {defineAs: 'FilterThreads_importIgnoreList'});
-		} else {
-			unsafeWindow.FilterThreads_importBuddyList = f1;
-			unsafeWindow.FilterThreads_importIgnoreList = f2;
-		}
+		exportBuddyAndIgnoreListFunctions();
 
 		return [
 			createPref({type: 'header', caption: 'Ocultar hilos', subCaption: 'Puedes ocultar hilos de forma automática, ya sea mediante una lista negra de usuarios o por palabras clave en el título de los temas:'}),
@@ -262,61 +250,8 @@
 		if (favorites == undefined)
 			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
 
-		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">' +
-			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">' +
-			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
-			'<div class="modal-body panel-group" id="accordion"></div></div></div></div>');
-		$('body').append(modal);
-
-		//para cada seccion hacemos una capa y metemos dentro la tabla
-		var sections = favorites.getSections();
-		sections.forEach(function (section) {
-			modal.find('.modal-body').append(favorites.getSectionHTML(section));
-		});
-
-		try {
-			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i); //De la URL
-			var currentSection = match && match[1];
-			if (!currentSection) {
-				currentSection = $(".fjsel").val(); //Del <select> para cambiar de subforo al final del hilo
-			}
-
-			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
-			if (!defaultSection.length) {
-				defaultSection = $("#shurscript-favs .collapse").first();
-			}
-			defaultSection.collapse('show');
-		} catch (e) {
-		}
-
-		//para cada hilo favorito:
-		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
-		// b) tenemos todos sus datos
-		//pintar sus datos o placeholders para cuando carguen
-		var fav;
-		for (var i = 0; i < favorites.favs.length; i++) {
-			fav = favorites.favs[i];
-			if (!('title' in fav) || !('section' in fav) || !('author' in fav)) {
-				//nos faltan datos, populate
-				favorites.populateAndSave(fav, mod.favPopulated);
-				//y cuando esté completo ya lo meteremos donde toque
-			} else {
-				//metemos el hilo en su correspondiente seccion
-				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
-				$sectionTable.append(favorites.getFavHTML(fav));
-				//evento click al borrar hilo
-				$sectionTable.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
-					var threadID = $(this).attr('id');
-					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
-						if (res) {
-							bootbox.hideAll();
-							mod.favRemove(threadID);
-						}
-					});
-				});
-			}
-		}
+		var modal = createFavoritesModal(favorites);
+		populateFavoritesModal();
 
 		//Mostrar mensaje informativo si no tiene ningún favorito
 		if (!favorites.favs.length) {
@@ -1017,6 +952,93 @@
 
 		xmlhttp.open("GET", "/foro/profile.php?do=ignorelist&nojs=1", true);
 		xmlhttp.send();
+	}
+
+	function exportBuddyAndIgnoreListFunctions() {
+		var f1 = function () {
+			importBuddyList();
+		};
+		var f2 = function () {
+			importIgnoreList();
+		};
+
+		if (typeof exportFunction === 'function') {// Firefox 31+
+			exportFunction(f1, unsafeWindow, {defineAs: 'FilterThreads_importBuddyList'});
+			exportFunction(f2, unsafeWindow, {defineAs: 'FilterThreads_importIgnoreList'});
+		} else {
+			unsafeWindow.FilterThreads_importBuddyList = f1;
+			unsafeWindow.FilterThreads_importIgnoreList = f2;
+		}
+	}
+
+	function createFavoritesModal(favorites) {
+		var modal = $('<div id="shurscript-favs" class="shurscript modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">' +
+			'<div class="modal-dialog modal-favs"><div class="modal-content"><div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+			'<h4 class="modal-title" id="modalLabel">Hilos Favoritos</h4></div>' +
+			'<div class="modal-body panel-group" id="accordion"></div></div></div></div>');
+		$('body').append(modal);
+
+		addFavoritesModalSections(favorites, modal);
+
+		displayFavoritesModalCurrentSection();
+
+		return modal;
+	}
+
+	function addFavoritesModalSections(favorites, modal) {
+		//para cada seccion hacemos una capa y metemos dentro la tabla
+		var sections = favorites.getSections();
+		sections.forEach(function (section) {
+			modal.find('.modal-body').append(favorites.getSectionHTML(section));
+		});
+	}
+
+	function displayFavoritesModalCurrentSection() {
+		try {
+			var match = location.href.match(/forumdisplay\.php\?f\=(\d+)/i); //De la URL
+			var currentSection = match && match[1];
+			if (!currentSection) {
+				currentSection = $(".fjsel").val(); //Del <select> para cambiar de subforo al final del hilo
+			}
+
+			var defaultSection = $("#shurscript-favs #shurscript-favs-section-" + currentSection + " .collapse");
+			if (!defaultSection.length) {
+				defaultSection = $("#shurscript-favs .collapse").first();
+			}
+			defaultSection.collapse('show');
+		} catch (e) {
+		}
+	}
+
+	function populateFavoritesModal() {
+		//para cada hilo favorito:
+		// a) tenemos solo su ID -> ajax para sacar titulo, autor y seccion
+		// b) tenemos todos sus datos
+		//pintar sus datos o placeholders para cuando carguen
+		var fav;
+		for (var i = 0; i < favorites.favs.length; i++) {
+			fav = favorites.favs[i];
+			var isIncomplete = !('title' in fav) || !('section' in fav) || !('author' in fav);
+			if (isIncomplete) {
+				favorites.populateAndSave(fav, mod.favPopulated);
+				//y cuando esté completo ya lo meteremos donde toque
+			} else {
+				//metemos el hilo en su correspondiente seccion
+				var $sectionTable = $('#shurscript-favs-section-' + fav.section.id + ' table');
+				$sectionTable.append(favorites.getFavHTML(fav));
+				//evento click al borrar hilo
+				$sectionTable.find('#shurscript-fav-' + fav.id + ' a#' + fav.id).click(function () {
+					var threadID = $(this).attr('id');
+					bootbox.confirm("Por favor, confirme que desea eliminar este hilo de sus favoritos", function (res) {
+						if (res) {
+							bootbox.hideAll();
+							mod.favRemove(threadID);
+						}
+					});
+				});
+			}
+		}
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
