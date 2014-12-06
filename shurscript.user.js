@@ -28,50 +28,52 @@
 // @require         https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
 // @require         https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require         https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootbox.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/Markdown.Converter.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/bootstrap-tokenfield.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/plugins/icheck.min.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/core.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/eventbus.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/sync.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/shurbar.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/modulemanager.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/topbar.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/templater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/autoupdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/preferences.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/components/parser.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Quotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/FilterThreads.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BetterPosts.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Scrollers.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/NestedQuotes.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/BottomNavigation.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/RefreshSearch.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/HighlightOP.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageUploader.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ThreadUpdater.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoIcons.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/PrivateMode.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Integrations.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/Reader.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/AutoSpoiler.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/History.js
-// @require         https://github.com/TheBronx/shurscript/raw/experimental/modules/ImageGallery.js
-// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/experimental/css/bootstrap.css
-// @resource        modalcss https://github.com/TheBronx/shurscript/raw/experimental/css/modal.css
-// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/experimental/css/shurbar.css
-// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/experimental/html/modal.html
-// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/experimental/html/quote.html
-// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/experimental/css/imageuploader.css
-// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/experimental/html/imageuploader.html
-// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/experimental/css/autoicons.css
-// @resource        readercss https://github.com/TheBronx/shurscript/raw/experimental/css/reader.css
-// @resource        readerhtml https://github.com/TheBronx/shurscript/raw/experimental/html/reader.html
-// @resource        historycss https://github.com/TheBronx/shurscript/raw/experimental/css/history.css
-// @resource        historyhtml https://github.com/TheBronx/shurscript/raw/experimental/html/history.html
-// @resource        gallerycss https://github.com/TheBronx/shurscript/raw/experimental/css/gallery.css
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/plugins/bootbox.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/plugins/Markdown.Converter.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/plugins/bootstrap-tokenfield.min.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/plugins/icheck.min.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/core.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/eventbus.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/sync.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/shurbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/modulemanager.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/topbar.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/templater.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/autoupdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/preferences.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/parser.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/components/notifications.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/Quotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/FilterThreads.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/BetterPosts.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/Scrollers.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/NestedQuotes.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/BottomNavigation.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/RefreshSearch.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/HighlightOP.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/ImageUploader.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/ThreadUpdater.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/AutoIcons.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/PrivateMode.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/Integrations.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/Reader.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/AutoSpoiler.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/History.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/ImageGallery.js
+// @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/notifications/css/bootstrap.css
+// @resource        modalcss https://github.com/TheBronx/shurscript/raw/notifications/css/modal.css
+// @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/notifications/css/shurbar.css
+// @resource        modalhtml https://github.com/TheBronx/shurscript/raw/notifications/html/modal.html
+// @resource        quotehtml https://github.com/TheBronx/shurscript/raw/notifications/html/quote.html
+// @resource        imageuploadercss https://github.com/TheBronx/shurscript/raw/notifications/css/imageuploader.css
+// @resource        imageuploaderhtml https://github.com/TheBronx/shurscript/raw/notifications/html/imageuploader.html
+// @resource        autoiconscss https://github.com/TheBronx/shurscript/raw/notifications/css/autoicons.css
+// @resource        readercss https://github.com/TheBronx/shurscript/raw/notifications/css/reader.css
+// @resource        readerhtml https://github.com/TheBronx/shurscript/raw/notifications/html/reader.html
+// @resource        historycss https://github.com/TheBronx/shurscript/raw/notifications/css/history.css
+// @resource        historyhtml https://github.com/TheBronx/shurscript/raw/notifications/html/history.html
+// @resource        gallerycss https://github.com/TheBronx/shurscript/raw/notifications/css/gallery.css
+// @resource        notificationscss https://github.com/TheBronx/shurscript/raw/notifications/css/notifications.css
 // ==/UserScript==
 
 /**
