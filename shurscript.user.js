@@ -60,6 +60,7 @@
 // @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/AutoSpoiler.js
 // @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/History.js
 // @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/ImageGallery.js
+// @require         https://github.com/TheBronx/shurscript/raw/notifications/modules/Announces.js
 // @resource        bootstrapcss https://github.com/TheBronx/shurscript/raw/notifications/css/bootstrap.css
 // @resource        modalcss https://github.com/TheBronx/shurscript/raw/notifications/css/modal.css
 // @resource        shurbarcss https://github.com/TheBronx/shurscript/raw/notifications/css/shurbar.css
