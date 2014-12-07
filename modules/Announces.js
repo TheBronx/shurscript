@@ -13,6 +13,9 @@
 		}
 	});
 
+	var announces;
+	var readAnnounces;
+
 	/**
 	 * Activamos modo de carga normal (aunque viene activo por defecto)
 	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
@@ -25,6 +28,13 @@
 	 * Sobreescribimos la funcion de ejecucion
 	 */
 	mod.onNormalStart = function () {
+		readAnnounces = JSON.parse(mod.helper.getValue("READ_ANNOUNCES", '[]'));
+
+		//TODO get announces from server
+		announces = [
+			{'title': 'Announce test', 'content': 'This is a <strong>test</strong> content', 'date': new Date()}
+		];
+
 		mod.showUnreadAnnounces();
 	};
 
@@ -50,9 +60,23 @@
 		};
 
 		SHURSCRIPT.eventbus.trigger('notification', notification);
+
+		mod.markAnnounceAsRead(announce);
+	};
+
+	mod.markAnnounceAsRead = function(announce) {
+		readAnnounces.push(announce);
+		mod.helper.setValue("READ_ANNOUNCES", JSON.stringify(readAnnounces));
 	};
 
 	function isNew(announce) {
+		for (var i=0; i<readAnnounces.length; i++) {
+			var readAnnounce = readAnnounces[i];
+			var areEqual = (announce.title == readAnnounce.title && announce.date == readAnnounce.date);
+			if (areEqual) {
+				return false;
+			}
+		}
 		return true;
 	}
 
