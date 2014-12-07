@@ -25,13 +25,36 @@
 	 * Sobreescribimos la funcion de ejecucion
 	 */
 	mod.onNormalStart = function () {
+		mod.showUnreadAnnounces();
+	};
+
+	mod.showUnreadAnnounces = function() {
+
+		var announce = null;
+		for (var i=0; i<announces.length; i++) {
+			announce = announces[i];
+
+			mod.showAnnounceNotification(announce);
+		}
+
+	};
+
+	mod.showAnnounceNotification = function(announce) {
+		if (!isNew(announce)) return;
+
 		var notification = {
-			'title': 'Test notification',
-			'type': 'tip',
-			'date': new Date()
+			'type': 'message',
+			'title': announce.title,
+			'content': announce.content,
+			'date': announce.date
 		};
+
 		SHURSCRIPT.eventbus.trigger('notification', notification);
 	};
+
+	function isNew(announce) {
+		return true;
+	}
 
 	/*mod.getPreferenceOptions = function () {
 
