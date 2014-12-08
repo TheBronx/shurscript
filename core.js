@@ -19,7 +19,7 @@ var SHURSCRIPT = {
 		server: "http://cloud.shurscript.org:8080/"
 	},
 	environment: {
-		page: location.pathname.indexOf("/foro") != -1 ? location.pathname.replace("/foro", "") : "frontpage",
+		page: location.pathname.indexOf("/foro") !== -1 ? location.pathname.replace("/foro", "") : "frontpage",
 		thread: {
 			id: getCurrentThread(),
 			page: getCurrentPage(),
@@ -30,21 +30,17 @@ var SHURSCRIPT = {
 
 function getCurrentPage() {
 	var r;
-
 	if (r = decodeURIComponent((new RegExp('[?|&]page=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1])) return r;// from URL parameter
 	if (r = document.getElementById("showthread_threadrate_form")) return r.page.value;
 	if (r = document.querySelector(".pagenav:first-child span strong")) return r.textContent;
-
 	return null;
 }
 
 function getCurrentThread() {
 	var r;
-
 	if (r = unsafeWindow.threadid) return r;
 	if (r = decodeURIComponent((new RegExp('[?|&]t=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1])) return r;// from URL parameter
-	if (r = document.getElementById("qr_threadid")) return r.t.value;
-
+	if (r = document.getElementById("qr_threadid")) return r.value;
 	return null;
 }
 
@@ -129,7 +125,7 @@ function getCurrentThread() {
 		 * Compone una cadena con el nombre del modulo que esta llamando al helper y la hora
 		 */
 		_getCallerDescription: function () {
-			return '[SHURSCRIPT]  [Modulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
+			return '[SHURSCRIPT]  [Módulo ' + this.moduleId + '] ' + new Date().toLocaleTimeString() + ': ';
 		},
 
 		/**
@@ -295,7 +291,6 @@ function getCurrentThread() {
 	 * Inicializa la aplicacion de modo normal
 	 */
 	core.initialize = function () {
-
 		if (!isCompatible()) {
 			alert('SHURSCRIPT: El complemento o extensión de userscripts que usas en tu navegador no está soportado.');
 			return;
