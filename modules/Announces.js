@@ -32,11 +32,10 @@
 
 	mod.checkAnnounces = function() {
 		if (announcesCheckedRecently()) return;
-		console.log('check announces again');
 		mod.helper.setLocalValue('lastCheck', (new Date()).toGMTString());
 
 		$.getJSON(announcesUrl, function( data ) {
-			announces = data.announces;
+			announces = data;
 		})
 			.done(function() {
 				mod.showUnreadAnnounces();
@@ -68,7 +67,6 @@
 		};
 
 		SHURSCRIPT.eventbus.trigger('notification', notification);
-
 		mod.markAnnounceAsRead(announce);
 	};
 
