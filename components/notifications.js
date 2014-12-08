@@ -13,7 +13,7 @@
 		this.id = new Date().getTime();
 		this.date = null;
 		this.read = false;
-		this.type = ''; // tip | link | message
+		this.type = ''; // bubble | link | message
 		this.title = '';
 		this.content = '';
 		this.link = '';
@@ -27,13 +27,6 @@
 		//shurbar.helper.addStyle('notifications');
 
 		SHURSCRIPT.eventbus.on('notification', comp.notify);
-
-		//Cada componente que se cargue, podrá añadir si quiere un botón a la barra
-		//SHURSCRIPT.eventbus.on('loadingComponent', loadingComponent);
-
-		//Lo mismo con los módulos
-		//SHURSCRIPT.eventbus.on('loadingModule', loadingModule);
-
 	};
 
 	comp.notify = function (event, notification) {
