@@ -13,13 +13,10 @@
 		}
 	});
 
+	const announcesUrl = 'http://cloud.shurscript.org:8080/announces';
 	var announces;
 	var readAnnounces;
 
-	/**
-	 * Activamos modo de carga normal (aunque viene activo por defecto)
-	 * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
-	 */
 	mod.normalStartCheck = function () {
 		return true;
 	};
@@ -30,12 +27,23 @@
 	mod.onNormalStart = function () {
 		readAnnounces = JSON.parse(mod.helper.getValue("READ_ANNOUNCES", '[]'));
 
-		//TODO get announces from server
-		announces = [
-			{'title': 'Announce test', 'content': 'This is a <strong>test</strong> content', 'date': new Date()}
-		];
+		mod.checkAnnounces();
+	};
 
-		mod.showUnreadAnnounces();
+	mod.checkAnnounces = function() {
+		if (announcesCheckedRecently()) return;
+		console.log('check announces again');
+		mod.helper.setLocalValue('lastCheck', (new Date()).toGMTString());
+
+		$.getJSON(announcesUrl, function( data ) {
+			announces = data.announces;
+		})
+			.done(function() {
+				mod.showUnreadAnnounces();
+			})
+			.fail(function() {
+				mod.helper.log('Error al recuperar lista de anuncios');
+			});
 	};
 
 	mod.showUnreadAnnounces = function() {
@@ -68,6 +76,18 @@
 		readAnnounces.push(announce);
 		mod.helper.setValue("READ_ANNOUNCES", JSON.stringify(readAnnounces));
 	};
+
+	function announcesCheckedRecently() {
+		const MINUTES_BETWEEN_CHECKS = 10;
+		var fewMinutesAgo = new Date();
+		fewMinutesAgo.setMinutes( fewMinutesAgo.getMinutes() - MINUTES_BETWEEN_CHECKS );
+
+		var lastCheck = mod.helper.getLocalValue('lastCheck', undefined);
+		if (!lastCheck) return false;
+
+		lastCheck = new Date(lastCheck);
+		return (lastCheck.getTime() > fewMinutesAgo.getTime());
+	}
 
 	function isNew(announce) {
 		for (var i=0; i<readAnnounces.length; i++) {
