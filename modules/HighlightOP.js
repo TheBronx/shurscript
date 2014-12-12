@@ -54,10 +54,7 @@
 		currentThread = SHURSCRIPT.environment.thread.id;
 		currentPage = SHURSCRIPT.environment.thread.page;
 		username = mod.helper.environment.user.name.toLowerCase();
-		contacts = mod.preferences.contacts.split(/\s*,\s*/);
-		for (var i = 0, n = contacts.length; i < n; i++) {
-			contacts[i] = contacts[i].toLowerCase();
-		}
+		contacts = mod.preferences.contacts.toLowerCase().split(/\s*,\s*/);
 
 		// Add CSS rules
 		GM_addStyle(".op_post, .op_quote { border: 1px solid " + mod.preferences.opPostsColor + " !important; border-left: 5px solid " + mod.preferences.opPostsColor + " !important; } .op_post td.alt2 { width: 171px; }");
