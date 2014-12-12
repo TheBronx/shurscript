@@ -23,7 +23,7 @@
 			this.title_link = this.title_td.find('div > a[id^="thread_title_"]').first();
 			this.href = this.title_link.attr('href');
 			this.id = parseInt(/.*showthread\.php\?.*t=([0-9]+).*/.exec(this.href)[1]);
-			this.title = this.title_link.html();
+			this.title = this.title_link.text();
 			this.author_span = this.title_td.find("div.smallfont > span:last-child");
 			this.author = this.author_span.text();
 			this.icon_td = this.element.find('#td_threadstatusicon_' + this.id);
@@ -38,7 +38,7 @@
 		this.id = parseInt(table.attr('id').replace('post',''));
 		this.href = '/showthread.php?p=' + this.id;
 		this.content = this.element.find('#post_message_' + this.id);
-		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').html());
+		this.postcount = parseInt(this.element.find('#postcount' + this.id + ' strong').text());
 
 		var user = this.element.find('#postmenu_' + this.id + ' .bigusername');
 		this.ignored = false;
@@ -46,7 +46,7 @@
 			user = this.element.find('.alt2:first-child > a');
 			this.ignored = true;
 		}
-		this.author = user.html();
+		this.author = user.text();
 		this.author_link = user.attr('href');
 	};
 
