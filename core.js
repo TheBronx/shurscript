@@ -389,6 +389,7 @@ function getCurrentThread() {
 		// TODO [ikaros45 28.03.2014]: lo mismo aqui... no hay que comprobar si existe!
 		if (_.isFunction(component.load)) {
 			component.load(); // sin callback
+			core.helper.log("Cargado componente " + component.id);
 		}
 
 		core.loadNextComponent();
