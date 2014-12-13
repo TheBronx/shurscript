@@ -13,7 +13,7 @@
 		}
 	});
 
-	const announcesUrl = 'http://cloud.shurscript.org:8080/announces';
+	var announcesUrl = 'http://cloud.shurscript.org:8080/announces';
 	var announces;
 	var readAnnounces;
 
@@ -76,7 +76,7 @@
 	};
 
 	function announcesCheckedRecently() {
-		const MINUTES_BETWEEN_CHECKS = 10;
+		var MINUTES_BETWEEN_CHECKS = 10;
 		var fewMinutesAgo = new Date();
 		fewMinutesAgo.setMinutes( fewMinutesAgo.getMinutes() - MINUTES_BETWEEN_CHECKS );
 
