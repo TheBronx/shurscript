@@ -11,6 +11,17 @@
     text-align: center;
 }
 
+.shurscript-notification-close {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-image: url('http://www.ecoweb.info/sites/default/files/tips-close.png');
+}
+
 .shurscript-notification.notification-bubble {
 
 }

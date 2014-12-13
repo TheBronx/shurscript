@@ -89,7 +89,8 @@
 	};
 
 	comp.displayBubbleNotification = function(notification) {
-		var notificationDiv = '<div class="shurscript-notification notification-bubble"><h1>{title}</h1></div>';
+		var notificationDiv = '<div id="shurscript-notification-{id}" class="shurscript-notification notification-bubble"><a class="shurscript-notification-close"></a><h1>{title}</h1></div>';
+		notificationDiv = notificationDiv.replace('{id}', notification.id);
 		notificationDiv = notificationDiv.replace('{title}', notification.title);
 		//TODO add listener
 		$('body').append(notificationDiv);
