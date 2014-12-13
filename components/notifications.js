@@ -19,19 +19,41 @@
 		this.link = '';
 	};
 
+	var NotificationsList = function() {
+		var _this = this;
+		this.notifications = [];
+
+		this.getUnreadNotifications = function() {
+			var unreadNotifications = [];
+			for(var i=0; i<notifications.length; i++) {
+				if (_this.notifications[i].unread) {
+					unreadNotifications.push(_this.notifications[i]);
+				}
+			}
+
+			return unreadNotifications;
+		};
+	};
+
 	/**
 	 * Punto de entrada del componente
 	 */
 	comp.load = function () {
 
-		//shurbar.helper.addStyle('notifications');
+		comp.helper.addStyle('notificationscss');
 
 		SHURSCRIPT.eventbus.on('notification', comp.notify);
 	};
 
-	comp.notify = function (event, notification) {
+	comp.notify = function (event, notificationParams) {
 		console.log('new notification: ');
-		console.log(notification);
+		console.log(notificationParams);
+
+		var notification = new Notification();
+		notification.type = notificationParams.type;
+		notification.title = notificationParams.title;
+
+		comp.displayNotification(notification);
 	};
 
 	comp.shurbarIcon = function () {
@@ -39,13 +61,48 @@
 			name: 'Notificaciones',
 			description: 'Avisos y mensajes',
 			image: 'http://i.imgur.com/wLtDpAp.png',
-			handler: comp.openNotifications,
+			handler: comp.showNotificationsList,
 			href: "#"
 		};
 	};
 
-	comp.openNotifications = function() {
+	comp.showNotificationsList = function() {
 
+	};
+
+	comp.markNotificationRead = function(notification) {
+
+	};
+
+	comp.displayNotification = function(notification) {
+		if (notification.type === 'bubble') {
+			comp.displayBubbleNotification(notification);
+		}
+
+		if (notification.type === 'link') {
+			comp.displayLinkNotification(notification);
+		}
+
+		if (notification.type === 'message') {
+			comp.displayMessageNotification(notification);
+		}
+	};
+
+	comp.displayBubbleNotification = function(notification) {
+		var notificationDiv = '<div class="shurscript-notification notification-bubble"><h1>{title}</h1></div>';
+		notificationDiv = notificationDiv.replace('{title}', notification.title);
+		//TODO add listener
+		$('body').append(notificationDiv);
+	};
+
+	comp.displayLinkNotification = function(notification) {
+		//TODO
+		comp.displayBubbleNotification(notification);
+	};
+
+	comp.displayMessageNotification = function(notification) {
+		//TODO
+		comp.displayBubbleNotification(notification);
 	};
 
 })(jQuery, SHURSCRIPT);
