@@ -14,7 +14,6 @@
 			hiddenTabPeriodicity: 30000,
 			loadAutomatically: false,
 			nextPageButton: false,
-			postsPerPage: 30,
 		},
 		preferences: {}
 	});
@@ -49,13 +48,10 @@
 			creOpt({
 				type: 'checkbox', mapsTo: 'nextPageButton', caption: 'Mostrar siempre el botón para ir a la siguiente página, no solo cuando haya una nueva.'
 			}),
-			creOpt({
-				type: 'text', mapsTo: 'postsPerPage', caption: 'Número de posts por página.', subCaption: 'Debe coincidir con el número de posts por página que tengas configurado en el foro.'
-			}),
 		];
 	};
 
-	var postsPerPage;// configuración de número de posts por página
+	var ge;// configuración de número de posts por página
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var isLastPage;// ¿estamos en la última página del hilo?
 	var isOpen = true;// ¿está abierto el hilo? si está cerrado el módulo no se ejecuta
@@ -86,7 +82,7 @@
 	};
 
 	mod.onNormalStart = function () {
-		postsPerPage = +mod.preferences.postsPerPage;
+		postsPerPage = +$('#threadrating_submit input[name=pp]').val();
 		shownPosts = document.querySelectorAll('#posts > div[align]');
 		numPostsBefore = shownPosts.length;
 		isLastPage = document.getElementsByClassName('pagenav').length
@@ -96,7 +92,7 @@
 		page = SHURSCRIPT.environment.thread.page;
 
 		// comprobar si hay nuevos posts si la página no está completa o es la última
-		if (numPostsBefore < postsPerPage || isLastPage) {
+		if (numPostsBefore < ge || isLastPage) {
 			createTimeout();// comprobar más tarde de nuevo si hay nuevos posts
 			createButton();// crear el elemento ya para poder reservar su hueco
 
@@ -141,7 +137,7 @@
 					shownPosts = document.querySelectorAll('#posts > div[align], #posts > div > div[align]');
 
 					// comprobar si se ha llenado la página
-					if (numPostsBefore <= postsPerPage) {
+					if (numPostsBefore <= ge) {
 						// activar el timeout de nuevo
 						createTimeout();
 					} else {
@@ -218,7 +214,7 @@
 	function loadThread() {
 		stopTimeout();
 
-		if ((numPostsBefore < postsPerPage || isLastPage) && isOpen) {
+		if ((numPostsBefore < ge || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
