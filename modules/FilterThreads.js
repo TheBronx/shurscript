@@ -211,7 +211,9 @@
 	mod.onNormalStart = function () {
 		loadStyles();
 
-		favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
+		var favsStr = mod.helper.getValue("FAVORITES", '[]');
+		favsStr = ensureStringIsJsonArray(favsStr);
+		favorites = new Favorites(JSON.parse(favsStr));
 
 		if (mod.helper.environment.page == "/forumdisplay.php" || mod.helper.environment.page == "/search.php") {
 			onForumDisplay();
@@ -247,8 +249,11 @@
 	};
 
 	mod.onShurbarClick = function () {
-		if (favorites == undefined)
-			favorites = new Favorites(JSON.parse(mod.helper.getValue("FAVORITES", '[]')));
+		if (favorites == undefined) {
+			var favsStr = mod.helper.getValue("FAVORITES", '[]');
+			favsStr = ensureStringIsJsonArray(favsStr);
+			favorites = new Favorites(JSON.parse(favsStr));
+		}
 
 		var modal = createFavoritesModal(favorites);
 		populateFavoritesModal();
@@ -358,7 +363,9 @@
 		});
 
 		//Recuperar los hilos ocultos manualmente
-		hiddenThreads = JSON.parse(mod.helper.getValue("HIDDEN_THREADS", '[]'));
+		var hiddenStr = mod.helper.getValue("HIDDEN_THREADS", '[]');
+		hiddenStr = ensureStringIsJsonArray(hiddenStr);
+		hiddenThreads = JSON.parse(hiddenStr);
 
 		initRegexs();
 	}
@@ -1043,6 +1050,11 @@
 				addFavToCorrespondingModalSection(favorites, fav);
 			}
 		}
+	}
+
+	function ensureStringIsJsonArray(str) {
+		if (str === '') str = '[]';
+		return str;
 	}
 
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
