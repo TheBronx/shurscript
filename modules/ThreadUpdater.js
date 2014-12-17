@@ -51,7 +51,7 @@
 		];
 	};
 
-	var ge;// configuración de número de posts por página
+	var postsPerPage;// configuración de número de posts por página
 	var numPostsBefore;// cantidad de posts al cargar el hilo
 	var isLastPage;// ¿estamos en la última página del hilo?
 	var isOpen = true;// ¿está abierto el hilo? si está cerrado el módulo no se ejecuta
@@ -92,7 +92,7 @@
 		page = SHURSCRIPT.environment.thread.page;
 
 		// comprobar si hay nuevos posts si la página no está completa o es la última
-		if (numPostsBefore < ge || isLastPage) {
+		if (numPostsBefore < postsPerPage || isLastPage) {
 			createTimeout();// comprobar más tarde de nuevo si hay nuevos posts
 			createButton();// crear el elemento ya para poder reservar su hueco
 
@@ -137,7 +137,7 @@
 					shownPosts = document.querySelectorAll('#posts > div[align], #posts > div > div[align]');
 
 					// comprobar si se ha llenado la página
-					if (numPostsBefore <= ge) {
+					if (numPostsBefore <= postsPerPage) {
 						// activar el timeout de nuevo
 						createTimeout();
 					} else {
@@ -214,7 +214,7 @@
 	function loadThread() {
 		stopTimeout();
 
-		if ((numPostsBefore < ge || isLastPage) && isOpen) {
+		if ((numPostsBefore < postsPerPage || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
