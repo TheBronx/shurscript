@@ -105,21 +105,6 @@
 
 	var originalTitle;
 
-	/**
-	 * Método temporal de migración de valores
-	 */
-	mod.migrateValues = function (callback) {
-		if (!mod.helper.getValue("LAST_QUOTES_UPDATE")) { //Al ser una segunda migración, no machacar los datos de los usuarios de la beta que ya habían migrado
-			mod.helper.setValue("LAST_QUOTES_UPDATE", mod.helper.getLocalValue("LAST_QUOTES_UPDATE"), function () {
-				mod.helper.setValue("LAST_READ_QUOTE", mod.helper.getLocalValue("LAST_READ_QUOTE"), function () {
-					mod.helper.setValue("LAST_QUOTES", mod.helper.getLocalValue("LAST_QUOTES"), callback);
-				});
-			});
-		} else {
-			callback();
-		}
-	};
-
 	mod.onNormalStart = function () {
 
 		originalTitle = document.title; //Para cambiar el titulo de la pagina con el numero de notificaciones

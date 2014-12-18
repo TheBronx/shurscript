@@ -116,37 +116,6 @@
 			$.extend(true, this.preferences, this.initialPreferences, storedPreferences);
 		},
 
-		/**
-		 * Migra las preferencias antiguas en FORMATO_UPPERCASE y almacenadas en el navegador
-		 * a las nuevas en formato camelCase y almacenadas en el servidor
-		 */
-		migratePreferences: function (callback) {
-			for (var newPrefName in this.preferences) {
-				var oldPrefName = ''; //Convertir el nueevo nombre al formato antiguo en mayusculas
-				for (var i = 0; i < newPrefName.length; i++) {
-					if (newPrefName[i] == newPrefName[i].toUpperCase()) { //Si hay una mayúscula metemos un guión bajo antes
-						oldPrefName += "_";
-					}
-					oldPrefName += newPrefName[i].toUpperCase();
-				}
-				var oldPref = this.helper.getLocalValue(oldPrefName);
-				if (typeof oldPref !== "undefined") {
-					this.preferences[newPrefName] = oldPref;
-					this.helper.log("Migrada: " + oldPrefName + " = " + oldPref);
-				}
-			}
-			;
-
-			this.storePreferences(callback);
-		},
-
-		/**
-		 * Migra los valores propios del módulo, que no se guardan en las preferencias
-		 */
-		migrateValues: function (callback) {
-			callback && callback();
-		},
-
 		// Por defecto los modulos arrancan fuera de la portada
 		domain: moduleManager.NO_FRONTPAGE,
 
@@ -233,68 +202,9 @@
 	};
 
 	/**
-	 * Método temporal que migrará los módulos activos y las preferencias de cada módulo antes de que se sincronizasen en la nube
-	 */
-	moduleManager.migratePreferences = function (callback) {
-
-		var dialog = bootbox.dialog({message: '<center>Migrando preferencias...</center>'});
-		var migratedCount = 0;
-		var numModules = 0;
-		var completedCallback = function () {
-			migratedCount++;
-			if (migratedCount == numModules) {
-				moduleManager.helper.setValue("MIGRATION_DONE", true, function () {
-					callback();
-					bootbox.hideAll();
-				});
-			}
-		};
-
-		//Activamos los módulos tal como los tenía antes
-		var activeModules = GM_getValue("SHURSCRIPT_MODULES_" + SHURSCRIPT.environment.user.id);
-		if (activeModules) {
-			activeModules = JSON.parse(activeModules);
-			$.each(activeModules, function (moduleName, active) {
-				try {
-					moduleManager.modules[moduleName].preferences.enabled = active;
-					moduleManager.helper.log("Migrando active status de " + moduleName + ": " + active);
-				} catch (e) {
-					moduleManager.helper.throw("Error al migrar el active status de " + moduleName, e);
-				}
-			});
-		}
-
-		//Migramos las preferencias individuales de cada módulo
-		$.each(moduleManager.modules, function (moduleName, module) {
-			try {
-				numModules++;
-				module.migratePreferences(function () {
-					module.migrateValues(completedCallback);
-				});
-			} catch (e) {
-				moduleManager.helper.throw("Error migrando las preferencias antiguas del modulo " + moduleName, e);
-			}
-		});
-
-	}
-
-	/**
 	 * Lanza la carga de modulos en document.ready
 	 */
 	moduleManager.startOnDocReadyModules = function () {
-
-		//Se ha generado una nueva key, manualmente. No hacemos migración.
-		if (moduleManager.helper.location.hash.indexOf("newkey") != -1) {
-			moduleManager.helper.setValue("MIGRATION_DONE", true);
-		}
-
-		//Migramos las antiguas preferencias (Antes de que se sincronizaran en la nube)
-		if (!moduleManager.helper.getValue("MIGRATION_DONE")) {
-			moduleManager.migratePreferences(function () {
-				moduleManager.startOnDocReadyModules();
-			});
-			return;
-		}
 
 		// Loop sobre modulos para cargarlos
 		$.each(moduleManager.modules, function (moduleName, module) {
