@@ -82,7 +82,7 @@
 	};
 
 	mod.onNormalStart = function () {
-		postsPerPage = +$('#threadrating_submit input[name=pp]').val();
+		postsPerPage = +document.getElementsByName('pp')[0].value;
 		shownPosts = document.querySelectorAll('#posts > div[align]');
 		numPostsBefore = shownPosts.length;
 		isLastPage = document.getElementsByClassName('pagenav').length
@@ -214,7 +214,9 @@
 	function loadThread() {
 		stopTimeout();
 
-		if ((numPostsBefore < postsPerPage || isLastPage) && isOpen) {
+		if (!loadCheck()) {
+			createTimeout();
+		} else if ((numPostsBefore < postsPerPage || isLastPage) && isOpen) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
@@ -464,5 +466,11 @@
 			document.head.removeChild(oldLink);
 		}
 		document.head.appendChild(link);
-	} 
+	}
+
+	function loadCheck() {
+		var end = document.body.offsetHeight - unsafeWindow.scrollY;// pixeles que quedan para el final
+		var size = Math.min(unsafeWindow.innerHeight * 2.5, 1800);// altura del navegador
+		return end < size;
+	}
 })(jQuery, SHURSCRIPT.moduleManager.createModule);
