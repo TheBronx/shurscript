@@ -60,6 +60,7 @@
 		if (!isNew(announce)) return;
 
 		var notification = {
+			'id': announce._id,
 			'type': 'message',
 			'title': announce.title,
 			'content': announce.content,
@@ -76,7 +77,7 @@
 	};
 
 	function announcesCheckedRecently() {
-		var MINUTES_BETWEEN_CHECKS = 10;
+		var MINUTES_BETWEEN_CHECKS = 5;
 		var fewMinutesAgo = new Date();
 		fewMinutesAgo.setMinutes( fewMinutesAgo.getMinutes() - MINUTES_BETWEEN_CHECKS );
 

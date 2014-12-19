@@ -10,30 +10,70 @@
 	var comp = SHURSCRIPT.core.createComponent('notifications');
 
 	var Notification = function() {
-		this.id = new Date().getTime();
+		this.id = null;
 		this.date = null;
 		this.read = false;
 		this.type = ''; // bubble | link | message
 		this.title = '';
 		this.content = '';
 		this.link = '';
+
+		this.parse = function(params) {
+			this.id = params.id;
+			this.date = params.date || new Date();
+			this.type = params.type;
+			this.title = params.title;
+			this.content = params.content ? params.content : '';
+			this.link = params.link ? params.link : '';
+
+			return this;
+		}
 	};
 
 	var NotificationsList = function() {
 		var _this = this;
 		this.notifications = [];
 
+		this.add = function(notification) {
+			_this.notifications.push(notification);
+			_this.saveNotifications();
+		};
+
+		this.saveNotifications = function() {
+			//TODO save to sync
+		};
+
+		this.markAsRead = function(notification) {
+			for(var i=0; i<_this.notifications.length; i++) {
+				if (_this.notifications[i].id === notification.id) {
+					notification.read = true;
+				}
+			}
+		};
+
 		this.getUnreadNotifications = function() {
 			var unreadNotifications = [];
-			for(var i=0; i<notifications.length; i++) {
-				if (_this.notifications[i].unread) {
+			for(var i=0; i<_this.notifications.length; i++) {
+				if (!_this.notifications[i].read) {
 					unreadNotifications.push(_this.notifications[i]);
 				}
 			}
 
 			return unreadNotifications;
 		};
+
+		this.getNextUnreadNotification = function() {
+			if (_this.notifications.length>0) {
+				var unreadNotifications = _this.getUnreadNotifications();
+				return unreadNotifications[0];
+			} else {
+				return null;
+			}
+		};
 	};
+
+	var notifications = new NotificationsList();
+	var showingNotification = false;
 
 	/**
 	 * Punto de entrada del componente
@@ -42,21 +82,25 @@
 
 		comp.helper.addStyle('notificationscss');
 
-		SHURSCRIPT.eventbus.on('notification', comp.notify);
+		SHURSCRIPT.eventbus.on('notification', comp.enqueNotification);
+
+		comp.loadNotifications();
 	};
 
-	comp.notify = function (event, notificationParams) {
-		console.log('new notification: ');
-		console.log(notificationParams);
-
-		var notification = new Notification();
-		notification.type = notificationParams.type;
-		notification.title = notificationParams.title;
-
-		comp.displayNotification(notification);
+	comp.loadNotifications = function() {
+		//TODO
 	};
 
-	comp.shurbarIcon = function () {
+	comp.enqueNotification = function (event, notificationParams) {
+		var notification = new Notification().parse(notificationParams);
+		notifications.add(notification);
+
+		if (!showingNotification) {
+			comp.showNextUnreadNotification();
+		}
+	};
+
+	/*comp.shurbarIcon = function () {
 		return {
 			name: 'Notificaciones',
 			description: 'Avisos y mensajes',
@@ -66,12 +110,20 @@
 		};
 	};
 
-	comp.showNotificationsList = function() {
+	 comp.showNotificationsList = function() {
 
+	 };
+	*/
+
+	comp.showNextUnreadNotification = function() {
+		var notification = notifications.getNextUnreadNotification();
+		if (notification) {
+			comp.displayNotification(notification);
+		}
 	};
 
 	comp.markNotificationRead = function(notification) {
-
+		notifications.markAsRead(notification);
 	};
 
 	comp.displayNotification = function(notification) {
@@ -102,8 +154,16 @@
 	};
 
 	comp.displayMessageNotification = function(notification) {
-		//TODO
-		comp.displayBubbleNotification(notification);
+		showingNotification = true;
+		var notificationHtml = '<div id="shurscript-notification-{id}"><h2>{title}</h2><p>{content}</p></div>';
+		notificationHtml = notificationHtml.replace('{id}', notification.id);
+		notificationHtml = notificationHtml.replace('{title}', notification.title);
+		notificationHtml = notificationHtml.replace('{content}', notification.content);
+		bootbox.alert(notificationHtml, function() {
+			showingNotification = false;
+			comp.markNotificationRead(notification);
+			comp.showNextUnreadNotification();
+		});
 	};
 
 })(jQuery, SHURSCRIPT);
