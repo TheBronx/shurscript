@@ -20,7 +20,7 @@
 
 		this.parse = function(params) {
 			this.id = params.id;
-			this.date = params.date || new Date();
+			this.date = params.date || new Date().getTime();
 			this.type = params.type;
 			this.title = params.title;
 			this.content = params.content ? params.content : '';
@@ -40,13 +40,20 @@
 		};
 
 		this.saveNotifications = function() {
-			//TODO save to sync
+			comp.helper.setValue("NOTIFICATIONS", JSON.stringify(_this.notifications));
+		};
+
+		this.loadNotifications = function() {
+			_this.notifications = JSON.parse(comp.helper.getValue("NOTIFICATIONS", '[]'));
+
+			return this;
 		};
 
 		this.markAsRead = function(notification) {
 			for(var i=0; i<_this.notifications.length; i++) {
 				if (_this.notifications[i].id === notification.id) {
 					notification.read = true;
+					break;
 				}
 			}
 		};
@@ -85,10 +92,13 @@
 		SHURSCRIPT.eventbus.on('notification', comp.enqueNotification);
 
 		comp.loadNotifications();
+		if (!showingNotification) {
+			comp.showNextUnreadNotification();
+		}
 	};
 
 	comp.loadNotifications = function() {
-		//TODO
+		notifications = notifications.loadNotifications();
 	};
 
 	comp.enqueNotification = function (event, notificationParams) {
@@ -124,6 +134,7 @@
 
 	comp.markNotificationRead = function(notification) {
 		notifications.markAsRead(notification);
+		notifications.saveNotifications();
 	};
 
 	comp.displayNotification = function(notification) {
