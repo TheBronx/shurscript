@@ -1,0 +1,31 @@
+.shurscript-notification {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    border-radius: 5px;
+    border: 1px solid #999;
+    background-color: #d9d9d9;
+    padding: 10px;
+    box-shadow: 2px 2px 5px #666;
+    min-width: 200px;
+    text-align: center;
+}
+
+.shurscript-notification-close {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-image: url('http://www.ecoweb.info/sites/default/files/tips-close.png');
+}
+
+.shurscript-notification.notification-bubble {
+
+}
+.shurscript-notification.notification-bubble h1 {
+    font-size: 14px;
+    color: #333;
+}
