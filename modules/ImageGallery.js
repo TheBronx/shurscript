@@ -13,7 +13,8 @@
   var thread;
   var pages;
   var title;
-  var images = []
+  var images = [];
+  var index = 0;
   /**
   * Activamos modo de carga normal (aunque viene activo por defecto)
   * aqui se podrian hacer comprobaciones adicionales. No es nuestro caso
@@ -27,12 +28,26 @@
   */
   mod.onNormalStart = function () {
     mod.helper.addStyle('gallerycss');
-
-    addGaleryButton();
+    thread = SHURSCRIPT.environment.thread.id;
+    title = $('.cmega').text();
+    pages = numberPages();
   };
 
-  mod.openGallery = function (button) {
-    $(button).find('a').text('Cargando...');
+  mod.shurbarIcon = function () {
+    if ( SHURSCRIPT.environment.thread.id != null ){
+      return {
+        name: 'Galería',
+        description: 'Muestra una galería con las imágenes del hilo',
+        image: 'http://i.imgur.com/iMe3OgE.png',
+        handler: function () {
+          $('.tooltip').hide();
+          mod.openGallery();
+        }
+      };
+    }
+  };
+
+  mod.openGallery = function () {
     thread = SHURSCRIPT.environment.thread.id;
     title = $('.cmega').text();
     pages = numberPages();
@@ -49,7 +64,6 @@
     + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</button>'
     + '<h3>'+images.length+' imágenes</h3></div><div class="modal-body"></div><div class="modal-footer"><h4>'+title+'</h4>'
     + '</div></div></div></div></div>';
-
     $('body').append(modal);
 
     if ( images.length <= 0) {
@@ -68,7 +82,6 @@
     });
     /* Abrimos la ventana */
     $('#gallery').modal('show');
-    $(button).find('a').text('Galeria');
   };
 
   /* Cargamos las páginas del hilo y buscamos las imagenes */
@@ -123,20 +136,6 @@
       page = 1;
     }
     return page;
-  }
-
-  /*Añadimos el botón al inicio del modulo */
-  function addGaleryButton() {
-    var tdNextNode = document.getElementById("threadtools");
-    var trNode = tdNextNode.parentNode;
-    var newTd = document.createElement("TD");
-    newTd.className = 'vbmenu_control';
-    newTd.innerHTML = '<a href="#gallery">Galería</a>';
-    $(newTd).on('click', function(){
-      mod.openGallery(this);
-      return false;
-    });
-    trNode.insertBefore(newTd, tdNextNode);
   }
 
   })(jQuery, SHURSCRIPT.moduleManager.createModule);
