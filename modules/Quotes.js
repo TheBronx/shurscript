@@ -120,7 +120,7 @@
 			}
 		}
 
-		notificationsUrl = "http://www.forocoches.com/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1&{random}";
+		notificationsUrl = "/foro/search.php?do=process&query=" + escape(encodedUsername) + "&titleonly=0&showposts=1&{random}";
 
 		lastUpdate = mod.helper.getValue("LAST_QUOTES_UPDATE");
 		lastReadQuote = mod.helper.getValue("LAST_READ_QUOTE");
