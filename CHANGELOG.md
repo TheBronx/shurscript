@@ -1,6 +1,58 @@
 # CHANGELOG
 
-## v0.20.6 `29/04/2014`
+## v0.288.0 `19/12/2014`
+
+**Features**
+
+* Modo lectura para leer tochos de forma más cómoda
+* Botón para añadir Spoilers y que aparezcan ocultos de verdad al leerlos en el foro
+* Modo Galería para ver todas las imágenes de un hilo de un vistazo y quitando las repetidas
+* Listado de últimos hilos visitados, hilos que has posteado e hilos que has abierto
+* Integrar Vocaroos directamente en los posts
+
+**Bugfixes**
+
+* A los usuarios nuevos del script, no les aparecía la opción de añadir hilos a Favoritos
+* Citas y menciones. Ahora, con menos retraso.
+* Y otros tantos arreglillos, como siempre.
+
+**Cambios**
+
+* Ahora el actualizador de hilos automático no se activa hasta que no lleguemos al final de la página, para evitar hacer peticiones innecesarias contra el servidor de FC
+
+### v0.24.1 `19/11/2014`
+
+**Bugfixes**
+
+* Apaño provisional para saltarnos la caché del buscador de forocoches que estaba ocasionando retrasos (no sanos) en las notificaciones de citas y menciones. 
+
+------------------------------------
+
+## v0.24.0 `15/11/2014`
+
+**IMPORTANTE:** En esta versión se ha dejado de dar soporte a la extensión **Scriptish** (**Firefox**). El motivo es porque desde las últimas actualizaciones de Firefox 30+, les han dejado de funcionar algunas cosas críticas que nos son imprescindibles para el correcto funcionamiento del script. Así que hasta futuras actualizaciones de dicha extensión que solucionen estos errores, os recomendamos que cambiéis a **Greasemonkey**.
+
+**Features**
+
+* Autocompletado de iconos: Pulsa ':' (dos puntos) para que te aparezcan sugerencias de los iconos del foro. Ordenados por más usados.
+* Nueva funcionalidad para que mientras estés leyendo un hilo, este se vaya actualizando automáticamente y notificándote de los nuevos posts, nuevas páginas e incluso cuando alguien elimina un post.
+* WEBM: Ahora podrás ver los famosos vídeos .webm incrustados en Forocoches (Soporte para gfycat.com, mediacru.sh y cualquier archivo .webm) - Gracias al forero **gananciafc**
+
+**Bugfixes**
+
+* Arreglos varios que no recordamos después de tantos meses sin actualizar. Perdón por el retraso.
+
+------------------------------------
+
+### v0.20.6.1 `29/04/2014`
+
+**Bugfixes**
+
+* **CRÍTICO**: Las citas no se abrían ni marcaban como leídas en Chrome
+
+------------------------------------
+
+### v0.20.6 `29/04/2014`
 
 **Bugfixes**
 
