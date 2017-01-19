@@ -48,3 +48,5 @@ _shurscript_ está desarrollado de forma modular, de forma que cualquiera puede 
 Todo el código está publicado en Github (ramas `master`, `dev` y `experimental`) de forma que también puedes contribuir revisando errores y mejorando partes ya existentes.<br>
 
 Por supuesto también puedes colaborar aportando ideas, sugerencias, probando la rama de desarrollo o [haciendo una contribución](http://shurscript.org/colabora).
+
+No sé otra manera de ponerme en contacto con vosotros, ¿alguien me pasa una invi? ¡Gracias de antemano!
